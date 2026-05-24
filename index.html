@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>kabkee-decks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Noto Sans KR', 'Inter', sans-serif; background: #0F172A; color: #E2E8F0; min-height: 100vh; }
+    header { padding: 48px 64px 24px; border-bottom: 1px solid #1E293B; }
+    header h1 { font-size: 2em; color: #F8FAFC; font-weight: 700; }
+    header p  { color: #64748B; font-size: 0.85em; margin-top: 6px; }
+    main { padding: 48px 64px; max-width: 960px; }
+    section { margin-bottom: 48px; }
+    section h2 { font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.1em; color: #3B82F6; font-weight: 600; margin-bottom: 16px; }
+    .deck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .deck-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .deck-card:hover { border-color: #3B82F6; transform: translateY(-2px); }
+    .deck-card .date { font-size: 0.65em; color: #64748B; margin-bottom: 8px; font-family: 'Inter', monospace; }
+    .deck-card .title { font-size: 0.9em; color: #F1F5F9; font-weight: 600; line-height: 1.4; }
+    .deck-card .meta { font-size: 0.6em; color: #475569; margin-top: 10px; }
+    .tag { display: inline-block; font-size: 0.8em; background: #1D4ED8; color: #BFDBFE; padding: 2px 8px; border-radius: 4px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>kabkee-decks</h1>
+    <p>슬라이드 저장소 — 주간회의 · 발표 · 기술 공유</p>
+  </header>
+  <main>
+    <section>
+      <h2>📅 Weekly Reports</h2>
+      <div class="deck-grid">
+        <a class="deck-card" href="weekly-reports/2026-05-26.html">
+          <div class="date">2026-05-26</div>
+          <div class="title">주간 업무 보고<br>2026-05-19 ~ 05-24</div>
+          <div class="meta">Look360 Platform · Engineering Manager</div>
+          <span class="tag">FE · BE · DB</span>
+        </a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

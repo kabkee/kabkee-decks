@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>주간 업무 보고 — 2026-05-26 | Look360 Platform</title>
+
+  <!-- Reveal.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── 전역 폰트 ── */
+    :root {
+      --r-main-font: 'Noto Sans KR', 'Inter', sans-serif;
+      --r-heading-font: 'Noto Sans KR', 'Inter', sans-serif;
+      --r-main-font-size: 32px;
+      --r-heading-color: #0F172A;
+      --r-main-color: #1E293B;
+      --r-link-color: #1D4ED8;
+      --accent-blue: #1D4ED8;
+      --accent-navy: #0F172A;
+    }
+
+    .reveal { font-family: var(--r-main-font); }
+    .reveal h1, .reveal h2, .reveal h3 { font-family: var(--r-heading-font); font-weight: 700; }
+
+    /* ── 하이라이트 색상 ── */
+    .hl-green { background: #D1FAE5; color: #065F46; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-blue  { background: #DBEAFE; color: #1E40AF; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-red   { background: #FEE2E2; color: #991B1B; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-gray  { background: #F1F5F9; color: #475569; padding: 2px 8px; border-radius: 5px; }
+
+    /* ── 이슈 뱃지 ── */
+    .badge {
+      display: inline-block;
+      font-size: 0.45em;
+      font-family: 'JetBrains Mono', monospace;
+      background: #E0E7FF;
+      color: #3730A3;
+      padding: 3px 10px;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 8px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .badge-date {
+      display: inline-block;
+      font-size: 0.42em;
+      background: #F1F5F9;
+      color: #64748B;
+      padding: 3px 10px;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+
+    /* ── 커버/섹션 슬라이드 ── */
+    .slide-cover { background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%) !important; }
+    .slide-cover h1 { color: #F8FAFC !important; font-size: 2.4em !important; }
+    .slide-cover p  { color: #94A3B8 !important; font-size: 0.7em; }
+
+    .slide-section-fe { background: #1D4ED8 !important; }
+    .slide-section-fe h2 { color: #ffffff !important; font-size: 1.8em !important; }
+    .slide-section-fe p  { color: #BFDBFE !important; }
+
+    .slide-section-be { background: #1E293B !important; }
+    .slide-section-be h2 { color: #ffffff !important; font-size: 1.8em !important; }
+    .slide-section-be p  { color: #94A3B8 !important; }
+
+    .slide-closing { background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%) !important; }
+    .slide-closing h2 { color: #F8FAFC !important; font-size: 2.2em !important; }
+    .slide-closing p  { color: #94A3B8 !important; }
+
+    /* ── 일반 슬라이드 제목 ── */
+    .reveal .slides section h2 {
+      font-size: 1.1em;
+      color: #0F172A;
+      border-bottom: 3px solid #1D4ED8;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    /* ── 불릿 스타일 ── */
+    .reveal ul { list-style: none; padding-left: 0; }
+    .reveal ul li {
+      padding: 8px 0 8px 24px;
+      position: relative;
+      font-size: 0.72em;
+      line-height: 1.5;
+      color: #334155;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .reveal ul li:last-child { border-bottom: none; }
+    .reveal ul li::before {
+      content: '›';
+      position: absolute;
+      left: 4px;
+      color: #1D4ED8;
+      font-weight: 700;
+      font-size: 1.1em;
+    }
+
+    /* ── 숫자 카드 (스탯) ── */
+    .stat-row { display: flex; gap: 16px; justify-content: center; margin-top: 16px; }
+    .stat-card {
+      flex: 1;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-card .num { font-size: 1.8em; font-weight: 700; color: #1D4ED8; }
+    .stat-card .label { font-size: 0.45em; color: #64748B; margin-top: 4px; }
+
+    /* ── 코드 인라인 ── */
+    .reveal code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: #F1F5F9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #0F172A;
+    }
+
+    /* ── 목차 레이아웃 ── */
+    .agenda-col { display: flex; gap: 40px; text-align: left; }
+    .agenda-col .col { flex: 1; }
+    .agenda-col .col h4 {
+      font-size: 0.65em;
+      color: #1D4ED8;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .agenda-col .col ul li { font-size: 0.6em; border-bottom: none; padding: 5px 0 5px 20px; }
+
+    /* ── 슬라이드 번호 ── */
+    .reveal .slide-number { color: #94A3B8; font-size: 0.5em; }
+
+    /* ── 진행바 ── */
+    .reveal .progress { color: #1D4ED8; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ══ Slide 01: Cover ══════════════════════════════════════ -->
+<section class="slide-cover" data-background-gradient="linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)">
+  <h1 style="color:#F8FAFC; font-size:2.2em; margin-bottom:20px;">주간 업무 보고</h1>
+  <p style="color:#94A3B8; font-size:0.65em; margin:0;">2026-05-19 &nbsp;~&nbsp; 2026-05-24</p>
+  <p style="color:#64748B; font-size:0.5em; margin-top:32px;">Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager</p>
+</section>
+
+<!-- ══ Slide 02: Agenda ══════════════════════════════════════ -->
+<section>
+  <h2>이번 주 주요 작업</h2>
+  <div class="agenda-col">
+    <div class="col">
+      <h4>🖥️ 사용자 화면 기능 개선</h4>
+      <ul>
+        <li>지역 / 국가 필터 전면 개편</li>
+        <li>마이페이지 감상기록 기능 신설</li>
+        <li>채널 페이지 · VR 스토리 개선</li>
+        <li>구매 / 결제 관리</li>
+        <li>기타 FE 수정</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>⚙️ 백엔드 / 데이터 인프라</h4>
+      <ul>
+        <li>user→channel 데이터 마이그레이션 완료</li>
+        <li>국가 필터 DB / API 확장</li>
+        <li>BE 기타 수정</li>
+      </ul>
+      <div class="stat-row" style="margin-top:24px;">
+        <div class="stat-card">
+          <div class="num">45</div>
+          <div class="label">완료 이슈</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">6</div>
+          <div class="label">작업일</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Slide 03: Section FE ══════════════════════════════════ -->
+<section class="slide-section-fe">
+  <h2 style="color:#fff; border:none; font-size:1.8em;">사용자 화면 기능 개선</h2>
+  <p style="color:#BFDBFE; font-size:0.6em;">FE / UI &nbsp;·&nbsp; 2026-05-19 ~ 05-24</p>
+</section>
+
+<!-- ══ Slide 04: 지역/국가 필터 ══════════════════════════════ -->
+<section>
+  <h2>지역 / 국가 필터 전면 개편
+    <span class="badge">IND-2058 · 2112 · 2111</span>
+    <span class="badge-date">5/19~20</span>
+  </h2>
+  <ul>
+    <li>🔄 지역 필터 드롭다운 → <span class="hl-blue">토글 방식</span> 전환 — UX 간소화</li>
+    <li>🌏 <span class="hl-green">국가 필터 신설</span> — API 동적 로딩, KO/EN 자동 전환</li>
+    <li>📍 지도 마커 클릭 시 VR 카드 형식으로 표시</li>
+    <li>🧹 count 표시 제거 + i18n 아이콘 + 구분선 정비</li>
+  </ul>
+</section>
+
+<!-- ══ Slide 05: 감상기록 신설 ══════════════════════════════ -->
+<section>
+  <h2>마이페이지 — 감상기록 기능 신설
+    <span class="badge">IND-2193 · 2197 · 2198 · 2199</span>
+    <span class="badge-date">5/22</span>
+  </h2>
+  <ul>
+    <li>📹 VR 뷰어 열람 시 <span class="hl-green">감상기록 자동 저장</span> (최초 로드 1회)</li>
+    <li>⏸️ <span class="hl-green">일시중지 / 재개 + 전체 삭제</span> — YouTube 패턴</li>
+    <li>🗑️ 기록 카드 더보기 → <span class="hl-green">항목별 삭제</span> + 확인 다이얼로그</li>
+    <li>📋 마이페이지 '나의 기록 - 감상기록' 탭에 <span class="hl-green">목록 표시</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 06: 채널 페이지 · VR 스토리 ═══════════════════ -->
+<section>
+  <h2>채널 페이지 · VR 스토리 개선
+    <span class="badge-date">5/24</span>
+  </h2>
+  <ul>
+    <li>🃏 Channel.vue VR 카드 <span class="hl-blue">area / theme / language 표시</span> 수정</li>
+    <li>🕐 등록일자 <code>"N일 전 / N개월 전"</code> 형식 변환 함수 <span class="hl-blue">공통화</span></li>
+    <li>🌐 VR 스토리 <span class="hl-green">콘텐츠 언어 컬럼</span> 추가 + vr-list · vr-info 표시</li>
+  </ul>
+</section>
+
+<!-- ══ Slide 07: 구매 / 결제 관리 ══════════════════════════ -->
+<section>
+  <h2>구매 · 결제 관리
+    <span class="badge-date">5/24</span>
+  </h2>
+  <ul>
+    <li>🐛 vr-info 구매 완료 콘텐츠 <span class="hl-red">"구매 후 감상" 버튼 표시 버그</span> 수정</li>
+    <li>🔧 Admin FE <span class="hl-green">결제 관리 페이지 신설</span> — 기한 연장 · 취소 · 환불</li>
+  </ul>
+</section>
+
+<!-- ══ Slide 08: 기타 FE 수정 ════════════════════════════════ -->
+<section>
+  <h2>기타 FE 수정
+    <span class="badge-date">5/20~22</span>
+  </h2>
+  <ul>
+    <li>💰 유료 가격 팝업 stacking context → <span class="hl-red">Teleport/fixed 방식</span> 수정 <span class="badge">IND-2166</span></li>
+    <li>❤️ VR <span class="hl-green">좋아요 토글</span> 기능 구현 <span class="badge">IND-2134</span></li>
+    <li>📍 vrinfo 탭 장소 상태 <span class="hl-blue">"기타"</span> + 비고 표시 <span class="badge">IND-2204</span></li>
+    <li>🖼️ 마이페이지 <span class="hl-red">썸네일 URL 처리 오류</span> 수정 <span class="badge">IND-2243</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 09: 함께 고민해볼 것 ══════════════════════════════ -->
+<section>
+  <h2>💬 함께 고민해볼 것</h2>
+  <ul>
+    <li>
+      🎬 <strong>콘텐츠 미리보기 버튼 노출 여부</strong>
+      <br><span style="font-size:0.85em; color:#475569;">— 어떤 조건에서 미리보기 버튼을 노출할지 정책 결정 필요</span>
+      <br><a href="http://100.120.25.127:3100/IND/issues/IND-2181" target="_blank"
+           style="font-size:0.75em; color:#1D4ED8; font-family:'JetBrains Mono',monospace;">
+        🔗 IND-2181
+      </a>
+    </li>
+    <li>
+      🔖 <strong>북마크 목록 편집 위치 결정</strong>
+      <br><span style="font-size:0.85em; color:#475569;">— <span class="hl-blue">내 채널 페이지</span>에서 관리 vs <span class="hl-blue">마이페이지</span>에서 관리 — 논의 필요</span>
+    </li>
+  </ul>
+</section>
+
+<!-- ══ Slide 10: Section BE ══════════════════════════════════ -->
+<section class="slide-section-be">
+  <h2 style="color:#fff; border:none; font-size:1.8em;">백엔드 / 데이터 인프라</h2>
+  <p style="color:#94A3B8; font-size:0.6em;">BE / DB &nbsp;·&nbsp; 눈에 보이지 않는 변경</p>
+</section>
+
+<!-- ══ Slide 11: user→channel 마이그레이션 ══════════════════ -->
+<section>
+  <h2>user → channel 데이터 마이그레이션 완료
+    <span class="badge">IND-2056 · 2061 · 2066 · 2086</span>
+    <span class="badge-date">5/19</span>
+  </h2>
+  <ul>
+    <li>📝 채널명 백필 <code>'{user.name}의 채널'</code> → <code>'{user.name}'</code></li>
+    <li>🔄 DTO channel_uid 전환 — <span class="hl-blue">6개 도메인</span> 일괄 수정</li>
+    <li>🗃️ l3_likes channel_uid 백필 — <span class="hl-blue">652건</span> 처리</li>
+    <li>✅ user→channel 데이터 소속 전반 <span class="hl-green">검증 완료</span></li>
+  </ul>
+  <div class="stat-row" style="margin-top:16px;">
+    <div class="stat-card"><div class="num">6</div><div class="label">전환 도메인</div></div>
+    <div class="stat-card"><div class="num">652</div><div class="label">백필 건수</div></div>
+    <div class="stat-card"><div class="num">100%</div><div class="label">검증 통과</div></div>
+  </div>
+</section>
+
+<!-- ══ Slide 11: 국가 필터 DB/API ════════════════════════════ -->
+<section>
+  <h2>국가 필터 DB / API 확장
+    <span class="badge">IND-2108 · 2109 · 2110 · 2111</span>
+    <span class="badge-date">5/20</span>
+  </h2>
+  <ul>
+    <li>🗃️ <code>l3_place.country</code> 컬럼 추가 + 기존 데이터 <span class="hl-green">국가 백필</span></li>
+    <li>🌍 해외 지역 마스터 데이터 확장 (<code>l3_areas</code>)</li>
+    <li>🔗 <code>/vr-list</code> country 파라미터 <span class="hl-green">실제 필터링</span> 연결</li>
+    <li>🌐 국가명 KO/EN i18n — 하드코딩 제거 → <span class="hl-green">API 동적 로딩</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 12: BE 기타 ══════════════════════════════════════ -->
+<section>
+  <h2>BE 기타 수정
+    <span class="badge-date">5/21~24</span>
+  </h2>
+  <ul>
+    <li>📹 <span class="hl-green">감상기록 저장 API 신설</span> — <code>POST /mypage/history/viewed/record</code></li>
+    <li>🏢 장소 상태 <span class="hl-green">ETC 추가</span> — DB migration + enum/DTO + 어드민 적요</li>
+    <li>🌐 VR 스토리 <span class="hl-green">언어 컬럼</span> 추가 + 제목 기반 자동 백필</li>
+    <li>🔧 NULL 정렬 버그 — NULLS LAST → <span class="hl-red">MySQL 호환 방식</span> 수정</li>
+    <li>💰 유료 필터 연결 불일치 수정 (<code>l3_store_item.vr_content_uid</code>)</li>
+  </ul>
+</section>
+
+<!-- ══ Slide 14: Closing ══════════════════════════════════════ -->
+<section data-background-gradient="linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)">
+  <h2 style="color:#F8FAFC; border:none; font-size:2em;">감사합니다</h2>
+  <p style="color:#64748B; font-size:0.5em; margin-top:24px;">
+    Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-05-26
+  </p>
+</section>
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    progress: true,
+    transition: 'slide',
+    transitionSpeed: 'default',
+    pdfSeparateFragments: false,
+    pdfMaxPagesPerSlide: 1,
+    width: 1280,
+    height: 720,
+    margin: 0.08,
+  });
+</script>
+</body>
+</html>
