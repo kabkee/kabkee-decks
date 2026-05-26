@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>전세계 독립형 VR 콘텐츠 수집 → external_vr 연동</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --r-main-font: 'Noto Sans KR', 'Inter', sans-serif;
+      --r-heading-font: 'Noto Sans KR', 'Inter', sans-serif;
+      --r-main-font-size: 30px;
+      --r-heading-color: #0F172A;
+      --r-main-color: #1E293B;
+    }
+    .reveal { font-family: var(--r-main-font); }
+    .reveal h1, .reveal h2, .reveal h3 { font-family: var(--r-heading-font); font-weight: 700; }
+
+    .hl-green  { background: #D1FAE5; color: #065F46; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-blue   { background: #DBEAFE; color: #1E40AF; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-red    { background: #FEE2E2; color: #991B1B; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-yellow { background: #FEF9C3; color: #854D0E; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-gray   { background: #F1F5F9; color: #475569; padding: 2px 8px; border-radius: 5px; }
+    .mono      { font-family: 'JetBrains Mono', monospace; background: #F1F5F9; padding: 1px 6px; border-radius: 4px; font-size: 0.85em; }
+
+    /* 커버 */
+    .slide-cover { background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%) !important; }
+    .slide-cover h1 { color: #F8FAFC !important; font-size: 1.75em !important; line-height: 1.35 !important; }
+    .slide-cover p  { color: #94A3B8 !important; }
+
+    /* 섹션 구분 */
+    .slide-section { background: #1D4ED8 !important; }
+    .slide-section h2 { color: #fff !important; font-size: 1.8em !important; border: none !important; }
+    .slide-section p  { color: #BFDBFE !important; font-size: 0.6em; }
+
+    .slide-section-dark { background: #1E293B !important; }
+    .slide-section-dark h2 { color: #fff !important; font-size: 1.8em !important; border: none !important; }
+    .slide-section-dark p  { color: #94A3B8 !important; font-size: 0.6em; }
+
+    .slide-section-amber { background: #78350F !important; }
+    .slide-section-amber h2 { color: #FEF3C7 !important; font-size: 1.8em !important; border: none !important; }
+    .slide-section-amber p  { color: #FDE68A !important; font-size: 0.6em; }
+
+    /* 마무리 */
+    .slide-closing { background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%) !important; }
+    .slide-closing h2 { color: #F8FAFC !important; border: none !important; font-size: 2em !important; }
+    .slide-closing p  { color: #94A3B8 !important; }
+
+    /* 일반 제목 */
+    .reveal section h2 {
+      font-size: 1.1em;
+      color: #0F172A;
+      border-bottom: 2px solid #E2E8F0;
+      padding-bottom: 10px;
+      margin-bottom: 18px;
+    }
+
+    .reveal ul { list-style: none; padding: 0; }
+    .reveal ul li { padding: 6px 0; font-size: 0.8em; color: #1E293B; line-height: 1.55; }
+    .reveal ul li::before { content: "▸ "; color: #1D4ED8; font-weight: bold; }
+
+    /* 결론 박스 */
+    .verdict-box {
+      background: #0F172A; color: #F8FAFC; border-radius: 12px;
+      padding: 14px 20px; margin-top: 16px; font-size: 0.72em;
+      text-align: center; font-weight: 600;
+    }
+    .verdict-box .emoji { font-size: 1.4em; display: block; margin-bottom: 5px; }
+
+    /* 3단 컬럼 */
+    .col3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; font-size: 0.65em; }
+    .col2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 14px; font-size: 0.68em; }
+    .card {
+      background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .card .card-title { font-weight: 700; color: #0F172A; margin-bottom: 6px; font-size: 1em; }
+    .card .card-sub   { color: #64748B; font-size: 0.85em; line-height: 1.4; }
+    .card.auto  { border-left: 4px solid #1D4ED8; }
+    .card.ai    { border-left: 4px solid #7C3AED; }
+    .card.human { border-left: 4px solid #DC2626; }
+
+    /* 플로우 */
+    .flow { display: flex; align-items: stretch; gap: 0; margin: 18px 0; font-size: 0.62em; }
+    .flow-step {
+      flex: 1; border: 2px solid #BFDBFE; border-radius: 10px;
+      padding: 10px 6px; text-align: center; background: #EFF6FF;
+    }
+    .flow-step .f-icon  { font-size: 1.5em; }
+    .flow-step .f-name  { font-weight: 700; color: #1E40AF; margin: 3px 0; font-size: 0.95em; }
+    .flow-step .f-who   { font-size: 0.8em; margin-top: 4px; }
+    .flow-step.human-step { background: #FFF7ED; border-color: #FED7AA; }
+    .flow-step.human-step .f-name { color: #92400E; }
+    .flow-arrow { font-size: 1.2em; color: #94A3B8; padding: 0 3px; display: flex; align-items: center; flex-shrink: 0; }
+
+    /* 컬럼 그리드 테이블 */
+    .col-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; font-size: 0.63em; }
+    .col-row { background: #F8FAFC; border-radius: 8px; padding: 8px 12px; border-left: 3px solid #E2E8F0; }
+    .col-row.auto   { border-left-color: #1D4ED8; }
+    .col-row.ai     { border-left-color: #7C3AED; }
+    .col-row.human  { border-left-color: #DC2626; }
+    .col-name  { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #0F172A; font-size: 0.95em; }
+    .col-desc  { color: #64748B; font-size: 0.85em; margin-top: 2px; }
+
+    /* 비교표 */
+    .cmp-table { width: 100%; border-collapse: collapse; font-size: 0.64em; margin-top: 12px; }
+    .cmp-table th { background: #0F172A; color: #F8FAFC; padding: 7px 10px; text-align: left; font-weight: 600; }
+    .cmp-table td { padding: 7px 10px; border-bottom: 1px solid #E2E8F0; color: #1E293B; }
+    .cmp-table tr:nth-child(even) td { background: #F8FAFC; }
+    .cmp-table .best  { background: #D1FAE5 !important; font-weight: 600; color: #065F46; }
+    .cmp-table .worst { background: #FEE2E2 !important; color: #991B1B; }
+    .cmp-table .mid   { background: #FEF9C3 !important; color: #854D0E; }
+
+    /* 로드맵 */
+    .roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; font-size: 0.6em; }
+    .rp { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px 10px; }
+    .rp .rp-num   { font-size: 0.75em; color: #1D4ED8; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .rp .rp-title { font-weight: 700; color: #0F172A; margin: 3px 0; }
+    .rp .rp-days  { color: #64748B; font-size: 0.9em; }
+    .rp .rp-cost  { color: #059669; font-weight: 600; font-size: 0.9em; margin-top: 3px; }
+    .rp .rp-note  { color: #475569; font-size: 0.85em; margin-top: 5px; line-height: 1.3; }
+
+    /* 범례 */
+    .legend { display: flex; gap: 16px; font-size: 0.6em; margin-bottom: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ══ Slide 01: Cover ══════════════════════════════════════ -->
+<section class="slide-cover">
+  <h1>🌐 전세계 독립형 360 VR 콘텐츠<br>수집 → external_vr DB 연동</h1>
+  <p style="margin-top: 24px; font-size: 0.6em;">
+    krpano · Pano2VR 기반 공개 투어를 자동 발굴하여<br>
+    external_vr 테이블에 적재 → Look360 플랫폼 연동
+  </p>
+  <p style="margin-top: 36px; color: #475569 !important; font-size: 0.45em;">2026-05-26 &nbsp;·&nbsp; Kabkee</p>
+</section>
+
+<!-- ══ Slide 02: 왜 필요한가 ════════════════════════════════ -->
+<section>
+  <h2>🤔 왜 필요한가?</h2>
+  <ul>
+    <li>전세계 독립 서버에 배포된 <span class="hl-blue">krpano · Pano2VR 기반 360 VR 투어</span>가 수십만 개 이상 파편화 존재</li>
+    <li>YouTube / Matterport 등 플랫폼 콘텐츠는 <span class="hl-red">임베딩·재가공 불가</span> — 직접 배포된 공개 투어만 타겟</li>
+    <li>현재 <span class="hl-yellow">external_vr DB</span>는 수동 입력에 의존 → 데이터 증가 속도가 느림</li>
+    <li>자동 발굴 파이프라인을 갖추면 → <span class="hl-green">Look360에서 더 많은 외부 VR 콘텐츠 노출</span> 가능</li>
+  </ul>
+  <div class="verdict-box">
+    <span class="emoji">🎯</span>
+    "수동 입력을 줄이고, 검증된 외부 투어 데이터를 빠르게 쌓는 것"
+  </div>
+</section>
+
+<!-- ══ Slide 03: 타겟 탐지 원리 ════════════════════════════ -->
+<section>
+  <h2>🔭 타겟 탐지 원리 — 기술적 흔적 역추적</h2>
+  <ul>
+    <li>무차별 크롤링 대신 VR 엔진이 남기는 <span class="hl-blue">고유한 코드 흔적</span>만 타겟</li>
+    <li>
+      탐지 신호 예시:<br>
+      <span style="margin-left:1em; font-size:0.85em;">
+        <span class="mono">embedpano()</span> 함수 호출 &nbsp;·&nbsp;
+        <span class="mono">krpano.js</span> 스크립트 로드 &nbsp;·&nbsp;
+        <span class="mono">tour.xml</span> 파일 참조
+      </span>
+    </li>
+    <li>이 신호가 있는 페이지 = <span class="hl-green">높은 확률로 360view 타입 투어</span> → 정밀 수집</li>
+    <li>탐지 루트 3가지: Google Dorking · Censys/Shodan 서버 스캔 · Common Crawl 전수조사</li>
+  </ul>
+  <div class="col3" style="margin-top: 16px;">
+    <div class="card auto">
+      <div class="card-title">🔍 Google Dorking</div>
+      <div class="card-sub">검색 연산자로 엔진 흔적 페이지 추출<br>수백~수천 건 / 거의 무료</div>
+    </div>
+    <div class="card auto">
+      <div class="card-title">🛰 Censys / Shodan</div>
+      <div class="card-sub">현재 살아있는 서버 전수 스캔<br>수만~수십만 건 / $50~$500</div>
+    </div>
+    <div class="card auto">
+      <div class="card-title">🌊 Common Crawl</div>
+      <div class="card-sub">월별 수십억 페이지 공개 아카이브<br>전체 웹 전수조사 가능</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Section: 수집 데이터 ═══════════════════════════════ -->
+<section class="slide-section">
+  <h2>📋 external_vr 테이블<br>컬럼별 수집 난이도</h2>
+  <p>자동 · AI 보조 · 사람 필수로 구분</p>
+</section>
+
+<!-- ══ Slide 04: 자동 수집 컬럼 ════════════════════════════ -->
+<section>
+  <h2>🤖 자동 수집 가능한 컬럼</h2>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#1D4ED8;"></div> 봇이 자동으로 채울 수 있음</div>
+  </div>
+  <div class="col-grid">
+    <div class="col-row auto">
+      <div class="col-name">url</div>
+      <div class="col-desc">Censys / Dorking으로 발굴한 투어 주소</div>
+    </div>
+    <div class="col-row auto">
+      <div class="col-name">type</div>
+      <div class="col-desc">Playwright로 엔진 탐지 → 360view / 360video 자동 판별</div>
+    </div>
+    <div class="col-row auto">
+      <div class="col-name">title (초안)</div>
+      <div class="col-desc">&lt;title&gt; / og:title 태그 파싱</div>
+    </div>
+    <div class="col-row auto">
+      <div class="col-name">subtitle (초안)</div>
+      <div class="col-desc">og:description 파싱</div>
+    </div>
+    <div class="col-row auto">
+      <div class="col-name">img</div>
+      <div class="col-desc">Playwright 스크린샷 자동 캡처</div>
+    </div>
+    <div class="col-row auto">
+      <div class="col-name">p_country</div>
+      <div class="col-desc">도메인 TLD / 페이지 언어로 추론 (KR, JP, US…)</div>
+    </div>
+    <div class="col-row auto">
+      <div class="col-name">p_tel · p_homepage</div>
+      <div class="col-desc">페이지 텍스트 정규식 파싱</div>
+    </div>
+    <div class="col-row auto">
+      <div class="col-name">p_instagram ~ p_tiktok</div>
+      <div class="col-desc">페이지 내 SNS 링크 패턴 매칭으로 추출</div>
+    </div>
+    <div class="col-row auto">
+      <div class="col-name">d_regis</div>
+      <div class="col-desc">DB 등록 시 NOW() 자동 삽입</div>
+    </div>
+    <div class="col-row auto">
+      <div class="col-name">d_created (추정)</div>
+      <div class="col-desc">HTTP Last-Modified 헤더 기반</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Slide 05: AI 보조 컬럼 ══════════════════════════════ -->
+<section>
+  <h2>🤝 AI 보조 컬럼 — 추천 후 사람이 확인</h2>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#7C3AED;"></div> AI가 제안 → 관리자가 승인/수정</div>
+  </div>
+  <div class="col-grid">
+    <div class="col-row ai">
+      <div class="col-name">category1</div>
+      <div class="col-desc">24개 표준 카테고리 중 AI 추천<br><span style="color:#7C3AED;">정확도 약 70~80%, 반드시 검토 필요</span></div>
+    </div>
+    <div class="col-row ai">
+      <div class="col-name">category2</div>
+      <div class="col-desc">소분류 자유 문자열 — AI가 초안 생성</div>
+    </div>
+    <div class="col-row ai">
+      <div class="col-name">desc</div>
+      <div class="col-desc">페이지 텍스트 분석 → AI 요약 생성</div>
+    </div>
+    <div class="col-row ai">
+      <div class="col-name">tags</div>
+      <div class="col-desc">키워드 자동 추출 (장소명·지역·업종)</div>
+    </div>
+    <div class="col-row ai">
+      <div class="col-name">p_address (초안)</div>
+      <div class="col-desc">NER(지명 인식)으로 주소 후보 추출<br>정확도 낮아 반드시 검증 필요</div>
+    </div>
+    <div class="col-row ai">
+      <div class="col-name">p_latitude · p_longitude</div>
+      <div class="col-desc">주소 확인 후 Geocoding API로 자동 변환</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Slide 06: 사람 필수 컬럼 ════════════════════════════ -->
+<section>
+  <h2>👤 사람이 필수인 컬럼</h2>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#DC2626;"></div> 자동화 불가 — 관리자가 직접 입력/확인 필수</div>
+  </div>
+  <div class="col2">
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div class="col-row human">
+        <div class="col-name">title (최종 정제)</div>
+        <div class="col-desc">자동 파싱 결과가 불완전 — 정확한 브랜드명/투어명으로 수정</div>
+      </div>
+      <div class="col-row human">
+        <div class="col-name">p_name</div>
+        <div class="col-desc">정확한 장소명 / 상호명 — AI 신뢰도 낮음</div>
+      </div>
+      <div class="col-row human">
+        <div class="col-name">p_address (검증)</div>
+        <div class="col-desc">AI 초안을 실제 도로명 주소로 교정</div>
+      </div>
+      <div class="col-row human">
+        <div class="col-name">provider</div>
+        <div class="col-desc">제작사 / 제공자명 — 페이지만으로 판단 어려움</div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div class="col-row human">
+        <div class="col-name">category1 (최종 확인)</div>
+        <div class="col-desc">AI 추천의 20~30%는 오분류 → 반드시 검토</div>
+      </div>
+      <div class="col-row human">
+        <div class="col-name">img1 ~ img5</div>
+        <div class="col-desc">어떤 씬이 대표 이미지로 적합한지 사람이 판단</div>
+      </div>
+      <div class="col-row human">
+        <div class="col-name">memo</div>
+        <div class="col-desc">수집 경위, 품질 메모, 특이사항 기록</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Slide 07: 전체 업무 플로우 ════════════════════════════ -->
+<section>
+  <h2>🔄 전체 수집 업무 플로우</h2>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="f-icon">🔍</div>
+      <div class="f-name">1. URL 발굴</div>
+      <div class="f-who"><span class="hl-blue">자동</span></div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="f-icon">✅</div>
+      <div class="f-name">2. 유효성 검증</div>
+      <div class="f-who"><span class="hl-blue">자동</span></div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="f-icon">🤖</div>
+      <div class="f-name">3. 데이터 1차 수집</div>
+      <div class="f-who"><span class="hl-blue">자동</span> + <span class="hl-yellow">AI</span></div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step human-step">
+      <div class="f-icon">👤</div>
+      <div class="f-name">4. 관리자 검토</div>
+      <div class="f-who"><span class="hl-red">수동 필수</span></div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:#F0FDF4; border-color:#BBF7D0;">
+      <div class="f-icon">🗄️</div>
+      <div class="f-name">5. DB INSERT</div>
+      <div class="f-who"><span class="hl-green">반자동</span></div>
+    </div>
+  </div>
+  <ul style="margin-top: 8px;">
+    <li><strong>1~3단계</strong>: 봇이 처리 → 검토 큐에 적재 (사람 개입 없음)</li>
+    <li><strong>4단계</strong>: 관리자가 큐 항목을 승인/수정 → <span class="hl-yellow">병목 지점</span>, 처리 속도가 전체 속도 결정</li>
+    <li><strong>5단계</strong>: 승인된 항목이 external_vr에 자동 INSERT → Look360에 즉시 반영</li>
+  </ul>
+</section>
+
+<!-- ══ Section: 비용 & 시간 ════════════════════════════════ -->
+<section class="slide-section-dark">
+  <h2>💰 비용 &amp; 시간</h2>
+  <p>현실적인 개발 일정과 운영 비용</p>
+</section>
+
+<!-- ══ Slide 08: 커버리지 vs 비용 ══════════════════════════ -->
+<section>
+  <h2>📊 수집 방법 — 커버리지 vs 비용</h2>
+  <table class="cmp-table">
+    <tr>
+      <th>방법</th>
+      <th>커버 URL</th>
+      <th>월 비용</th>
+      <th>특징</th>
+      <th>추천 단계</th>
+    </tr>
+    <tr>
+      <td>Google Dorking</td>
+      <td class="worst">수백~수천</td>
+      <td class="best">거의 무료</td>
+      <td>정밀 타격</td>
+      <td class="best">PoC 시작</td>
+    </tr>
+    <tr>
+      <td>Censys / Shodan</td>
+      <td class="mid">수만~수십만</td>
+      <td class="mid">$50~$500</td>
+      <td>현재 활성 서버</td>
+      <td class="mid">스케일업</td>
+    </tr>
+    <tr>
+      <td>Common Crawl + Athena</td>
+      <td class="best">수십억 (전체 웹)</td>
+      <td class="mid">스캔당 $2~$10</td>
+      <td>최신성 낮음</td>
+      <td class="worst">전수조사용</td>
+    </tr>
+  </table>
+  <ul style="margin-top: 14px;">
+    <li>Google/Bing은 <span class="hl-red">전체 인덱스 직접 접근 불가</span> — 쿼리 결과 상위 100건 한계</li>
+    <li>PoC는 Google Dorking만으로 0원에 시작 → 규모 확인 후 Censys 확장</li>
+  </ul>
+</section>
+
+<!-- ══ Slide 09: 운영 비용 ══════════════════════════════════ -->
+<section>
+  <h2>💸 운영 비용 추정 (수집 1만 건 기준)</h2>
+  <table class="cmp-table">
+    <tr>
+      <th>항목</th>
+      <th>도구</th>
+      <th>1만 건 비용</th>
+      <th>비고</th>
+    </tr>
+    <tr>
+      <td>URL 수집</td>
+      <td>Censys Free</td>
+      <td class="best">$0</td>
+      <td>월 25,000건 한도</td>
+    </tr>
+    <tr>
+      <td>category1 추천 + desc 생성</td>
+      <td>Claude Haiku</td>
+      <td class="best">약 $3</td>
+      <td>GPT-4o 대비 1/10 비용</td>
+    </tr>
+    <tr>
+      <td>주소 → 위경도 변환</td>
+      <td>Google Geocoding</td>
+      <td class="mid">약 $5</td>
+      <td>월 $200 무료 크레딧 내</td>
+    </tr>
+    <tr>
+      <td>이미지 스크린샷 저장</td>
+      <td>CDN / S3</td>
+      <td class="mid">약 $1~$5</td>
+      <td>해상도·개수에 따라 상이</td>
+    </tr>
+  </table>
+  <div class="verdict-box" style="margin-top: 14px;">
+    수집 1만 건 기준 AI + 인프라 비용 합산 <strong>약 $10~$15</strong>
+    — 인건비(검토 공수)가 실질 최대 비용
+  </div>
+</section>
+
+<!-- ══ Slide 10: 개발 로드맵 ════════════════════════════════ -->
+<section>
+  <h2>🗺️ 개발 로드맵</h2>
+  <div class="roadmap">
+    <div class="rp">
+      <div class="rp-num">Phase 1</div>
+      <div class="rp-title">URL 발굴 + 검증 봇</div>
+      <div class="rp-days">⏱ 3~5일</div>
+      <div class="rp-cost">💰 거의 무료</div>
+      <div class="rp-note">Censys/Dorking 수집 → Playwright로 type 판별 + Dead Link 차단</div>
+    </div>
+    <div class="rp">
+      <div class="rp-num">Phase 2</div>
+      <div class="rp-title">데이터 자동 파싱 + AI 분석</div>
+      <div class="rp-days">⏱ 3~5일</div>
+      <div class="rp-cost">💰 ~$3/만건</div>
+      <div class="rp-note">메타 추출 · category1 추천 · desc/tags 생성 · SNS 링크 파싱</div>
+    </div>
+    <div class="rp">
+      <div class="rp-num">Phase 3</div>
+      <div class="rp-title">검토 큐 UI 제작</div>
+      <div class="rp-days">⏱ 5~7일</div>
+      <div class="rp-cost">💰 개발 공수</div>
+      <div class="rp-note">관리자 승인/수정 화면 · 이미지 선택 · category 드롭다운</div>
+    </div>
+    <div class="rp">
+      <div class="rp-num">Phase 4</div>
+      <div class="rp-title">external_vr DB 연동</div>
+      <div class="rp-days">⏱ 2~3일</div>
+      <div class="rp-cost">💰 무료</div>
+      <div class="rp-note">승인 항목 INSERT · Look360 플랫폼에 즉시 반영 확인</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Section: 한계 & 제약 ═══════════════════════════════ -->
+<section class="slide-section-amber">
+  <h2>⚠️ 한계 &amp; 제약</h2>
+  <p>넘어야 할 벽과 해결 방법</p>
+</section>
+
+<!-- ══ Slide 11: 기술적 한계 ══════════════════════════════ -->
+<section>
+  <h2>🔧 기술적 한계</h2>
+  <ul>
+    <li>
+      <strong>Google/Bing 전체 인덱스 접근 불가</strong> &nbsp;<span class="hl-red">핵심 제약</span><br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ Censys(현재 활성 서버) + Common Crawl(과거 전수) 조합으로 보완</span>
+    </li>
+    <li>
+      <strong>Playwright 자원 소모</strong> — 브라우저 실행이 무거움<br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ 동시 5~10 탭, 타임아웃 15초 제한으로 관리</span>
+    </li>
+    <li>
+      <strong>Dead Link 비율</strong> — 독립 호스팅은 사이트 폐쇄 잦음<br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ 90일 미응답 항목 자동 비활성화 배치 필요</span>
+    </li>
+    <li>
+      <strong>중복 URL</strong> — 동일 투어가 여러 도메인에 미러링<br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ <span class="mono">url</span> 컬럼 UNIQUE 제약 + 정규화 처리</span>
+    </li>
+  </ul>
+</section>
+
+<!-- ══ Slide 12: 운영 제약 ══════════════════════════════════ -->
+<section>
+  <h2>⚖️ 운영 · 법적 제약</h2>
+  <ul>
+    <li>
+      <strong>robots.txt 준수</strong> &nbsp;<span class="hl-red">필수</span><br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ 수집 전 robots.txt 파싱 — 금지 경로 자동 스킵</span>
+    </li>
+    <li>
+      <strong>이미지 저작권</strong> — 원본 이미지/파노라마 파일 저장 불가<br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ <span class="hl-blue">스크린샷 썸네일만 저장</span>, 원본은 원본 URL 링크로 처리</span>
+    </li>
+    <li>
+      <strong>검토 병목</strong> — 수만 건이면 관리자 검토 공수 폭발<br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ AI 신뢰도 점수 기준: 高신뢰 항목 자동 통과 / 低신뢰만 수동 검토</span>
+    </li>
+    <li>
+      <strong>DB 연동 방식 결정 필요</strong><br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ 옵션 A: 기존 PHP 관리 화면 임포트 기능 추가<br>
+      &nbsp;&nbsp;&nbsp;옵션 B: look360_theme_external_vr API Lambda로 직접 INSERT<br>
+      &nbsp;&nbsp;&nbsp;옵션 C: DB 직접 접속 Python 스크립트 (가장 단순)</span>
+    </li>
+  </ul>
+</section>
+
+<!-- ══ Slide 13: 해볼 가치 있나? ═══════════════════════════ -->
+<section>
+  <h2>🤔 해볼 가치 있나? — 종합 판단</h2>
+  <table class="cmp-table">
+    <tr>
+      <th>기준</th>
+      <th>평가</th>
+      <th>근거</th>
+    </tr>
+    <tr>
+      <td>초기 비용</td>
+      <td class="best">✅ 낮음</td>
+      <td>PoC까지 $0, 2주 이내</td>
+    </tr>
+    <tr>
+      <td>기술 난이도</td>
+      <td class="mid">⚠️ 보통</td>
+      <td>Playwright + Python + MySQL — 이미 보유한 스택</td>
+    </tr>
+    <tr>
+      <td>Look360 시너지</td>
+      <td class="best">✅ 직접적</td>
+      <td>external_vr DB에 적재 즉시 Look360에 반영</td>
+    </tr>
+    <tr>
+      <td>데이터 품질</td>
+      <td class="mid">⚠️ 검토 필요</td>
+      <td>자동 수집 한계 — 검토 큐 UI 구축이 핵심</td>
+    </tr>
+    <tr>
+      <td>법적 리스크</td>
+      <td class="mid">⚠️ 관리 가능</td>
+      <td>robots.txt 준수 + 썸네일만 저장 시 낮음</td>
+    </tr>
+    <tr>
+      <td>검토 공수</td>
+      <td class="worst">❌ 부담</td>
+      <td>AI 신뢰도 기반 자동 통과 기준 설정이 중요</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ══ Slide 14: 결론 & 첫 걸음 ═══════════════════════════ -->
+<section>
+  <h2>🚀 결론 &amp; 추천 첫 걸음</h2>
+  <ul>
+    <li>
+      <strong>Day 1~2</strong> &nbsp;<span class="hl-blue">Censys Free PoC</span><br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ 한국 도메인 krpano 서버 몇 개나 있는지 직접 확인 → 규모 파악</span>
+    </li>
+    <li>
+      <strong>Week 1~2</strong> &nbsp;<span class="hl-green">수집+검증 봇 MVP</span><br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ URL 발굴 → type 판별 → 데이터 파싱 완성 · 검토 큐 임시 CSV 형태라도 운영</span>
+    </li>
+    <li>
+      <strong>Week 3~4</strong> &nbsp;<span class="hl-yellow">검토 큐 UI + DB 연동</span><br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ 관리자 승인 화면 구축 → external_vr INSERT → Look360 반영 확인</span>
+    </li>
+    <li>
+      <strong>이후</strong> &nbsp;<span class="hl-gray">Common Crawl 전수조사 확장 여부 판단</span><br>
+      <span style="font-size:0.85em; color:#475569; margin-left:1em;">→ MVP 품질 확인 후 스케일업 결정</span>
+    </li>
+  </ul>
+  <div class="verdict-box">
+    <span class="emoji">🐾</span>
+    핵심은 <strong>검토 큐 UI</strong> — 봇이 쌓은 데이터를 얼마나 빠르게 검토할 수 있는지가 전체 속도를 결정
+  </div>
+</section>
+
+<!-- ══ Slide 15: Closing ═══════════════════════════════════ -->
+<section data-background-gradient="linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)">
+  <h2 style="color:#F8FAFC; border:none; font-size:2em;">감사합니다 🐾</h2>
+  <p style="color:#64748B; font-size:0.5em; margin-top:24px;">
+    Kabkee &nbsp;·&nbsp; VR 콘텐츠 수집 → external_vr 연동 &nbsp;·&nbsp; 2026-05-26
+  </p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    progress: true,
+    transition: 'slide',
+    transitionSpeed: 'default',
+    width: 1280,
+    height: 720,
+    margin: 0.08,
+  });
+</script>
+</body>
+</html>
