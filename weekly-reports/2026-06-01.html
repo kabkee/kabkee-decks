@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>주간 업무 보고 — 2026-06-01 | Look360 Platform</title>
+
+  <!-- Reveal.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── 전역 폰트 ── */
+    :root {
+      --r-main-font: 'Noto Sans KR', 'Inter', sans-serif;
+      --r-heading-font: 'Noto Sans KR', 'Inter', sans-serif;
+      --r-main-font-size: 32px;
+      --r-heading-color: #0F172A;
+      --r-main-color: #1E293B;
+      --r-link-color: #1D4ED8;
+      --accent-blue: #1D4ED8;
+      --accent-navy: #0F172A;
+    }
+
+    .reveal { font-family: var(--r-main-font); }
+    .reveal h1, .reveal h2, .reveal h3 { font-family: var(--r-heading-font); font-weight: 700; }
+
+    /* ── 하이라이트 색상 ── */
+    .hl-green { background: #D1FAE5; color: #065F46; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-blue  { background: #DBEAFE; color: #1E40AF; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-red   { background: #FEE2E2; color: #991B1B; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-gray  { background: #F1F5F9; color: #475569; padding: 2px 8px; border-radius: 5px; }
+
+    /* ── 이슈 뱃지 ── */
+    .badge {
+      display: inline-block;
+      font-size: 0.45em;
+      font-family: 'JetBrains Mono', monospace;
+      background: #E0E7FF;
+      color: #3730A3;
+      padding: 3px 10px;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 8px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .badge-date {
+      display: inline-block;
+      font-size: 0.42em;
+      background: #F1F5F9;
+      color: #64748B;
+      padding: 3px 10px;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+
+    /* ── 커버/섹션 슬라이드 ── */
+    .slide-cover { background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%) !important; }
+    .slide-cover h1 { color: #F8FAFC !important; font-size: 2.4em !important; }
+    .slide-cover p  { color: #94A3B8 !important; font-size: 0.7em; }
+
+    .slide-section-fe { background: #1D4ED8 !important; }
+    .slide-section-fe h2 { color: #ffffff !important; font-size: 1.8em !important; }
+    .slide-section-fe p  { color: #BFDBFE !important; }
+
+    .slide-section-be { background: #1E293B !important; }
+    .slide-section-be h2 { color: #ffffff !important; font-size: 1.8em !important; }
+    .slide-section-be p  { color: #94A3B8 !important; }
+
+    .slide-closing { background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%) !important; }
+    .slide-closing h2 { color: #F8FAFC !important; font-size: 2.2em !important; }
+    .slide-closing p  { color: #94A3B8 !important; }
+
+    /* ── 일반 슬라이드 제목 ── */
+    .reveal .slides section h2 {
+      font-size: 1.1em;
+      color: #0F172A;
+      border-bottom: 3px solid #1D4ED8;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    /* ── 불릿 스타일 ── */
+    .reveal ul { list-style: none; padding-left: 0; }
+    .reveal ul li {
+      padding: 8px 0 8px 24px;
+      position: relative;
+      font-size: 0.72em;
+      line-height: 1.5;
+      color: #334155;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .reveal ul li:last-child { border-bottom: none; }
+    .reveal ul li::before {
+      content: '›';
+      position: absolute;
+      left: 4px;
+      color: #1D4ED8;
+      font-weight: 700;
+      font-size: 1.1em;
+    }
+
+    /* ── 숫자 카드 (스탯) ── */
+    .stat-row { display: flex; gap: 16px; justify-content: center; margin-top: 16px; }
+    .stat-card {
+      flex: 1;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-card .num { font-size: 1.8em; font-weight: 700; color: #1D4ED8; }
+    .stat-card .label { font-size: 0.45em; color: #64748B; margin-top: 4px; }
+
+    /* ── 코드 인라인 ── */
+    .reveal code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: #F1F5F9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #0F172A;
+    }
+
+    /* ── 목차 레이아웃 ── */
+    .agenda-col { display: flex; gap: 40px; text-align: left; }
+    .agenda-col .col { flex: 1; }
+    .agenda-col .col h4 {
+      font-size: 0.65em;
+      color: #1D4ED8;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .agenda-col .col ul li { font-size: 0.6em; border-bottom: none; padding: 5px 0 5px 20px; }
+
+    /* ── 슬라이드 번호 ── */
+    .reveal .slide-number { color: #94A3B8; font-size: 0.5em; }
+
+    /* ── 진행바 ── */
+    .reveal .progress { color: #1D4ED8; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ══ Slide 01: Cover ══════════════════════════════════════ -->
+<section class="slide-cover" data-background-gradient="linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)">
+  <h1 style="color:#F8FAFC; font-size:2.2em; margin-bottom:20px;">주간 업무 보고</h1>
+  <p style="color:#94A3B8; font-size:0.65em; margin:0;">2026-05-25 &nbsp;~&nbsp; 2026-05-31</p>
+  <p style="color:#64748B; font-size:0.5em; margin-top:32px;">Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager</p>
+</section>
+
+<!-- ══ Slide 02: Agenda ══════════════════════════════════════ -->
+<section>
+  <h2>이번 주 주요 작업</h2>
+  <div class="agenda-col">
+    <div class="col">
+      <h4>🖥️ 사용자 화면 기능 개선</h4>
+      <ul>
+        <li>채널 · 마이페이지 UX 대개편</li>
+        <li>VR 콘텐츠 표시 개선 (카드 · 상세)</li>
+        <li>유료 콘텐츠 미리보기 / 구매</li>
+        <li>인증 · 보안 (회원가입 · 비번 · 북마크)</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>⚙️ 백엔드 / 데이터 인프라</h4>
+      <ul>
+        <li>장소 · 콘텐츠 데이터 다국어 구조 정비</li>
+        <li>이메일 템플릿 · OTP 2FA 시스템 신설</li>
+        <li>판매 설정 서버사이드 전환 · BE 핫픽스</li>
+      </ul>
+      <div class="stat-row" style="margin-top:20px;">
+        <div class="stat-card">
+          <div class="num">38</div>
+          <div class="label">완료 작업</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">6</div>
+          <div class="label">작업일</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Slide 03: Section FE ══════════════════════════════════ -->
+<section class="slide-section-fe">
+  <h2 style="color:#fff; border:none; font-size:1.8em;">사용자 화면 기능 개선</h2>
+  <p style="color:#BFDBFE; font-size:0.6em;">FE / UI &nbsp;·&nbsp; 2026-05-25 ~ 05-31</p>
+</section>
+
+<!-- ══ Slide 04: 채널·마이페이지 UX ══════════════════════════ -->
+<section>
+  <h2>채널 · 마이페이지 UX 대개편
+    <span class="badge">IND-2288 · 2367 · 2493</span>
+    <span class="badge-date">5/26~28</span>
+  </h2>
+  <ul>
+    <li>🔖 <span class="hl-green">내 채널 VR북마크 목록</span> 신규 — 북마크 상세 레이아웃 통일 <span class="badge">2288 · 2451</span></li>
+    <li>🧹 나의 기록 정리 — 불필요한 VR북마크 탭 · 360포스트 기록 <span class="hl-red">삭제</span> <span class="badge">2297 · 2298</span></li>
+    <li>✏️ 마이페이지 북마크 · 리뷰 · Q&A · 내 댓글 <span class="hl-blue">편집 동선 정비</span> <span class="badge">2367 · 2374 · 2375</span></li>
+    <li>💬 내 댓글 <span class="hl-green">SNS 카드형 UI</span> + 북마크 공개범위 표시 오류 수정 <span class="badge">2490 · 2493</span></li>
+    <li>🔧 내 채널 탭 클릭 시 <span class="hl-red">새로고침 버그</span> 수정 — 스크롤 유지 <span class="badge">2528</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 05: VR 콘텐츠 표시 ══════════════════════════════ -->
+<section>
+  <h2>VR 콘텐츠 표시 개선
+    <span class="badge">IND-2311 · 2328 · 2433</span>
+    <span class="badge-date">5/26~27</span>
+  </h2>
+  <ul>
+    <li>🏷️ vrCard chipList — 지역 · 테마를 <span class="hl-blue">단일 chip</span>으로 (<code>서울시 › 강남구</code>) <span class="badge">2311</span></li>
+    <li>🔖 vr-info에 chipList 적용 + 태그를 <span class="hl-green">#해시태그</span> 형태로 표시 <span class="badge">2312 · 2313</span></li>
+    <li>🖼️ 360뷰 <span class="hl-green">파노라마 목록 섹션</span> 신규 — 모바일 풀스크린 <span class="badge">2328</span></li>
+    <li>✅ vr-info 북마크 저장 — 소속 북마크 <span class="hl-green">체크 · 하이라이트</span> <span class="badge">2432 · 2433</span></li>
+    <li>🖼️ vr-info 갤러리 노출 규칙 정비 <span class="badge">2334 · 2335</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 06: 유료 콘텐츠 ════════════════════════════════ -->
+<section>
+  <h2>유료 콘텐츠 — 미리보기 & 구매
+    <span class="badge">IND-2181</span>
+    <span class="badge-date">5/27</span>
+  </h2>
+  <ul>
+    <li>🎬 콘텐츠 <span class="hl-green">"미리보기" 기능</span> — 미구매 콘텐츠 사전 열람</li>
+    <li>🛒 <span class="hl-green">"구매 후 감상" 플로우</span> — 구매 상태별 접근 제어</li>
+    <li>🔀 미구매 · 미리보기 유무에 따른 <span class="hl-blue">버튼 분기</span> 처리</li>
+  </ul>
+</section>
+
+<!-- ══ Slide 07: 인증·보안 (FE) ═════════════════════════════ -->
+<section>
+  <h2>인증 · 보안
+    <span class="badge">IND-2285 · 2474 · 2468</span>
+    <span class="badge-date">5/26~28</span>
+  </h2>
+  <ul>
+    <li>👤 <span class="hl-green">회원가입 제작</span> + <span class="hl-green">비밀번호 찾기</span> 구현 <span class="badge">2285 · 2474</span></li>
+    <li>🔐 북마크 <span class="hl-green">비밀번호 접근 보호</span> 기능 <span class="badge">2468</span></li>
+    <li>🔗 Private 북마크 공유 시 <span class="hl-blue">소유자 전용 URL</span> 제공 <span class="badge">2472</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 08: Section BE ══════════════════════════════════ -->
+<section class="slide-section-be">
+  <h2 style="color:#fff; border:none; font-size:1.8em;">백엔드 / 데이터 인프라</h2>
+  <p style="color:#94A3B8; font-size:0.6em;">BE / DB &nbsp;·&nbsp; 눈에 보이지 않는 변경</p>
+</section>
+
+<!-- ══ Slide 09: 데이터 다국어 구조 ══════════════════════════ -->
+<section>
+  <h2>장소 · 콘텐츠 데이터 다국어 구조 정비
+    <span class="badge">IND-2338 · 2408 · 2330</span>
+    <span class="badge-date">5/26~27</span>
+  </h2>
+  <ul>
+    <li>🌏 해외 장소 <code>l3_place</code> area1~4 데이터 정비 + <span class="hl-green">다국어 지원 구조</span> 설계 <span class="badge">2408</span></li>
+    <li>📱 vr-list 모바일 필터 다국어 버그 수정 + 근본 <span class="hl-blue">DB 구조 변경</span> <span class="badge">2338</span></li>
+    <li>🗃️ <code>l3_vr_content</code> 테이블 마이그레이션 규칙 확인 · 데이터 변환 <span class="badge">2330</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 10: 신규 시스템 ════════════════════════════════ -->
+<section>
+  <h2>신규 시스템 구축 — 이메일 템플릿 · OTP
+    <span class="badge">IND-2388 · 2431</span>
+    <span class="badge-date">5/27~28</span>
+  </h2>
+  <ul>
+    <li>📧 <span class="hl-green">이메일 템플릿 DB 관리 시스템</span> 구축 — BE + Admin FE <span class="badge">2388</span></li>
+    <li>🔑 Admin <span class="hl-green">OTP 2FA</span> — <code>/auth/otp/setup</code> · <code>/auth/otp/activate</code> API + 관리 메뉴 <span class="badge">2431 · 2454</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 11: BE 기타 ════════════════════════════════════ -->
+<section>
+  <h2>판매 설정 · BE 핫픽스
+    <span class="badge">IND-2381 · 2582</span>
+    <span class="badge-date">5/27~29</span>
+  </h2>
+  <ul>
+    <li>🛍️ 판매 설정 <span class="hl-blue">서버사이드 전환</span> — 필터 · 정렬 · 페이지네이션 <span class="badge">2381 · 2402</span></li>
+    <li>🐛 <code>@Transform</code> boolean 변환 <span class="hl-red">안티패턴 일괄 수정</span> — themes · vr-contents 등 <span class="badge">2580 · 2582</span></li>
+    <li>✅ 일괄 수정 검증 (qc-be) <span class="badge">2583</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 12: 진행 중 / 다음 단계 ════════════════════════ -->
+<section>
+  <h2>🚧 진행 중 · 다음 단계</h2>
+  <ul>
+    <li>
+      🗺️ <strong>[EPIC] vr-list 지역 필터 전면 개선</strong> <span class="hl-blue">진행 중</span>
+      <br><span style="font-size:0.85em; color:#475569;">— l3_areas 재구성 · 국내외 통합 · area4 활성화 · 완전 다국어 (자식 9건 완료)</span>
+      <span class="badge">IND-2545</span>
+    </li>
+    <li>
+      🔒 <strong>로그인 보안 강화</strong> <span class="hl-gray">Backlog</span>
+      <br><span style="font-size:0.85em; color:#475569;">— "새 환경 로그인 감지" 메일 + refreshToken 선택적 revoke</span>
+      <span class="badge">IND-2447</span>
+    </li>
+    <li>
+      🧩 <strong>legacy vrstory 엔진 검토</strong> <span class="hl-gray">Backlog</span>
+      <br><span style="font-size:0.85em; color:#475569;">— krpanoWrap · vrstoryWrap 분석, 재사용 · 개선 방향</span>
+      <span class="badge">IND-2448</span>
+    </li>
+  </ul>
+</section>
+
+<!-- ══ Slide 13: Closing ════════════════════════════════════ -->
+<section data-background-gradient="linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)">
+  <h2 style="color:#F8FAFC; border:none; font-size:2em;">감사합니다</h2>
+  <p style="color:#64748B; font-size:0.5em; margin-top:24px;">
+    Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-06-01
+  </p>
+</section>
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    progress: true,
+    transition: 'slide',
+    transitionSpeed: 'default',
+    pdfSeparateFragments: false,
+    pdfMaxPagesPerSlide: 1,
+    width: 1280,
+    height: 720,
+    margin: 0.08,
+  });
+</script>
+</body>
+</html>
