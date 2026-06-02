@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Look360 보안 사고 대응 보고 — 2026-06-02</title>
+
+  <!-- Reveal.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --r-main-font: 'Noto Sans KR', 'Inter', sans-serif;
+      --r-heading-font: 'Noto Sans KR', 'Inter', sans-serif;
+      --r-main-font-size: 32px;
+      --r-heading-color: #0F172A;
+      --r-main-color: #1E293B;
+      --r-link-color: #1D4ED8;
+      --accent-blue: #1D4ED8;
+      --accent-navy: #0F172A;
+    }
+    .reveal { font-family: var(--r-main-font); }
+    .reveal h1, .reveal h2, .reveal h3 { font-family: var(--r-heading-font); font-weight: 700; }
+
+    /* 하이라이트 (부드러운 파스텔) */
+    .hl-green { background: #D1FAE5; color: #065F46; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-blue  { background: #DBEAFE; color: #1E40AF; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-amber { background: #FEF3C7; color: #92400E; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-red   { background: #FEE2E2; color: #991B1B; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-gray  { background: #F1F5F9; color: #475569; padding: 2px 8px; border-radius: 5px; }
+
+    .badge-date {
+      display: inline-block; font-size: 0.42em; background: #F1F5F9; color: #64748B;
+      padding: 3px 10px; border-radius: 20px; vertical-align: middle; margin-left: 6px;
+    }
+
+    /* 커버 / 섹션 / 클로징 */
+    .slide-cover h1 { color: #F8FAFC !important; }
+    .slide-section h2 { color: #fff !important; border: none !important; font-size: 1.8em !important; }
+    .slide-section p  { color: #BFDBFE !important; }
+
+    /* 일반 슬라이드 제목 */
+    .reveal .slides section h2 {
+      font-size: 1.05em; color: #0F172A; border-bottom: 3px solid #1D4ED8;
+      padding-bottom: 8px; margin-bottom: 22px; text-align: left;
+    }
+    .reveal .slides section h2 .sub { font-size: 0.5em; color: #94A3B8; font-weight: 400; }
+
+    /* 불릿 */
+    .reveal ul { list-style: none; padding-left: 0; }
+    .reveal ul li {
+      padding: 9px 0 9px 24px; position: relative; font-size: 0.7em; line-height: 1.55;
+      color: #334155; border-bottom: 1px solid #F1F5F9;
+    }
+    .reveal ul li:last-child { border-bottom: none; }
+    .reveal ul li::before { content: '›'; position: absolute; left: 4px; color: #1D4ED8; font-weight: 700; font-size: 1.1em; }
+    .reveal ul li .desc { display:block; font-size: 0.84em; color:#64748B; margin-top:2px; }
+
+    /* 용어 설명 박스 */
+    .term { background:#F8FAFC; border-left:4px solid #1D4ED8; border-radius:6px; padding:12px 16px; margin:14px 0; font-size:0.6em; color:#475569; text-align:left; line-height:1.6; }
+    .term b { color:#1E40AF; }
+
+    /* 숫자 카드 */
+    .stat-row { display: flex; gap: 16px; justify-content: center; margin-top: 8px; flex-wrap:wrap; }
+    .stat-card { flex: 1; min-width:170px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; text-align: center; }
+    .stat-card.ok   { background:#ECFDF5; border-color:#A7F3D0; }
+    .stat-card.warn { background:#FFFBEB; border-color:#FDE68A; }
+    .stat-card .num { font-size: 1.6em; font-weight: 700; color: #1D4ED8; }
+    .stat-card.ok .num { color:#059669; }
+    .stat-card.warn .num { color:#D97706; }
+    .stat-card .label { font-size: 0.42em; color: #64748B; margin-top: 6px; line-height:1.4; }
+
+    /* 2단 카드 (안전 vs 노출) */
+    .twocol { display:flex; gap:20px; text-align:left; margin-top:6px; }
+    .panel { flex:1; border-radius:14px; padding:22px 24px; }
+    .panel.safe   { background:#ECFDF5; border:1px solid #A7F3D0; }
+    .panel.expose { background:#FFFBEB; border:1px solid #FDE68A; }
+    .panel h3 { font-size:0.72em; margin-bottom:12px; }
+    .panel.safe h3 { color:#047857; }
+    .panel.expose h3 { color:#B45309; }
+    .panel ul li { font-size:0.62em; border-bottom:none; padding:6px 0 6px 22px; }
+    .panel.safe ul li::before { content:'✓'; color:#059669; }
+    .panel.expose ul li::before { content:'!'; color:#D97706; }
+
+    /* 타임라인 */
+    .timeline { text-align:left; margin-top:10px; }
+    .timeline .row { display:flex; align-items:flex-start; gap:18px; padding:10px 0; border-bottom:1px solid #F1F5F9; }
+    .timeline .row:last-child { border-bottom:none; }
+    .timeline .t { font-family:'JetBrains Mono',monospace; font-size:0.6em; color:#1D4ED8; font-weight:600; min-width:92px; padding-top:3px; }
+    .timeline .c { font-size:0.66em; color:#334155; line-height:1.5; }
+    .timeline .c b { color:#0F172A; }
+    .timeline .row.down .t { color:#DC2626; }
+    .timeline .row.fix  .t { color:#059669; }
+
+    /* 비유 박스 */
+    .analogy { background:linear-gradient(135deg,#EFF6FF,#F0F9FF); border:1px solid #BFDBFE; border-radius:14px; padding:22px 26px; text-align:left; font-size:0.66em; color:#1E3A5F; line-height:1.7; margin-top:8px; }
+    .analogy .ico { font-size:1.5em; }
+
+    .reveal code { font-family:'JetBrains Mono',monospace; font-size:0.85em; background:#F1F5F9; padding:2px 6px; border-radius:4px; color:#0F172A; }
+    .reveal .slide-number { color:#94A3B8; font-size:0.5em; }
+    .reveal .progress { color:#1D4ED8; }
+    .lead { font-size:0.8em; color:#475569; text-align:center; line-height:1.6; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ══ 01 Cover ══ -->
+<section class="slide-cover" data-background-gradient="linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)">
+  <h1 style="color:#F8FAFC; font-size:2.1em; margin-bottom:18px;">Look360 보안 사고<br>대응 보고</h1>
+  <p style="color:#94A3B8; font-size:0.62em; margin:0;">2026년 6월 2일 새벽 발생 · 당일 복구 완료</p>
+  <p style="color:#64748B; font-size:0.48em; margin-top:30px;">Indyspot AI Corp &nbsp;·&nbsp; 비개발자도 이해할 수 있는 정리본</p>
+</section>
+
+<!-- ══ 02 한눈에 보기 ══ -->
+<section>
+  <h2>한눈에 보기 <span class="sub">3줄 요약</span></h2>
+  <p class="lead" style="margin-bottom:18px;">
+    외부에서 <b>자동화된 해킹 시도</b>가 들어와 6월 2일 새벽 <b>약 2시간 사이트가 멈췄습니다.</b><br>
+    조사 결과 <b>현재 회원·관리자 정보는 안전</b>하며, <b>휴면회원 일부 정보만 노출 정황</b>이 있습니다.<br>
+    원인을 막는 <b>긴급 조치는 모두 완료</b>했고, 추가 보완을 진행 중입니다.
+  </p>
+  <div class="stat-row">
+    <div class="stat-card warn"><div class="num">~2시간</div><div class="label">서비스 중단<br>(05:58 ~ 08:20)</div></div>
+    <div class="stat-card ok"><div class="num">안전</div><div class="label">현재 회원<br>· 관리자 정보</div></div>
+    <div class="stat-card warn"><div class="num">휴면 일부</div><div class="label">이메일 등<br>노출 정황</div></div>
+    <div class="stat-card ok"><div class="num">완료</div><div class="label">긴급 차단<br>· 보안 조치</div></div>
+  </div>
+</section>
+
+<!-- ══ 03 타임라인 ══ -->
+<section>
+  <h2>무슨 일이 있었나 <span class="sub">2026년 6월 2일</span></h2>
+  <div class="timeline">
+    <div class="row"><div class="t">00시경</div><div class="c"><b>외부에서 자동 공격 시작</b> — 중국發 IP가 사이트 주소에 비정상 요청을 대량으로 보내기 시작</div></div>
+    <div class="row down"><div class="t">05:58</div><div class="c"><b>서비스 다운</b> — 서버가 처리 한계에 도달, 정상 이용자도 접속 불가</div></div>
+    <div class="row"><div class="t">08:0x</div><div class="c">담당자 인지 및 원인 진단 시작 (서버가 응답 없음을 확인)</div></div>
+    <div class="row fix"><div class="t">08:1x</div><div class="c"><b>공격 차단 적용</b> — 공격 패턴·공격자 IP 차단, 실제 공격자 추적용 로그 설정</div></div>
+    <div class="row fix"><div class="t">~08:20</div><div class="c"><b>정상 복구</b> — 응답 속도 정상화 (홈 1.5초)</div></div>
+    <div class="row"><div class="t">이후</div><div class="c">근본 원인 분석 + 데이터 유출 범위 정밀 조사 + 추가 보안 조치 진행</div></div>
+  </div>
+</section>
+
+<!-- ══ 04 어떤 공격? ══ -->
+<section>
+  <h2>어떤 공격이었나 <span class="sub">SQL 인젝션</span></h2>
+  <div class="analogy">
+    <span class="ico">🍽️</span> <b>비유로 이해하기</b><br>
+    식당에서 손님이 주방에 <b>주문서</b>를 보냅니다. 정상 손님은 "콜라 한 잔"이라고 적죠.
+    그런데 공격자는 주문서에 <b>"콜라 한 잔 — 그리고 금고를 열어라"</b> 처럼
+    <u>명령을 몰래 섞어</u> 적습니다. 시스템이 이걸 진짜 명령으로 착각하고 실행하면,
+    저장된 정보가 새어나갈 수 있습니다.
+  </div>
+  <div class="term">
+    <b>SQL 인젝션</b> : 입력칸에 데이터 대신 <b>데이터베이스 명령어</b>를 몰래 넣어, 시스템이 그 명령을 실행하게 만드는 대표적인 웹 공격.<br>
+    <b>sqlmap</b> : 이 공격을 <b>자동으로 수천 번 반복</b> 시도하는 해킹 도구. 이번 공격에 사용됨 (총 <span class="hl-amber">약 1.2만 건</span>의 공격 요청).
+  </div>
+</section>
+
+<!-- ══ 05 왜 멈췄나 ══ -->
+<section>
+  <h2>왜 사이트가 멈췄나 <span class="sub">과부하의 원리</span></h2>
+  <div class="analogy">
+    <span class="ico">📞</span> <b>비유로 이해하기</b><br>
+    서버에는 손님을 응대하는 <b>상담원(처리 일꾼)</b>이 정해진 수만큼 있습니다.
+    공격자는 <b>"5초 동안 가만히 기다려"</b> 라는 명령을 수없이 보냈고,
+    그때마다 상담원 한 명이 <u>아무것도 못 하고 묶여버렸습니다.</u>
+    결국 <b>모든 상담원이 붙잡혀</b> 정상 손님(이용자)을 받을 수 없게 된 것입니다.
+  </div>
+  <ul>
+    <li>이 서버는 처리 일꾼이 <span class="hl-blue">최대 200개</span>지만, 실제 CPU는 <span class="hl-amber">2개뿐</span>이라 과부하에 취약했음</li>
+    <li>"기다려" 공격이 일꾼 + 데이터베이스를 동시에 묶어 <span class="hl-red">완전 정지</span></li>
+  </ul>
+</section>
+
+<!-- ══ 06 데이터 안전한가 (핵심) ══ -->
+<section>
+  <h2>우리 데이터는 안전한가? <span class="sub">가장 중요한 질문</span></h2>
+  <div class="twocol">
+    <div class="panel safe">
+      <h3>✅ 안전 — 유출 안 됨</h3>
+      <ul>
+        <li><b>현재 활성 회원</b> 정보 전체</li>
+        <li><b>관리자 계정</b> 정보</li>
+        <li>→ 공격이 거기 도달하기 <b>전에 차단</b>되어 막힘</li>
+      </ul>
+    </div>
+    <div class="panel expose">
+      <h3>⚠️ 노출 정황 — 유출 가정</h3>
+      <ul>
+        <li><b>휴면회원</b> 이메일 약 <b>292건</b></li>
+        <li>휴면회원 비밀번호 약 193건<br>(<b>암호화된 형태</b>, 평문 아님)</li>
+        <li>이름·전화는 휴면처리로 <b>대부분 이미 삭제됨</b></li>
+      </ul>
+    </div>
+  </div>
+  <div class="term" style="margin-top:16px;">
+    <b>휴면회원</b> : 오랫동안 로그인하지 않아 별도 보관 중인 계정. 개인정보보호를 위해 이름·연락처 등은 이미 상당수 파기된 상태였음.
+    노출된 비밀번호도 <b>암호화(해시)</b>되어 있어 즉시 악용은 어렵지만, 안전을 위해 <span class="hl-blue">유출됐다고 가정</span>하고 대응합니다.
+  </div>
+</section>
+
+<!-- ══ 07 근본 원인 ══ -->
+<section>
+  <h2>무엇이 문제였나 <span class="sub">근본 원인</span></h2>
+  <ul>
+    <li>🚪 <b>입력값 검사가 약했다</b> — 검사 장치는 있었지만, 일부 위험 단어만 걸러내는 <span class="hl-amber">허술한 방식</span>이라 공격자가 우회함
+      <span class="desc">"위험 단어 목록"만 막는 방식은, 목록에 없는 표현·대문자·따옴표로 쉽게 빠져나갈 수 있음</span></li>
+    <li>🔑 <b>데이터베이스 접속 권한이 과했다</b> — 앱이 <span class="hl-red">최고 권한(root)</span>으로 접속해, 뚫렸을 때 피해 범위가 커질 수 있었음</li>
+    <li>🌐 <b>서버가 외부에 직접 노출</b> + 자동 차단 장치(방화벽 규칙) 부재로 공격을 초기에 막지 못함</li>
+  </ul>
+  <div class="term">
+    핵심: "공격을 당해서"가 아니라, <b>입력을 안전하게 처리하지 못하는 구조</b>가 근본 원인입니다.
+    공격은 그 약점을 건드린 <b>방아쇠</b>일 뿐입니다.
+  </div>
+</section>
+
+<!-- ══ 08 즉시 조치 ══ -->
+<section>
+  <h2>이미 완료한 긴급 조치 <span class="sub">당일 ~ 후속</span></h2>
+  <ul>
+    <li>🛡️ <span class="hl-green">공격 패턴·공격자 IP 즉시 차단</span> — 같은 공격 재유입 방지, 서비스 복구</li>
+    <li>🔒 <span class="hl-green">데이터베이스 외부 접속 완전 차단</span> — 외부에서 DB에 직접 접근 불가하도록 방화벽 영구 설정</li>
+    <li>🔑 <span class="hl-green">앱 접속 권한 최소화</span> — 최고 권한(root) 대신 <b>꼭 필요한 권한만</b> 가진 전용 계정으로 교체</li>
+    <li>🗝️ <span class="hl-green">위험 계정 제거 + 비밀번호 교체</span> — 외부 노출돼 있던 관리 계정 삭제, 비밀번호 새로 발급 후 안전 보관</li>
+    <li>🔍 <span class="hl-blue">유출 범위 정밀 조사 완료</span> — 무엇이 노출됐는지 로그로 확인 (위 6페이지)</li>
+  </ul>
+</section>
+
+<!-- ══ 09 앞으로 ══ -->
+<section>
+  <h2>앞으로 할 일 <span class="sub">재발 방지</span></h2>
+  <ul>
+    <li>🧱 <b>근본 수정</b> — 입력을 명령과 완전히 분리하는 <span class="hl-blue">안전한 코드 방식(프리페어드 스테이트먼트)</span>으로 전환
+      <span class="desc">위험 단어를 "거르는" 방식이 아니라, 입력이 애초에 명령이 될 수 없게 만드는 근본 해법</span></li>
+    <li>📧 <b>휴면회원 보호 조치</b> — 노출 정황 계정 비밀번호 무효화 + 개인정보보호법상 <span class="hl-amber">통지 의무 검토</span></li>
+    <li>🌐 <b>방어막 강화</b> — 외부 보안 필터(WAF) 적용, 서버 직접 노출 차단, 과부하 대비 설정 조정</li>
+    <li>📊 <b>상시 감시</b> — 비정상 트래픽 자동 탐지·알림 체계 마련</li>
+  </ul>
+</section>
+
+<!-- ══ 10 Closing ══ -->
+<section data-background-gradient="linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)">
+  <h2 style="color:#F8FAFC; border:none; font-size:1.9em;">정리</h2>
+  <p style="color:#CBD5E1; font-size:0.62em; line-height:1.9; margin-top:18px;">
+    ✅ 서비스는 <b style="color:#6EE7B7;">당일 정상 복구</b><br>
+    ✅ 현재 회원·관리자 정보 <b style="color:#6EE7B7;">안전</b> (차단이 피해를 막음)<br>
+    ⚠️ 휴면회원 일부 정보 노출 정황 → <b style="color:#FCD34D;">통지·보호 조치 검토 중</b><br>
+    🧱 근본 원인 수정 + 방어 강화 <b style="color:#93C5FD;">진행 중</b>
+  </p>
+  <p style="color:#64748B; font-size:0.45em; margin-top:30px;">
+    Indyspot AI Corp &nbsp;·&nbsp; Look360 보안 사고 대응 &nbsp;·&nbsp; 2026-06-02
+  </p>
+</section>
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    progress: true,
+    transition: 'slide',
+    width: 1280,
+    height: 720,
+    margin: 0.07,
+  });
+</script>
+</body>
+</html>
