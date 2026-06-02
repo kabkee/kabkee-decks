@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Look360 보안 사고 — 최종 대응 보고 (2026-06-02)</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --r-main-font:'Noto Sans KR','Inter',sans-serif; --r-heading-font:'Noto Sans KR','Inter',sans-serif; --r-main-font-size:32px; --r-heading-color:#0F172A; --r-main-color:#1E293B; --r-link-color:#1D4ED8; }
+    .reveal { font-family: var(--r-main-font); }
+    .reveal h1,.reveal h2,.reveal h3 { font-family: var(--r-heading-font); font-weight:700; }
+    .hl-green{background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:5px;font-weight:600;}
+    .hl-blue {background:#DBEAFE;color:#1E40AF;padding:2px 8px;border-radius:5px;font-weight:600;}
+    .hl-amber{background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:5px;font-weight:600;}
+    .hl-gray {background:#F1F5F9;color:#475569;padding:2px 8px;border-radius:5px;}
+    .slide-cover h1{color:#F8FAFC !important;}
+    .reveal .slides section h2{font-size:1.05em;color:#0F172A;border-bottom:3px solid #1D4ED8;padding-bottom:8px;margin-bottom:22px;text-align:left;}
+    .reveal .slides section h2 .sub{font-size:0.5em;color:#94A3B8;font-weight:400;}
+    .reveal ul{list-style:none;padding-left:0;}
+    .reveal ul li{padding:9px 0 9px 24px;position:relative;font-size:0.7em;line-height:1.55;color:#334155;border-bottom:1px solid #F1F5F9;}
+    .reveal ul li:last-child{border-bottom:none;}
+    .reveal ul li::before{content:'›';position:absolute;left:4px;color:#1D4ED8;font-weight:700;font-size:1.1em;}
+    .reveal ul li .desc{display:block;font-size:0.84em;color:#64748B;margin-top:2px;}
+    .step{background:#F8FAFC;border-left:4px solid #1D4ED8;border-radius:6px;padding:12px 16px;margin:10px 0;font-size:0.6em;color:#475569;text-align:left;line-height:1.6;}
+    .step b{color:#1E40AF;}
+    .stat-row{display:flex;gap:16px;justify-content:center;margin-top:8px;flex-wrap:wrap;}
+    .stat-card{flex:1;min-width:150px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:16px;text-align:center;}
+    .stat-card.ok{background:#ECFDF5;border-color:#A7F3D0;}
+    .stat-card.warn{background:#FFFBEB;border-color:#FDE68A;}
+    .stat-card .num{font-size:1.5em;font-weight:700;color:#1D4ED8;}
+    .stat-card.ok .num{color:#059669;} .stat-card.warn .num{color:#D97706;}
+    .stat-card .label{font-size:0.42em;color:#64748B;margin-top:6px;line-height:1.4;}
+    .twocol{display:flex;gap:20px;text-align:left;margin-top:6px;}
+    .panel{flex:1;border-radius:14px;padding:20px 22px;}
+    .panel.safe{background:#ECFDF5;border:1px solid #A7F3D0;}
+    .panel.expose{background:#FFFBEB;border:1px solid #FDE68A;}
+    .panel h3{font-size:0.7em;margin-bottom:10px;} .panel.safe h3{color:#047857;} .panel.expose h3{color:#B45309;}
+    .panel ul li{font-size:0.6em;border-bottom:none;padding:5px 0 5px 20px;}
+    .panel.safe ul li::before{content:'✓';color:#059669;} .panel.expose ul li::before{content:'!';color:#D97706;}
+    .donebox{background:#ECFDF5;border:1px solid #A7F3D0;border-radius:12px;padding:16px 20px;text-align:left;}
+    .donebox ul li{font-size:0.66em;border-bottom:1px solid #D1FAE5;} .donebox ul li::before{content:'✓';color:#059669;}
+    .reveal code{font-family:'JetBrains Mono',monospace;font-size:0.85em;background:#F1F5F9;padding:2px 6px;border-radius:4px;color:#0F172A;}
+    .reveal .slide-number{color:#94A3B8;font-size:0.5em;} .reveal .progress{color:#1D4ED8;}
+    .lead{font-size:0.78em;color:#475569;text-align:center;line-height:1.7;}
+    .phasetag{display:inline-block;font-size:0.4em;background:#1D4ED8;color:#fff;padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:8px;font-weight:600;}
+  </style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- 01 Cover -->
+<section class="slide-cover" data-background-gradient="linear-gradient(135deg,#0F172A 0%,#1E3A5F 100%)">
+  <h1 style="color:#F8FAFC;font-size:2.0em;margin-bottom:16px;">Look360 보안 사고<br>최종 대응 보고</h1>
+  <p style="color:#94A3B8;font-size:0.6em;margin:0;">사고 발생 → 정밀 분석 → 보안 강화 → 시스템 개선 (전 과정 완료)</p>
+  <p style="color:#64748B;font-size:0.46em;margin-top:28px;">(주)인디스팟 &nbsp;·&nbsp; 2026-06-02</p>
+</section>
+
+<!-- 02 한눈에 -->
+<section>
+  <h2>전체 요약 <span class="sub">한눈에</span></h2>
+  <p class="lead" style="margin-bottom:16px;">
+    새벽 외부 해킹 시도로 <b>약 2시간 서비스 중단</b> → <b>당일 차단·복구</b>.<br>
+    정밀 분석 결과 <b>현재 회원·관리자 정보는 안전</b>, 휴면 일부만 노출 정황.<br>
+    <b>근본 원인 차단 + DB 보안 강화 + 휴면정책 개편</b>까지 완료.
+  </p>
+  <div class="stat-row">
+    <div class="stat-card warn"><div class="num">~2시간</div><div class="label">서비스 중단<br>(당일 복구)</div></div>
+    <div class="stat-card ok"><div class="num">안전</div><div class="label">현재회원·관리자<br>개인정보</div></div>
+    <div class="stat-card ok"><div class="num">5+건</div><div class="label">보안조치<br>완료</div></div>
+    <div class="stat-card ok"><div class="num">배포완료</div><div class="label">시스템<br>개선</div></div>
+  </div>
+</section>
+
+<!-- 03 사고 개요 (1차대응 이전 - 간단) -->
+<section>
+  <h2>① 무슨 일이 있었나 <span class="phasetag">사고 · 1차대응</span></h2>
+  <div class="step">
+    🌙 <b>2026-06-02 새벽</b>, 외부(중국 IP)에서 <b>자동화 해킹 도구(sqlmap)</b>로 사이트 주소에
+    <b>SQL 인젝션</b> 공격을 대량 유입. "5초 기다려"류 공격이 서버 처리 일꾼을 모두 묶어
+    <span class="hl-red" style="background:#FEE2E2;color:#991B1B;padding:2px 8px;border-radius:5px;font-weight:600;">05:58 전면 다운</span>.
+  </div>
+  <ul>
+    <li>⚡ <b>1차 대응</b> — 공격 패턴·공격자 IP <span class="hl-green">즉시 차단</span> + 서버 재시작 → <span class="hl-green">08:20경 정상 복구</span></li>
+    <li>📌 여기까지가 응급 조치. 이후 <b>"왜 뚫렸나·무엇이 새어나갔나"</b>를 정밀 분석</li>
+  </ul>
+  <div class="step" style="border-color:#94A3B8;">
+    <b>SQL 인젝션</b> = 입력칸에 데이터 대신 <b>명령어를 몰래 섞어</b> 시스템이 실행하게 만드는 공격.
+    <b>sqlmap</b> = 이를 자동 반복하는 해킹 도구.
+  </div>
+</section>
+
+<!-- 04 근본 원인 -->
+<section>
+  <h2>② 진짜 원인을 찾다 <span class="phasetag">정밀 분석</span></h2>
+  <div class="step">
+    "공격당해서"가 아니라 — <b>입력값을 안전하게 거르지 못한 코드 구조</b>가 근본 원인.
+  </div>
+  <ul>
+    <li>🔍 입력을 막는 <b>검사 장치는 있었지만</b>, 위험 단어 몇 개만 지우는 <span class="hl-amber">허술한 방식</span>이라
+      대문자·따옴표·시간지연 명령을 <span class="hl-amber">그대로 통과</span>시켰음
+      <span class="desc">"위험 단어 목록"만 막는 방식은 빠져나갈 구멍이 끝없이 생김</span></li>
+    <li>🔑 앱이 DB에 <span class="hl-red" style="background:#FEE2E2;color:#991B1B;padding:2px 8px;border-radius:5px;">최고 권한(root)</span>으로 접속해, 뚫렸을 때 피해 범위가 클 수 있었음</li>
+    <li>🌐 서버가 외부에 직접 노출 + 자동 차단장치 부재로 초기에 못 막음</li>
+  </ul>
+</section>
+
+<!-- 05 데이터 점검 -->
+<section>
+  <h2>③ 데이터는 안전한가? <span class="phasetag">유출 포렌식</span></h2>
+  <div class="twocol">
+    <div class="panel safe">
+      <h3>✅ 안전 — 유출 안 됨</h3>
+      <ul>
+        <li><b>현재 활성 회원</b> 전체</li>
+        <li><b>관리자 계정</b></li>
+        <li>→ 공격이 도달하기 <b>전에 차단</b>되어 막힘</li>
+      </ul>
+    </div>
+    <div class="panel expose">
+      <h3>⚠️ 노출 정황 (제한적)</h3>
+      <ul>
+        <li>휴면회원 이메일 — 실질 <b>182건</b><br>(전체 292건 중 110건은 회사 생성 더미)</li>
+        <li>비밀번호는 <b>암호화 형태</b>(평문 아님)</li>
+        <li>이름·전화는 <b>이미 대부분 파기</b>됨</li>
+      </ul>
+    </div>
+  </div>
+  <div class="step" style="margin-top:16px;">
+    접속 기록 전수 분석으로 확인 — 차단 타이밍 덕에 <b>현재 회원·관리자는 무사</b>. 노출 정황은 휴면 일부로 한정.
+  </div>
+</section>
+
+<!-- 06 보안 강화 -->
+<section>
+  <h2>④ 보안 강화 조치 <span class="phasetag">완료</span></h2>
+  <div class="donebox">
+    <ul>
+      <li>🔒 <b>DB 외부 접속 완전 차단</b> — 방화벽 영구 설정 (외부에서 DB 직접 접근 불가)</li>
+      <li>🔑 <b>앱 접속 권한 최소화</b> — 최고권한(root) → <b>꼭 필요한 권한만</b> 가진 전용 계정으로 교체</li>
+      <li>🗝️ <b>위험 계정 제거 + 비밀번호 교체</b> — 외부 노출돼 있던 과잉권한 계정 삭제, 새 비밀번호는 안전 금고(Vaultwarden) 보관</li>
+      <li>🔍 <b>유출 범위 정밀 조사 완료</b> — 무엇이·얼마나 노출됐는지 로그로 규명</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 07 시스템 개선 (휴면정책) -->
+<section>
+  <h2>⑤ 시스템 개선 — 휴면계정 정책 <span class="phasetag">개편·배포</span></h2>
+  <div class="step">
+    개인정보보호법 개정(휴면제 폐지)을 반영해, <b>오래 방치된 개인정보를 최소화</b>하는 방향으로 정책을 개선.
+    <b>보관할 개인정보가 적을수록 = 유출돼도 피해가 작다</b>는 보안 원칙과도 일치.
+  </div>
+  <ul>
+    <li>🗑️ <b>1년 이상 미접속 회원</b> → 휴면 전환 + <span class="hl-blue">개인정보 즉시 파기</span> (재접속 식별용 닉네임만 유지)</li>
+    <li>🛡️ 휴면 처리 기능은 <span class="hl-green">관리자만 실행</span> 가능하도록 잠금 (외부 무단 실행 차단)</li>
+    <li>🧹 더 이상 쓰지 않는 <b>개인정보 분리보관 테이블 비움</b> (불필요 데이터 제거)</li>
+    <li>✅ 코드 검증 후 <span class="hl-green">운영 서버 배포 완료</span></li>
+  </ul>
+</section>
+
+<!-- 08 Closing -->
+<section data-background-gradient="linear-gradient(135deg,#0F172A 0%,#1E3A5F 100%)">
+  <h2 style="color:#F8FAFC;border:none;font-size:1.8em;">대응 완료</h2>
+  <p style="color:#CBD5E1;font-size:0.6em;line-height:1.9;margin-top:16px;">
+    ✅ 서비스 <b style="color:#6EE7B7;">당일 정상 복구</b> &nbsp;·&nbsp; 현재 회원·관리자 <b style="color:#6EE7B7;">안전</b><br>
+    ✅ 근본 원인(과잉권한·외부노출) <b style="color:#6EE7B7;">차단</b> &nbsp;·&nbsp; 비밀번호 안전 보관<br>
+    ✅ 휴면계정 개인정보 최소화 정책 <b style="color:#93C5FD;">개편·배포</b><br>
+    🔭 남은 권장: 입력검증 근본 수정(코드)·외부 보안필터(WAF)·상시 모니터링
+  </p>
+  <p style="color:#64748B;font-size:0.44em;margin-top:26px;">(주)인디스팟 &nbsp;·&nbsp; Look360 보안 사고 최종 대응 보고 &nbsp;·&nbsp; 2026-06-02</p>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script>
+  Reveal.initialize({ hash:true, slideNumber:'c/t', progress:true, transition:'slide', width:1280, height:720, margin:0.07 });
+</script>
+</body>
+</html>
