@@ -162,6 +162,33 @@
   </ul>
 </section>
 
+<!-- 07-2 SQLi 근본방어 (3중) -->
+<section>
+  <h2>⑥ 근본 방어 — SQL 인젝션 3중 차단 <span class="phasetag">강화·배포</span></h2>
+  <div class="step">
+    이번 공격의 통로였던 <b>SQL 인젝션</b>을, 한 겹이 뚫려도 다음 겹이 막도록 <b>3중(다층)으로</b> 방어 구축.
+    전수검사로 <b>DB 접근 4,000여 곳</b>을 점검해 적용.
+  </div>
+  <div class="twocol">
+    <div class="panel safe" style="background:#EFF6FF;border-color:#BFDBFE;">
+      <h3 style="color:#1E40AF;">🛡️ 3중 방어막</h3>
+      <ul>
+        <li style="border:none;"><b>1겹 — 입구(WAF)</b>: CloudFront에 SQLi 차단 룰 추가 (관찰모드)</li>
+        <li style="border:none;"><b>2겹 — 서버 관문</b>: 모든 DB 접근을 한 곳에서 검사·차단 (419곳 일괄)</li>
+        <li style="border:none;"><b>3겹 — 코드</b>: 위험 지점 29개 파일 개별 정제(입력값 안전처리)</li>
+      </ul>
+    </div>
+    <div class="panel safe">
+      <h3>✅ 안전장치</h3>
+      <ul>
+        <li style="border:none;">실서버 복제 환경에서 <b>실제 동작 검증(QC)</b> — 정상기능 영향 0</li>
+        <li style="border:none;">검증 중 발견한 <b>잠재버그 3건도 수정</b></li>
+        <li style="border:none;"><b>관찰모드로 시작</b> → 오탐 없음 확인 후 차단 전환(무중단)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <!-- 08 Closing -->
 <section data-background-gradient="linear-gradient(135deg,#0F172A 0%,#1E3A5F 100%)">
   <h2 style="color:#F8FAFC;border:none;font-size:1.8em;">대응 완료</h2>
@@ -169,7 +196,8 @@
     ✅ 서비스 <b style="color:#6EE7B7;">당일 정상 복구</b> &nbsp;·&nbsp; 현재 회원·관리자 <b style="color:#6EE7B7;">안전</b><br>
     ✅ 근본 원인(과잉권한·외부노출) <b style="color:#6EE7B7;">차단</b> &nbsp;·&nbsp; 비밀번호 안전 보관<br>
     ✅ 휴면계정 개인정보 최소화 정책 <b style="color:#93C5FD;">개편·배포</b><br>
-    🔭 남은 권장: 입력검증 근본 수정(코드)·외부 보안필터(WAF)·상시 모니터링
+    ✅ SQL 인젝션 <b style="color:#6EE7B7;">3중 방어</b>(WAF·서버관문·코드) 구축·배포<br>
+    🔭 다음: 관찰모드 → 차단모드 전환(무중단) · 신규 V3 플랫폼에 보안 기준 반영
   </p>
   <p style="color:#64748B;font-size:0.44em;margin-top:26px;">(주)인디스팟 &nbsp;·&nbsp; Look360 보안 사고 최종 대응 보고 &nbsp;·&nbsp; 2026-06-02</p>
 </section>
