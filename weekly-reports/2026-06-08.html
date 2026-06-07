@@ -199,6 +199,33 @@
 
     /* ── 작은 캡션 ── */
     .caption { font-size: 0.5em; color: #64748B; margin-top: 14px; font-style: italic; }
+
+    /* ── 라이브 링크 칩 ── */
+    .live-links { margin-top: 18px; text-align: left; }
+    .live-links .lbl { font-size: 0.5em; color: #64748B; margin-right: 8px; font-weight: 600; letter-spacing: 0.02em; }
+    .reveal a.lnk {
+      display: inline-block;
+      font-size: 0.5em;
+      font-family: 'JetBrains Mono', monospace;
+      background: #EFF6FF;
+      color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin: 3px 5px 3px 0;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .reveal a.lnk:hover { background: #DBEAFE; transform: translateY(-1px); }
+    .reveal a.lnk::before { content: '🔗 '; }
+    .reveal a.lnk.cms    { background: #F0FDFA; color: #0F766E; border-color: #99F6E4; }
+    .reveal a.lnk.cms:hover { background: #CCFBF1; }
+    .reveal a.lnk.legacy { background: #FEF2F2; color: #B91C1C; border-color: #FECACA; }
+    .reveal a.lnk.legacy:hover { background: #FEE2E2; }
+
+    /* ── 엔드포인트 모음 ── */
+    .ep-list li { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .ep-list li .ep-hint { font-size: 0.85em; color: #64748B; font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
 <body>
@@ -276,6 +303,9 @@
     <div class="flow-step"><div class="n">05</div><div class="t">Publish</div><div class="d">Look360 노출</div></div>
   </div>
   <p class="caption">스택: TypeScript pnpm 모노레포 · NestJS · BullMQ(Redis) · Vue3 + Vite · docker-compose</p>
+  <div class="live-links"><span class="lbl">바로보기</span>
+    <a class="lnk cms" href="http://100.120.25.127:5175/dashboard" target="_blank">CMS 대시보드</a>
+  </div>
 </section>
 
 <!-- ══ Slide 05: cms PoC + 자율실행 ═════════════════════════ -->
@@ -292,6 +322,10 @@
     <li>📊 운영 마감 — 비용통계 · <span class="hl-green">자동통과(신뢰도 0.90)</span> · dead link · 증분 스케줄 <span class="badge">2645</span></li>
   </ul>
   <p class="caption">Epic + 하위이슈 #0~#5를 paperclip 자율실행으로 순차 진행 — 하루 만에 동작하는 파이프라인 완성</p>
+  <div class="live-links"><span class="lbl">바로보기</span>
+    <a class="lnk cms" href="http://100.120.25.127:5175/candidates" target="_blank">후보 리스트</a>
+    <a class="lnk cms" href="http://100.120.25.127:5175/review" target="_blank">검토 화면</a>
+  </div>
 </section>
 
 <!-- ══ Slide 06: Section FE ══════════════════════════════════ -->
@@ -312,6 +346,10 @@
     <li>📺 채널 페이지 — vr-list fetch 시 <code>lang</code> 파라미터 재전송, 더보기 모달 스타일 복원 <span class="badge">2821</span></li>
     <li>📱 모바일 반응형 버그 — detail.css 오버플로 · 지도 캔버스 소실 · 파노라마 드릴다운 수정 <span class="badge">2614 · 2616 · 2620</span></li>
   </ul>
+  <div class="live-links"><span class="lbl">바로보기</span>
+    <a class="lnk" href="http://100.120.25.127:5174/vr-list" target="_blank">VR 목록·지역필터</a>
+    <a class="lnk" href="http://100.120.25.127:5174/channels" target="_blank">채널</a>
+  </div>
 </section>
 
 <!-- ══ Slide 08: 북마크·검색·페이지네이션 ═══════════════════ -->
@@ -326,6 +364,10 @@
     <li>🔍 검색 페이지 개선 — 더보기 버튼 · 탭 페이지네이션 · <span class="hl-green">정렬 드롭다운</span> <span class="badge">2782 · 2781</span></li>
     <li>📑 <span class="hl-green">공통 Pagination 컴포넌트로 전역 통일</span> — <code>&lt;&lt; &lt; 1 2 3 &gt; &gt;&gt;</code> 형태, 홈 탭 더보기 통일</li>
   </ul>
+  <div class="live-links"><span class="lbl">바로보기</span>
+    <a class="lnk" href="http://100.120.25.127:5174/search" target="_blank">검색</a>
+    <a class="lnk" href="http://100.120.25.127:5174/my/bookmarks" target="_blank">북마크 목록</a>
+  </div>
 </section>
 
 <!-- ══ Slide 09: FE 보안·권한 게이트 ════════════════════════ -->
@@ -340,6 +382,10 @@
     <li>🔐 관리자 <span class="hl-blue">로그인 권한 게이트</span> — 권한없음/탈퇴/휴면 계정 차단(role 정규화 + applyLoginGate) <span class="badge">2798 · 2808</span></li>
     <li>🧩 DOMPurify · RBAC 라우터 가드 · OTP 재확인 다이얼로그 · axios <code>X-CSRF-Token</code> 자동 삽입 <span class="badge">2685 · 2704 · 2705</span></li>
   </ul>
+  <div class="live-links"><span class="lbl">바로보기</span>
+    <a class="lnk" href="http://100.120.25.127:5174/my/settings/account" target="_blank">계정·탈퇴</a>
+    <a class="lnk admin" href="http://100.120.25.127:5277/#/login" target="_blank">관리자 로그인·OTP</a>
+  </div>
 </section>
 
 <!-- ══ Slide 10: Section BE ══════════════════════════════════ -->
@@ -360,6 +406,10 @@
     <li>📦 <span class="hl-amber">이번 주 최대 작업</span> — 마이그레이션 관련 커밋만 <strong>25개</strong>, 그룹 A/B/C 단계 진행</li>
     <li>🧹 place area 자동 매핑 — <code>area2~4_id</code> FK 컬럼 추가 + backfill 런타임 <span class="badge">2725 · 2726 · 2727</span></li>
   </ul>
+  <div class="live-links"><span class="lbl">관련 화면</span>
+    <a class="lnk admin" href="http://100.120.25.127:5277/#/place-management" target="_blank">장소·지역 관리</a>
+    <a class="lnk" href="http://100.120.25.127:5174/vr-list" target="_blank">사용자 지역필터</a>
+  </div>
 </section>
 
 <!-- ══ Slide 12: 지역 데이터 + 테이블 정리 ══════════════════ -->
@@ -374,6 +424,10 @@
     <li>🗑️ 불필요 테이블 제거 — <code>l3_place_area_i18n</code> DROP, 지역 표시명 <span class="hl-blue">단일 공급원화</span> <span class="badge">2748 · 2750</span></li>
     <li>🧮 컬럼 정리 — <code>l3_user.preferred_lang</code> · <code>l3_bookmark_items.is_hidden</code> DROP <span class="badge">2276 · 2632</span></li>
   </ul>
+  <div class="live-links"><span class="lbl">관련 화면</span>
+    <a class="lnk admin" href="http://100.120.25.127:5277/#/admin/regions/i18n" target="_blank">지역 다국어 관리</a>
+    <a class="lnk admin" href="http://100.120.25.127:5277/#/place-management" target="_blank">장소 관리</a>
+  </div>
 </section>
 
 <!-- ══ Slide 13: BE 보안 하드닝 + API ═══════════════════════ -->
@@ -388,6 +442,10 @@
     <li>🔑 인증 API — OTP verify / 민감액션 재확인 엔드포인트, <code>/auth/login</code> <span class="hl-blue">is_active=false 차단 가드</span> + spec <span class="badge">2705 · 2800</span></li>
     <li>🖼️ 북마크 API 정비 — visibility ENUM <code>password→unlisted</code>, 썸네일 재지정 시 <span class="hl-green">S3 고아 이미지 정리</span> <span class="badge">2789 · 2790</span></li>
   </ul>
+  <div class="live-links"><span class="lbl">관련 화면</span>
+    <a class="lnk admin" href="http://100.120.25.127:5277/#/email-templates" target="_blank">이메일 템플릿</a>
+    <a class="lnk" href="http://100.120.25.127:5174/my/bookmarks" target="_blank">북마크</a>
+  </div>
 </section>
 
 <!-- ══ Slide 14: Section SEC ════════════════════════════════ -->
@@ -408,20 +466,18 @@
     <li>🩹 후속 패치(6/07) — 지역/테마/지도 테마 미표시 버그 수정(<code>sqlGuardIdent</code> 허용집합 보강, 2차 방어 부수효과 해결)</li>
   </ul>
   <p class="caption">근본원인 분석 → 대응안 → 전용 대응 보고 슬라이드(kabkee-decks/reports)로 별도 정리 완료</p>
+  <div class="live-links"><span class="lbl">바로보기</span>
+    <a class="lnk legacy" href="https://look360.kr/theme/" target="_blank">테마</a>
+    <a class="lnk legacy" href="https://look360.kr/vr/" target="_blank">지역</a>
+    <a class="lnk legacy" href="https://look360.kr/map/" target="_blank">지도</a>
+    <a class="lnk legacy" href="https://look360.kr/sticker/" target="_blank">360포스트</a>
+  </div>
 </section>
 
 <!-- ══ Slide 16: 진행 중 / 다음 단계 ════════════════════════ -->
 <section>
   <h2>🚧 진행 중 · 다음 단계</h2>
   <ul>
-    <li>
-      🔑 <strong><code>id → uid</code> 리네임 EPIC</strong> <span class="hl-blue">진행 중</span>
-      <br><span style="font-size:0.85em; color:#475569;">— Phase 1-B/2-A/2-B 단계 진행, 잔여 테이블/Phase 존재. FE 호환 <code>id</code> alias는 임시 방어책 → 추후 제거 필요</span>
-    </li>
-    <li>
-      🌏 <strong>채널 단위 언어 관리</strong> <span class="hl-gray">설계 중</span>
-      <br><span style="font-size:0.85em; color:#475569;">— preferred_lang을 user가 아닌 채널 단위로 전환하는 방향 논의(IND-2276 연계)</span>
-    </li>
     <li>
       🧩 <strong>VR 수집 CMS 모수 확대</strong> <span class="hl-gray">Backlog</span>
       <br><span style="font-size:0.85em; color:#475569;">— URL 패턴만으론 일반 경로 투어 미포착. CC WARC 본문 스캔 · Google Dorking 병행 검토</span>
@@ -430,19 +486,34 @@
       📝 <strong>내 활동 페이지 · VR스토리 탭</strong> <span class="hl-gray">예정</span>
       <br><span style="font-size:0.85em; color:#475569;">— 내 댓글 위치 이동 + 360포스트/VR스토리 하위 탭. VR스토리 기능 미구현</span>
     </li>
+    <li>
+      🖼️ <strong>VR 콘텐츠 썸네일 S3 고아 정리</strong> <span class="hl-gray">점검 예정</span>
+      <br><span style="font-size:0.85em; color:#475569;">— 북마크 컬렉션 썸네일은 처리 완료, 커스텀 썸네일 교체·삭제 시 고아 파일 발생 여부 전수 점검</span>
+    </li>
   </ul>
 </section>
 
-<!-- ══ Slide 17: 도구 · 자동화 기여 ═════════════════════════ -->
+<!-- ══ Slide 17: 라이브 엔드포인트 모음 ═════════════════════ -->
 <section>
-  <h2>도구 · 자동화 (보조)
-    <span class="badge-date">6/01~07</span>
-  </h2>
-  <ul>
-    <li>🤖 <strong>paperclip</strong> (에이전트 오케스트레이션 툴 기여) — Documents 라이브러리/문서 리뷰 기능, 워크스페이스 파일 뷰어, Team Catalog, 저신뢰 에이전트 격리, MCP 거버넌스 <span class="badge">PAP-10524 · 10568 · 10511</span></li>
-    <li>📺 <strong>youtube-economic-briefing</strong> — 경제 영상 자동 요약 파이프라인 <span class="hl-gray">정상 운영</span> (이번 주 기능 변경 없이 일 단위 수집·요약 가동)</li>
-    <li>🔎 보안 후속 — Look360 MySQL 접속 계정 전수검사, <code>rb_s_mbrdata</code> 회원 데이터/휴면 로직 분석</li>
+  <h2>🔗 라이브 엔드포인트 <span class="badge-date">tailnet</span></h2>
+  <ul class="ep-list">
+    <li>🖥️ <strong>사용자 화면 (v3)</strong>
+      <a class="lnk" href="http://100.120.25.127:5174/" target="_blank">100.120.25.127:5174</a>
+      <span class="ep-hint">/vr-list · /search · /channels · /my/*</span></li>
+    <li>🛠️ <strong>관리자</strong>
+      <a class="lnk admin" href="http://100.120.25.127:5277/" target="_blank">100.120.25.127:5277</a>
+      <span class="ep-hint">#/place-management · #/email-templates · #/admin/regions/i18n</span></li>
+    <li>🧭 <strong>VR 수집 CMS</strong>
+      <a class="lnk cms" href="http://100.120.25.127:5175/" target="_blank">100.120.25.127:5175</a>
+      <span class="ep-hint">/dashboard · /candidates · /review</span></li>
+    <li>🗄️ <strong>레거시 (PHP)</strong>
+      <a class="lnk legacy" href="https://look360.kr/" target="_blank">look360.kr</a>
+      <span class="ep-hint">/vr · /theme · /map · /sticker</span></li>
+    <li>📑 <strong>이 슬라이드 저장소</strong>
+      <a class="lnk" href="http://100.120.25.127:8088/" target="_blank">100.120.25.127:8088</a>
+      <span class="ep-hint">kabkee-decks</span></li>
   </ul>
+  <p class="caption">tailnet 연결 기기에서 바로 접근 · v3/admin/cms는 로컬 dev 서버라 코드 수정 즉시 반영됨</p>
 </section>
 
 <!-- ══ Slide 18: Closing ════════════════════════════════════ -->
