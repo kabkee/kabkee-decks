@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>주간 업무 보고 — 2026-06-08 | Look360 Platform</title>
+
+  <!-- Reveal.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── 전역 폰트 ── */
+    :root {
+      --r-main-font: 'Noto Sans KR', 'Inter', sans-serif;
+      --r-heading-font: 'Noto Sans KR', 'Inter', sans-serif;
+      --r-main-font-size: 32px;
+      --r-heading-color: #0F172A;
+      --r-main-color: #1E293B;
+      --r-link-color: #1D4ED8;
+      --accent-blue: #1D4ED8;
+      --accent-navy: #0F172A;
+    }
+
+    .reveal { font-family: var(--r-main-font); }
+    .reveal h1, .reveal h2, .reveal h3 { font-family: var(--r-heading-font); font-weight: 700; }
+
+    /* ── 하이라이트 색상 ── */
+    .hl-green { background: #D1FAE5; color: #065F46; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-blue  { background: #DBEAFE; color: #1E40AF; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-red   { background: #FEE2E2; color: #991B1B; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-teal  { background: #CCFBF1; color: #0F766E; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-amber { background: #FEF3C7; color: #92400E; padding: 2px 8px; border-radius: 5px; font-weight: 600; }
+    .hl-gray  { background: #F1F5F9; color: #475569; padding: 2px 8px; border-radius: 5px; }
+
+    /* ── 이슈 뱃지 ── */
+    .badge {
+      display: inline-block;
+      font-size: 0.45em;
+      font-family: 'JetBrains Mono', monospace;
+      background: #E0E7FF;
+      color: #3730A3;
+      padding: 3px 10px;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 8px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .badge-date {
+      display: inline-block;
+      font-size: 0.42em;
+      background: #F1F5F9;
+      color: #64748B;
+      padding: 3px 10px;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+    .badge-new {
+      display: inline-block;
+      font-size: 0.42em;
+      font-family: 'JetBrains Mono', monospace;
+      background: #CCFBF1;
+      color: #0F766E;
+      padding: 3px 10px;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 8px;
+      font-weight: 600;
+    }
+
+    /* ── 커버/섹션 슬라이드 ── */
+    .slide-cover { background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%) !important; }
+    .slide-cover h1 { color: #F8FAFC !important; font-size: 2.4em !important; }
+    .slide-cover p  { color: #94A3B8 !important; font-size: 0.7em; }
+
+    .slide-section-new { background: #0F766E !important; }
+    .slide-section-new h2 { color: #ffffff !important; font-size: 1.8em !important; }
+    .slide-section-new p  { color: #CCFBF1 !important; }
+
+    .slide-section-fe { background: #1D4ED8 !important; }
+    .slide-section-fe h2 { color: #ffffff !important; font-size: 1.8em !important; }
+    .slide-section-fe p  { color: #BFDBFE !important; }
+
+    .slide-section-be { background: #1E293B !important; }
+    .slide-section-be h2 { color: #ffffff !important; font-size: 1.8em !important; }
+    .slide-section-be p  { color: #94A3B8 !important; }
+
+    .slide-section-sec { background: #991B1B !important; }
+    .slide-section-sec h2 { color: #ffffff !important; font-size: 1.8em !important; }
+    .slide-section-sec p  { color: #FECACA !important; }
+
+    .slide-closing { background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%) !important; }
+    .slide-closing h2 { color: #F8FAFC !important; font-size: 2.2em !important; }
+    .slide-closing p  { color: #94A3B8 !important; }
+
+    /* ── 일반 슬라이드 제목 ── */
+    .reveal .slides section h2 {
+      font-size: 1.1em;
+      color: #0F172A;
+      border-bottom: 3px solid #1D4ED8;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    /* ── 불릿 스타일 ── */
+    .reveal ul { list-style: none; padding-left: 0; }
+    .reveal ul li {
+      padding: 8px 0 8px 24px;
+      position: relative;
+      font-size: 0.72em;
+      line-height: 1.5;
+      color: #334155;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .reveal ul li:last-child { border-bottom: none; }
+    .reveal ul li::before {
+      content: '›';
+      position: absolute;
+      left: 4px;
+      color: #1D4ED8;
+      font-weight: 700;
+      font-size: 1.1em;
+    }
+
+    /* ── 숫자 카드 (스탯) ── */
+    .stat-row { display: flex; gap: 16px; justify-content: center; margin-top: 16px; }
+    .stat-card {
+      flex: 1;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-card .num { font-size: 1.8em; font-weight: 700; color: #1D4ED8; }
+    .stat-card .label { font-size: 0.45em; color: #64748B; margin-top: 4px; }
+
+    /* ── 파이프라인 플로우 ── */
+    .flow-row { display: flex; gap: 8px; justify-content: center; align-items: stretch; margin: 24px 0 12px; }
+    .flow-step {
+      flex: 1;
+      background: #F0FDFA;
+      border: 1px solid #99F6E4;
+      border-radius: 10px;
+      padding: 14px 8px;
+      text-align: center;
+      position: relative;
+    }
+    .flow-step .n { font-size: 0.5em; color: #0F766E; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+    .flow-step .t { font-size: 0.62em; font-weight: 700; color: #134E4A; margin-top: 4px; }
+    .flow-step .d { font-size: 0.42em; color: #475569; margin-top: 6px; line-height: 1.35; }
+    .flow-step:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #0F766E;
+      font-weight: 700;
+      font-size: 0.8em;
+      z-index: 2;
+    }
+
+    /* ── 코드 인라인 ── */
+    .reveal code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: #F1F5F9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #0F172A;
+    }
+
+    /* ── 목차 레이아웃 ── */
+    .agenda-col { display: flex; gap: 40px; text-align: left; }
+    .agenda-col .col { flex: 1; }
+    .agenda-col .col h4 {
+      font-size: 0.65em;
+      color: #1D4ED8;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .agenda-col .col ul li { font-size: 0.6em; border-bottom: none; padding: 5px 0 5px 20px; }
+
+    /* ── 슬라이드 번호 ── */
+    .reveal .slide-number { color: #94A3B8; font-size: 0.5em; }
+
+    /* ── 진행바 ── */
+    .reveal .progress { color: #1D4ED8; }
+
+    /* ── 작은 캡션 ── */
+    .caption { font-size: 0.5em; color: #64748B; margin-top: 14px; font-style: italic; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ══ Slide 01: Cover ══════════════════════════════════════ -->
+<section class="slide-cover" data-background-gradient="linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)">
+  <h1 style="color:#F8FAFC; font-size:2.2em; margin-bottom:20px;">주간 업무 보고</h1>
+  <p style="color:#94A3B8; font-size:0.65em; margin:0;">2026-06-01 &nbsp;~&nbsp; 2026-06-07</p>
+  <p style="color:#64748B; font-size:0.5em; margin-top:32px;">Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager</p>
+</section>
+
+<!-- ══ Slide 02: Agenda ══════════════════════════════════════ -->
+<section>
+  <h2>이번 주 주요 작업</h2>
+  <div class="agenda-col">
+    <div class="col">
+      <h4>🆕 신규 · 회사 핵심</h4>
+      <ul>
+        <li>VR 콘텐츠 자동 수집 CMS 신규 구축</li>
+        <li>지역 필터 cascade 전면 개편</li>
+        <li><code>id → uid</code> DB 키 대규모 리네임</li>
+        <li>백엔드 보안 하드닝 (SQLi · CSRF · OTP)</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>🔒 보안 대응 · 기타</h4>
+      <ul>
+        <li>레거시(ksq1.2) SQLi 3중 방어</li>
+        <li>휴면계정 정책 개편 · CloudFront 시크릿 교체</li>
+        <li>북마크 · 검색 · 페이지네이션 UX 정비</li>
+        <li>관리자 권한 게이트 · 마이페이지 보안</li>
+      </ul>
+      <div class="stat-row" style="margin-top:16px;">
+        <div class="stat-card">
+          <div class="num">102</div>
+          <div class="label">커밋</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">60</div>
+          <div class="label">IND 이슈</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">+1</div>
+          <div class="label">신규 시스템</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Slide 03: Section NEW ════════════════════════════════ -->
+<section class="slide-section-new">
+  <h2 style="color:#fff; border:none; font-size:1.8em;">신규 — VR 콘텐츠 수집 CMS</h2>
+  <p style="color:#CCFBF1; font-size:0.6em;">cms-for-vr-crawler &nbsp;·&nbsp; 2026-06-01 구축</p>
+</section>
+
+<!-- ══ Slide 04: cms 개요 + 파이프라인 ══════════════════════ -->
+<section>
+  <h2>VR 콘텐츠 수집 CMS — 개요
+    <span class="badge-new">NEW</span>
+    <span class="badge-date">6/01</span>
+  </h2>
+  <p style="font-size:0.62em; color:#334155; line-height:1.5; text-align:left;">
+    전세계에 파편화된 독립형 360 VR 투어(<code>krpano</code> · <code>Pano2VR</code>)를
+    <strong>자동 발굴 → 검증 → AI 가공 → 관리자 검토 → <code>external_vr</code> 적재</strong>하는 웹 기반 수집 시스템.
+    무차별 크롤링이 아니라 VR 엔진의 고유 코드 흔적(<code>embedpano()</code>, <code>tour.xml</code>)만 역추적하는 정밀 수집 방식.
+  </p>
+  <div class="flow-row">
+    <div class="flow-step"><div class="n">01</div><div class="t">Discover</div><div class="d">Athena(Common Crawl) URL 발굴 · dedup</div></div>
+    <div class="flow-step"><div class="n">02</div><div class="t">Validate</div><div class="d">robots 준수 · 엔진 판별</div></div>
+    <div class="flow-step"><div class="n">03</div><div class="t">Enrich</div><div class="d">메타 · AI 분류 · 썸네일</div></div>
+    <div class="flow-step"><div class="n">04</div><div class="t">Review</div><div class="d">관리자 승인 · 수정</div></div>
+    <div class="flow-step"><div class="n">05</div><div class="t">Publish</div><div class="d">Look360 노출</div></div>
+  </div>
+  <p class="caption">스택: TypeScript pnpm 모노레포 · NestJS · BullMQ(Redis) · Vue3 + Vite · docker-compose</p>
+</section>
+
+<!-- ══ Slide 05: cms PoC + 자율실행 ═════════════════════════ -->
+<section>
+  <h2>VR 수집 CMS — PoC & 자율 구축
+    <span class="badge">IND-2640 ~ 2645</span>
+    <span class="badge-date">6/01</span>
+  </h2>
+  <ul>
+    <li>🔬 <span class="hl-teal">Athena PoC</span> — Common Crawl 인덱스로 한국 krpano/pano2vr 규모 확인. 파티션 프루닝으로 스캔 0.2GB, <span class="hl-green">비용 $0.001</span> (목표 $2 대비 2,000배 절감) <span class="badge">2640</span></li>
+    <li>🏗️ pnpm 모노레포 스캐폴딩 + 작업 DB DDL + detector 포팅 <span class="badge">2641</span></li>
+    <li>⚙️ Discover · Validate · Enrich 파이프라인 <span class="hl-blue">e2e 구현</span> (BullMQ v5 · Dockerfile) <span class="badge">2642 · 2643</span></li>
+    <li>🖥️ ReviewModule + ExternalVrModule + 프론트 3페이지(대시보드 · 후보 · 검토) <span class="badge">2644</span></li>
+    <li>📊 운영 마감 — 비용통계 · <span class="hl-green">자동통과(신뢰도 0.90)</span> · dead link · 증분 스케줄 <span class="badge">2645</span></li>
+  </ul>
+  <p class="caption">Epic + 하위이슈 #0~#5를 paperclip 자율실행으로 순차 진행 — 하루 만에 동작하는 파이프라인 완성</p>
+</section>
+
+<!-- ══ Slide 06: Section FE ══════════════════════════════════ -->
+<section class="slide-section-fe">
+  <h2 style="color:#fff; border:none; font-size:1.8em;">사용자 · 관리자 화면 개선</h2>
+  <p style="color:#BFDBFE; font-size:0.6em;">FE / UI &nbsp;·&nbsp; 2026-06-01 ~ 06-07</p>
+</section>
+
+<!-- ══ Slide 07: 지역 필터 + 다국어 ═════════════════════════ -->
+<section>
+  <h2>지역 필터 cascade 개편 · 다국어
+    <span class="badge">IND-2648 · 2727 · 2696</span>
+    <span class="badge-date">6/01~07</span>
+  </h2>
+  <ul>
+    <li>🗺️ 지역 필터 <span class="hl-blue">전 국가 hierarchy cascade 통일</span> — KR/비KR 이분법 제거, area 필드 camelCase UID 통일 <span class="badge">2648 · 2649 · 2746</span></li>
+    <li>🌏 다국어(i18n) 확장 — <code>ja</code>/<code>zh</code> locale · LanguageSwitcher 추가 후, 정책에 따라 사이트 언어 <span class="hl-amber">ko/en 노출로 회귀</span> <span class="badge">2696 · 2276</span></li>
+    <li>📺 채널 페이지 — vr-list fetch 시 <code>lang</code> 파라미터 재전송, 더보기 모달 스타일 복원 <span class="badge">2821</span></li>
+    <li>📱 모바일 반응형 버그 — detail.css 오버플로 · 지도 캔버스 소실 · 파노라마 드릴다운 수정 <span class="badge">2614 · 2616 · 2620</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 08: 북마크·검색·페이지네이션 ═══════════════════ -->
+<section>
+  <h2>북마크 · 검색 · 페이지네이션 정비
+    <span class="badge">IND-2732 · 2782 · 2772</span>
+    <span class="badge-date">6/01~07</span>
+  </h2>
+  <ul>
+    <li>🔖 북마크 식별자 <span class="hl-blue">7개 화면 <code>vr_content.uid</code>로 통일</span> + 기능 정리(개별 숨기기 롤백) <span class="badge">2732 · 2731 · 2627</span></li>
+    <li>🔓 북마크 <span class="hl-red">비밀번호 UI 제거</span> — unlisted 분기로 전환, verify-password 화면 삭제 <span class="badge">2772 · 2789</span></li>
+    <li>🔍 검색 페이지 개선 — 더보기 버튼 · 탭 페이지네이션 · <span class="hl-green">정렬 드롭다운</span> <span class="badge">2782 · 2781</span></li>
+    <li>📑 <span class="hl-green">공통 Pagination 컴포넌트로 전역 통일</span> — <code>&lt;&lt; &lt; 1 2 3 &gt; &gt;&gt;</code> 형태, 홈 탭 더보기 통일</li>
+  </ul>
+</section>
+
+<!-- ══ Slide 09: FE 보안·권한 게이트 ════════════════════════ -->
+<section>
+  <h2>사용자 · 관리자 보안 (FE)
+    <span class="badge">IND-2798 · 2686 · 2719</span>
+    <span class="badge-date">6/02~07</span>
+  </h2>
+  <ul>
+    <li>🛡️ 사용자 보안 — <span class="hl-red">XSS 방지</span> · 토큰 in-memory 저장 · 자동 로그아웃 · 이메일 마스킹 <span class="badge">2686 · 2698 · 2719</span></li>
+    <li>🚪 회원 탈퇴 모달(WithdrawConfirmModal) + 휴면 정책 안내 <span class="badge">2715</span></li>
+    <li>🔐 관리자 <span class="hl-blue">로그인 권한 게이트</span> — 권한없음/탈퇴/휴면 계정 차단(role 정규화 + applyLoginGate) <span class="badge">2798 · 2808</span></li>
+    <li>🧩 DOMPurify · RBAC 라우터 가드 · OTP 재확인 다이얼로그 · axios <code>X-CSRF-Token</code> 자동 삽입 <span class="badge">2685 · 2704 · 2705</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 10: Section BE ══════════════════════════════════ -->
+<section class="slide-section-be">
+  <h2 style="color:#fff; border:none; font-size:1.8em;">백엔드 / 데이터 인프라</h2>
+  <p style="color:#94A3B8; font-size:0.6em;">BE / DB &nbsp;·&nbsp; 데이터 모델 리팩터링이 이번 주 최대 작업</p>
+</section>
+
+<!-- ══ Slide 11: id→uid 리네임 ══════════════════════════════ -->
+<section>
+  <h2>DB 키 <code>id → uid</code> 대규모 리네임
+    <span class="badge">IND-2741 ~ 2753</span>
+    <span class="badge-date">6/05</span>
+  </h2>
+  <ul>
+    <li>🗃️ PK/FK 일괄 리네임 — area 클러스터(<code>l3_areas</code> · <code>l3_areas_i18n</code> · <code>l3_place</code>), 북마크 테이블(<code>collections</code> · <code>items</code>), 채널구독, hero/banner</li>
+    <li>🔗 area2~4 <span class="hl-blue">FK JOIN 전환</span> + FE 호환용 <code>id</code> alias 임시 부여(과도기 방어책)</li>
+    <li>📦 <span class="hl-amber">이번 주 최대 작업</span> — 마이그레이션 관련 커밋만 <strong>25개</strong>, 그룹 A/B/C 단계 진행</li>
+    <li>🧹 place area 자동 매핑 — <code>area2~4_id</code> FK 컬럼 추가 + backfill 런타임 <span class="badge">2725 · 2726 · 2727</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 12: 지역 데이터 + 테이블 정리 ══════════════════ -->
+<section>
+  <h2>지역 데이터 정비 · 스키마 정리
+    <span class="badge">IND-2665 · 2676 · 2748</span>
+    <span class="badge-date">6/02~06</span>
+  </h2>
+  <ul>
+    <li>🌐 지역 다국어 데이터 — KR area4 <span class="hl-green">965건 Romanization</span> 갱신, i18n th/tr 백필, FK JOIN 전환 <span class="badge">2665 · 2666 · 2744</span></li>
+    <li>🏗️ 지역 계층 결함 수정 — 구리시·군포시 등 <span class="hl-red">area3("구") 누락</span> 구조 보강, collation mismatch 수정 <span class="badge">2676 · 2677 · 2678</span></li>
+    <li>🗑️ 불필요 테이블 제거 — <code>l3_place_area_i18n</code> DROP, 지역 표시명 <span class="hl-blue">단일 공급원화</span> <span class="badge">2748 · 2750</span></li>
+    <li>🧮 컬럼 정리 — <code>l3_user.preferred_lang</code> · <code>l3_bookmark_items.is_hidden</code> DROP <span class="badge">2276 · 2632</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 13: BE 보안 하드닝 + API ═══════════════════════ -->
+<section>
+  <h2>백엔드 보안 하드닝 · 인증 API
+    <span class="badge">IND-2683 ~ 2800</span>
+    <span class="badge-date">6/02~06</span>
+  </h2>
+  <ul>
+    <li>🔒 <span class="hl-red">SQLi 방지</span> · ValidationPipe 강화 · helmet · Throttler · Joi · 감사로그 <span class="badge">2683 · 2700</span></li>
+    <li>🎫 CSRF 토큰 발급·검증 · <code>ParseIntPipe</code> 누락 12건+ 일괄 보정 · 하드코딩 시크릿 제거</li>
+    <li>🔑 인증 API — OTP verify / 민감액션 재확인 엔드포인트, <code>/auth/login</code> <span class="hl-blue">is_active=false 차단 가드</span> + spec <span class="badge">2705 · 2800</span></li>
+    <li>🖼️ 북마크 API 정비 — visibility ENUM <code>password→unlisted</code>, 썸네일 재지정 시 <span class="hl-green">S3 고아 이미지 정리</span> <span class="badge">2789 · 2790</span></li>
+  </ul>
+</section>
+
+<!-- ══ Slide 14: Section SEC ════════════════════════════════ -->
+<section class="slide-section-sec">
+  <h2 style="color:#fff; border:none; font-size:1.8em;">보안 사고 대응 — 레거시</h2>
+  <p style="color:#FECACA; font-size:0.6em;">Look360 ksq1.2 (PHP) &nbsp;·&nbsp; origin.look360.kr SQLi 사고 후속</p>
+</section>
+
+<!-- ══ Slide 15: SQLi 3중 방어 + 후속 ══════════════════════ -->
+<section>
+  <h2>레거시 SQLi 3중 방어 · 정책 개편
+    <span class="badge-date">6/02~07</span>
+  </h2>
+  <ul>
+    <li>🧱 SQLi <span class="hl-red">3중 방어</span> — ① DB 계층(<code>db.mysql.func.php</code>) 화이트리스트 가드(<code>sqlGuardInspect/Gate/Ident</code>, +239줄) ② raw SQL 고위험 <strong>29개 파일</strong> 개별 정제 ③ FE/BE 입력 검증</li>
+    <li>👤 <span class="hl-blue">휴면계정 WebJob 정책 개편</span> — 휴면제 폐지(2023-09) 반영, 사전경고·분리보관 폐지 → 1년 초과 시 개인정보 즉시 파기 + 비인증 외부 트리거 차단</li>
+    <li>🔐 CloudFront 시크릿 교체 — 하드코딩값(<code>look360cdnsecret</code>) 제거 → 강화 랜덤값 전환</li>
+    <li>🩹 후속 패치(6/07) — 지역/테마/지도 테마 미표시 버그 수정(<code>sqlGuardIdent</code> 허용집합 보강, 2차 방어 부수효과 해결)</li>
+  </ul>
+  <p class="caption">근본원인 분석 → 대응안 → 전용 대응 보고 슬라이드(kabkee-decks/reports)로 별도 정리 완료</p>
+</section>
+
+<!-- ══ Slide 16: 진행 중 / 다음 단계 ════════════════════════ -->
+<section>
+  <h2>🚧 진행 중 · 다음 단계</h2>
+  <ul>
+    <li>
+      🔑 <strong><code>id → uid</code> 리네임 EPIC</strong> <span class="hl-blue">진행 중</span>
+      <br><span style="font-size:0.85em; color:#475569;">— Phase 1-B/2-A/2-B 단계 진행, 잔여 테이블/Phase 존재. FE 호환 <code>id</code> alias는 임시 방어책 → 추후 제거 필요</span>
+    </li>
+    <li>
+      🌏 <strong>채널 단위 언어 관리</strong> <span class="hl-gray">설계 중</span>
+      <br><span style="font-size:0.85em; color:#475569;">— preferred_lang을 user가 아닌 채널 단위로 전환하는 방향 논의(IND-2276 연계)</span>
+    </li>
+    <li>
+      🧩 <strong>VR 수집 CMS 모수 확대</strong> <span class="hl-gray">Backlog</span>
+      <br><span style="font-size:0.85em; color:#475569;">— URL 패턴만으론 일반 경로 투어 미포착. CC WARC 본문 스캔 · Google Dorking 병행 검토</span>
+    </li>
+    <li>
+      📝 <strong>내 활동 페이지 · VR스토리 탭</strong> <span class="hl-gray">예정</span>
+      <br><span style="font-size:0.85em; color:#475569;">— 내 댓글 위치 이동 + 360포스트/VR스토리 하위 탭. VR스토리 기능 미구현</span>
+    </li>
+  </ul>
+</section>
+
+<!-- ══ Slide 17: 도구 · 자동화 기여 ═════════════════════════ -->
+<section>
+  <h2>도구 · 자동화 (보조)
+    <span class="badge-date">6/01~07</span>
+  </h2>
+  <ul>
+    <li>🤖 <strong>paperclip</strong> (에이전트 오케스트레이션 툴 기여) — Documents 라이브러리/문서 리뷰 기능, 워크스페이스 파일 뷰어, Team Catalog, 저신뢰 에이전트 격리, MCP 거버넌스 <span class="badge">PAP-10524 · 10568 · 10511</span></li>
+    <li>📺 <strong>youtube-economic-briefing</strong> — 경제 영상 자동 요약 파이프라인 <span class="hl-gray">정상 운영</span> (이번 주 기능 변경 없이 일 단위 수집·요약 가동)</li>
+    <li>🔎 보안 후속 — Look360 MySQL 접속 계정 전수검사, <code>rb_s_mbrdata</code> 회원 데이터/휴면 로직 분석</li>
+  </ul>
+</section>
+
+<!-- ══ Slide 18: Closing ════════════════════════════════════ -->
+<section data-background-gradient="linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)">
+  <h2 style="color:#F8FAFC; border:none; font-size:2em;">감사합니다</h2>
+  <p style="color:#94A3B8; font-size:0.55em; margin-top:20px;">
+    이번 주 핵심 &nbsp;·&nbsp; VR 수집 CMS 신규 구축 &nbsp;·&nbsp; id→uid DB 리팩터링 &nbsp;·&nbsp; 전방위 보안 하드닝
+  </p>
+  <p style="color:#64748B; font-size:0.5em; margin-top:24px;">
+    Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-06-08
+  </p>
+</section>
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    progress: true,
+    transition: 'slide',
+    transitionSpeed: 'default',
+    pdfSeparateFragments: false,
+    pdfMaxPagesPerSlide: 1,
+    width: 1280,
+    height: 720,
+    margin: 0.08,
+  });
+</script>
+</body>
+</html>
