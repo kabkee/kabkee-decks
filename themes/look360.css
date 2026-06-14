@@ -1,0 +1,280 @@
+/* @theme look360 */
+/*
+ * Look360 주간보고 Marp 테마
+ * ─ 기존 reveal.js deck(2026-06-08) 톤을 Marp 마크다운용으로 이식
+ * ─ 사용: marp <file>.md --theme themes/look360.css --html -o <file>.html
+ * ─ 슬라이드별 클래스: cover / agenda / sec-new / sec-fe / sec-be / sec-sec / sec-ai / closing
+ */
+
+@import 'default';
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --navy:    #0F172A;
+  --blue:    #1D4ED8;
+  --blue-d:  #1E40AF;
+  --slate:   #334155;
+  --slate-l: #64748B;
+  --line:    #E2E8F0;
+  --line-f:  #F1F5F9;
+  --teal:    #0F766E;
+}
+
+/* ── 슬라이드 기본 ── */
+section {
+  font-family: 'Noto Sans KR', 'Inter', sans-serif;
+  font-size: 25px;
+  line-height: 1.5;
+  color: var(--slate);
+  background: #FFFFFF;
+  padding: 56px 64px;
+  justify-content: flex-start;
+}
+
+section::after {
+  /* 페이지 번호 */
+  color: var(--slate-l);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+}
+
+/* ── 제목 ── */
+section h1, section h2, section h3 {
+  font-family: 'Noto Sans KR', 'Inter', sans-serif;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+section h2 {
+  font-size: 1.18em;
+  border-bottom: 3px solid var(--blue);
+  padding-bottom: 10px;
+  margin: 0 0 22px;
+}
+
+section h3 {
+  font-size: 0.82em;
+  color: var(--blue);
+  margin: 18px 0 6px;
+}
+
+/* ── 불릿 ── */
+section ul { list-style: none; padding-left: 0; }
+section ul > li {
+  position: relative;
+  padding: 9px 0 9px 26px;
+  font-size: 0.74em;
+  line-height: 1.5;
+  color: var(--slate);
+  border-bottom: 1px solid var(--line-f);
+}
+section ul > li:last-child { border-bottom: none; }
+section ul > li::before {
+  content: '›';
+  position: absolute;
+  left: 4px;
+  top: 8px;
+  color: var(--blue);
+  font-weight: 700;
+  font-size: 1.15em;
+}
+/* 중첩 불릿 */
+section ul ul { margin-top: 4px; }
+section ul ul > li {
+  font-size: 0.92em;
+  color: var(--slate-l);
+  border-bottom: none;
+  padding: 3px 0 3px 22px;
+}
+section ul ul > li::before { content: '–'; color: var(--slate-l); font-weight: 400; }
+
+/* 강조 */
+section strong { color: var(--navy); font-weight: 700; }
+section em { color: var(--slate-l); font-style: italic; }
+
+/* ── 인라인 코드 ── */
+section code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.84em;
+  background: var(--line-f);
+  color: var(--navy);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+/* ── 링크 ── */
+section a { color: var(--blue); text-decoration: none; }
+
+/* ── 테이블 ── */
+section table {
+  font-size: 0.6em;
+  border-collapse: collapse;
+  margin: 10px 0;
+  width: 100%;
+}
+section th {
+  background: var(--navy);
+  color: #F8FAFC;
+  font-weight: 600;
+  text-align: left;
+  padding: 9px 14px;
+}
+section td {
+  border-bottom: 1px solid var(--line);
+  padding: 8px 14px;
+  color: var(--slate);
+}
+section tr:nth-child(even) td { background: #F8FAFC; }
+
+/* ── blockquote = 캡션 ── */
+section blockquote {
+  border: none;
+  font-size: 0.56em;
+  color: var(--slate-l);
+  font-style: italic;
+  margin: 14px 0 0;
+  padding: 0;
+}
+section blockquote::before { content: ''; }
+
+/* ════════════════════════════════════════════
+ *  유틸 인라인 (──html 필요)
+ * ════════════════════════════════════════════ */
+.badge {
+  display: inline-block;
+  font-size: 0.42em;
+  font-family: 'JetBrains Mono', monospace;
+  background: #E0E7FF;
+  color: #3730A3;
+  padding: 3px 10px;
+  border-radius: 20px;
+  vertical-align: middle;
+  margin-left: 6px;
+  font-weight: 500;
+}
+.badge-date {
+  display: inline-block;
+  font-size: 0.4em;
+  background: var(--line-f);
+  color: var(--slate-l);
+  padding: 3px 10px;
+  border-radius: 20px;
+  vertical-align: middle;
+  margin-left: 5px;
+}
+.badge-new {
+  display: inline-block;
+  font-size: 0.4em;
+  font-family: 'JetBrains Mono', monospace;
+  background: #CCFBF1;
+  color: var(--teal);
+  padding: 3px 10px;
+  border-radius: 20px;
+  vertical-align: middle;
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+.hl-green { background: #D1FAE5; color: #065F46; padding: 1px 7px; border-radius: 5px; font-weight: 600; }
+.hl-blue  { background: #DBEAFE; color: var(--blue-d); padding: 1px 7px; border-radius: 5px; font-weight: 600; }
+.hl-red   { background: #FEE2E2; color: #991B1B; padding: 1px 7px; border-radius: 5px; font-weight: 600; }
+.hl-teal  { background: #CCFBF1; color: var(--teal); padding: 1px 7px; border-radius: 5px; font-weight: 600; }
+.hl-amber { background: #FEF3C7; color: #92400E; padding: 1px 7px; border-radius: 5px; font-weight: 600; }
+.hl-gray  { background: var(--line-f); color: #475569; padding: 1px 7px; border-radius: 5px; }
+
+/* 라이브 링크 칩 */
+.links { margin-top: 16px; }
+.links .lbl { font-size: 0.5em; color: var(--slate-l); margin-right: 8px; font-weight: 600; }
+a.lnk {
+  display: inline-block;
+  font-size: 0.5em;
+  font-family: 'JetBrains Mono', monospace;
+  background: #EFF6FF;
+  color: var(--blue);
+  border: 1px solid #BFDBFE;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin: 3px 5px 3px 0;
+  text-decoration: none;
+}
+a.lnk::before { content: '🔗 '; }
+a.lnk.cms    { background: #F0FDFA; color: var(--teal); border-color: #99F6E4; }
+a.lnk.admin  { background: #F5F3FF; color: #6D28D9; border-color: #DDD6FE; }
+a.lnk.legacy { background: #FEF2F2; color: #B91C1C; border-color: #FECACA; }
+
+/* 스탯 카드 행 */
+.stats { display: flex; gap: 16px; justify-content: center; margin-top: 22px; }
+.stats .card {
+  flex: 1;
+  background: #F8FAFC;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 12px;
+  text-align: center;
+}
+.stats .card .num { font-size: 1.7em; font-weight: 700; color: var(--blue); line-height: 1; }
+.stats .card .lab { font-size: 0.42em; color: var(--slate-l); margin-top: 8px; }
+
+/* 2단 컬럼 */
+.cols { display: flex; gap: 36px; }
+.cols .col { flex: 1; }
+
+/* ════════════════════════════════════════════
+ *  슬라이드 클래스 (<!-- _class: xxx -->)
+ * ════════════════════════════════════════════ */
+
+/* 표지 */
+section.cover {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%);
+  color: #F8FAFC;
+  justify-content: center;
+  text-align: center;
+}
+section.cover h1 { color: #F8FAFC; font-size: 2.3em; margin-bottom: 18px; }
+section.cover h2 { color: #94A3B8; border: none; font-size: 0.62em; font-weight: 400; margin: 0; }
+section.cover p  { color: #64748B; font-size: 0.5em; margin-top: 30px; }
+section.cover::after { color: #475569; }
+
+/* 섹션 표지 공통 */
+section.sec-new, section.sec-fe, section.sec-be, section.sec-sec, section.sec-ai {
+  justify-content: center;
+  text-align: center;
+}
+section.sec-new h2, section.sec-fe h2, section.sec-be h2,
+section.sec-sec h2, section.sec-ai h2 {
+  color: #fff; border: none; font-size: 1.7em; margin-bottom: 12px;
+}
+section.sec-new p, section.sec-fe p, section.sec-be p,
+section.sec-sec p, section.sec-ai p { font-size: 0.6em; }
+section.sec-new::after, section.sec-fe::after, section.sec-be::after,
+section.sec-sec::after, section.sec-ai::after { color: rgba(255,255,255,0.5); }
+
+section.sec-new { background: #0F766E; }
+section.sec-new p { color: #CCFBF1; }
+section.sec-fe  { background: #1D4ED8; }
+section.sec-fe p { color: #BFDBFE; }
+section.sec-be  { background: #1E293B; }
+section.sec-be p { color: #94A3B8; }
+section.sec-sec { background: #991B1B; }
+section.sec-sec p { color: #FECACA; }
+section.sec-ai  { background: #5B21B6; }
+section.sec-ai p { color: #DDD6FE; }
+
+/* 마무리 */
+section.closing {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%);
+  color: #F8FAFC;
+  justify-content: center;
+  text-align: center;
+}
+section.closing h2 { color: #F8FAFC; border: none; font-size: 1.9em; }
+section.closing p  { color: #94A3B8; font-size: 0.56em; margin-top: 16px; }
+section.closing::after { color: #475569; }
+
+/* 목차 슬라이드 */
+section.agenda h4 {
+  font-size: 0.62em; color: var(--blue); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 6px;
+}
+section.agenda .col ul > li { font-size: 0.62em; border-bottom: none; padding: 5px 0 5px 22px; }
