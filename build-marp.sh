@@ -10,8 +10,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-THEME="themes/look360.css"
-MARP=(npx -y @marp-team/marp-cli --theme "$THEME" --html --no-stdin)
+MARP=(npx -y @marp-team/marp-cli --theme-set themes/ --html --no-stdin)
 
 build() {
   local src="$1"
