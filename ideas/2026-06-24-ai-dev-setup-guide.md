@@ -663,6 +663,71 @@ find_referencing_symbols  # 참조 위치만 추출
 
 ---
 
+<style scoped>
+section { font-size: 20px; }
+pre { font-size: 0.65em; }
+blockquote { font-size: 0.5em; margin-top: 6px; }
+</style>
+
+## 그 외 토큰 절약 — 설정으로 줄이기
+
+<div class="cols">
+<div class="col">
+
+### 📄 `.claudeignore`
+
+Claude Code가 읽지 말아야 할 파일·폴더 차단
+
+```
+# .claudeignore (프로젝트 루트에 생성)
+node_modules/
+dist/
+*.lock
+*.log
+coverage/
+```
+
+→ 탐색 시 통째로 컨텍스트에 실려오는 낭비 방지
+
+---
+
+### ⚡ `/compact` 명령
+
+대화가 길어지면 히스토리를 **AI가 직접 요약 압축**
+
+```
+/compact
+→ 현재까지 대화를 요약본으로 교체
+→ 이후 토큰 사용량 리셋 효과
+```
+
+</div>
+<div class="col">
+
+### 🗂️ CLAUDE.md 분리 (Lazy Loading)
+
+전역 CLAUDE.md는 **매 세션 자동 로드** → 짧을수록 유리
+
+```
+# 나쁜 예 — 모든 규칙을 전역에 다 쓰기
+~/.claude/CLAUDE.md  ← 수백 줄 규칙
+
+# 좋은 예 — 필요한 것만 @참조로 분리
+~/.claude/CLAUDE.md  ← 핵심 10줄만
+  @rules/api.md       ← API 작업할 때만
+  @rules/deploy.md    ← 배포할 때만
+```
+
+서브 프로젝트별 `.claude/CLAUDE.md` 분리도 가능
+→ 해당 폴더 작업 시에만 로드
+
+> **공통점** : 설정 한 번으로 매 세션 자동 적용 — 별도 명령 불필요
+
+</div>
+</div>
+
+---
+
 <!-- _class: sec -->
 
 # 정리
