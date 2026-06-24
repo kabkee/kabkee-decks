@@ -1,0 +1,649 @@
+<!DOCTYPE html><html lang="ko-KR"><head><title>AI 활용 개발 환경 셋업 — 문갑기가 쓰고 있는 툴 실전 가이드</title><meta property="og:title" content="AI 활용 개발 환경 셋업 — 문갑기가 쓰고 있는 툴 실전 가이드"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0"><meta name="apple-mobile-web-app-capable" content="yes"><meta http-equiv="X-UA-Compatible" content="ie=edge"><meta property="og:type" content="website"><meta name="twitter:card" content="summary"><style>@media screen{body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button,body[data-bespoke-view=overview] button.bespoke-marp-overview-close,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button{appearance:none;background-color:initial;border:0;color:inherit;cursor:pointer;font-size:inherit;opacity:.8;outline:none;padding:0;transition:opacity .2s linear;-webkit-tap-highlight-color:transparent}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:disabled,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:disabled,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:disabled{cursor:not-allowed;opacity:.15!important}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover{opacity:1}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:active,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:active,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover:active{opacity:.6}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:not(:disabled),body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:not(:disabled),body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover:not(:disabled){transition:none}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button.bespoke-marp-presenter-info-page-prev{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNNjggOTAgMjggNTBsNDAtNDAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button.bespoke-marp-presenter-info-page-next{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJtMzIgOTAgNDAtNDAtNDAtNDAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4fTwvc3R5bGU+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MCIgaGVpZ2h0PSI2MCIgeD0iMTAiIHk9IjIwIiBjbGFzcz0iYSIgcng9IjUuNjciLz48cGF0aCBkPSJNNDAgNzBIMjBWNTBtMjAgMEwyMCA3MG00MC00MGgyMHYyMG0tMjAgMCAyMC0yMCIgY2xhc3M9ImEiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button.exit[data-bespoke-marp-osc=fullscreen],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button.exit[data-bespoke-marp-osc=fullscreen]{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4fTwvc3R5bGU+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MCIgaGVpZ2h0PSI2MCIgeD0iMTAiIHk9IjIwIiBjbGFzcz0iYSIgcng9IjUuNjciLz48cGF0aCBkPSJNMjAgNTBoMjB2MjBtLTIwIDAgMjAtMjBtNDAgMEg2MFYzMG0yMCAwTDYwIDUwIiBjbGFzcz0iYSIvPjwvc3ZnPg==")}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNODcuOCA0Ny41Qzg5IDUwIDg3LjcgNTIgODUgNTJIMzVhOC43IDguNyAwIDAgMS03LjItNC41bC0xNS42LTMxQzExIDE0IDEyLjIgMTIgMTUgMTJoNTBhOC44IDguOCAwIDAgMSA3LjIgNC41ek02MCA1MnYzNm0tMTAgMGgyME00NSA0MmgyMCIvPjwvc3ZnPg==") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=overview] button.bespoke-marp-overview-close,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button.bespoke-marp-presenter-note-bigger{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNMTIgNTBoODBNNTIgOTBWMTAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button.bespoke-marp-presenter-note-smaller{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNMTIgNTBoODAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=overview],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=overview]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4O3J4OjVweDtyeTo1cHg7d2lkdGg6MjVweDtoZWlnaHQ6MjVweH08L3N0eWxlPjwvZGVmcz48cmVjdCB4PSIyMCIgeT0iMjAiIGNsYXNzPSJhIi8+PHJlY3QgeD0iNTUiIHk9IjIwIiBjbGFzcz0iYSIvPjxyZWN0IHg9IjIwIiB5PSI1NSIgY2xhc3M9ImEiLz48cmVjdCB4PSI1NSIgeT0iNTUiIGNsYXNzPSJhIi8+PC9zdmc+") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}}@keyframes __bespoke_marp_transition_reduced_outgoing__{0%{opacity:1}to{opacity:0}}@keyframes __bespoke_marp_transition_reduced_incoming__{0%{mix-blend-mode:plus-lighter;opacity:0}to{mix-blend-mode:plus-lighter;opacity:1}}.bespoke-marp-note,.bespoke-marp-osc,.bespoke-progress-parent{display:none;transition:none}@media screen{::view-transition-group(*){animation-duration:var(--marp-bespoke-transition-animation-duration,.5s);animation-timing-function:ease}::view-transition-new(*),::view-transition-old(*){animation-delay:0s;animation-direction:var(--marp-bespoke-transition-animation-direction,normal);animation-duration:var(--marp-bespoke-transition-animation-duration,.5s);animation-fill-mode:both;animation-name:var(--marp-bespoke-transition-animation-name,var(--marp-bespoke-transition-animation-name-fallback,__bespoke_marp_transition_no_animation__));mix-blend-mode:normal}::view-transition-old(*){--marp-bespoke-transition-animation-name-fallback:__bespoke_marp_transition_reduced_outgoing__;animation-timing-function:ease}::view-transition-new(*){--marp-bespoke-transition-animation-name-fallback:__bespoke_marp_transition_reduced_incoming__;animation-timing-function:ease}::view-transition-new(root),::view-transition-old(root){animation-timing-function:linear}::view-transition-new(__bespoke_marp_transition_osc__),::view-transition-old(__bespoke_marp_transition_osc__){animation-duration:0s!important;animation-name:__bespoke_marp_transition_osc__!important}::view-transition-new(__bespoke_marp_transition_osc__){opacity:0!important}.bespoke-marp-transition-warming-up::view-transition-group(*),.bespoke-marp-transition-warming-up::view-transition-new(*),.bespoke-marp-transition-warming-up::view-transition-old(*){animation-play-state:paused!important}body,html{height:100%;margin:0}body{background:#000;overflow:hidden}svg.bespoke-marp-slide{content-visibility:hidden;interactivity:inert;opacity:0;pointer-events:none;z-index:-1}svg.bespoke-marp-slide:not(.bespoke-marp-active) *{view-transition-name:none!important}svg.bespoke-marp-slide.bespoke-marp-active{content-visibility:visible;interactivity:auto;opacity:1;pointer-events:auto;z-index:0}svg.bespoke-marp-slide.bespoke-marp-active.bespoke-marp-active-ready *{animation-name:__bespoke_marp__!important}@supports not (content-visibility:hidden){svg.bespoke-marp-slide[data-bespoke-marp-load=hideable]{display:none}svg.bespoke-marp-slide[data-bespoke-marp-load=hideable].bespoke-marp-active{display:block}}}@media screen and (prefers-reduced-motion:reduce){svg.bespoke-marp-slide *{view-transition-name:none!important}}@media screen{[data-bespoke-marp-fragment=inactive]{visibility:hidden}body[data-bespoke-view=""] .bespoke-marp-parent,body[data-bespoke-view=next] .bespoke-marp-parent{inset:0;position:absolute}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc{background:#000000a6;border-radius:7px;bottom:50px;color:#fff;contain:paint;display:block;font-family:Helvetica,Arial,sans-serif;font-size:16px;left:50%;line-height:0;opacity:1;padding:12px;position:absolute;touch-action:manipulation;transform:translateX(-50%);transition:opacity .2s linear;-webkit-user-select:none;user-select:none;view-transition-name:__bespoke_marp_transition_osc__;white-space:nowrap;will-change:transform;z-index:1}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>:where(*),body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>:where(*){margin-left:6px}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>:where(*):where(:first-child),body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>:where(*):where(:first-child){margin-left:0}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>span,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>span{opacity:.8}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>span[data-bespoke-marp-osc=page],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>span[data-bespoke-marp-osc=page]{display:inline-block;min-width:140px;text-align:center}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen],body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=overview],body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter],body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=overview],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev]{height:32px;line-height:32px;width:32px}body[data-bespoke-view=""] .bespoke-marp-parent.bespoke-marp-inactive,body[data-bespoke-view=next] .bespoke-marp-parent.bespoke-marp-inactive{cursor:none}body[data-bespoke-view=""] .bespoke-marp-parent.bespoke-marp-inactive>.bespoke-marp-osc,body[data-bespoke-view=next] .bespoke-marp-parent.bespoke-marp-inactive>.bespoke-marp-osc{opacity:0;pointer-events:none}body[data-bespoke-view=""] svg.bespoke-marp-slide,body[data-bespoke-view=next] svg.bespoke-marp-slide{height:100%;left:0;position:absolute;top:0;width:100%}body[data-bespoke-view=""] .bespoke-progress-parent{background:#222;display:flex;height:5px;width:100%}body[data-bespoke-view=""] .bespoke-progress-parent+:where(.bespoke-marp-parent){top:5px}body[data-bespoke-view=""] .bespoke-progress-parent .bespoke-progress-bar{background:#0288d1;flex:0 0 0;transition:flex-basis .2s cubic-bezier(0,1,1,1)}body[data-bespoke-view=next]{background:#0000}body[data-bespoke-view=presenter]{background:#161616}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container{display:grid;font-family:Helvetica,Arial,sans-serif;grid-template:"current dragbar next" minmax(140px,1fr) "current dragbar note" 2fr "info    dragbar note" 3em;grid-template-columns:minmax(3px,var(--bespoke-marp-presenter-split-ratio,66%)) 0 minmax(3px,1fr);height:100%;left:0;position:absolute;top:0;width:100%}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent){grid-area:current;overflow:hidden;position:relative}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent) :where(svg.bespoke-marp-slide){height:calc(100% - 40px);left:20px;pointer-events:none;position:absolute;top:20px;-webkit-user-select:none;user-select:none;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent) :where(svg.bespoke-marp-slide).bespoke-marp-active{filter:drop-shadow(0 3px 10px rgba(0,0,0,.5))}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container{background:#0288d1;cursor:col-resize;grid-area:dragbar;margin-left:-3px;opacity:0;position:relative;transition:opacity .4s linear .1s;width:6px;z-index:10}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container:hover{opacity:1}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container.active{opacity:1;transition-delay:0s}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container{background:#222;cursor:pointer;display:none;grid-area:next;overflow:hidden;position:relative}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container.active{display:block}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container iframe.bespoke-marp-presenter-next{background:#0000;border:0;display:block;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5));height:calc(100% - 40px);left:20px;pointer-events:none;position:absolute;interactivity:inert;top:20px;-webkit-user-select:none;user-select:none;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container{background:#222;color:#eee;grid-area:note;position:relative;z-index:1}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button{height:1.5em;line-height:1.5em;width:1.5em}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-wrapper{display:block;inset:0;position:absolute}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-buttons{background:#000000a6;border-radius:4px;bottom:0;display:flex;gap:4px;margin:12px;opacity:0;padding:6px;pointer-events:none;position:absolute;right:0;transition:opacity .2s linear}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-buttons:focus-within,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-wrapper:focus-within+.bespoke-marp-presenter-note-buttons,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container:hover .bespoke-marp-presenter-note-buttons{opacity:1;pointer-events:auto}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note{box-sizing:border-box;font-size:calc(1.1em*var(--bespoke-marp-note-font-scale, 1));height:calc(100% - 40px);margin:20px;overflow:auto;padding-right:3px;white-space:pre-wrap;width:calc(100% - 40px);word-wrap:break-word;scrollbar-color:#eeeeee80 #0000;scrollbar-width:thin}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar{width:6px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar-track{background:#0000}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar-thumb{background:#eeeeee80;border-radius:6px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note:empty{pointer-events:none}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note.active{display:block}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note p:first-child{margin-top:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note p:last-child{margin-bottom:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container{align-items:center;box-sizing:border-box;color:#eee;display:flex;flex-wrap:nowrap;grid-area:info;justify-content:center;overflow:hidden;padding:0 10px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-time,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer{box-sizing:border-box;display:block;padding:0 10px;white-space:nowrap;width:100%}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button{height:1.5em;line-height:1.5em;width:1.5em}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area{order:2;text-align:center}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page{display:inline-block;min-width:120px;text-align:center}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-time{color:#999;order:1;text-align:left}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer{color:#999;order:3;text-align:right}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer:hover{cursor:pointer}body[data-bespoke-view=overview]{background:#161616;overflow:auto}body[data-bespoke-view=overview] [data-bespoke-marp-fragment=inactive]{visibility:visible}body[data-bespoke-view=overview] .bespoke-marp-overview-header{backdrop-filter:blur(4px);background:#222222d9;box-shadow:0 3px 10px #00000080;box-sizing:border-box;display:flex;height:48px;inset:0 0 auto;justify-content:flex-end;padding:10px;position:fixed;z-index:1}body[data-bespoke-view=overview] button.bespoke-marp-overview-close{height:28px;line-height:28px;transform:rotate(45deg);width:28px}body[data-bespoke-view=overview] .bespoke-marp-parent{display:grid;gap:40px;grid-template-columns:repeat(auto-fit,minmax(0,240px));justify-content:space-around;padding:30px}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide{--bov-selected:#0000;--bov-focus:#161616;--bov-focus-outline:#0000;background-image:conic-gradient(#161616 0 0),conic-gradient(var(--bov-focus) 0 0),conic-gradient(var(--bov-focus-outline) 0 0),conic-gradient(var(--bov-selected) 0 0);background-position:5px 5px,3px 3px,2px 2px,0 0;background-repeat:no-repeat;background-size:calc(100% - 10px) calc(100% - 10px),calc(100% - 6px) calc(100% - 6px),calc(100% - 4px) calc(100% - 4px),100% 100%;content-visibility:visible;cursor:pointer;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5));margin:-6px;padding:6px;interactivity:auto;opacity:1;outline:0;pointer-events:auto;scroll-margin-block:30px;width:100%;z-index:0}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide *,body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide.bespoke-marp-active *{pointer-events:none;interactivity:inert}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:active,body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:focus-visible,body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:hover{--bov-focus-outline:#161616}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:focus-visible,body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:hover{--bov-focus:#999}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:active{--bov-focus:#eee}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide.bespoke-marp-active{--bov-selected:#0288d1}body[data-bespoke-view=overview]:has(.bespoke-marp-overview-header) .bespoke-marp-parent{padding-top:78px}body[data-bespoke-view=overview]:has(.bespoke-marp-overview-header) .bespoke-marp-parent svg.bespoke-marp-slide{scroll-margin-top:78px}.bespoke-marp-overview{background:#000000a6;inset:0;opacity:0;pointer-events:none;position:fixed;transition:opacity .1s ease;z-index:10}.bespoke-marp-overview iframe{background:#222;border:0;display:block;height:100%;left:0;position:absolute;top:0;width:100%}.bespoke-marp-overview[data-open="1"]{opacity:1;pointer-events:auto}}@media print{.bespoke-marp-overview,.bespoke-marp-presenter-info-container,.bespoke-marp-presenter-next-container,.bespoke-marp-presenter-note-container{display:none}}</style><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');div#\:\$p > svg > foreignObject > section{width:1280px;height:720px;box-sizing:border-box;overflow:hidden;position:relative;scroll-snap-align:center center;-webkit-text-size-adjust:100%;text-size-adjust:100%}div#\:\$p > svg > foreignObject > section::after{bottom:0;content:attr(data-marpit-pagination);padding:inherit;pointer-events:none;position:absolute;right:0}div#\:\$p > svg > foreignObject > section:not([data-marpit-pagination])::after{display:none}div#\:\$p > svg > foreignObject > section :is(h1, marp-h1){font-size:2em;margin-block:0.67em}div#\:\$p > svg > foreignObject > section video::-webkit-media-controls{will-change:transform}@page {size:1280px 720px;margin:0}@media print{html, body{background-color:#fff;margin:0;page-break-inside:avoid;break-inside:avoid-page}div#\:\$p > svg > foreignObject > section{page-break-before:always;break-before:page}div#\:\$p > svg > foreignObject > section, div#\:\$p > svg > foreignObject > section *{-webkit-print-color-adjust:exact!important;animation-delay:0s!important;animation-duration:0s!important;color-adjust:exact!important;print-color-adjust:exact!important;transition:none!important}div#\:\$p > svg[data-marpit-svg]{display:block;height:100vh;width:100vw}}div#\:\$p > svg > foreignObject > :where(section){container-type:size}div#\:\$p > svg > foreignObject > section img[data-marp-twemoji]{background:transparent;height:1em;margin:0 .05em 0 .1em;vertical-align:-.1em;width:1em}div#\:\$p > svg > foreignObject > :where(section):not([\20 root]){--ink:       #1E1B4B;--ink-2:     #3730A3;--body:      #374151;--muted:     #6B7280;--accent:    #6366F1;--accent-l:  #A5B4FC;--accent-bg: #EEF2FF;--line:      #E5E7EB;--surface:   #F9FAFB;--white:     #FFFFFF;}div#\:\$p > svg > foreignObject > section{font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:24px;line-height:1.55;color:var(--body);background:var(--white);padding:52px 60px 48px;justify-content:flex-start;position:relative}div#\:\$p > svg > foreignObject > section{--marpit-root-font-size: 24px}div#\:\$p > svg > foreignObject > section::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, var(--accent) 0%, #818CF8 60%, transparent 100%)}div#\:\$p > svg > foreignObject > section::after{color:var(--muted);font-family:'JetBrains Mono', monospace;font-size:13px}div#\:\$p > svg > foreignObject > section::after{--marpit-root-font-size: 13px}div#\:\$p > svg > foreignObject > section :is(h1, marp-h1){font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:1.7em;font-weight:700;color:var(--ink);margin:0 0 28px;line-height:1.2}div#\:\$p > svg > foreignObject > section :is(h2, marp-h2){font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:1.05em;font-weight:700;color:var(--ink);margin:0 0 20px;padding:0 0 12px 16px;border-left:4px solid var(--accent);border-bottom:1px solid var(--line)}div#\:\$p > svg > foreignObject > section :is(h3, marp-h3){font-size:0.78em;font-weight:600;color:var(--accent);margin:20px 0 6px;text-transform:uppercase;letter-spacing:0.06em}div#\:\$p > svg > foreignObject > section ul{list-style:none;padding:0;margin:0}div#\:\$p > svg > foreignObject > section ul > li{position:relative;padding:7px 0 7px 22px;font-size:0.71em;line-height:1.55;color:var(--body);border-bottom:1px solid var(--surface)}div#\:\$p > svg > foreignObject > section ul > li:last-child{border-bottom:none}div#\:\$p > svg > foreignObject > section ul > li::before{content:'';position:absolute;left:4px;top:16px;width:6px;height:6px;border-radius:50%;background:var(--accent)}div#\:\$p > svg > foreignObject > section ul ul{margin-top:2px}div#\:\$p > svg > foreignObject > section ul ul > li{font-size:0.92em;color:var(--muted);border-bottom:none;padding:2px 0 2px 20px}div#\:\$p > svg > foreignObject > section ul ul > li::before{width:4px;height:4px;top:11px;background:var(--accent-l)}div#\:\$p > svg > foreignObject > section strong{color:var(--ink);font-weight:700}div#\:\$p > svg > foreignObject > section em{color:var(--muted);font-style:italic}div#\:\$p > svg > foreignObject > section code{font-family:'JetBrains Mono', monospace;font-size:0.8em;background:var(--surface);color:var(--ink-2);padding:2px 7px;border-radius:5px;border:1px solid var(--line)}div#\:\$p > svg > foreignObject > section a{color:var(--accent);text-decoration:none}div#\:\$p > svg > foreignObject > section table{font-size:0.6em;border-collapse:collapse;margin:8px 0;width:100%}div#\:\$p > svg > foreignObject > section th{background:var(--ink);color:#F9FAFB;font-weight:600;text-align:left;padding:9px 14px;font-size:0.95em}div#\:\$p > svg > foreignObject > section td{border-bottom:1px solid var(--line);padding:8px 14px;color:var(--body)}div#\:\$p > svg > foreignObject > section tr:nth-child(even) td{background:var(--surface)}div#\:\$p > svg > foreignObject > section blockquote{border:none;font-size:0.55em;color:var(--muted);font-style:normal;margin:12px 0 0;padding:10px 14px;background:var(--surface);border-radius:6px;border-left:3px solid var(--accent-l)}div#\:\$p > svg > foreignObject > section blockquote::before{content:''}div#\:\$p > svg > foreignObject > section .badge{display:inline-block;font-size:0.4em;font-family:'JetBrains Mono', monospace;background:var(--accent-bg);color:var(--ink-2);padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:6px;font-weight:500}div#\:\$p > svg > foreignObject > section section.badge{--marpit-root-font-size: 0.4em}div#\:\$p > svg > foreignObject > section .badge-date{display:inline-block;font-size:0.38em;background:var(--surface);color:var(--muted);padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:5px;border:1px solid var(--line)}div#\:\$p > svg > foreignObject > section section.badge-date{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section .badge-new{display:inline-block;font-size:0.38em;font-family:'JetBrains Mono', monospace;background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:6px;font-weight:600}div#\:\$p > svg > foreignObject > section section.badge-new{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section .hl{padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-blue{background:#EEF2FF;color:var(--ink-2);padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-green{background:#ECFDF5;color:#065F46;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-red{background:#FEF2F2;color:#991B1B;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-amber{background:#FFFBEB;color:#92400E;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-teal{background:#F0FDFA;color:#0F766E;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-gray{background:var(--surface);color:#374151;padding:1px 7px;border-radius:4px}div#\:\$p > svg > foreignObject > section .links{margin-top:14px}div#\:\$p > svg > foreignObject > section .links .lbl{font-size:0.48em;color:var(--muted);margin-right:8px;font-weight:600}div#\:\$p > svg > foreignObject > section .links div#\:\$p > svg > foreignObject > section section.lbl{--marpit-root-font-size: 0.48em}div#\:\$p > svg > foreignObject > section a.lnk{display:inline-block;font-size:0.48em;font-family:'JetBrains Mono', monospace;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-l);padding:4px 12px;border-radius:20px;margin:3px 4px 3px 0;text-decoration:none}div#\:\$p > svg > foreignObject > section .stats{display:flex;gap:14px;justify-content:center;margin-top:20px}div#\:\$p > svg > foreignObject > section .stats .card{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 10px;text-align:center}div#\:\$p > svg > foreignObject > section .stats .card .num{font-size:1.8em;font-weight:700;color:var(--accent);line-height:1}div#\:\$p > svg > foreignObject > section .stats .card div#\:\$p > svg > foreignObject > section section.num{--marpit-root-font-size: 1.8em}div#\:\$p > svg > foreignObject > section .stats .card .lab{font-size:0.4em;color:var(--muted);margin-top:8px;line-height:1.4}div#\:\$p > svg > foreignObject > section .stats .card div#\:\$p > svg > foreignObject > section section.lab{--marpit-root-font-size: 0.4em}div#\:\$p > svg > foreignObject > section .cols{display:flex;gap:32px}div#\:\$p > svg > foreignObject > section .cols .col{flex:1}div#\:\$p > svg > foreignObject > section.cover{background:var(--ink);color:#F9FAFB;justify-content:center;text-align:left;padding:72px 72px}div#\:\$p > svg > foreignObject > section.cover::before{background:linear-gradient(90deg, var(--accent) 0%, #818CF8 100%);height:4px}div#\:\$p > svg > foreignObject > section.cover :is(h1, marp-h1){color:#F9FAFB;font-size:2.1em;font-weight:700;margin:0 0 12px;line-height:1.15}div#\:\$p > svg > foreignObject > section.cover :is(h2, marp-h2){border:none;color:var(--accent-l);font-size:0.68em;font-weight:400;margin:0 0 40px;padding:0;letter-spacing:0}div#\:\$p > svg > foreignObject > section.cover p{color:#6B7280;font-size:0.48em;margin-top:0}div#\:\$p > svg > foreignObject > section.cover hr{border:none;border-top:1px solid #374151;margin:28px 0;width:60px}div#\:\$p > svg > foreignObject > section.cover::after{color:#4B5563}div#\:\$p > svg > foreignObject > section.sec{background:var(--surface);justify-content:center;text-align:left;padding:72px}div#\:\$p > svg > foreignObject > section.sec::before{height:4px}div#\:\$p > svg > foreignObject > section.sec .sec-num{display:block;font-size:0.38em;font-family:'JetBrains Mono', monospace;color:var(--accent);font-weight:600;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:16px}div#\:\$p > svg > foreignObject > section.sec div#\:\$p > svg > foreignObject > section section.sec-num{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section.sec :is(h2, marp-h2){border:none;border-bottom:none;font-size:1.8em;color:var(--ink);padding:0;margin:0 0 10px}div#\:\$p > svg > foreignObject > section.sec p{font-size:0.58em;color:var(--muted);margin:0}div#\:\$p > svg > foreignObject > section.sec::after{color:var(--muted)}div#\:\$p > svg > foreignObject > section.agenda :is(h3, marp-h3){font-size:0.6em;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 6px}div#\:\$p > svg > foreignObject > section.agenda ul > li{font-size:0.62em;border-bottom:none;padding:4px 0 4px 18px}div#\:\$p > svg > foreignObject > section.closing{background:var(--ink);color:#F9FAFB;justify-content:center;text-align:center;padding:72px}div#\:\$p > svg > foreignObject > section.closing::before{background:linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);height:3px}div#\:\$p > svg > foreignObject > section.closing :is(h2, marp-h2){border:none;color:#F9FAFB;font-size:1.7em;padding:0;margin:0 0 16px}div#\:\$p > svg > foreignObject > section.closing p{font-size:0.5em;color:#6B7280}div#\:\$p > svg > foreignObject > section.closing::after{color:#4B5563}div#\:\$p > svg > foreignObject > section[data-marpit-scope-8XImqjyv]{font-size:20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-8XImqjyv]{--marpit-root-font-size: 20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-8XImqjyv] :is(pre, marp-pre){font-size:0.65em}div#\:\$p > svg > foreignObject > section[data-marpit-scope-8XImqjyv] blockquote{font-size:0.5em;margin-top:6px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-IqMPrcT8]{font-size:20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-IqMPrcT8]{--marpit-root-font-size: 20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-IqMPrcT8] :is(pre, marp-pre){font-size:0.65em}div#\:\$p > svg > foreignObject > section[data-marpit-scope-IqMPrcT8] blockquote{font-size:0.5em;margin-top:8px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-gFZ367Fu]{font-size:20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-gFZ367Fu]{--marpit-root-font-size: 20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-gFZ367Fu] :is(pre, marp-pre){font-size:0.65em}div#\:\$p > svg > foreignObject > section[data-marpit-scope-gFZ367Fu] blockquote{font-size:0.5em;margin-top:6px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-FTy2H0PE]{font-size:20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-FTy2H0PE]{--marpit-root-font-size: 20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-FTy2H0PE] :is(pre, marp-pre){font-size:0.65em}div#\:\$p > svg > foreignObject > section[data-marpit-scope-co5qB3zd]{font-size:19px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-co5qB3zd]{--marpit-root-font-size: 19px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-co5qB3zd] :is(pre, marp-pre){font-size:0.63em}div#\:\$p > svg > foreignObject > section[data-marpit-scope-wZ2KbdQD]{font-size:20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-wZ2KbdQD]{--marpit-root-font-size: 20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-wZ2KbdQD] :is(pre, marp-pre){font-size:0.65em}div#\:\$p > svg > foreignObject > section[data-marpit-scope-wZ2KbdQD] blockquote{font-size:0.5em;margin-top:8px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-wWTCcTVu] th:last-child{color:#FDE68A}div#\:\$p > svg > foreignObject > section[data-marpit-scope-wWTCcTVu] th:last-child strong{color:#FDE68A}div#\:\$p > svg > foreignObject > section[data-marpit-scope-lDsjFxwY]{font-size:20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-lDsjFxwY]{--marpit-root-font-size: 20px}div#\:\$p > svg > foreignObject > section[data-marpit-scope-lDsjFxwY] :is(pre, marp-pre){font-size:0.65em}div#\:\$p > svg > foreignObject > section[data-marpit-scope-lDsjFxwY] blockquote{font-size:0.5em;margin-top:8px}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]{columns:initial!important;display:block!important;padding:0!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]::before, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]::after, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"]::before, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"]::after{display:none!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container]{all:initial;display:flex;flex-direction:row;height:100%;overflow:hidden;width:100%}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container][data-marpit-advanced-background-direction="vertical"]{flex-direction:column}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"][data-marpit-advanced-background-split] > div[data-marpit-advanced-background-container]{width:var(--marpit-advanced-background-split, 50%)}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"][data-marpit-advanced-background-split="right"] > div[data-marpit-advanced-background-container]{margin-left:calc(100% - var(--marpit-advanced-background-split, 50%))}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container] > figure{all:initial;background-position:center;background-repeat:no-repeat;background-size:cover;flex:auto;margin:0}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container] > figure > figcaption{position:absolute;border:0;clip:rect(0, 0, 0, 0);height:1px;margin:-1px;overflow:hidden;padding:0;white-space:nowrap;width:1px}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"], div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="pseudo"]{background:transparent!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="pseudo"], div#\:\$p > svg[data-marpit-svg] > foreignObject[data-marpit-advanced-background="pseudo"]{pointer-events:none!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background-split]{width:100%;height:100%}
+</style></head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="overview" tabindex="-1" title="Toggle overview view (o)">Toggle overview view</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-class="cover" data-theme="clean" lang="ko-KR" class="cover" style="--class:cover;--theme:clean;">
+<h1 id="ai-%ED%99%9C%EC%9A%A9-%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD-%EC%85%8B%EC%97%85">AI 활용 개발 환경 셋업</h1>
+<h2 id="%EB%AC%B8%EA%B0%91%EA%B8%B0%EA%B0%80-%EC%93%B0%EA%B3%A0-%EC%9E%88%EB%8A%94-%ED%88%B4-%EC%8B%A4%EC%A0%84-%EA%B0%80%EC%9D%B4%EB%93%9C">문갑기가 쓰고 있는 툴 실전 가이드</h2>
+<hr />
+<p>2026-06-24</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="agenda" data-theme="clean" lang="ko-KR" class="agenda" data-marpit-pagination="2" style="--paginate:true;--class:agenda;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="%EC%98%A4%EB%8A%98-%EB%8B%A4%EB%A3%B0-%EB%8F%84%EA%B5%AC-7%EA%B0%80%EC%A7%80">오늘 다룰 도구 7가지</h2>
+<div class="cols">
+<div class="col">
+<h3 id="%F0%9F%93%8A-%EB%B0%9C%ED%91%9C-%EB%8F%84%EA%B5%AC"><img class="emoji" draggable="false" alt="📊" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f4ca.svg" data-marp-twemoji=""/> 발표 도구</h3>
+<ol>
+<li><strong>Marp CLI</strong> — MD로 슬라이드 만들기</li>
+</ol>
+<h3 id="%F0%9F%94%97-%EA%B5%AC%EA%B8%80-%EC%97%B0%EB%8F%99"><img class="emoji" draggable="false" alt="🔗" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f517.svg" data-marp-twemoji=""/> 구글 연동</h3>
+<ol start="2">
+<li><strong>gog CLI</strong> — Drive · Gmail · Calendar 터미널 연동</li>
+</ol>
+<h3 id="%F0%9F%94%92-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EB%B3%B4%EC%95%88"><img class="emoji" draggable="false" alt="🔒" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f512.svg" data-marp-twemoji=""/> 네트워크 보안</h3>
+<ol start="3">
+<li><strong>Tailscale</strong> — IP 공개 없이 안전한 원격 접속</li>
+<li><strong>OpenVPN</strong> — 기관 내부망 접속 (옵션)</li>
+</ol>
+</div>
+<div class="col">
+<h3 id="%F0%9F%A4%96-ai-%EA%B0%9C%EC%9D%B8-%EB%B9%84%EC%84%9C"><img class="emoji" draggable="false" alt="🤖" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f916.svg" data-marp-twemoji=""/> AI 개인 비서</h3>
+<ol start="5">
+<li><strong>Hermes Agent</strong> — 쓸수록 나를 아는 AI 파트너</li>
+</ol>
+<h3 id="%F0%9F%92%BB-%EC%9B%90%EA%B2%A9-%EC%9E%91%EC%97%85"><img class="emoji" draggable="false" alt="💻" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f4bb.svg" data-marp-twemoji=""/> 원격 작업</h3>
+<ol start="6">
+<li><strong>원격 컴퓨터 연동</strong> — SSH · 원격 데스크탑 · NoMachine</li>
+</ol>
+<h3 id="%F0%9F%8E%A8-ai-%EB%94%94%EC%9E%90%EC%9D%B8"><img class="emoji" draggable="false" alt="🎨" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f3a8.svg" data-marp-twemoji=""/> AI 디자인</h3>
+<ol start="7">
+<li><strong>OpenDesign</strong> — 디자인 · 랜딩페이지 · 이미지/영상 올인원</li>
+</ol>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="3" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+<h1 id="1-marp-cli">1. Marp CLI</h1>
+<h2 id="markdown-%E2%86%92-%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C-%EC%9E%90%EB%8F%99-%EC%83%9D%EC%84%B1">Markdown → 슬라이드 자동 생성</h2>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="4" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="marp-cli--%EC%99%9C-%ED%95%84%EC%9A%94%ED%95%9C%EA%B0%80">Marp CLI — 왜 필요한가?</h2>
+<blockquote>
+<p>&quot;PPT 디자인 조정하는 시간을 줄이고, 내용에만 집중하자&quot;</p>
+</blockquote>
+<p><strong>기존 방식</strong> : PowerPoint/Keynote 열고 → 글자 크기 맞추고 → 정렬하고 → 색 고르고…</p>
+<p><strong>Marp 방식</strong> : <code>.md</code> 파일에 내용만 쓰면 → 슬라이드 자동 생성</p>
+<div class="cols">
+<div class="col">
+<h3 id="%EC%96%B8%EC%A0%9C-%EC%93%B0%EB%82%98">언제 쓰나?</h3>
+<ul>
+<li>발표 자료를 <strong>빠르게</strong> 만들 때</li>
+<li><strong>git으로 버전 관리</strong>가 필요한 슬라이드</li>
+<li>AI(Claude, GPT)로 내용 생성 후 <strong>바로 슬라이드화</strong></li>
+<li>코드 블록이 많은 <strong>기술 발표</strong></li>
+</ul>
+</div>
+<div class="col">
+<h3 id="%EC%99%9C-%EC%A2%8B%EC%9D%80%EA%B0%80">왜 좋은가?</h3>
+<ul>
+<li>Markdown = 텍스트 → <strong>git commit 가능</strong></li>
+<li><strong>HTML · PDF · PPT(pptx)</strong> 출력 지원</li>
+<li>테마는 CSS로 한 번만 만들면 끝</li>
+<li>AI가 내용도 써주고, 슬라이드도 만들어줌</li>
+</ul>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-marpit-scope-8XImqjyv="" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="5" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="marp-cli--%EC%84%A4%EC%B9%98--%EC%82%AC%EC%9A%A9%EB%B2%95">Marp CLI — 설치 &amp; 사용법</h2>
+<div class="cols">
+<div class="col">
+<pre><code class="language-bash"><span class="hljs-comment"># 설치</span>
+npm install -g @marp-team/marp-cli
+
+<span class="hljs-comment"># MD → HTML 슬라이드 (가장 많이 씀)</span>
+marp slide.md -o slide.html
+
+<span class="hljs-comment"># MD → PPT</span>
+marp slide.md -o slide.pptx
+
+<span class="hljs-comment"># 실시간 미리보기 (저장하면 브라우저 자동 갱신)</span>
+marp --watch slide.md
+</code></pre>
+</div>
+<div class="col">
+<p><strong>MD 파일 맨 위 — Marp 모드 활성화 선언:</strong></p>
+<pre><code class="language-yaml"><span class="hljs-meta">---</span>
+<span class="hljs-attr">marp:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">theme:</span> <span class="hljs-string">default</span>   <span class="hljs-comment"># gaia / uncover / 커스텀 CSS 가능</span>
+<span class="hljs-attr">paginate:</span> <span class="hljs-literal">true</span>
+<span class="hljs-meta">---
+</span>
+<span class="hljs-comment"># 1번 슬라이드 내용</span>
+
+<span class="hljs-meta">---
+</span>
+<span class="hljs-comment"># 2번 슬라이드 — --- 로 페이지 구분</span>
+</code></pre>
+<blockquote>
+<p><strong>AI 활용 팁</strong> : &quot;이 내용으로 Marp 슬라이드 MD 작성해줘&quot; → Claude에 그대로 요청!</p>
+</blockquote>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="6" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+<h1 id="2-gog-cli">2. gog CLI</h1>
+<h2 id="%EA%B5%AC%EA%B8%80-%EC%84%9C%EB%B9%84%EC%8A%A4%EB%A5%BC-%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%90%EC%84%9C">구글 서비스를 터미널에서</h2>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-marpit-scope-IqMPrcT8="" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="7" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="gog-cli--%EC%99%9C-%ED%95%84%EC%9A%94%ED%95%9C%EA%B0%80">gog CLI — 왜 필요한가?</h2>
+<blockquote>
+<p>&quot;AI가 내 구글 캘린더에 일정을 직접 넣어줬으면…&quot;</p>
+</blockquote>
+<p><strong>gog</strong> = Google-on-CLI. 터미널에서 구글 서비스를 직접 호출하는 도구</p>
+<div class="cols">
+<div class="col">
+<h3 id="%EC%96%B8%EC%A0%9C-%EC%93%B0%EB%82%98-1">언제 쓰나?</h3>
+<ul>
+<li>AI(Claude, Codex)가 <strong>캘린더 일정 자동 생성/조회</strong></li>
+<li>스크립트로 <strong>Google Drive 파일 자동 업로드</strong></li>
+<li><strong>Gmail 발송 자동화</strong> (알림 메일, 리포트 등)</li>
+<li>Claude Code에서 <strong>구글 슬라이드 자동 생성</strong></li>
+</ul>
+</div>
+<div class="col">
+<h3 id="%EC%84%A4%EC%A0%95-%ED%9D%90%EB%A6%84-%EA%B0%9C%EB%85%90">설정 흐름 (개념)</h3>
+<pre><code>1. gog auth login
+   → 브라우저에서 구글 로그인
+   → OAuth2 토큰이 로컬에 저장됨
+
+2. 이후 터미널에서 바로 사용
+   gog calendar list
+   gog drive upload report.pdf
+   gog slides create &quot;발표제목&quot;
+</code></pre>
+</div>
+</div>
+<blockquote>
+<p><strong>설정 주의</strong> : 처음 인증 시 keyring 설정 필요. 서버(headless)는 <code>--manual</code> 플래그로 처리.<br />
+구글 OAuth 앱 등록이 필요해서 초기 설정이 좀 번거로움 — 한 번만 하면 끝!</p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="8" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+<h1 id="3-tailscale">3. Tailscale</h1>
+<h2 id="ip-%EA%B3%B5%EA%B0%9C-%EC%97%86%EC%9D%B4-%EC%96%B4%EB%94%94%EC%84%9C%EB%82%98-%EC%95%88%EC%A0%84%ED%95%98%EA%B2%8C-%EC%97%B0%EA%B2%B0">IP 공개 없이 어디서나 안전하게 연결</h2>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="9" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="tailscale--%EC%99%9C-%ED%95%84%EC%9A%94%ED%95%9C%EA%B0%80">Tailscale — 왜 필요한가?</h2>
+<blockquote>
+<p>&quot;집 컴퓨터를 카페에서 쓰고 싶은데, 포트를 열면 해킹 위험…&quot;</p>
+</blockquote>
+<p><strong>기존 방식</strong> : 공유기 포트 포워딩 → 내 IP/포트가 인터넷에 노출 → 보안 취약</p>
+<p><strong>Tailscale</strong> : WireGuard 기반 메시 VPN — <strong>아무것도 외부에 공개하지 않고 연결</strong></p>
+<div class="cols">
+<div class="col">
+<h3 id="%EC%9E%91%EB%8F%99-%EC%9B%90%EB%A6%AC">작동 원리</h3>
+<pre><code>[카페 노트북]          [집 데스크탑]
+ 100.64.0.1    ←→     100.64.0.2
+      ↑                    ↑
+      └── Tailscale 가상 IP ──┘
+          (외부 인터넷에 노출 없음)
+</code></pre>
+<ul>
+<li>각 기기에 <strong>가상 사설 IP</strong> (100.x.x.x) 부여</li>
+<li>이 IP로만 통신 → 방화벽/포트포워딩 불필요</li>
+</ul>
+</div>
+<div class="col">
+<h3 id="%EC%96%B8%EC%A0%9C-%EC%93%B0%EB%82%98-2">언제 쓰나?</h3>
+<ul>
+<li><strong>집 서버에 카페에서</strong> 안전하게 접속</li>
+<li>AI 코딩 중 <strong>다른 컴퓨터 자원 활용</strong></li>
+<li>팀원과 <strong>로컬 개발 서버 공유</strong> (포트 오픈 없이)</li>
+<li>Codex / opencode-go의 <strong>원격 머신 접근 허용</strong></li>
+</ul>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-marpit-scope-gFZ367Fu="" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="10" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="tailscale--%EC%84%A4%EC%B9%98--%EC%84%A4%EC%A0%95">Tailscale — 설치 &amp; 설정</h2>
+<div class="cols">
+<div class="col">
+<pre><code class="language-bash"><span class="hljs-comment"># 설치 (Ubuntu/Debian)</span>
+curl -fsSL https://tailscale.com/install.sh | sh
+
+<span class="hljs-comment"># 로그인 — 브라우저에서 구글/깃허브 계정으로 승인</span>
+<span class="hljs-built_in">sudo</span> tailscale up
+
+<span class="hljs-comment"># 내 Tailscale IP 확인</span>
+tailscale ip -4
+<span class="hljs-comment"># → 100.x.x.x (이 IP로 기기 간 통신)</span>
+
+<span class="hljs-comment"># 연결된 기기 목록 확인</span>
+tailscale status
+</code></pre>
+</div>
+<div class="col">
+<p><strong>접속 예시 :</strong></p>
+<pre><code class="language-bash"><span class="hljs-comment"># 집 컴퓨터에 SSH (Tailscale IP 사용)</span>
+ssh username@100.64.0.2
+
+<span class="hljs-comment"># SSH config 파일로 단축키 등록</span>
+<span class="hljs-comment"># ~/.ssh/config</span>
+Host home
+  HostName 100.64.0.2
+  User kabkee
+</code></pre>
+<blockquote>
+<p><strong>AI 연동 팁</strong> : Codex / opencode-go / z.ai 같은 오픈소스 모델도<br />
+Tailscale IP로 로컬 서버에 안전하게 연결 가능!</p>
+</blockquote>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="11" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+<h1 id="4-openvpn">4. OpenVPN</h1>
+<h2 id="%EA%B8%B0%EA%B4%80-%EB%82%B4%EB%B6%80%EB%A7%9D%EC%9D%84-%EC%99%B8%EB%B6%80%EC%97%90%EC%84%9C-%EC%98%B5%EC%85%98">기관 내부망을 외부에서 (옵션)</h2>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="12" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="openvpn--%EC%96%B8%EC%A0%9C-%ED%95%84%EC%9A%94%ED%95%9C%EA%B0%80">OpenVPN — 언제 필요한가?</h2>
+<blockquote>
+<p>Tailscale로 개인 기기 연결은 해결. 학교·회사 내부망은 OpenVPN.</p>
+</blockquote>
+<p><strong>Tailscale vs OpenVPN 비교</strong></p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th style="text-align:center">Tailscale</th>
+<th style="text-align:center">OpenVPN</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>설정 난이도</td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="⭐" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2b50.svg" data-marp-twemoji=""/> 쉬움</td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="⭐" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2b50.svg" data-marp-twemoji=""/><img class="emoji" draggable="false" alt="⭐" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2b50.svg" data-marp-twemoji=""/><img class="emoji" draggable="false" alt="⭐" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2b50.svg" data-marp-twemoji=""/> 어려움</td>
+</tr>
+<tr>
+<td>주요 용도</td>
+<td style="text-align:center">개인 기기 간 연결</td>
+<td style="text-align:center">기관 내부망 접속</td>
+</tr>
+<tr>
+<td>VPN 서버</td>
+<td style="text-align:center">불필요 (Tailscale이 중계)</td>
+<td style="text-align:center">필요 (학교/회사가 운영)</td>
+</tr>
+<tr>
+<td>속도</td>
+<td style="text-align:center">빠름 (P2P)</td>
+<td style="text-align:center">중간 (서버 경유)</td>
+</tr>
+<tr>
+<td>보안 설정</td>
+<td style="text-align:center">자동</td>
+<td style="text-align:center">수동 (인증서 등)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>언제 쓰나?</strong></p>
+<ul>
+<li>학교/회사 <strong>내부 시스템</strong> 외부에서 접속</li>
+<li>학교 도서관 <strong>전자 학술 자료</strong> 외부 이용</li>
+<li>인턴/취업 후 <strong>사내망 접속</strong> (IT팀이 설정 파일 제공)</li>
+</ul>
+<blockquote>
+<p><strong>결론</strong> : 개인 프로젝트 → <strong>Tailscale 우선</strong>, 기관망 접속 → <strong>OpenVPN</strong></p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="13" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+<h1 id="5-hermes-agent">5. Hermes Agent</h1>
+<h2 id="%EC%93%B8%EC%88%98%EB%A1%9D-%EB%82%98%EB%A5%BC-%EC%95%84%EB%8A%94-ai-%ED%8C%8C%ED%8A%B8%EB%84%88">쓸수록 나를 아는 AI 파트너</h2>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="14" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="hermes-agent--%EC%99%9C-%ED%8A%B9%EB%B3%84%ED%95%9C%EA%B0%80">Hermes Agent — 왜 특별한가?</h2>
+<blockquote>
+<p>&quot;ChatGPT는 매번 처음부터 설명해야 하는데… 나를 기억하는 AI가 있으면?&quot;</p>
+</blockquote>
+<p><strong>Hermes Agent</strong> = 자가 학습 + 영구 기억 + 개인화 AI 에이전트</p>
+<div class="cols">
+<div class="col">
+<h3 id="%EC%9D%BC%EB%B0%98-ai-vs-hermes">일반 AI vs Hermes</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center">일반 AI</th>
+<th style="text-align:center">Hermes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>기억</td>
+<td style="text-align:center">대화 종료 시 소멸</td>
+<td style="text-align:center"><strong>영구 누적</strong></td>
+</tr>
+<tr>
+<td>개인화</td>
+<td style="text-align:center">없음</td>
+<td style="text-align:center"><strong>쓸수록 강해짐</strong></td>
+</tr>
+<tr>
+<td>접근</td>
+<td style="text-align:center">브라우저</td>
+<td style="text-align:center">Telegram · Slack · Discord</td>
+</tr>
+<tr>
+<td>운영</td>
+<td style="text-align:center">클라우드 종속</td>
+<td style="text-align:center"><strong>내 서버 자율 운영</strong></td>
+</tr>
+<tr>
+<td>비용</td>
+<td style="text-align:center">구독료</td>
+<td style="text-align:center">오픈소스 (무료~저렴)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="col">
+<h3 id="%EC%96%B8%EC%A0%9C-%EC%93%B0%EB%82%98-3">언제 쓰나?</h3>
+<ul>
+<li><strong>나만의 AI 비서</strong> (일정 · 메모 · 알림 관리)</li>
+<li>공부 내용 누적 → <strong>나중에 질문하면 기억함</strong></li>
+<li>Telegram에서 <strong>언제 어디서나</strong> AI와 소통</li>
+<li>반복 작업 자동화 (알림, 요약, 분류 등)</li>
+<li>openclaw의 <strong>오픈소스 대체</strong> — 무료로 운영</li>
+</ul>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-marpit-scope-FTy2H0PE="" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="15" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="hermes-agent--%EC%9A%B4%EC%98%81-%EB%B0%A9%EC%8B%9D">Hermes Agent — 운영 방식</h2>
+<div class="cols">
+<div class="col">
+<p><strong>두 가지 운영 방식 중 선택</strong></p>
+<pre><code>A. 외부 서버 설치 (24시간 운영 추천)
+   ─────────────────────────────
+   [집 서버 or Oracle Free Tier (무료)]
+   → Tailscale로 보안 접근
+   → 24시간 켜 있어서 언제든 응답
+   → 새벽에 물어봐도 즉시 답변
+
+B. 개인 노트북 설치 (Hermes Desktop)
+   ─────────────────────────────
+   → 노트북 켤 때만 활성화
+   → 가볍게 시작하기 좋음
+</code></pre>
+</div>
+<div class="col">
+<p><strong>채널 연동 설정 (개념)</strong></p>
+<pre><code>Hermes → Telegram Bot 토큰 설정
+       → Slack Webhook URL 등록
+       → Discord Bot 연결
+
+사용 예:
+  텔레그램에서
+  &quot;오늘 내 일정 정리해줘&quot;
+  → Hermes가 내 데이터 기반
+    개인화 응답
+</code></pre>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="16" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+<h1 id="6-%EC%9B%90%EA%B2%A9-%EC%BB%B4%ED%93%A8%ED%84%B0-%EC%97%B0%EB%8F%99">6. 원격 컴퓨터 연동</h1>
+<h2 id="ssh--%EC%9B%90%EA%B2%A9-%EB%8D%B0%EC%8A%A4%ED%81%AC%ED%83%91--nomachine">SSH · 원격 데스크탑 · NoMachine</h2>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-marpit-scope-co5qB3zd="" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="17" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="%EC%9B%90%EA%B2%A9-%EC%A0%91%EC%86%8D-%EB%B0%A9%EB%B2%95-3%EA%B0%80%EC%A7%80">원격 접속 방법 3가지</h2>
+<div class="cols">
+<div class="col">
+<h3 id="ssh-%ED%84%B0%EB%AF%B8%EB%84%90-%EC%A0%91%EC%86%8D">SSH (터미널 접속)</h3>
+<pre><code class="language-bash"><span class="hljs-comment"># 기본 접속</span>
+ssh username@100.64.0.2
+
+<span class="hljs-comment"># 설정 파일로 단축키 등록</span>
+<span class="hljs-comment"># ~/.ssh/config</span>
+Host home
+  HostName 100.64.0.2
+  User kabkee
+  IdentityFile ~/.ssh/id_ed25519
+
+<span class="hljs-comment"># 이후 이렇게만 접속</span>
+ssh home
+</code></pre>
+<p><strong>언제</strong> : 코드 작업, 서버 관리, AI 도구 원격 실행</p>
+</div>
+<div class="col">
+<h3 id="%EC%9B%90%EA%B2%A9-%EB%8D%B0%EC%8A%A4%ED%81%AC%ED%83%91-windows-gui">원격 데스크탑 (Windows GUI)</h3>
+<pre><code>Windows 설정 → 원격 데스크탑 활성화
+클라이언트:
+  Windows: mstsc → Tailscale IP 입력
+  Mac: Microsoft Remote Desktop 앱
+</code></pre>
+<p><strong>언제</strong> : GUI 필요, Windows 전용 프로그램</p>
+<h3 id="nomachine-maclinux-gui">NoMachine (Mac/Linux GUI)</h3>
+<pre><code>download.nomachine.com 에서
+서버 + 클라이언트 모두 설치
+→ Tailscale IP로 접속
+</code></pre>
+<p><strong>언제</strong> : Linux/Mac 빠른 GUI 원격 (RDP보다 쾌적)</p>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-marpit-scope-wZ2KbdQD="" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="18" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="codex%EB%A1%9C-%EC%9B%90%EA%B2%A9-%EC%84%9C%EB%B2%84-ssh-%EC%A0%91%EC%86%8D">Codex로 원격 서버 SSH 접속</h2>
+<blockquote>
+<p>Codex CLI가 SSH 명령을 대신 실행 — 명령어 몰라도 자연어로 OK!</p>
+</blockquote>
+<div class="cols">
+<div class="col">
+<pre><code class="language-bash"><span class="hljs-comment"># Codex 설치</span>
+npm install -g @openai/codex
+
+<span class="hljs-comment"># 자연어로 SSH 작업 지시</span>
+codex <span class="hljs-string">&quot;100.64.0.2 서버에 접속해서
+홈 디렉토리 파일 목록 보여줘&quot;</span>
+
+<span class="hljs-comment"># 자동 승인 모드 (바로 실행)</span>
+codex --approval-mode full-auto \
+  <span class="hljs-string">&quot;ssh kabkee@100.64.0.2 \
+  &#x27;ls ~/projects &amp;&amp; df -h&#x27;&quot;</span>
+</code></pre>
+</div>
+<div class="col">
+<p><strong>실전 활용 시나리오:</strong></p>
+<pre><code>카페 노트북 → Codex CLI
+           → 집 서버 (Tailscale)
+
+&quot;빌드 실행해줘&quot;
+→ ssh 접속 후 자동 실행
+
+&quot;로그 마지막 100줄 보여줘&quot;
+→ 결과 요약까지 해줌
+
+&quot;오류 나는 파일 찾아서 수정&quot;
+→ 파일 수정까지 자동
+</code></pre>
+<blockquote>
+<p><strong>핵심</strong> : 명령어 안 외워도 됨<br />
+하고 싶은 걸 말하면 Codex가 SSH로 수행</p>
+</blockquote>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="19" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+<h1 id="7-opendesign">7. OpenDesign</h1>
+<h2 id="%EB%94%94%EC%9E%90%EC%9D%B8--%EC%9D%B4%EB%AF%B8%EC%A7%80--%EC%98%81%EC%83%81-ai-%EC%98%AC%EC%9D%B8%EC%9B%90">디자인 · 이미지 · 영상 AI 올인원</h2>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="20" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="opendesign--%EC%99%9C-%ED%95%84%EC%9A%94%ED%95%9C%EA%B0%80">OpenDesign — 왜 필요한가?</h2>
+<blockquote>
+<p>&quot;디자인 툴은 Figma, 이미지는 Midjourney, 영상은 또 다른 앱… 하나로 안 되나?&quot;</p>
+</blockquote>
+<p><strong>OpenDesign</strong> (<code>open-design.ai</code>) = Claude Design의 오픈 대안 — 디자인 전 과정을 하나의 도구에서</p>
+<div class="cols">
+<div class="col">
+<h3 id="%EB%AC%B4%EC%97%87%EC%9D%84-%ED%95%A0-%EC%88%98-%EC%9E%88%EB%82%98">무엇을 할 수 있나?</h3>
+<ul>
+<li><strong>랜딩페이지 자동 생성</strong> — 텍스트 설명만으로 완성</li>
+<li><strong>디자인 샘플</strong> 빠르게 시안 제작</li>
+<li><strong>이미지 생성</strong> — AI로 소재 즉시 생성</li>
+<li><strong>동영상 생성</strong> — 홍보영상, 인트로 등</li>
+<li><strong>한국어 지원</strong> (open-design.ai/ko/)</li>
+</ul>
+</div>
+<div class="col">
+<h3 id="%EC%96%B8%EC%A0%9C-%EC%93%B0%EB%82%98-4">언제 쓰나?</h3>
+<ul>
+<li><strong>졸업 작품 발표</strong> 랜딩페이지가 필요할 때</li>
+<li><strong>포트폴리오</strong> 비주얼 소재 빠르게 제작</li>
+<li><strong>앱/서비스 UI 시안</strong> 아이디어 단계 시각화</li>
+<li>디자이너 없이 <strong>1인 개발자</strong> 프로젝트 완성</li>
+<li>Claude Design 유료 구독 <strong>대신</strong> 무료/저렴하게</li>
+</ul>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-marpit-scope-wWTCcTVu="" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="21" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="opendesign-vs-%EA%B8%B0%EC%A1%B4-%EB%8F%84%EA%B5%AC-%EB%B9%84%EA%B5%90">OpenDesign vs 기존 도구 비교</h2>
+<table>
+<thead>
+<tr>
+<th>기능</th>
+<th style="text-align:center">Figma</th>
+<th style="text-align:center">Midjourney</th>
+<th style="text-align:center">CapCut</th>
+<th style="text-align:center"><strong>OpenDesign</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UI 디자인</td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+</tr>
+<tr>
+<td>이미지 생성</td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+</tr>
+<tr>
+<td>영상 생성</td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+</tr>
+<tr>
+<td>랜딩페이지</td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+<td style="text-align:center"><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+</tr>
+<tr>
+<td>학습 난이도</td>
+<td style="text-align:center">중간</td>
+<td style="text-align:center">쉬움</td>
+<td style="text-align:center">쉬움</td>
+<td style="text-align:center"><strong>쉬움</strong></td>
+</tr>
+<tr>
+<td>가격</td>
+<td style="text-align:center">유료</td>
+<td style="text-align:center">유료</td>
+<td style="text-align:center">무료~</td>
+<td style="text-align:center"><strong>무료~</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>실전 활용 시나리오:</strong></p>
+<pre><code>1. 아이디어 설명 입력
+   &quot;피트니스 앱 랜딩페이지, 밝고 에너지 넘치는 느낌&quot;
+
+2. OpenDesign이 자동으로
+   → 레이아웃 + 이미지 + 텍스트 시안 생성
+
+3. 필요한 부분만 수정 → 텍스트 변경, 색상 조정
+</code></pre>
+<blockquote>
+<p><strong>접속</strong> : <a href="https://open-design.ai/ko/">open-design.ai/ko</a> — 가입 후 바로 사용 가능</p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="22" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+<h1 id="%EB%B3%B4%EB%84%88%EC%8A%A4-claude-code-%ED%86%A0%ED%81%B0-%EC%A0%88%EC%95%BD">보너스: Claude Code 토큰 절약</h1>
+<h2 id="rtk--serena--claude-code-%EC%A0%84%EC%9A%A9-%EC%B5%9C%EC%A0%81%ED%99%94-2%EC%A2%85-%EC%84%B8%ED%8A%B8">RTK + Serena — Claude Code 전용 최적화 2종 세트</h2>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-marpit-scope-lDsjFxwY="" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="23" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="claude-%ED%86%A0%ED%81%B0-%EC%B5%9C%EC%A0%81%ED%99%94--rtk--serena">Claude 토큰 최적화 — RTK &amp; Serena</h2>
+<blockquote>
+<p>Claude Code를 쓴다면: 토큰 = 비용 + 속도. 두 도구로 60~90% 절약 가능.</p>
+</blockquote>
+<div class="cols">
+<div class="col">
+<h3 id="%F0%9F%A6%80-rtk-rust-token-killer"><img class="emoji" draggable="false" alt="🦀" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f980.svg" data-marp-twemoji=""/> RTK (Rust Token Killer)</h3>
+<p><strong>문제</strong> : <code>git status</code>, <code>cat</code> 출력이 그대로 컨텍스트에 들어가 토큰 낭비</p>
+<p><strong>해결</strong> : Claude Code Hook으로 명령 출력을 <strong>자동 필터링</strong></p>
+<pre><code class="language-bash"><span class="hljs-comment"># Hook 등록 한 번이면 자동 적용</span>
+<span class="hljs-comment"># git status → rtk git status (투명하게 작동)</span>
+
+rtk gain           <span class="hljs-comment"># 절약량 통계 확인</span>
+rtk gain --<span class="hljs-built_in">history</span> <span class="hljs-comment"># 명령별 이력 조회</span>
+rtk discover       <span class="hljs-comment"># 최적화 가능 명령 탐지</span>
+</code></pre>
+<ul>
+<li>별도 명령 없이 <strong>기존 명령 그대로</strong> 사용</li>
+<li>불필요한 출력 라인 제거 → 입력 토큰 대폭 감소</li>
+</ul>
+</div>
+<div class="col">
+<h3 id="%F0%9F%94%8D-serena-mcp-%EC%84%9C%EB%B2%84"><img class="emoji" draggable="false" alt="🔍" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f50d.svg" data-marp-twemoji=""/> Serena (MCP 서버)</h3>
+<p><strong>문제</strong> : 파일 전체를 Read해야 심볼/참조를 찾을 수 있어 토큰 낭비</p>
+<p><strong>해결</strong> : LSP(Language Server) 기반 <strong>정밀 코드 탐색</strong></p>
+<pre><code>파일 전체 읽기  →  find_symbol / find_declaration
+(수천 토큰)         (필요한 심볼만 수십 토큰)
+
+get_symbols_overview   # 파일 구조 개요만 조회
+find_referencing_symbols  # 참조 위치만 추출
+</code></pre>
+<ul>
+<li>코드베이스 이해 시 <strong>파일 통째 읽기</strong> 대신 필요 심볼만</li>
+<li>Claude Code 세션 시작 시 <code>initial_instructions</code> 한 번 호출</li>
+</ul>
+<blockquote>
+<p><strong>둘 다 Claude Code 전용</strong> — Codex CLI 사용자에겐 해당 없음</p>
+</blockquote>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="24" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+<h1 id="%EC%A0%95%EB%A6%AC">정리</h1>
+<h2 id="%EB%82%98%EB%A7%8C%EC%9D%98-ai-%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD-%EB%A1%9C%EB%93%9C%EB%A7%B5">나만의 AI 개발 환경 로드맵</h2>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="25" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+<h2 id="%EB%8B%A8%EA%B3%84%EB%B3%84-%EA%B5%AC%EC%B6%95-%EC%88%9C%EC%84%9C">단계별 구축 순서</h2>
+<div class="cols">
+<div class="col">
+<h3 id="phase-1--%EA%B8%B0%EC%B4%88-1%EC%A3%BC%EC%9D%BC">Phase 1 — 기초 (1주일)</h3>
+<ol>
+<li><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/> <strong>Marp CLI</strong> 설치<br />
+→ 발표 자료를 MD로 관리 시작</li>
+<li><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2705.svg" data-marp-twemoji=""/> <strong>Tailscale</strong> 설치<br />
+→ 노트북 + 집 컴퓨터 + 스마트폰 연결</li>
+</ol>
+<h3 id="phase-2--%EC%97%B0%EA%B2%B0-23%EC%A3%BC">Phase 2 — 연결 (2~3주)</h3>
+<ol start="3">
+<li><img class="emoji" draggable="false" alt="🔗" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f517.svg" data-marp-twemoji=""/> <strong>Codex SSH</strong> 설정<br />
+→ Codex CLI로 원격 서버에 자연어로 명령</li>
+<li><img class="emoji" draggable="false" alt="🔗" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f517.svg" data-marp-twemoji=""/> <strong>gog CLI</strong> 인증<br />
+→ 구글 서비스 터미널 연동</li>
+</ol>
+</div>
+<div class="col">
+<h3 id="phase-3--ai-%EC%8B%AC%ED%99%94-%ED%95%9C-%EB%8B%AC">Phase 3 — AI 심화 (한 달+)</h3>
+<ol start="5">
+<li><img class="emoji" draggable="false" alt="🤖" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f916.svg" data-marp-twemoji=""/> <strong>Hermes Agent</strong> 설치<br />
+→ Telegram 연동, 개인화 시작</li>
+<li><img class="emoji" draggable="false" alt="🤖" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f916.svg" data-marp-twemoji=""/> <strong>Claude Code / Codex</strong> 원격 서버 실행<br />
+→ 노트북 배터리 아끼며 AI 풀 활용</li>
+<li><img class="emoji" draggable="false" alt="🎨" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f3a8.svg" data-marp-twemoji=""/> <strong>OpenDesign</strong> 활용<br />
+→ 포트폴리오/발표용 비주얼 AI로 빠르게 제작</li>
+</ol>
+<h3 id="%ED%95%B5%EC%8B%AC-%EC%9B%90%EC%B9%99-3%EA%B0%80%EC%A7%80">핵심 원칙 3가지</h3>
+<ul>
+<li><strong>Tailscale 먼저</strong> — 보안 기반 없이 포트 열지 말 것</li>
+<li><strong>AI에게 도움 받기</strong> — 설정 막히면 그냥 물어봐</li>
+<li><strong>한 번에 다 하려 하지 말 것</strong> — Phase별로 천천히</li>
+</ul>
+</div>
+</div>
+<hr />
+<p><em>도구는 수단이다. 일단 하나씩 써보는 것이 가장 빠른 학습이다.</em></p>
+</section>
+<script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()})}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame(()=>{t.style.display=""}))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol(),l=()=>o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o);let c;const d="marpitSVGPolyfill:setZoomFactor,",h=Symbol(),g=Symbol();const p=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[v]:[],i={then:e=>(t?(async()=>{if(void 0===c){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise(t=>{i.addEventListener("load",()=>t())});i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),c=e.getImageData(5,5,1,1).data[3]<128}return c})().then(t=>{null==e||e(t?[v]:[])}):null==e||e([]),i)};return Object.assign(e,i)};let m,u;function v(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[g]||(Object.defineProperty(window,g,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(d)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(u=i)}}catch(t){console.error(t)}}));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||u||t.currentScale||1;m!==a&&(m=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}}),!1!==n&&Array.from(e.querySelectorAll("iframe"),({contentWindow:t})=>{null==t||t.postMessage(`${d}${n}`,"null"===window.origin?"*":window.origin)})}function w({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[h])return t[h];let e=!0;const i=()=>{e=!1,delete t[h]};Object.defineProperty(t,h,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await p()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}m=1,u=void 0;const b=Symbol(),y=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,o=t[n].proto();l()&&o!==HTMLElement?i||customElements.define(s,r(o,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach(t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)}))}window[a]=!0})(e),e[b])return e[b];const i=w({target:e}),n=()=>{i(),delete e[b]},o=Object.assign(n,{cleanup:n,update:()=>y(e)});return Object.defineProperty(e,b,{configurable:!0,value:o}),o},f=document.currentScript;y(f?f.getRootNode():document)}();
+</script></foreignObject></svg></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@4.4.0/lib/bespoke.js.LICENSE.txt */
+!function(){"use strict";function e(e){return e&&e.__esModule&&Object.prototype.hasOwnProperty.call(e,"default")?e.default:e}var t,n,r=(n||(n=1,t={from:function(e,t){var n,r=1===(e.parent||e).nodeType?e.parent||e:document.querySelector(e.parent||e),o=[].filter.call("string"==typeof e.slides?r.querySelectorAll(e.slides):e.slides||r.children,function(e){return"SCRIPT"!==e.nodeName}),i={},a=function(e,t){return(t=t||{}).index=o.indexOf(e),t.slide=e,t},s=function(e,t){i[e]=(i[e]||[]).filter(function(e){return e!==t})},l=function(e,t){return(i[e]||[]).reduce(function(e,n){return e&&!1!==n(t)},!0)},c=function(e,t){o[e]&&(n&&l("deactivate",a(n,t)),n=o[e],l("activate",a(n,t)))},d=function(e,t){var r=o.indexOf(n)+e;l(e>0?"next":"prev",a(n,t))&&c(r,t)},u={off:s,on:function(e,t){return(i[e]||(i[e]=[])).push(t),s.bind(null,e,t)},fire:l,slide:function(e,t){if(!arguments.length)return o.indexOf(n);l("slide",a(o[e],t))&&c(e,t)},next:d.bind(null,1),prev:d.bind(null,-1),parent:r,slides:o,destroy:function(e){l("destroy",a(n,e)),i={}}};return(t||[]).forEach(function(e){e(u)}),n||c(0),u}}),t),o=e(r);const i=document.body,a=(...e)=>history.replaceState(...e),s="",l="presenter",c="next",d="overview",u=["",l,d,c],f="bespoke-marp-",m=`data-${f}`,g=(e,{protocol:t,host:n,pathname:r,hash:o}=location)=>{const i=e.toString();return`${t}//${n}${r}${i?"?":""}${i}${o}`},p=()=>i.dataset.bespokeView,v=e=>new URLSearchParams(location.search).get(e),h=(e,t={})=>{const n={location,setter:a,...t},r=new URLSearchParams(n.location.search);for(const t of Object.keys(e)){const n=e[t];"string"==typeof n?r.set(t,n):r.delete(t)}try{n.setter({...window.history.state??{}},"",g(r,n.location))}catch(e){console.error(e)}},w=(()=>{const e="bespoke-marp";try{return localStorage.setItem(e,e),localStorage.removeItem(e),!0}catch{return!1}})(),y=e=>{try{return localStorage.getItem(e)}catch{return null}},b=(e,t)=>{try{return localStorage.setItem(e,t),!0}catch{return!1}},k=e=>{try{return localStorage.removeItem(e),!0}catch{return!1}},x=(e,t)=>{const n="aria-hidden";t?e.setAttribute(n,"true"):e.removeAttribute(n)},E=e=>{e.parent.classList.add(`${f}parent`),e.slides.forEach(e=>e.classList.add(`${f}slide`)),e.on("activate",t=>{const n=`${f}active`,r=t.slide,o=r.classList,i=!o.contains(n);if(e.slides.forEach(e=>{e.classList.remove(n),x(e,!0)}),o.add(n),x(r,!1),i){const e=`${n}-ready`;o.add(e),document.body.clientHeight,o.remove(e)}})},$=e=>{let t=0,n=0;Object.defineProperty(e,"fragments",{enumerable:!0,value:e.slides.map(e=>[null,...e.querySelectorAll("[data-marpit-fragment]")])});const r=r=>void 0!==e.fragments[t][n+r],o=(r,o)=>{t=r,n=o,e.fragments.forEach((e,t)=>{e.forEach((e,n)=>{if(null==e)return;const i=t<r||t===r&&n<=o;e.setAttribute(`${m}fragment`,(i?"":"in")+"active");const a=`${m}current-fragment`;t===r&&n===o?e.setAttribute(a,"current"):e.removeAttribute(a)})}),e.fragmentIndex=o;const i={slide:e.slides[r],index:r,fragments:e.fragments[r],fragmentIndex:o};e.fire("fragment",i)};e.on("next",({fragment:i=!0})=>{if(i){if(r(1))return o(t,n+1),!1;const i=t+1;e.fragments[i]&&o(i,0)}else{const r=e.fragments[t].length;if(n+1<r)return o(t,r-1),!1;const i=e.fragments[t+1];i&&o(t+1,i.length-1)}}),e.on("prev",({fragment:i=!0})=>{if(r(-1)&&i)return o(t,n-1),!1;const a=t-1;e.fragments[a]&&o(a,e.fragments[a].length-1)}),e.on("slide",({index:t,fragment:n})=>{let r=0;if(void 0!==n){const o=e.fragments[t];if(o){const{length:e}=o;r=-1===n?e-1:Math.min(Math.max(n,0),e-1)}}o(t,r)}),o(0,0)},L=document,S=()=>!(!L.fullscreenEnabled&&!L.webkitFullscreenEnabled),P=()=>!(!L.fullscreenElement&&!L.webkitFullscreenElement),_=e=>{e.fullscreen=()=>{S()&&(async()=>{P()?(L.exitFullscreen||L.webkitExitFullscreen)?.call(L):((e=L.body)=>{(e.requestFullscreen||e.webkitRequestFullscreen)?.call(e)})()})()},document.addEventListener("keydown",t=>{"f"!==t.key&&"F11"!==t.key||t.altKey||t.ctrlKey||t.metaKey||!S()||(e.fullscreen(),t.preventDefault())})},O=`${f}inactive`,T=(e=2e3)=>({parent:t,fire:n})=>{const r=t.classList,o=e=>n(`marp-${e?"":"in"}active`);let i;const a=()=>{i&&clearTimeout(i),i=setTimeout(()=>{r.add(O),o()},e),r.contains(O)&&(r.remove(O),o(!0))};for(const e of["mousedown","mousemove","touchend"])document.addEventListener(e,a);setTimeout(a,0)},I=["AUDIO","BUTTON","INPUT","SELECT","TEXTAREA","VIDEO"],M=e=>{e.parent.addEventListener("keydown",e=>{if(!e.target)return;const t=e.target;(I.includes(t.nodeName)||"true"===t.contentEditable)&&e.stopPropagation()})},A=e=>{window.addEventListener("load",()=>{for(const t of e.slides){const e=t.querySelector("marp-auto-scaling, [data-auto-scaling], [data-marp-fitting]");t.setAttribute(`${m}load`,e?"":"hideable")}})},C=({interval:e=250}={})=>t=>{document.addEventListener("keydown",e=>{if(" "===e.key&&e.shiftKey)t.prev();else if("ArrowLeft"===e.key||"ArrowUp"===e.key||"PageUp"===e.key)t.prev({fragment:!e.shiftKey});else if(" "!==e.key||e.shiftKey)if("ArrowRight"===e.key||"ArrowDown"===e.key||"PageDown"===e.key)t.next({fragment:!e.shiftKey});else if("End"===e.key)t.slide(t.slides.length-1,{fragment:-1});else{if("Home"!==e.key)return;t.slide(0)}else t.next();e.preventDefault()});let n,r,o=0;t.parent.addEventListener("wheel",i=>{let a=!1;const s=(e,t)=>{e&&(a=a||((e,t)=>((e,t)=>{const n="X"===t?"Width":"Height";return e[`client${n}`]<e[`scroll${n}`]})(e,t)&&((e,t)=>{const{overflow:n}=e,r=e[`overflow${t}`];return"auto"===n||"scroll"===n||"auto"===r||"scroll"===r})(getComputedStyle(e),t))(e,t)),e?.parentElement&&s(e.parentElement,t)};if(0!==i.deltaX&&s(i.target,"X"),0!==i.deltaY&&s(i.target,"Y"),a)return;i.preventDefault();const l=Math.sqrt(i.deltaX**2+i.deltaY**2);if(void 0!==i.wheelDelta){if(void 0===i.webkitForce&&Math.abs(i.wheelDelta)<40)return;if(i.deltaMode===i.DOM_DELTA_PIXEL&&l<4)return}else if(i.deltaMode===i.DOM_DELTA_PIXEL&&l<12)return;r&&clearTimeout(r),r=setTimeout(()=>{n=0},e);const c=Date.now()-o<e,d=l<=n;if(n=l,c||d)return;let u;(i.deltaX>0||i.deltaY>0)&&(u="next"),(i.deltaX<0||i.deltaY<0)&&(u="prev"),u&&(t[u](),o=Date.now())})},D=(e=`.${f}osc`)=>{const t=document.querySelector(e);if(!t)return()=>{};const n=(e,n)=>{t.querySelectorAll(`[${m}osc=${JSON.stringify(e)}]`).forEach(n)};if(S()||n("fullscreen",e=>e.style.display="none"),!w){const e=(e,t)=>{e.disabled=!0,e.title=`${t} is disabled due to restricted localStorage.`};n("presenter",t=>e(t,"Presenter view")),n("overview",t=>e(t,"Overview view"))}return e=>{t.addEventListener("click",t=>{if(t.target instanceof HTMLElement){const{bespokeMarpOsc:n}=t.target.dataset;n&&t.target.blur();const r={fragment:!t.shiftKey};"next"===n?e.next(r):"prev"===n?e.prev(r):"fullscreen"===n?e?.fullscreen():"presenter"===n?e.openPresenterView():"overview"===n&&e.toggleOverviewView()}}),e.parent.appendChild(t),e.on("activate",({index:t})=>{n("page",n=>n.textContent=`Page ${t+1} of ${e.slides.length}`)}),e.on("fragment",({index:t,fragments:r,fragmentIndex:o})=>{n("prev",e=>e.disabled=0===t&&0===o),n("next",n=>n.disabled=t===e.slides.length-1&&o===r.length-1)}),e.on("marp-active",()=>x(t,!1)),e.on("marp-inactive",()=>x(t,!0)),S()&&(e=>{for(const t of["","webkit"])L.addEventListener(t+"fullscreenchange",e)})(()=>n("fullscreen",e=>e.classList.toggle("exit",S()&&P())))}},N=e=>{if(e.syncKey&&"string"==typeof e.syncKey)return!0;throw new Error("The current instance of Bespoke.js is incompatible with Marp bespoke sync plugin.")},B=(e={})=>{const t=e.key||window.history.state?.marpBespokeSyncKey||Math.random().toString(36).slice(2),n=`bespoke-marp-sync-${t}`;var r;r={marpBespokeSyncKey:t},h({},{setter:(e,...t)=>a({...e,...r},...t)});const o=()=>{const e=y(n);return e?JSON.parse(e):Object.create(null)},i=e=>{const t=o(),r={...t,...e(t)};return b(n,JSON.stringify(r)),r},s=()=>{window.removeEventListener("pageshow",s),i(e=>({reference:(e.reference||0)+1}))};return e=>{s(),Object.defineProperty(e,"syncKey",{value:t,enumerable:!0});let r=!0;setTimeout(()=>{e.on("fragment",e=>{r&&i(()=>({index:e.index,fragmentIndex:e.fragmentIndex}))})},0),window.addEventListener("storage",t=>{if(t.key===n&&t.oldValue&&t.newValue){const n=JSON.parse(t.oldValue),o=JSON.parse(t.newValue);if(n.index!==o.index||n.fragmentIndex!==o.fragmentIndex)try{r=!1,e.slide(o.index,{fragment:o.fragmentIndex,forSync:!0})}finally{r=!0}}});const a=()=>{const{reference:e}=o();void 0===e||e<=1?k(n):i(()=>({reference:e-1}))};window.addEventListener("pagehide",e=>{e.persisted&&window.addEventListener("pageshow",s),a()}),e.on("destroy",a)}},K=e=>{w&&document.addEventListener("keydown",t=>{("o"!==t.key||t.altKey||t.ctrlKey||t.metaKey)&&"Escape"!==t.key||(t.preventDefault(),e())})};let q=null;const V=({closeOnSelect:e=!0}={})=>t=>{N(t);const n=n=>{const r=(()=>{if(!q||!q.isConnected){q=document.createElement("div"),q.className=`${f}overview`,q.inert=!0;const n=document.createElement("iframe");n.src=(()=>{const n=new URLSearchParams(location.search);return n.set("view","overview"),n.set("sync",t.syncKey),e&&n.set("closeOnSelect","1"),g(n)})(),q.append(n),document.body.append(q)}return q})(),o=n??!r.dataset.open;setTimeout(()=>{if(r.dataset.open=o?"1":"",r.inert=!o,t.skipTransition=o,o){const e=r.querySelector("iframe");try{e?.contentWindow?.focus()}catch{e?.focus()}}else window.focus()},0)};Object.defineProperties(t,{toggleOverviewView:{enumerable:!0,value:n}}),window.addEventListener("message",e=>{e.origin===window.origin&&"closeOverview"===e.data&&n(!1)}),K(n)},j=e=>{const{title:t}=document;document.title="[Overview]"+(t?` - ${t}`:"");const n=!!v("closeOnSelect"),r=()=>{window.parent.postMessage("closeOverview","null"===window.origin?"*":window.origin)};if(e.slides.forEach((t,o)=>{t.tabIndex=0;const i=()=>{e.slide(o,{fragment:-1}),n&&r()};t.addEventListener("click",i),t.addEventListener("keydown",e=>{"Enter"!==e.key&&" "!==e.key||(e.preventDefault(),i())})}),window.addEventListener("keydown",t=>{const n=e.slide(),r=t=>{const r=t=>{const n=e.slides[t].getBoundingClientRect();return[Math.round((n.left+n.right)/2),Math.round((n.top+n.bottom)/2)]};let o=null,i=n;do{const e=r(i);if(o){if(Math.abs(e[0]-o[0])<2)return i}else o=e;i+=t}while(i>=0&&i<e.slides.length);return n};if("ArrowLeft"===t.key)e.slide(Math.max(n-1,0),{fragment:-1});else if("ArrowRight"===t.key)e.slide(Math.min(n+1,e.slides.length-1),{fragment:-1});else if("ArrowUp"===t.key)e.slide(r(-1),{fragment:-1});else if("ArrowDown"===t.key)e.slide(r(1),{fragment:-1});else if("End"===t.key)e.slide(e.slides.length-1,{fragment:-1});else{if("Home"!==t.key)return;e.slide(0,{fragment:-1})}t.preventDefault();const o=e.slide();e.slides[o]?.focus?.(),e.slides[o]?.scrollIntoView?.({behavior:"smooth",block:"nearest"})}),e.on("slide",({index:t})=>{e.slides[t]?.scrollIntoView?.({behavior:"smooth",block:"nearest"})}),window.parent!==window){K(r);const e=document.createElement("header");e.className=`${f}overview-header`;const t=document.createElement("button");t.className=`${f}overview-close`,t.type="button",t.title="Close overview",t.textContent=t.title,t.addEventListener("click",r),e.append(t),document.body.prepend(e)}},F=()=>{const e=p();return{[s]:V(),[l]:V({closeOnSelect:!1}),[d]:j}[e]},U=e=>{window.addEventListener("message",t=>{if(t.origin!==window.origin)return;const[n,r]=t.data.split(":");if("navigate"===n){const[t,n]=r.split(",");let o=Number.parseInt(t,10),i=Number.parseInt(n,10)+1;i>=e.fragments[o].length&&(o+=1,i=0),e.slide(o,{fragment:i})}})};var R,X,H,W,J,Y,z,G={exports:{}},Q=(R||(R=1,G.exports=(X=["area","base","br","col","command","embed","hr","img","input","keygen","link","meta","param","source","track","wbr"],H=function(e){return String(e).replace(/[&<>"']/g,function(e){return"&"+W[e]+";"})},W={"&":"amp","<":"lt",">":"gt",'"':"quot","'":"apos"},J="dangerouslySetInnerHTML",Y={className:"class",htmlFor:"for"},z={},function(e,t){var n=[],r="";t=t||{};for(var o=arguments.length;o-- >2;)n.push(arguments[o]);if("function"==typeof e)return t.children=n.reverse(),e(t);if(e){if(r+="<"+e,t)for(var i in t)!1!==t[i]&&null!=t[i]&&i!==J&&(r+=" "+(Y[i]?Y[i]:H(i))+'="'+H(t[i])+'"');r+=">"}if(-1===X.indexOf(e)){if(t[J])r+=t[J].__html;else for(;n.length;){var a=n.pop();if(a)if(a.pop)for(var s=a.length;s--;)n.push(a[s]);else r+=!0===z[a]?a:H(a)}r+=e?"</"+e+">":""}return z[r]=!0,r})),G.exports),Z=e(Q);const ee=({children:e})=>Z(null,null,...e),te=`${f}presenter-`,ne={container:`${te}container`,dragbar:`${te}dragbar-container`,next:`${te}next`,nextContainer:`${te}next-container`,noteContainer:`${te}note-container`,noteWrapper:`${te}note-wrapper`,noteButtons:`${te}note-buttons`,infoContainer:`${te}info-container`,infoPageArea:`${te}info-page-area`,infoPage:`${te}info-page`,infoPagePrev:`${te}info-page-prev`,infoPageNext:`${te}info-page-next`,noteButtonsBigger:`${te}note-bigger`,noteButtonsSmaller:`${te}note-smaller`,infoTime:`${te}info-time`,infoTimer:`${te}info-timer`},re=e=>{const{title:t}=document;document.title="[Presenter view]"+(t?` - ${t}`:"");const n={},r=e=>(n[e]=n[e]||document.querySelector(`.${e}`),n[e]);document.body.appendChild((e=>{const t=document.createElement("div");return t.className=ne.container,t.appendChild(e),t.insertAdjacentHTML("beforeend",Z(ee,null,Z("div",{class:ne.nextContainer},Z("iframe",{class:ne.next,src:"?view=next"})),Z("div",{class:ne.dragbar}),Z("div",{class:ne.noteContainer},Z("div",{class:ne.noteWrapper}),Z("div",{class:ne.noteButtons},Z("button",{class:ne.noteButtonsSmaller,tabindex:"-1",title:"Smaller notes font size"},"Smaller notes font size"),Z("button",{class:ne.noteButtonsBigger,tabindex:"-1",title:"Bigger notes font size"},"Bigger notes font size"))),Z("div",{class:ne.infoContainer},Z("div",{class:ne.infoPageArea},Z("button",{class:ne.infoPagePrev,tabindex:"-1",title:"Previous"},"Previous"),Z("button",{class:ne.infoPage}),Z("button",{class:ne.infoPageNext,tabindex:"-1",title:"Next"},"Next")),Z("time",{class:ne.infoTime,title:"Current time"}),Z("time",{class:ne.infoTimer,title:"Timer"})))),t})(e.parent)),(e=>{let t=!1;r(ne.dragbar).addEventListener("mousedown",()=>{t=!0,r(ne.dragbar).classList.add("active")}),window.addEventListener("mouseup",()=>{t=!1,r(ne.dragbar).classList.remove("active")}),window.addEventListener("mousemove",e=>{if(!t)return;const n=e.clientX/document.documentElement.clientWidth*100;r(ne.container).style.setProperty("--bespoke-marp-presenter-split-ratio",`${Math.max(0,Math.min(100,n))}%`)}),r(ne.nextContainer).addEventListener("click",()=>e.next());const n=r(ne.next),o=(i=n,(e,t)=>i.contentWindow?.postMessage(`navigate:${e},${t}`,"null"===window.origin?"*":window.origin));var i;n.addEventListener("load",()=>{r(ne.nextContainer).classList.add("active"),o(e.slide(),e.fragmentIndex),e.on("fragment",({index:e,fragmentIndex:t})=>o(e,t))});const a=document.querySelectorAll(".bespoke-marp-note");a.forEach(e=>{e.addEventListener("keydown",e=>e.stopPropagation()),r(ne.noteWrapper).appendChild(e)}),e.on("activate",()=>a.forEach(t=>t.classList.toggle("active",t.dataset.index==e.slide())));let s=0;const l=e=>{s=Math.max(-5,s+e),r(ne.noteContainer).style.setProperty("--bespoke-marp-note-font-scale",(1.2**s).toFixed(4))},c=()=>l(1),d=()=>l(-1),u=r(ne.noteButtonsBigger),f=r(ne.noteButtonsSmaller);u.addEventListener("click",()=>{u.blur(),c()}),f.addEventListener("click",()=>{f.blur(),d()}),document.addEventListener("keydown",e=>{"+"===e.key&&c(),"-"===e.key&&d()},!0);const m=r(ne.infoPage);e.on("activate",({index:t})=>{m.textContent=`${t+1} / ${e.slides.length}`}),m.addEventListener("click",()=>{m.blur(),e.toggleOverviewView()});const g=r(ne.infoPagePrev),p=r(ne.infoPageNext);g.addEventListener("click",t=>{g.blur(),e.prev({fragment:!t.shiftKey})}),p.addEventListener("click",t=>{p.blur(),e.next({fragment:!t.shiftKey})}),e.on("fragment",({index:t,fragments:n,fragmentIndex:r})=>{g.disabled=0===t&&0===r,p.disabled=t===e.slides.length-1&&r===n.length-1});let v=new Date;const h=()=>{const e=new Date,t=e=>`${Math.floor(e)}`.padStart(2,"0"),n=e.getTime()-v.getTime(),o=t(n/1e3%60),i=t(n/1e3/60%60),a=t(n/36e5%24);r(ne.infoTime).textContent=e.toLocaleTimeString(),r(ne.infoTimer).textContent=`${a}:${i}:${o}`};h(),setInterval(h,250),r(ne.infoTimer).addEventListener("click",()=>{v=new Date})})(e)},oe=e=>{N(e),Object.defineProperties(e,{openPresenterView:{enumerable:!0,value:ie},presenterUrl:{enumerable:!0,get:ae}}),w&&document.addEventListener("keydown",t=>{"p"!==t.key||t.altKey||t.ctrlKey||t.metaKey||(t.preventDefault(),e.openPresenterView())})};function ie(){const{max:e,floor:t}=Math,n=e(t(.85*window.innerWidth),640),r=e(t(.85*window.innerHeight),360);return window.open(this.presenterUrl,te+this.syncKey,`width=${n},height=${r},menubar=no,toolbar=no`)}function ae(){const e=new URLSearchParams(location.search);return e.set("view","presenter"),e.set("sync",this.syncKey),g(e)}const se=e=>{const t=p();return t===c&&e.appendChild(document.createElement("span")),{[s]:oe,[l]:re,[c]:U}[t]},le=e=>{e.on("activate",t=>{document.querySelectorAll(".bespoke-progress-parent > .bespoke-progress-bar").forEach(n=>{n.style.flexBasis=100*t.index/(e.slides.length-1)+"%"})})},ce=e=>{const t=Number.parseInt(e,10);return Number.isNaN(t)?null:t},de=(e={})=>{const t={history:!0,...e};return e=>{let n=!0;const r=e=>{const t=n;try{return n=!0,e()}finally{n=t}},o=(t={fragment:!0})=>{let n=t.fragment?ce(v("f")||""):null;((t,n)=>{const{min:r,max:o}=Math,{fragments:i,slides:a}=e,s=o(0,r(t,a.length-1)),l=o(0,r(n||0,i[s].length-1));s===e.slide()&&l===e.fragmentIndex||e.slide(s,{fragment:l})})((()=>{if(location.hash){const[t]=location.hash.slice(1).split(":~:");if(/^\d+$/.test(t))return(ce(t)??1)-1;const r=document.getElementById(t)||document.querySelector(`a[name="${CSS.escape(t)}"]`);if(r){const{length:t}=e.slides;for(let o=0;o<t;o+=1)if(e.slides[o].contains(r)){const t=e.fragments?.[o],i=r.closest("[data-marpit-fragment]");if(t&&i){const e=t.indexOf(i);e>=0&&(n=e)}return o}}}return 0})(),n)};e.on("fragment",({index:e,fragmentIndex:r})=>{n||h({f:0===r||r.toString()},{location:{...location,hash:`#${e+1}`},setter:(...e)=>t.history?history.pushState(...e):history.replaceState(...e)})}),setTimeout(()=>{o(),window.addEventListener("hashchange",()=>r(()=>{o({fragment:!1}),h({f:void 0})})),window.addEventListener("popstate",()=>{n||r(()=>o())}),n=!1},0)}},{PI:ue,abs:fe,sqrt:me,atan2:ge}=Math,pe={passive:!0},ve=({slope:e=-.7,swipeThreshold:t=30}={})=>n=>{let r;const o=n.parent,i=e=>{const t=o.getBoundingClientRect();return{x:e.pageX-(t.left+t.right)/2,y:e.pageY-(t.top+t.bottom)/2}};o.addEventListener("touchstart",({touches:e})=>{r=1===e.length?i(e[0]):void 0},pe),o.addEventListener("touchmove",e=>{if(r)if(1===e.touches.length){e.preventDefault();const t=i(e.touches[0]),n=t.x-r.x,o=t.y-r.y;r.delta=me(fe(n)**2+fe(o)**2),r.radian=ge(n,o)}else r=void 0}),o.addEventListener("touchend",o=>{if(r){if(r.delta&&r.delta>=t&&r.radian){const t=(r.radian-e+ue)%(2*ue)-ue;n[t<0?"next":"prev"](),o.stopPropagation()}r=void 0}},pe)},he=new Map;he.clear(),he.set("none",{backward:{both:void 0,incoming:void 0,outgoing:void 0},forward:{both:void 0,incoming:void 0,outgoing:void 0}});const we={both:"",outgoing:"outgoing-",incoming:"incoming-"},ye={forward:"",backward:"-backward"},be=e=>`--marp-bespoke-transition-animation-${e}`,ke=e=>`--marp-transition-${e}`,xe=be("name"),Ee=be("duration"),$e=e=>new Promise(t=>{const n={},r=document.createElement("div"),o=e=>{r.remove(),t(e)};r.addEventListener("animationstart",()=>o(n)),Object.assign(r.style,{animationName:e,animationDuration:"1s",animationFillMode:"both",animationPlayState:"paused",position:"absolute",pointerEvents:"none"}),document.body.appendChild(r);const i=getComputedStyle(r).getPropertyValue(ke("duration"));i&&Number.parseFloat(i)>=0&&(n.defaultDuration=i),((e,t)=>{requestAnimationFrame(()=>{e.style.animationPlayState="running",requestAnimationFrame(()=>t(void 0))})})(r,o)}),Le=async e=>he.has(e)?he.get(e):(e=>{const t={},n=[];for(const[r,o]of Object.entries(we))for(const[i,a]of Object.entries(ye)){const s=`marp-${o}transition${a}-${e}`;n.push($e(s).then(e=>{t[i]=t[i]||{},t[i][r]=e?{...e,name:s}:void 0}))}return Promise.all(n).then(()=>t)})(e).then(t=>(he.set(e,t),t)),Se=e=>Object.values(e).flatMap(Object.values).every(e=>!e),Pe=(e,{type:t,backward:n})=>{const r=e[n?"backward":"forward"],o=(()=>{const e=r[t],n=e=>({[xe]:e.name});if(e)return n(e);if(r.both){const e=n(r.both);return"incoming"===t&&(e[be("direction")]="reverse"),e}})();return!o&&n?Pe(e,{type:t,backward:!1}):o||{[xe]:"__bespoke_marp_transition_no_animation__"}},_e=e=>{if(e)try{const t=JSON.parse(e);if((e=>{if("object"!=typeof e)return!1;const t=e;return"string"==typeof t.name&&(void 0===t.duration||"string"==typeof t.duration)})(t))return t}catch{}},Oe="_tSId",Te="_tA",Ie="bespoke-marp-transition-warming-up",Me=window.matchMedia("(prefers-reduced-motion: reduce)"),Ae="__bespoke_marp_transition_reduced_outgoing__",Ce="__bespoke_marp_transition_reduced_incoming__",De={forward:{both:void 0,incoming:{name:Ce},outgoing:{name:Ae}},backward:{both:void 0,incoming:{name:Ce},outgoing:{name:Ae}}},Ne=e=>{if(!document.startViewTransition)return;const t=t=>(void 0!==t&&(e._tD=t),e._tD);let n;t(!1),((...e)=>{CSS.registerProperty({name:ke("duration"),syntax:"<time>",inherits:!0,initialValue:"-1s"});const t=[...new Set(e).values()];return Promise.all(t.map(e=>Le(e))).then()})(...Array.from(document.querySelectorAll("section[data-transition], section[data-transition-back]")).flatMap(e=>[e.dataset.transition,e.dataset.transitionBack].flatMap(e=>{const t=_e(e);return[t?.name,t?.builtinFallback?`__builtin__${t.name}`:void 0]}).filter(e=>!!e))).then(()=>{document.querySelectorAll("style").forEach(e=>{e.innerHTML=e.innerHTML.replace(/--marp-transition-duration:[^;}]*[;}]/g,e=>e.slice(0,-1)+"!important"+e.slice(-1))})});const r=(n,{back:r,cond:o})=>i=>{const a=t();if(a)return!!i[Te]||!("object"!=typeof a||(a.skipTransition(),!i.forSync));if(e.skipTransition)return!0;if(!o(i))return!0;const s=e.slides[e.slide()],l=()=>i.back??r,c="data-transition"+(l()?"-back":""),d=s.querySelector(`section[${c}]`);if(!d)return!0;const u=_e(d.getAttribute(c)??void 0);return!u||((async(e,{builtinFallback:t=!0}={})=>{let n=await Le(e);if(Se(n)){if(!t)return;return n=await Le(`__builtin__${e}`),Se(n)?void 0:n}return n})(u.name,{builtinFallback:u.builtinFallback}).then(e=>{if(!e){t(!0);try{n(i)}finally{t(!1)}return}let r=e;Me.matches&&(console.warn("Use a constant animation to transition because preferring reduced motion by viewer has detected."),r=De);const o=document.getElementById(Oe);o&&o.remove();const a=document.createElement("style");a.id=Oe,document.head.appendChild(a),((e,t)=>{const n=[`:root{${ke("direction")}:${t.backward?-1:1};}`,":root:has(.bespoke-marp-inactive){cursor:none;}"],r=t=>{const n=e[t].both?.defaultDuration||e[t].outgoing?.defaultDuration||e[t].incoming?.defaultDuration;return"forward"===t?n:n||r("forward")},o=t.duration||r(t.backward?"backward":"forward");void 0!==o&&n.push(`::view-transition-group(*){${Ee}:${o};}`);const i=e=>Object.entries(e).map(([e,t])=>`${e}:${t};`).join("");return n.push(`::view-transition-old(root){${i(Pe(e,{...t,type:"outgoing"}))}}`,`::view-transition-new(root){${i(Pe(e,{...t,type:"incoming"}))}}`),n})(r,{backward:l(),duration:u.duration}).forEach(e=>a.sheet?.insertRule(e));const s=document.documentElement.classList;s.add(Ie);let c=!1;const d=()=>{c||(n(i),c=!0,s.remove(Ie))},f=()=>{t(!1),a.remove(),s.remove(Ie)};try{t(!0);const e=document.startViewTransition(d);t(e),e.finished.finally(f)}catch(e){console.error(e),d(),f()}}),!1)};e.on("prev",r(t=>e.prev({...t,[Te]:!0}),{back:!0,cond:e=>e.index>0&&!((e.fragment??1)&&n.fragmentIndex>0)})),e.on("next",r(t=>e.next({...t,[Te]:!0}),{cond:t=>t.index+1<e.slides.length&&!(n.fragmentIndex+1<n.fragments.length)})),setTimeout(()=>{e.on("slide",r(t=>e.slide(t.index,{...t,[Te]:!0}),{cond:t=>{const n=e.slide();return t.index!==n&&(t.back=t.index<n,!0)}}))},0),e.on("fragment",e=>{n=e})};let Be;const Ke=()=>(void 0===Be&&(Be="wakeLock"in navigator&&navigator.wakeLock),Be),qe=async()=>{const e=Ke();if(e)try{return await e.request("screen")}catch(e){console.warn(e)}return null},Ve=async()=>{if(!Ke())return;let e;const t=()=>{e&&"visible"===document.visibilityState&&qe()};for(const e of["visibilitychange","fullscreenchange"])document.addEventListener(e,t);return e=await qe(),e};((e=document.getElementById(":$p"))=>{(()=>{const e=v("view");i.dataset.bespokeView=u.some(t=>t&&t===e)?e:""})();const t=(e=>{const t=v(e);return h({[e]:void 0}),t})("sync")||void 0;o.from(e,((...e)=>{const t=u.findIndex(e=>p()===e);return e.map(([e,n])=>e[t]&&n).filter(e=>e)})([[1,1,1,0],B({key:t})],[[1,1,0,1],se(e)],[[1,1,0,0],M],[[1,1,1,1],E],[[1,0,0,0],T()],[[1,1,1,1],A],[[1,1,1,1],de({history:!1})],[[1,1,0,0],C()],[[1,1,1,0],_],[[1,0,0,0],le],[[1,1,0,0],ve()],[[1,0,0,0],D()],[[1,1,1,0],F()],[[1,0,0,0],Ne],[[1,1,1,1],$],[[1,1,1,0],Ve]))})()}();</script></body></html>
