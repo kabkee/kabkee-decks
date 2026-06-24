@@ -618,45 +618,51 @@ blockquote { font-size: 0.5em; margin-top: 8px; }
 <div class="cols">
 <div class="col">
 
-### 🦀 RTK (Rust Token Killer)
+### 🦀 RTK — github.com/rtk-ai/rtk
 
-**문제** : `git status`, `cat` 출력이 그대로 컨텍스트에 들어가 토큰 낭비
+**문제** : `git status`, `ls` 출력이 그대로 컨텍스트에 들어가 토큰 낭비
 
-**해결** : Claude Code Hook으로 명령 출력을 **자동 필터링**
+**해결** : Claude Code Hook이 명령 출력을 **자동 필터링**
 
 ```bash
-# Hook 등록 한 번이면 자동 적용
-# git status → rtk git status (투명하게 작동)
+# 1. 설치 (Rust 바이너리)
+curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/main/install.sh | sh
 
-rtk gain           # 절약량 통계 확인
-rtk gain --history # 명령별 이력 조회
-rtk discover       # 최적화 가능 명령 탐지
+# 2. Claude Code Hook 등록 (settings.json)
+# PreToolUse > Bash > command: "rtk hook claude"
+rtk init   # hook 설정 자동 안내
+
+# 이후 git, ls, cat 등 기존 명령 그대로 사용
+rtk gain   # 절약량 확인
 ```
-
-- 별도 명령 없이 **기존 명령 그대로** 사용
-- 불필요한 출력 라인 제거 → 입력 토큰 대폭 감소
 
 </div>
 <div class="col">
 
-### 🔍 Serena (MCP 서버)
+### 🔍 Serena — github.com/oraios/serena
 
-**문제** : 파일 전체를 Read해야 심볼/참조를 찾을 수 있어 토큰 낭비
+**문제** : 파일 전체를 읽어야 심볼/참조를 찾을 수 있어 토큰 낭비
 
-**해결** : LSP(Language Server) 기반 **정밀 코드 탐색**
+**해결** : LSP 기반 **정밀 코드 탐색** — 필요한 심볼만 추출
 
+```bash
+# Claude Code 플러그인 마켓플레이스에서 설치
+/plugin install serena
+
+# 또는 MCP 직접 설정 (settings.json)
+{
+  "mcpServers": {
+    "serena": {
+      "command": "uvx",
+      "args": ["--from",
+        "git+https://github.com/oraios/serena",
+        "serena", "start-mcp-server"]
+    }
+  }
+}
 ```
-파일 전체 읽기  →  find_symbol / find_declaration
-(수천 토큰)         (필요한 심볼만 수십 토큰)
 
-get_symbols_overview   # 파일 구조 개요만 조회
-find_referencing_symbols  # 참조 위치만 추출
-```
-
-- 코드베이스 이해 시 **파일 통째 읽기** 대신 필요 심볼만
-- Claude Code 세션 시작 시 `initial_instructions` 한 번 호출
-
-> **둘 다 Claude Code 전용** — Codex CLI 사용자에겐 해당 없음
+> **둘 다 Claude Code 전용** — 설치 후 Claude가 알아서 활용
 
 </div>
 </div>
