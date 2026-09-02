@@ -399,3 +399,22 @@ section.closing p {
 }
 
 section.closing::after { color: #4B5563; }
+
+/* ── 화면 스크린샷 (2026-09-02 도입) ────────────────────────── */
+section img:not(.emoji) {
+  display: block;
+  margin: 4px auto;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  box-shadow: 0 3px 14px rgba(15, 23, 42, 0.10);
+}
+section figure { margin: 0; }
+section figcaption {
+  font-size: 0.52em;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.shot-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.shot-row img:not(.emoji) { margin: 0; width: 100%; }

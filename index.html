@@ -8,12 +8,13 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Noto Sans KR', 'Inter', sans-serif; background: #0F172A; color: #E2E8F0; min-height: 100vh; }
     header { padding: 48px 64px 24px; border-bottom: 1px solid #1E293B; }
+    header .wrap { max-width: 1440px; margin: 0 auto; }
     header h1 { font-size: 2em; color: #F8FAFC; font-weight: 700; }
     header p  { color: #64748B; font-size: 0.85em; margin-top: 6px; }
-    main { padding: 48px 64px; max-width: 960px; }
+    main { padding: 48px 64px; max-width: 1440px; margin: 0 auto; }
     section { margin-bottom: 48px; }
     section h2 { font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.1em; color: #3B82F6; font-weight: 600; margin-bottom: 16px; }
-    .deck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .deck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
     .deck-card {
       background: #1E293B;
       border: 1px solid #334155;
@@ -22,103 +23,131 @@
       text-decoration: none;
       color: inherit;
       transition: border-color 0.2s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
     }
     .deck-card:hover { border-color: #3B82F6; transform: translateY(-2px); }
-    .deck-card .date { font-size: 0.65em; color: #64748B; margin-bottom: 8px; font-family: 'Inter', monospace; }
-    .deck-card .title { font-size: 0.9em; color: #F1F5F9; font-weight: 600; line-height: 1.4; }
-    .deck-card .meta { font-size: 0.6em; color: #475569; margin-top: 10px; }
-    .tag { display: inline-block; font-size: 0.8em; background: #1D4ED8; color: #BFDBFE; padding: 2px 8px; border-radius: 4px; margin-top: 8px; }
+    .deck-card .date { font-size: 0.65em; color: #64748B; margin-bottom: 8px; font-family: 'Inter', monospace;
+                       display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .deck-card .week {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.15em;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      color: #FBBF24;                        /* 카드 배경 대비 7.3:1 (WCAG AAA) */
+      background: rgba(251, 191, 36, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.5);  /* 배경 대비 3.25:1 */
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+    .deck-card .title { font-size: 0.9em; color: #F1F5F9; font-weight: 600; line-height: 1.4; margin-bottom: 10px; }
+    .deck-card .meta { font-size: 0.6em; color: #475569; margin-top: 10px; margin-bottom: 10px; }
+    .tag { display: inline-block; align-self: flex-start; margin-top: auto; font-size: 0.8em; background: #1D4ED8; color: #BFDBFE; padding: 2px 8px; border-radius: 4px; }
+    @media (max-width: 900px) {
+      header { padding: 36px 28px 20px; }
+      main { padding: 36px 28px; }
+      .deck-grid { gap: 14px; }
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>kabkee-decks</h1>
-    <p>슬라이드 저장소 — 주간회의 · 발표 · 기술 공유</p>
+    <div class="wrap">
+      <h1>kabkee-decks</h1>
+      <p>슬라이드 저장소 — 주간회의 · 발표 · 기술 공유</p>
+    </div>
   </header>
   <main>
     <section>
       <h2>📅 Weekly Reports</h2>
       <div class="deck-grid">
+        <a class="deck-card" href="weekly-reports/2026-09-02.html">
+          <div class="date">2026-09-02<span class="week">35주차</span></div>
+          <div class="title">주간 업무 보고<br>2026-08-26 ~ 09-01</div>
+          <div class="meta">홈 메인 슬라이드 360VIEW 전면 교체 · 관리자 검색 트렌드 통계 신설 · FAQ 카테고리 7종 개편 · 판매 상품 미리보기 상시 감시 · 지역 FK 결측 복구 · 사이트 언어 7종 확대 · 250건 완결</div>
+          <span class="tag">NEW · Look360 · 홈개편 · 관리자화면</span>
+        </a>
         <a class="deck-card" href="weekly-reports/2026-08-26.html">
-          <div class="date">2026-08-26</div>
+          <div class="date">2026-08-26<span class="week">34주차</span></div>
           <div class="title">주간 업무 보고<br>2026-08-19 ~ 08-25</div>
           <div class="meta">360VIEW 외국어판 94건 복원 · 언어그룹 114개 연결 · 자동번역 사용자 선택식 전환 · 뷰어 번역 범위 전면 확대 · 채널 페이지 1.55초→0.1초대 · 261건 완결</div>
-          <span class="tag">NEW · Look360 · 다국어 · 성능</span>
+          <span class="tag">Look360 · 다국어 · 성능</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-08-19.html">
-          <div class="date">2026-08-19</div>
+          <div class="date">2026-08-19<span class="week">33주차</span></div>
           <div class="title">주간 업무 보고<br>2026-08-12 ~ 08-18</div>
           <div class="meta">환불 정책 5단계 코드 강제 · 약관·코드 정합 · 결제 취소 취약점 차단 · 다국어 형제 콘텐츠 연결 신설 · 0건 필터 3축 · 234건 완결</div>
           <span class="tag">Look360 · 결제정책 · 다국어</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-08-12.html">
-          <div class="date">2026-08-12</div>
+          <div class="date">2026-08-12<span class="week">32주차</span></div>
           <div class="title">주간 업무 보고<br>2026-08-05 ~ 08-11</div>
           <div class="meta">자동 다국어 번역 구조 신설 · 유료 콘텐츠 무단 노출 7종 차단 · 예상 관람시간 전수 재계산 · 자동 검사 3,064건 · 309건 완결</div>
           <span class="tag">Look360 · 다국어 · 보안</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-08-05.html">
-          <div class="date">2026-08-05</div>
+          <div class="date">2026-08-05<span class="week">31주차</span></div>
           <div class="title">주간 업무 보고<br>2026-07-29 ~ 08-04</div>
           <div class="meta">실카드 결제 검증 완료 · 0원 획득 경로 차단 · vr-info/VR목록/360포스트 전면 개편 · 데이터 소실 9.4만 행 복구 · 405건 완결</div>
           <span class="tag">Look360 · 결제 · 화면개편</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-07-29.html">
-          <div class="date">2026-07-29</div>
+          <div class="date">2026-07-29<span class="week">30주차</span></div>
           <div class="title">주간 업무 보고<br>2026-07-22 ~ 07-28</div>
           <div class="meta">보안 P0 연쇄 당일 차단 · MD5 209건 퍼지 · 결제 실전환 준비 · 로그인 견고화 · 웹푸시 신설 · 판매자 Q&A 오픈</div>
           <span class="tag">Look360 · 보안 · 결제</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-07-22.html">
-          <div class="date">2026-07-22</div>
+          <div class="date">2026-07-22<span class="week">29주차</span></div>
           <div class="title">주간 업무 보고<br>2026-07-13 ~ 07-21</div>
           <div class="meta">보안 게이트 차단 · vr-info 대개편 · 카테고리 정착 5연작 · VRSTORY 답글 · 인앱 알림 · 391건 완결</div>
           <span class="tag">Look360 · 보안 · vr-info</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-07-13.html">
-          <div class="date">2026-07-13</div>
+          <div class="date">2026-07-13<span class="week">28주차</span></div>
           <div class="title">주간 업무 보고<br>2026-07-06 ~ 07-12</div>
           <div class="meta">VRSTORY 뷰어 완성 · 포인트 적립 게이트 · 검색 VR탭 · 판매 관리 정비</div>
           <span class="tag">Look360 · VRSTORY · 커머스</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-07-06.html">
-          <div class="date">2026-07-06</div>
+          <div class="date">2026-07-06<span class="week">27주차</span></div>
           <div class="title">주간 업무 보고<br>2026-06-29 ~ 07-05</div>
           <div class="meta">판매자 스튜디오 · 알림 센터 · 유료 판매/만료 게이팅 · VR 뷰어 개편</div>
           <span class="tag">Look360 · 판매 · 알림</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-06-29.html">
-          <div class="date">2026-06-29</div>
+          <div class="date">2026-06-29<span class="week">26주차</span></div>
           <div class="title">주간 업무 보고<br>2026-06-22 ~ 06-28</div>
           <div class="meta">CMS 크롤러 UI 고도화 · 검증 품질 개선 · 분산 워커 · 백필 의사결정</div>
           <span class="tag">CMS · Look360 · AI</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-06-23.html">
-          <div class="date">2026-06-23</div>
+          <div class="date">2026-06-23<span class="week">25주차</span></div>
           <div class="title">주간 업무 보고<br>2026-06-15 ~ 06-21</div>
           <div class="meta">레거시 이관 Epic · Codex CLI 도입 · UCC VR 복구 · 핫스팟 전수조사</div>
           <span class="tag">clean · 이관 · AI</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-06-15.html">
-          <div class="date">2026-06-15</div>
+          <div class="date">2026-06-15<span class="week">24주차</span></div>
           <div class="title">주간 업무 보고<br>2026-06-08 ~ 06-14</div>
           <div class="meta">360포스트·BBS 신규 · 통계 일원화 · paperclip 자율 QC</div>
           <span class="tag">marp · FE · BE</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-06-08.html">
-          <div class="date">2026-06-08</div>
+          <div class="date">2026-06-08<span class="week">23주차</span></div>
           <div class="title">주간 업무 보고<br>2026-06-01 ~ 06-07</div>
           <div class="meta">VR 수집 CMS 신규 · id→uid 리팩터링 · 보안 하드닝</div>
           <span class="tag">FE · BE · 보안</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-06-01.html">
-          <div class="date">2026-06-01</div>
+          <div class="date">2026-06-01<span class="week">22주차</span></div>
           <div class="title">주간 업무 보고<br>2026-05-25 ~ 05-31</div>
           <div class="meta">Look360 Platform · Engineering Manager</div>
           <span class="tag">FE · BE · DB</span>
         </a>
         <a class="deck-card" href="weekly-reports/2026-05-26.html">
-          <div class="date">2026-05-26</div>
+          <div class="date">2026-05-26<span class="week">21주차</span></div>
           <div class="title">주간 업무 보고<br>2026-05-19 ~ 05-24</div>
           <div class="meta">Look360 Platform · Engineering Manager</div>
           <span class="tag">FE · BE · DB</span>
