@@ -8,7 +8,7 @@
  *   node scripts/capture-weekly.mjs --only home  # 특정 화면만 (id 부분일치)
  *   node scripts/capture-weekly.mjs --list       # 대상 목록만 출력
  *
- * 출력: weekly-reports/assets/<날짜>/NN-<id>.png
+ * 출력: weekly-reports/assets/<날짜>/NN-<id>.jpg  (2배 해상도 JPEG — 슬라이드 축소 표시 기준 충분히 선명하고 PNG 대비 1/5 용량)
  *
  * 인증: 관리자(:5277)는 비밀번호 로그인 대신 nestjs .env 의 JWT_ACCESS_SECRET 으로
  *       자가서명한 accessToken 쿠키를 주입한다 (사용자 FE 와 동일한 인증 로직·계정).
@@ -54,9 +54,12 @@ const SHOTS = [
 const CROPS = {
   // 홈 히어로 영역만 (1440x900 뷰포트 기준)
   hero: { x: 38, y: 120, width: 1364, height: 417 },
+  // 관리자 사이드바(좌 256px)를 제외한 본문만
+  adminBody: { x: 256, y: 64, width: 1184, height: 836 },
 };
 
 const VIEWPORT = { width: 1440, height: 900 };
+const JPEG = { type: 'jpeg', quality: 88 };   // git 저장소에 매주 쌓이므로 용량을 억제한다
 
 // ── 인자 파싱 ────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -142,7 +145,7 @@ const browser = await chromium.launch({
   executablePath: '/usr/bin/google-chrome',
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
 });
-const ctx = await browser.newContext({ viewport: VIEWPORT, locale: 'ko-KR', deviceScaleFactor: 1 });
+const ctx = await browser.newContext({ viewport: VIEWPORT, locale: 'ko-KR', deviceScaleFactor: 2 });
 
 if (needAdmin) {
   const token = adminToken();
@@ -155,12 +158,12 @@ const pageErrors = [];
 page.on('console', (m) => { if (m.type() === 'error') pageErrors.push(m.text().slice(0, 160)); });
 
 const results = [];
-let seq = 0;
 
 for (const shot of targets) {
-  seq += 1;
+  // 🔴 번호는 SHOTS 전체에서의 위치로 고정한다 (--only 로 일부만 찍어도 파일명이 흔들리지 않도록)
+  const seq = SHOTS.indexOf(shot) + 1;
   const base = `${String(seq).padStart(2, '0')}-${shot.id}`;
-  const file = path.join(OUT_DIR, `${base}.png`);
+  const file = path.join(OUT_DIR, `${base}.jpg`);
   const origin = shot.site === 'admin' ? ADMIN : FE;
   const before = pageErrors.length;
   try {
@@ -172,13 +175,13 @@ for (const shot of targets) {
       await page.waitForTimeout(shot.type.after ?? 1500);
     }
 
-    await page.screenshot({ path: file });
-    const made = [`${base}.png`];
+    await page.screenshot({ path: file, ...JPEG });
+    const made = [`${base}.jpg`];
 
     if (shot.crop && CROPS[shot.crop]) {
-      const cropFile = path.join(OUT_DIR, `${base}-crop.png`);
-      await page.screenshot({ path: cropFile, clip: CROPS[shot.crop] });
-      made.push(`${base}-crop.png`);
+      const cropFile = path.join(OUT_DIR, `${base}-crop.jpg`);
+      await page.screenshot({ path: cropFile, clip: CROPS[shot.crop], ...JPEG });
+      made.push(`${base}-crop.jpg`);
     }
 
     const errs = pageErrors.length - before;
