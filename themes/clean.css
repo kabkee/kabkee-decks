@@ -418,3 +418,10 @@ section figcaption {
 }
 .shot-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
 .shot-row img:not(.emoji) { margin: 0; width: 100%; }
+
+/* PC + 모바일 나란히 (2026-09-02) */
+.shot-pair { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; justify-items: center; }
+.shot-pair figure { margin: 0; }
+.shot-pair img:not(.emoji) { margin: 0; }
+/* 캡션이 이미지보다 길어져 그리드 셀을 밀어내지 않도록, figure 폭을 인라인 style 로 못박는다 */
+.shot-pair figcaption { width: 100%; word-break: keep-all; }

@@ -35,6 +35,8 @@ const API = 'http://100.120.25.127:3001/v1.0';
 const SHOTS = [
   { id: 'home-hero',    site: 'fe',    url: '/',                        wait: 3500, crop: 'hero',
     desc: '홈 — 히어로 360VIEW 자동재생 · 우하단 정보 · 랜덤 슬라이드' },
+  { id: 'home-mobile',  site: 'fe',    url: '/',                        wait: 3500, device: 'mobile',
+    desc: '홈(모바일) — 히어로 높이 제약 · 스크롤 탈출 · 오버레이 배치' },
   { id: 'vrlist',       site: 'fe',    url: '/vr-list',                 wait: 2500,
     desc: 'VR 목록 — 필터·카드 규격·지역 칩' },
   { id: 'autocomplete', site: 'fe',    url: '/vr-list',                 wait: 2500, type: { sel: 'input[placeholder*="검색"]', text: '서울', after: 1800 },
@@ -59,6 +61,8 @@ const CROPS = {
 };
 
 const VIEWPORT = { width: 1440, height: 900 };
+// 모바일 캡처용 (iPhone 14 급) — 터치·모바일 플래그까지 켜야 반응형 분기가 실제와 같아진다
+const MOBILE = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const JPEG = { type: 'jpeg', quality: 88 };   // git 저장소에 매주 쌓이므로 용량을 억제한다
 
 // ── 인자 파싱 ────────────────────────────────────────────────
@@ -157,6 +161,15 @@ const page = await ctx.newPage();
 const pageErrors = [];
 page.on('console', (m) => { if (m.type() === 'error') pageErrors.push(m.text().slice(0, 160)); });
 
+// 모바일 대상이 있으면 전용 컨텍스트를 따로 연다 (viewport·isMobile 은 컨텍스트 단위 설정)
+let mobilePage = null;
+if (targets.some((s) => s.device === 'mobile')) {
+  const mctx = await browser.newContext({ ...MOBILE, locale: 'ko-KR' });
+  mobilePage = await mctx.newPage();
+  mobilePage.on('console', (m) => { if (m.type() === 'error') pageErrors.push(m.text().slice(0, 160)); });
+  console.log(`📱 모바일 컨텍스트 생성 (${MOBILE.viewport.width}x${MOBILE.viewport.height})`);
+}
+
 const results = [];
 
 for (const shot of targets) {
@@ -165,22 +178,23 @@ for (const shot of targets) {
   const base = `${String(seq).padStart(2, '0')}-${shot.id}`;
   const file = path.join(OUT_DIR, `${base}.jpg`);
   const origin = shot.site === 'admin' ? ADMIN : FE;
+  const pg = shot.device === 'mobile' ? mobilePage : page;
   const before = pageErrors.length;
   try {
-    await page.goto(origin + shot.url, { waitUntil: 'networkidle', timeout: 45000 });
-    await page.waitForTimeout(shot.wait ?? 2000);
+    await pg.goto(origin + shot.url, { waitUntil: 'networkidle', timeout: 45000 });
+    await pg.waitForTimeout(shot.wait ?? 2000);
 
     if (shot.type) {
-      await page.locator(shot.type.sel).first().pressSequentially(shot.type.text, { delay: 90 });
-      await page.waitForTimeout(shot.type.after ?? 1500);
+      await pg.locator(shot.type.sel).first().pressSequentially(shot.type.text, { delay: 90 });
+      await pg.waitForTimeout(shot.type.after ?? 1500);
     }
 
-    await page.screenshot({ path: file, ...JPEG });
+    await pg.screenshot({ path: file, ...JPEG });
     const made = [`${base}.jpg`];
 
     if (shot.crop && CROPS[shot.crop]) {
       const cropFile = path.join(OUT_DIR, `${base}-crop.jpg`);
-      await page.screenshot({ path: cropFile, clip: CROPS[shot.crop], ...JPEG });
+      await pg.screenshot({ path: cropFile, clip: CROPS[shot.crop], ...JPEG });
       made.push(`${base}-crop.jpg`);
     }
 
