@@ -49,8 +49,15 @@ const SHOTS = [
     desc: '관리자 — 메인 페이지 / 히어로 슬라이드 풀 구성' },
   { id: 'admin-sales',         site: 'admin', url: '/vr-sales-settings',   wait: 3000,
     desc: '관리자 — VR 판매 설정 (미리보기 위반 건수 상시 노출)' },
-  { id: 'admin-bbs',           site: 'admin', url: '/bbs/manage',          wait: 3000,
-    desc: '관리자 — 게시판/FAQ 카테고리 관리' },
+  { id: 'admin-faq-category',  site: 'admin', url: '/bbs/manage',          wait: 2500,
+    desc: '관리자 — FAQ 카테고리 관리(7종 CRUD · 사용 중 삭제 차단)',
+    actions: [
+      { do: 'fill',  sel: 'input[placeholder*="slug"], input[placeholder*="이름"]', text: 'faq' },
+      { do: 'press', key: 'Enter' },
+      { do: 'wait',  ms: 2000 },
+      { do: 'click', sel: 'button[title*="카테고리"]' },
+      { do: 'wait',  ms: 2500 },
+    ] },
 ];
 
 const CROPS = {
@@ -189,6 +196,14 @@ for (const shot of targets) {
       await pg.waitForTimeout(shot.type.after ?? 1500);
     }
 
+    // 다이얼로그 등 「눌러야 보이는 화면」을 위한 조작 시퀀스
+    for (const a of shot.actions ?? []) {
+      if (a.do === 'fill')  await pg.locator(a.sel).first().fill(a.text);
+      if (a.do === 'press') await pg.keyboard.press(a.key);
+      if (a.do === 'click') await pg.locator(a.sel).first().click({ force: true });
+      if (a.do === 'wait')  await pg.waitForTimeout(a.ms);
+    }
+
     await pg.screenshot({ path: file, ...JPEG });
     const made = [`${base}.jpg`];
 
@@ -216,9 +231,13 @@ const failed = results.filter((r) => !r.ok);
 console.log(`\n${'─'.repeat(62)}`);
 console.log(`결과  성공 ${ok.length}/${results.length}   저장 위치: ${path.relative(ROOT, OUT_DIR)}/`);
 if (ok.length) {
-  console.log('\n마크다운에 붙여넣기:');
-  for (const r of ok) for (const f of r.files) {
-    console.log(`  ![w:900](assets/${DATE}/${f})`);
+  console.log('\n마크다운에 붙여넣기 — 🔴 이미지 슬라이드에는 «반드시» links 블록을 함께 넣을 것:');
+  for (const r of ok) {
+    const shot = SHOTS.find((s) => s.id === r.id);
+    const origin = shot.site === 'admin' ? ADMIN : FE;
+    for (const f of r.files) console.log(`  ![w:900](assets/${DATE}/${f})`);
+    console.log(`  <div class="links"><span class="lbl">직접 확인</span>`);
+    console.log(`  <a class="lnk${shot.site === 'admin' ? ' admin' : ''}" href="${origin}${shot.url}" target="_blank">${origin}${shot.url}</a></div>`);
   }
 }
 if (failed.length) {
