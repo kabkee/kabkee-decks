@@ -34,35 +34,41 @@ const API = 'http://100.120.25.127:3001/v1.0';
 // crop: 'hero' 처럼 이름을 주면 아래 CROPS 의 좌표로 잘라 별도 파일도 함께 만든다.
 const SHOTS = [
   { id: 'home-hero',    site: 'fe',    url: '/',                        wait: 3500, crop: 'hero',
-    desc: '홈 — 히어로 360VIEW 자동재생 · 우하단 정보 · 랜덤 슬라이드' },
-  { id: 'home-mobile',  site: 'fe',    url: '/',                        wait: 3500, device: 'mobile',
-    desc: '홈(모바일) — 히어로 높이 제약 · 스크롤 탈출 · 오버레이 배치' },
-  { id: 'vrlist',       site: 'fe',    url: '/vr-list',                 wait: 2500,
-    desc: 'VR 목록 — 필터·카드 규격·지역 칩' },
-  { id: 'autocomplete', site: 'fe',    url: '/vr-list',                 wait: 2500, type: { sel: 'input[placeholder*="검색"]', text: '서울', after: 1800 },
-    desc: '검색 자동완성 — VR/파노라마/360포스트/채널 배지' },
-  { id: 'faq',          site: 'fe',    url: '/faq',                     wait: 2000,
-    desc: 'FAQ — 카테고리 필터 칩 + 제목 앞 칩' },
-  { id: 'admin-search-trends', site: 'admin', url: '/admin/search-trends', wait: 3000,
-    desc: '관리자 — 검색 트렌드 통계 (인기 검색어 · 0건 검색어)' },
-  { id: 'admin-main-hero',     site: 'admin', url: '/main-page?tab=hero',  wait: 3000,
-    desc: '관리자 — 메인 페이지 / 히어로 슬라이드 풀 구성' },
-  { id: 'admin-sales',         site: 'admin', url: '/vr-sales-settings',   wait: 3000,
-    desc: '관리자 — VR 판매 설정 (미리보기 위반 건수 상시 노출)' },
-  { id: 'admin-faq-category',  site: 'admin', url: '/bbs/manage',          wait: 2500,
-    desc: '관리자 — FAQ 카테고리 관리(7종 CRUD · 사용 중 삭제 차단)',
+    desc: '홈 — 히어로 우측 정보블록 재구성(지역|카테고리) · 좌우 여백 제거' },
+  { id: 'vr-detail',    site: 'fe',    url: '/vr-info/v47cpxre',        wait: 3000,
+    desc: 'VR 상세 — 파노라마 목록 썸네일 반응형 + 캡션 번역 배선' },
+  { id: 'vr-detail-en', site: 'fe',    url: '/vr-info/v47cpxre',        wait: 3500, lang: 'en',
+    ls: { vr_auto_translate: '1' },
+    desc: 'VR 상세(영어·자동번역 ON) — 파노라마 목록 캡션까지 번역 (IND-6955)',
     actions: [
-      { do: 'fill',  sel: 'input[placeholder*="slug"], input[placeholder*="이름"]', text: 'faq' },
-      { do: 'press', key: 'Enter' },
-      { do: 'wait',  ms: 2000 },
-      { do: 'click', sel: 'button[title*="카테고리"]' },
+      { do: 'click', sel: 'text=Panorama List' },
       { do: 'wait',  ms: 2500 },
     ] },
+  { id: 'vrlist',       site: 'fe',    url: '/vr-list',                 wait: 3000,
+    desc: 'VR 목록 — 0건 필터 숨김 · 가격 역순 자동 교정' },
+  { id: 'post360-mobile', site: 'fe',  url: '/vr/v47cpxre',             wait: 6000, device: 'mobile',
+    desc: '모바일 VR 뷰어 — 360포스트 FAB · 하프시트 뷰포트 추종' },
+  { id: 'admin-bbs-manage',   site: 'admin', url: '/bbs/manage',        wait: 3000,
+    desc: '관리자 — 게시판 관리 페이지네이션 복구(33건 전량 접근)' },
+  { id: 'admin-bbs-category', site: 'admin', url: '/bbs/manage',        wait: 3000,
+    desc: '관리자 — 게시판 카테고리 인라인 편집(A안) + 언어 도트 + 자동번역 초안',
+    actions: [
+      // FAQ 게시판(카테고리 8개)을 열어야 인라인 펼침이 의미를 갖는다 — 카테고리 0개인 게시판은 빈 모달이다
+      { do: 'click', sel: 'tr:has-text("FAQ") button[title="카테고리 관리"]' },
+      { do: 'wait',  ms: 2500 },
+      { do: 'click', sel: '.cat-row' },
+      { do: 'wait',  ms: 1800 },
+    ] },
+  { id: 'admin-place',        site: 'admin', url: '/place-management',  wait: 3500,
+    desc: '관리자 — 장소 관리 (장소 유형 필터 400 오류 해소 · 수정 저장 복구)' },
+  { id: 'admin-unlinked', site: 'admin', url: '/admin/regions/unlinked-places', wait: 3500,
+    desc: '관리자 — 지역 미연결 place 화면(신설) · 후보 제안·확정 (IND-6897 파이프라인 봉합)' },
 ];
 
 const CROPS = {
   // 홈 히어로 영역만 (1440x900 뷰포트 기준)
-  hero: { x: 38, y: 120, width: 1364, height: 417 },
+  // IND-6777 로 히어로 좌우 여백이 제거돼 전체 폭을 쓴다 — 크롭도 폭 전체로 맞춘다
+  hero: { x: 0, y: 119, width: 1440, height: 440 },
   // 관리자 사이드바(좌 256px)를 제외한 본문만
   adminBody: { x: 256, y: 64, width: 1184, height: 836 },
 };
@@ -188,6 +194,14 @@ for (const shot of targets) {
   const pg = shot.device === 'mobile' ? mobilePage : page;
   const before = pageErrors.length;
   try {
+    // 사이트 언어는 localStorage('preferred_lang'), 자동번역 토글은 'vr_auto_translate' 가
+    // 비로그인 상태의 정본이다 (useUserStore.js:23 · VrDetail.vue:1326-1339).
+    // 지면을 먼저 열어 origin 을 확보한 뒤 값을 넣고 다시 연다.
+    const ls = { ...(shot.lang ? { preferred_lang: shot.lang } : {}), ...(shot.ls ?? {}) };
+    if (Object.keys(ls).length) {
+      await pg.goto(origin + '/', { waitUntil: 'domcontentloaded', timeout: 45000 });
+      await pg.evaluate((kv) => { for (const [k, v] of Object.entries(kv)) localStorage.setItem(k, v); }, ls);
+    }
     await pg.goto(origin + shot.url, { waitUntil: 'networkidle', timeout: 45000 });
     await pg.waitForTimeout(shot.wait ?? 2000);
 
@@ -212,6 +226,10 @@ for (const shot of targets) {
       await pg.screenshot({ path: cropFile, clip: CROPS[shot.crop], ...JPEG });
       made.push(`${base}-crop.jpg`);
     }
+
+    // 다음 캡처가 오염되지 않도록 되돌린다
+    if (shot.lang) await pg.evaluate(() => localStorage.setItem('preferred_lang', 'ko'));
+    if (shot.ls) await pg.evaluate((keys) => keys.forEach((k) => localStorage.removeItem(k)), Object.keys(shot.ls));
 
     const errs = pageErrors.length - before;
     const kb = Math.round(fs.statSync(file).size / 1024);
