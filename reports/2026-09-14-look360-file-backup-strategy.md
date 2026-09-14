@@ -39,15 +39,16 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14
 </div>
 <div class="col">
 
-### ✅ 백업 결정
+### ✅ 백업 결정 (확정)
 
 - AWS Backup(월 <span class="hl-red">11.5~16.4만원</span>) 대신 <span class="hl-green">로컬 백업 + 버저닝 30일</span>
-- 갱신은 <span class="hl-green">바뀐 장소만 다시 받는 증분 방식</span>, 예상 월 <span class="hl-blue">1,500~4,500원</span>
+- <span class="hl-green">매일 04:00</span> dsgn에서 <span class="hl-green">바뀐 장소만 다시 받는 증분 갱신</span>, 예상 월 <span class="hl-blue">1,500~4,500원</span>
+- 보관은 <span class="hl-green">기간 기준</span>: 30일 전부 + 월간 12개월 + 기준본
 
-### 🎯 오너 결정 대기
+### 🎯 현재 단계
 
-- 무인 실행용 인증 방식 · 갱신 주기 · 알림 방식
-- 구현 착수 지시 (구현은 약 1~2일 규모)
+- <span class="hl-green">준비 완료</span>: 읽기 전용 인증 · 목록 저장용 버킷
+- <span class="hl-amber">구현 착수 대기</span>: 목록 생성 설정 · 갱신 스크립트 · 스케줄 · 알림
 
 </div>
 </div>
@@ -246,18 +247,54 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🔄 구현 방식 — 장소 단위 증분 갱신
+## 🔄 구현 방식 — 매일 04:00 장소 단위 증분 갱신 <span class="badge-new">확정</span>
 
 | 순서 | 동작 | 이유 |
 |---|---|---|
-| ① | S3 Inventory가 매일 전체 파일 목록(키·크기·ETag·수정시각) 생성 | 1,657만 개를 직접 조회하지 않음 · 1회 약 $0.04 |
-| ② | 새 목록과 지난 목록을 <span class="hl-blue">장소 폴더별로 비교</span> | 추가·내용 변경·삭제가 있는 장소만 골라냄 |
-| ③ | 바뀐 장소는 <span class="hl-green">현재 상태 전체를 새 tar로</span> 받기 | 복원 시 최신 tar 하나만 풀면 끝 |
-| ④ | 권한만 바뀐 파일(ETag 동일)은 기록만 | 9/3 같은 대량 권한 변경에도 재다운로드 없음 |
+| ① | S3 Inventory가 매일 파일 목록(키·크기·ETag·수정시각) 생성 | 1,657만 개를 직접 조회하지 않음 · 1회 약 $0.04 |
+| ② | 어제 목록과 <span class="hl-blue">장소 폴더별로 비교</span> — ETag가 달라도 크기가 같으면 <span class="hl-blue">체크섬(CRC64) 재확인</span> | 내용이 같은 재기록(9/5, 9.65GB)은 기록만 하고 받지 않음 |
+| ③ | 한 번에 <span class="hl-amber">샤드 200곳 또는 50GB 이상</span>이면 멈추고 Slack 확인 요청 | 대량 작업이 모르는 사이 대량 다운로드로 번지는 것 차단 |
+| ④ | 바뀐 장소는 <span class="hl-green">현재 상태 전체를 새 tar로</span> dsgn이 원본에서 직접 받기 | 복원 시 최신 tar 하나만 풀면 끝 · S3에 사본을 두지 않음 |
 | ⑤ | tar sha256 + 파일별 md5 검증 | 기존 검증 스크립트 재사용 |
-| ⑥ | 장소별 tar <span class="hl-green">최근 3세대 보관</span> | 잘못된 업데이트가 반영돼도 되돌릴 수 있음 |
+| ⑥ | <span class="hl-green">기간 기준 보관</span> 적용 (다음 장) | 자주 바뀌는 장소의 수정 전 원본 보존 |
 
 > 장소 하나를 통째로 다시 받아도 비용은 작습니다: 중간값 49MB는 1원 미만, 재생성된 `pano/1/1773/`(0.5GB)은 약 80원, 가장 큰 `pano/0/100/`(8GB)도 약 1,500원입니다(추정).
+
+---
+
+## 📅 주기와 보관 규칙 — 실측 변경 빈도로 정했습니다
+
+<div class="cols">
+<div class="col">
+
+### 실제 변경 빈도 (목록표 실측)
+
+| 날짜 | 바뀐 파일 | 성격 |
+|---|---|---|
+| 9/5 | 40,169개 · 545샤드 | <span class="hl-gray">ETag 형식만 바뀐 재기록</span> |
+| 9/7 | 17,379개 · 2샤드 | <span class="hl-red">1773 타일 재생성</span> |
+| 9/8~9/13 | 하루 4~11개 | <span class="hl-green">평소 수준</span> |
+
+- 평소엔 <span class="hl-green">매일 돌려도 받을 게 거의 없음</span> → <span class="hl-green">매일 04:00</span>
+- 새 장소는 짧게 여러 번 바뀜 — `1773`은 <span class="hl-amber">열흘 중 4일</span>
+
+</div>
+<div class="col">
+
+### 보관 규칙 — 개수가 아니라 기간
+
+| 대상 | 보관 |
+|---|---|
+| 기준본 (9/13 전체) | 1년 뒤 새 기준본까지 |
+| 최근 30일 세대 | <span class="hl-green">전부</span> |
+| 30일 지난 세대 | 장소별 <span class="hl-green">월 1개 · 12개월</span> |
+| 12개월 지난 월간 세대 | 삭제 |
+
+- «최근 3세대»는 `1773` 같은 장소에서 <span class="hl-red">일주일 안에 원본이 밀려남</span>
+- 30일은 <span class="hl-blue">S3 버저닝 30일</span>과 복원 가능 기간을 맞춤
+
+</div>
+</div>
 
 ---
 
@@ -269,7 +306,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 | 파노라마 재생성·신규 업로드 | 사실상 장소 전체 | 장소 전체 |
 | 복원 절차 | 기준 tar + 증분 tar를 날짜순으로 전부 풀고 삭제 기록 반영 | <span class="hl-green">최신 tar 하나</span> |
 | 복원 실수 가능성 | <span class="hl-red">높음</span> (순서·누락) | <span class="hl-green">낮음</span> |
-| 로컬 용량 | 가장 적음 | 보관 세대 수만큼 증가 |
+| 로컬 용량 | 가장 적음 | 바뀐 장소 × 보관 기간만큼 증가 (1년 수십 GB 추정) |
 | 기존 백업과의 연속성 | 새 구조 필요 | <span class="hl-green">장소별 tar 구조 그대로</span> |
 
 > 사고가 났을 때 필요한 것은 <span class="hl-amber">빠르고 틀리지 않는 복원</span>입니다. 약간의 추가 다운로드를 감수하고 복원 단순성을 택했습니다.
@@ -283,16 +320,17 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ### AWS 설정
 
-- 목록 저장용 버킷 1개 신규 (90일 자동 삭제)
-- `look360-v1-files` 에 Inventory 설정 추가 (매일 · 현재 버전 · 크기/수정시각/ETag)
+- <span class="hl-green">✓ 준비 완료</span> 목록 저장용 버킷 — **파일 목록만** 저장 · 7일 자동 삭제
+- <span class="hl-green">✓ 준비 완료</span> 무인 실행용 읽기 전용 인증
+- `look360-v1-files` 에 Inventory 설정 (매일 · 현재 버전 · 크기/수정시각/ETag)
 - 버킷 전체 <span class="hl-green">구버전 30일 보관 규칙</span> (임시 1일 규칙 교체)
-- <span class="hl-amber">무인 실행용 읽기 전용 인증</span>
+- S3에는 <span class="hl-blue">백업 사본을 두지 않음</span> — dsgn이 원본에서 직접 받음
 
 ### dsgn 설정
 
 - 갱신 스크립트 (기존 묶기·검증 코드 재사용)
-- WSL cron 매일 새벽 실행
-- 실패·이상 변경량 시 Slack 알림
+- WSL cron <span class="hl-green">매일 04:00</span>
+- 실패 · 대량 변경 확인 요청을 Slack으로
 
 </div>
 <div class="col">
@@ -301,7 +339,8 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 | 항목 | 금액 |
 |---|---|
-| Inventory 목록 | 1회 약 $0.04 |
+| Inventory 목록 생성 | 1회 약 $0.04 |
+| 목록 보관 (7일치) | 월 100원 미만 |
 | 바뀐 장소 다운로드 | 대부분 무료 전송분 안 |
 | 조회 요청 | 1만 건 약 $0.0035 |
 | **월 합계** | **약 $1~3** |
@@ -316,9 +355,9 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🔑 무인 실행용 인증 — 어떤 방식이 필요한가
+## 🔑 무인 실행용 인증 — 읽기 전용 액세스 키로 준비 완료 <span class="badge-date">9/14</span>
 
-현재 로그인(SSO)은 최대 1일이라 매일 자동 실행에는 쓸 수 없습니다.
+현재 로그인(SSO)은 최대 1일이라 매일 자동 실행에는 쓸 수 없습니다. <span class="hl-green">`look360-backup-reader` 를 만들어 검증까지 마쳤습니다</span> — 읽기는 허용, 쓰기·삭제·설정 변경은 정책 시뮬레이터에서 전부 <span class="hl-green">explicitDeny</span> (실제 삭제 호출 없이 판정). 키 교체 알림: 12/13.
 
 | 방식 | 보안 | 설정 난이도 | 판단 |
 |---|---|---|---|
@@ -330,20 +369,21 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🎯 오너 결정 대기와 후속 일정
+## 🎯 결정 현황과 후속 일정
 
 <div class="cols">
 <div class="col">
 
-### 결정할 것
+### 결정 현황
 
-| 항목 | 추천 |
+| 항목 | 상태 |
 |---|---|
-| 인증 방식 | 읽기 전용 액세스 키 |
-| 갱신 주기 | 매일 새벽 |
-| 알림 | 실패·이상 시 + 주간 요약 |
-| 두 번째 사본 | 월 1회 다른 디스크로 복사 |
-| 구현 착수 | 지시 대기 |
+| 방식 · 인증 | <span class="hl-green">확정 · 준비 완료</span> |
+| 주기 · 보관 규칙 | <span class="hl-green">확정</span> (매일 04:00 · 기간 기준) |
+| 체크섬 재확인 · 대량 변경 확인 | <span class="hl-green">확정</span> |
+| 주간 요약 알림 | <span class="hl-amber">결정 대기</span> |
+| 두 번째 사본 (월 1회 다른 디스크) | <span class="hl-amber">결정 대기</span> |
+| 구현 착수 | <span class="hl-amber">지시 대기</span> |
 
 </div>
 <div class="col">
@@ -377,7 +417,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ## 정리
 
-캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했습니다. 앞으로는 <span class="hl-green">바뀐 장소만 매일 받아</span> 월 수천 원으로 최신 백업을 유지합니다.
+캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했습니다. 다음 단계는 dsgn에서 <span class="hl-green">매일 04:00 바뀐 장소만 받는 증분 갱신</span>을 자동화하는 것이며, 인증 준비를 마치고 <span class="hl-amber">구현 착수를 기다리고 있습니다</span>.
 
 <hr>
 
