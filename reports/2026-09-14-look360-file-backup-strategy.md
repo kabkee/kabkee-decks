@@ -410,6 +410,20 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
+## ♻️ 복원할 때 주의 — 권한까지 살리려면 «서버 폴더»에 풉니다
+
+백업 tar에는 파일마다 <span class="hl-green">주인·권한(www-data)</span>이 함께 기록돼 있습니다. 어디에 푸느냐에 따라 이 정보가 살기도 하고 사라지기도 합니다.
+
+| 복원 방법 | 절차 | 결과 |
+|---|---|---|
+| <span class="hl-green">✅ 서버 폴더에 풀기 (기본)</span> | 장소 tar를 서버로 옮긴 뒤 root로 `tar -xp --numeric-owner --warning=no-unknown-keyword -f <장소>.tar -C /var/www/html/files` | <span class="hl-green">주인·권한 그대로</span> · 약 1분 안에 S3 반영 |
+| <span class="hl-red">🚫 S3에 직접 올리기</span> | tar를 풀어 `aws s3 cp` · `sync` 로 업로드 | <span class="hl-red">권한 정보가 빠져 root 소유·읽기 전용</span> → 업로드·수정 실패 → 권한 복구 재발 |
+| 불가피하게 S3에 직접 올릴 때 | 파일마다 `file-owner` `33` · `file-group` `33` · `file-permissions` `0100664`, 폴더 표시 객체(`pano/0/` 같은 빈 객체)에는 `0042775` 를 함께 넣기 | 권한 유지 |
+
+> 9/3 권한 복구가 필요했던 이유가 이것입니다. S3에 직접 올린 파일은 권한 정보가 없어 <span class="hl-amber">root 소유로 보입니다</span>(AWS 문서 기본값). 복원은 덮어쓰기라 복원 전 상태도 <span class="hl-blue">구버전으로 30일</span> 남습니다.
+
+---
+
 ## 🧰 필요한 것과 비용
 
 <div class="cols">
