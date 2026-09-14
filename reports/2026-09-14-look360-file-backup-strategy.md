@@ -2,7 +2,7 @@
 marp: true
 theme: clean
 paginate: true
-title: Look360 파일 백업 전략 — S3 Files 비용 사고 정리 · 로컬 전체 백업 · 장소 단위 증분 갱신 설계
+title: Look360 파일 백업 전략 — S3 Files 비용 사고 정리 · 파일시스템 교체 · 로컬 전체 백업 · 장소 단위 증분 갱신 설계
 ---
 
 <!-- _class: cover -->
@@ -10,7 +10,7 @@ title: Look360 파일 백업 전략 — S3 Files 비용 사고 정리 · 로컬 
 
 # Look360 파일 백업 전략
 
-## S3 Files 비용 사고 정리 &nbsp;·&nbsp; 로컬 전체 백업 &nbsp;·&nbsp; 장소 단위 증분 갱신
+## S3 Files 비용 사고 정리 &nbsp;·&nbsp; 파일시스템 교체 &nbsp;·&nbsp; 로컬 전체 백업 &nbsp;·&nbsp; 장소 단위 증분 갱신
 
 <hr>
 
@@ -32,7 +32,8 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14
 
 ### 🛠️ 지금까지 한 조치
 
-- 캐시 자동 적재 끄기 + 만료 1일 → <span class="hl-green">439GB → 195GB, 계속 감소</span>
+- 캐시 자동 적재 끄기 + 만료 1일 → 439GB가 <span class="hl-amber">158.9GB에서 멈춤</span> (파일 항목 최소 과금)
+- <span class="hl-green">9/14 19:31 파일시스템 교체</span>로 남은 158.9GB 제거 · 서버 전환 1.2초
 - 파일 현재 버전 <span class="hl-green">16,566,507개 전체를 dsgn에 백업·전수 검증</span>
 - 중복 구버전 약 1,630만 개 정리 착수 (고유본 21,192개는 먼저 백업)
 
@@ -48,7 +49,8 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14
 ### 🎯 현재 단계 (9/14)
 
 - <span class="hl-green">구현·가동 시작</span>: 목록 생성 설정 · dsgn 04:00 증분 갱신 · 이 컴퓨터 06:00 2차 백업
-- <span class="hl-amber">대기</span>: 첫 S3 목록 도착(최대 48시간) · 2차 백업 첫 복사(457GB) 진행 중
+- <span class="hl-green">완료</span>: 파일시스템 교체 · 2차 백업 archive1 복사·sha256 검증 (문제 0)
+- <span class="hl-amber">대기</span>: 첫 S3 목록 도착(최대 48시간) · archive2 복사 진행 중 · 기존 파일시스템 삭제(2~3일 관찰 후)
 
 </div>
 </div>
@@ -108,7 +110,8 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14
 
 - 9/13 21:12 자동 적재 <span class="hl-green">끄기</span>
 - 9/14 12:05 만료 <span class="hl-green">7일 → 1일</span>
-- 캐시 <span class="hl-blue">439GB → 195GB</span> (9/14 12:00)
+- 캐시 <span class="hl-blue">439GB → 158.9GB</span>에서 멈춤 (9/14 12:36)
+- 9/14 19:31 <span class="hl-green">파일시스템 교체</span>로 남은 분량 제거
 
 </div>
 </div>
@@ -123,10 +126,73 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14
 |---|---|---|
 | Azure (데이터 디스크 + 스냅샷 + 백업 볼트) | 154,781원 | 기준 |
 | AWS — 캐시 439GB가 쌓였을 때 | <span class="hl-red">256,383원</span> | <span class="hl-red">+66%</span> |
-| AWS — 캐시를 비운 뒤 | <span class="hl-green">약 38,500원</span> | <span class="hl-green">−75%</span> |
-| AWS — 캐시 비움 + 중복 구버전 정리 | <span class="hl-green">약 20,000원</span> | <span class="hl-green">−87%</span> |
+| AWS — 캐시 데이터를 비운 뒤 (파일 항목 158.9GB 남음 · 교체 전) | <span class="hl-amber">약 116,000원</span> | <span class="hl-amber">−25%</span> |
+| AWS — 파일시스템 교체 후 | <span class="hl-green">약 38,500원</span> | <span class="hl-green">−75%</span> |
+| AWS — 교체 + 중복 구버전 정리 | <span class="hl-green">약 20,000원</span> | <span class="hl-green">−87%</span> |
 
-> 이전 결정 자체는 옳았습니다. <span class="hl-amber">S3 Files의 기본 캐시 설정</span>이 켜진 채 대량 작업을 만난 것이 비용을 뒤집었습니다.
+> 이전 결정 자체는 옳았습니다. <span class="hl-amber">S3 Files의 기본 캐시 설정</span>이 켜진 채 대량 작업을 만난 것이 비용을 뒤집었습니다. 교체 후 금액은 새 파일시스템 용량을 0에 가깝게 본 추정이며, <span class="hl-blue">9/17 자동 보고</span>로 확인합니다.
+
+---
+
+## 🔁 파일시스템 교체 — 남은 158.9GB는 «파일 항목 기록»이었습니다 <span class="badge-date">9/14</span>
+
+<div class="stats">
+<div class="card"><div class="num">158.9GB</div><div class="lab">만료로 안 빠진 용량 (월 약 7.8만원)</div></div>
+<div class="card"><div class="num">1,661만</div><div class="lab">기록된 파일 항목 수</div></div>
+<div class="card"><div class="num">10KiB</div><div class="lab">항목 1개 최소 과금 크기</div></div>
+<div class="card"><div class="num">1.2초</div><div class="lab">서버 연결 전환 시간</div></div>
+</div>
+
+<div class="cols">
+<div class="col">
+
+### 왜 안 줄었나
+
+- 캐시에 담긴 <span class="hl-green">파일 내용은 만료로 전부 빠졌습니다</span>
+- 남은 것은 파일시스템이 기억하는 <span class="hl-amber">파일 목록(이름·크기·권한)</span>입니다
+- 9/3 권한 복구가 모든 폴더를 열어 <span class="hl-red">1,661만 항목 × 10KiB = 158.9GB</span>
+- 목록 기록은 <span class="hl-red">만료 대상이 아니라</span> 설정으로 지울 수 없습니다
+
+</div>
+<div class="col">
+
+### 어떻게 없앴나
+
+- S3의 파일은 그대로 두고, 서버가 붙는 <span class="hl-green">파일시스템만 새로 만들어</span> 연결했습니다
+- 새 파일시스템은 <span class="hl-green">실제로 연 폴더만</span> 기록해서 작게 유지됩니다
+- 기존 파일시스템은 연결만 끊고 보관 → <span class="hl-amber">2~3일 관찰 후 삭제</span> (보관 중 하루 약 $1.7)
+
+</div>
+</div>
+
+---
+
+## ✅ 교체 절차와 검증 — 운영 폴더를 건드리기 전에 먼저 대조했습니다
+
+| 순서 | 작업 | 확인 결과 |
+|---|---|---|
+| ① | 새 파일시스템 생성 → <span class="hl-green">연결 전에</span> 자동 적재 끄기·만료 1일 적용 | 기본값(적재 켬·만료 30일)이 한 번도 동작하지 않음 |
+| ② | 서버 임시 경로에 새 파일시스템을 <span class="hl-blue">나란히 연결</span>해 기존과 대조 | 폴더 23개·항목 2,960개 — 이름·소유자 차이 <span class="hl-green">0</span>, 업로드 계정 쓰기 권한 상실 <span class="hl-green">0</span> |
+| ③ | 파일 내용 대조 + 업로드 계정(www-data) 쓰기 시험 | 내용 일치 · 쓴 파일이 <span class="hl-green">약 1분 뒤 S3 반영</span> |
+| ④ | S3로 아직 안 넘어간 변경 <span class="hl-green">0건</span> 확인 → 서버 연결 교체 | 전환 1.2초 · 사이트·파일 응답 정상 |
+| ⑤ | 기존 파일시스템 보관 · 9/17 자동 보고에 새 용량과 삭제 알림 추가 | 되돌리기 = 백업한 설정 파일 복원 후 재연결 |
+
+> 폴더 권한(www-data)은 S3의 폴더 표시 객체에도 저장돼 있어 새 파일시스템이 그대로 읽습니다. 교체 직후 본 타일 이미지 403은 장소 폴더 안의 `.htaccess`가 직접 접근을 막는 기존 동작이었습니다.
+
+---
+
+## 🧭 다음에 권한을 또 바꿔야 한다면
+
+권한 변경은 폴더 규모와 상관없이 <span class="hl-amber">S3 파일을 한 번씩 다시 쓰는 작업</span>입니다. 9/3의 S3 요청비 $125와 구버전 1,630만 개가 여기서 나왔습니다. 피할 수 있는 것은 <span class="hl-green">파일 항목 기록(바닥값)</span> 쪽입니다.
+
+| 상황 | 방법 | 운영 파일시스템의 항목 기록 | 비용 (추정) |
+|---|---|---|---|
+| 특정 장소·폴더만 문제 | <span class="hl-green">그 폴더만</span> 권한 수정 | 그 폴더 항목만 (수천 개 · 수 원) | 거의 0 |
+| 전체 변경 — <span class="hl-green">권장</span> | <span class="hl-green">작업용 임시 파일시스템</span>을 만들어 거기서 실행 → 끝나면 삭제 | <span class="hl-green">생기지 않음</span> (추정) · 임시분만 하루 약 $1.7 | S3 재기록 약 $75~125 |
+| 전체 변경 — 대안 | S3 일괄 작업(Batch Operations)으로 권한 정보만 교체 | <span class="hl-green">생기지 않음</span> (추정) | 요청 약 $75 + 작업비 약 $17 |
+| 이번 방식 | 운영 파일시스템에서 실행 → 나중에 교체 | <span class="hl-red">교체 전까지 매일 과금</span> | 교체 작업 약 15분 |
+
+> 🔑 재발을 막는 쪽이 가장 쌉니다: 서버 업로드는 권한 정보가 자동으로 기록되고(9/14 업로드 실측), S3에 직접 올리는 파일만 <span class="hl-blue">권한 정보(file-owner 등)를 함께 넣으면</span> 복구 작업 자체가 필요 없습니다. 어떤 방법이든 전체 재기록은 구버전이 한 벌 생기므로 <span class="hl-amber">30일 구버전 규칙</span>이 정리합니다.
 
 ---
 
@@ -415,18 +481,19 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 | 2차 사본 | <span class="hl-green">확정</span> (이 컴퓨터 디스크 2개 · 매일) |
 | 알림 | 실패·확인 필요 시에만 (주간 요약 없음) |
 | 구현 | <span class="hl-green">완료 · 9/14 가동 시작</span> |
+| 파일시스템 교체 | <span class="hl-green">완료 · 9/14 19:31</span> |
 
 </div>
 <div class="col">
 
 ### 예정된 후속 작업
 
-- <span class="badge-date">9/14 저녁</span> 2차 백업 첫 복사·sha256 검증 완료 확인
+- <span class="badge-date">9/14 저녁</span> 2차 백업 archive2 복사·sha256 검증 완료 확인 (archive1은 통과)
 - <span class="badge-date">9/15~16</span> 첫 S3 목록 도착 → 첫 증분 갱신 결과 확인
 - <span class="badge-date">9/16~17</span> 구버전 정리 완료 확인 → 임시 1일 규칙을 <span class="hl-green">버킷 전체 30일 규칙</span>으로 교체
-- <span class="badge-date">9/17 10:00</span> Slack 자동 보고 — 캐시 용량 + 교체 시점 알림
+- <span class="badge-date">9/16~17</span> 기존 파일시스템 삭제 (접근 지점 → 연결 지점 → 파일시스템 순)
+- <span class="badge-date">9/17 10:00</span> Slack 자동 보고 — 새 파일시스템 용량 + 삭제·규칙 교체 알림
 - 월 예산 알림 금액 재조정 (현재 $200 · CloudWatch $300)
-- 로그인 세션 1일 설정 적용 여부 확인
 
 </div>
 </div>
@@ -442,6 +509,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 | 빠르게 지우면 빨리 끝난다? | 동시 삭제 128개 → S3 속도 제한 | <span class="hl-green">대량 삭제는 lifecycle에 맡기기</span> |
 | 종료 기록이 있으면 완료다? | 로그인 만료로 전부 실패한 다운로드를 완료로 판정 | <span class="hl-green">종료코드 + 개수 대조까지</span> |
 | 캐시는 성능에 도움된다? | 방문자는 CloudFront를 쓰고 캐시는 비용만 증가 | <span class="hl-green">자동 적재 끄기 유지</span> |
+| 용량이 멈추면 다 빠진 것이다? | 158.9GB는 데이터가 아니라 파일 항목 1,661만 개의 최소 과금분 | <span class="hl-green">전체 폴더 순회는 임시 파일시스템에서</span> |
 
 ---
 
@@ -450,7 +518,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ## 정리
 
-캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했습니다. 9/14부터 dsgn이 <span class="hl-green">매일 04:00 바뀐 장소만 받고</span>, 이 컴퓨터가 <span class="hl-green">06:00 디스크 2개에 똑같이 복사</span>합니다. 첫 S3 목록이 도착하면 자동으로 동작을 시작합니다.
+캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 설정으로 못 지우는 파일 항목 기록은 <span class="hl-green">파일시스템 교체로 없앴습니다</span>. 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했습니다. 9/14부터 dsgn이 <span class="hl-green">매일 04:00 바뀐 장소만 받고</span>, 이 컴퓨터가 <span class="hl-green">06:00 디스크 2개에 똑같이 복사</span>합니다. 첫 S3 목록이 도착하면 자동으로 동작을 시작합니다.
 
 <hr>
 
