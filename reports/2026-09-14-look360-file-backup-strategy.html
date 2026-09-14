@@ -5,7 +5,7 @@
 <hr />
 <p>Indyspot AI Corp  ·  Engineering Manager  ·  2026-09-14</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="agenda" data-theme="clean" lang="ko-KR" class="agenda" data-marpit-pagination="2" style="--paginate:true;--class:agenda;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="agenda" data-theme="clean" lang="ko-KR" class="agenda" data-marpit-pagination="2" style="--paginate:true;--class:agenda;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%ED%95%9C-%EC%9E%A5-%EC%9A%94%EC%95%BD--%EC%BA%90%EC%8B%9C%EA%B0%80-%EB%A7%8C%EB%93%A0-%EB%B9%84%EC%9A%A9%EC%9D%84-%EB%81%84%EA%B3%A0-%EB%B0%B1%EC%97%85%EC%9D%80-aws-%EB%B0%96%EC%97%90-%EB%91%90%EA%B8%B0%EB%A1%9C">한 장 요약 — 「캐시가 만든 비용을 끄고, 백업은 AWS 밖에 두기로」</h2>
 <div class="cols">
 <div class="col">
@@ -28,20 +28,20 @@
 <li><span class="hl-green">매일 04:00</span> dsgn에서 <span class="hl-green">바뀐 장소만 다시 받는 증분 갱신</span>, 예상 월 <span class="hl-blue">1,500~4,500원</span></li>
 <li>보관은 <span class="hl-green">기간 기준</span>: 30일 전부 + 월간 12개월 + 기준본</li>
 </ul>
-<h3 id="%F0%9F%8E%AF-%ED%98%84%EC%9E%AC-%EB%8B%A8%EA%B3%84"><img class="emoji" draggable="false" alt="🎯" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f3af.svg" data-marp-twemoji=""/> 현재 단계</h3>
+<h3 id="%F0%9F%8E%AF-%ED%98%84%EC%9E%AC-%EB%8B%A8%EA%B3%84-914"><img class="emoji" draggable="false" alt="🎯" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f3af.svg" data-marp-twemoji=""/> 현재 단계 (9/14)</h3>
 <ul>
-<li><span class="hl-green">준비 완료</span>: 읽기 전용 인증 · 목록 저장용 버킷</li>
-<li><span class="hl-amber">구현 착수 대기</span>: 목록 생성 설정 · 갱신 스크립트 · 스케줄 · 알림</li>
+<li><span class="hl-green">구현·가동 시작</span>: 목록 생성 설정 · dsgn 04:00 증분 갱신 · 이 컴퓨터 06:00 2차 백업</li>
+<li><span class="hl-amber">대기</span>: 첫 S3 목록 도착(최대 48시간) · 2차 백업 첫 복사(457GB) 진행 중</li>
 </ul>
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="3" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="3" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="21">
 <p><span class="sec-num">Section 01</span></p>
 <h2 id="%EB%B9%84%EC%9A%A9-%EC%82%AC%EA%B3%A0--%EB%AC%B4%EC%97%87%EC%9D%B4-%EC%96%BC%EB%A7%88%EB%82%98-%EB%82%98%EC%99%94%EB%82%98">비용 사고 — 무엇이 얼마나 나왔나</h2>
 <p>9월 청구서가 평소의 두 배를 넘었습니다. 원인은 한 번의 대량 작업과, 그 작업이 채워 넣은 서버용 캐시였습니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="4" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="4" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%92%B8-9%EC%9B%94-%EC%B6%94%EA%B0%80-%EB%B9%84%EC%9A%A9%EC%9D%98-%EA%B5%AC%EC%84%B1-span-classbadge-date91912-%EC%B2%AD%EA%B5%AC-%EC%8B%A4%EC%B8%A1span"><img class="emoji" draggable="false" alt="💸" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f4b8.svg" data-marp-twemoji=""/> 9월 추가 비용의 구성 <span class="badge-date">9/1~9/12 청구 실측</span></h2>
 <div class="stats">
 <div class="card"><div class="num">$228</div><div class="lab">평소 대비 추가 (약 33.8만원)</div></div>
@@ -79,7 +79,7 @@
 <p>세 항목 모두 <span class="hl-amber">9/3 권한 복구 작업 하나</span>에서 시작됐습니다. 같은 파일이 같은 날 최대 9번까지 반복 복사됐습니다.</p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="5" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="5" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%A7%AD-%EC%BA%90%EC%8B%9C%EB%8A%94-%EB%B0%A9%EB%AC%B8%EC%9E%90-%EC%86%8D%EB%8F%84%EC%99%80-%EB%AC%B4%EA%B4%80%ED%96%88%EC%8A%B5%EB%8B%88%EB%8B%A4"><img class="emoji" draggable="false" alt="🧭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f9ed.svg" data-marp-twemoji=""/> 캐시는 방문자 속도와 무관했습니다</h2>
 <table>
 <thead>
@@ -126,7 +126,7 @@
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%E2%9A%96%EF%B8%8F-azure-%EC%8B%9C%EC%A0%88%EA%B3%BC-%EB%B9%84%EA%B5%90%ED%95%9C-%EC%9B%94-%EB%B9%84%EC%9A%A9"><img class="emoji" draggable="false" alt="⚖️" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2696.svg" data-marp-twemoji=""/> Azure 시절과 비교한 월 비용</h2>
 <p>파일 저장 계층만 비교했습니다. Azure는 7월 실청구, AWS는 실측 용량 × 청구서 단가입니다(환율 1,479.5원).</p>
 <table>
@@ -164,12 +164,12 @@
 <p>이전 결정 자체는 옳았습니다. <span class="hl-amber">S3 Files의 기본 캐시 설정</span>이 켜진 채 대량 작업을 만난 것이 비용을 뒤집었습니다.</p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="7" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="7" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="21">
 <p><span class="sec-num">Section 02</span></p>
 <h2 id="%EA%B5%AC%EB%B2%84%EC%A0%84-%EC%A0%95%EB%A6%AC%EC%99%80-%EC%A0%84%EC%B2%B4-%EB%B0%B1%EC%97%85">구버전 정리와 전체 백업</h2>
 <p>지우기 전에 먼저 받아두고, 받은 것은 파일 하나까지 검증했습니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="8" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="8" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%97%82%EF%B8%8F-%EA%B5%AC%EB%B2%84%EC%A0%84-%EC%A0%84%EC%88%98%EC%A1%B0%EC%82%AC-%EA%B2%B0%EA%B3%BC-span-classbadge-date913-2238-%EA%B8%B0%EC%A4%80span"><img class="emoji" draggable="false" alt="🗂️" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f5c2.svg" data-marp-twemoji=""/> 구버전 전수조사 결과 <span class="badge-date">9/13 22:38 기준</span></h2>
 <table>
 <thead>
@@ -219,7 +219,7 @@
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="9" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="9" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%93%A6-%EB%A1%9C%EC%BB%AC-%EC%A0%84%EC%B2%B4-%EB%B0%B1%EC%97%85--aws-%EC%95%88%EC%97%90%EC%84%9C-%EB%AC%B6%EA%B3%A0-%ED%95%9C-%EB%B2%88%EC%97%90-%EB%B0%9B%EA%B8%B0-span-classbadge-date913914span"><img class="emoji" draggable="false" alt="📦" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f4e6.svg" data-marp-twemoji=""/> 로컬 전체 백업 — AWS 안에서 묶고 한 번에 받기 <span class="badge-date">9/13~9/14</span></h2>
 <div class="stats">
 <div class="card"><div class="num">16,566,507</div><div class="lab">검증 통과 파일</div></div>
@@ -259,12 +259,12 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="10" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-class="sec" data-theme="clean" lang="ko-KR" class="sec" data-marpit-pagination="10" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="21">
 <p><span class="sec-num">Section 03</span></p>
 <h2 id="%EC%95%9E%EC%9C%BC%EB%A1%9C%EC%9D%98-%EB%B0%B1%EC%97%85--%EB%B0%A9%EB%B2%95-%EB%B9%84%EA%B5%90%EC%99%80-%EC%84%A0%ED%83%9D">앞으로의 백업 — 방법 비교와 선택</h2>
 <p>AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·운영 수고로 비교했습니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="11" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="11" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%94%8D-%EC%84%B8-%EA%B0%80%EC%A7%80-%EB%B0%A9%EB%B2%95-%EB%B9%84%EA%B5%90"><img class="emoji" draggable="false" alt="🔍" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f50d.svg" data-marp-twemoji=""/> 세 가지 방법 비교</h2>
 <table>
 <thead>
@@ -318,7 +318,7 @@
 <p>금액은 서울 리전 가격표 기준 추정입니다. AWS Backup은 <span class="hl-amber">128KB 미만 파일을 128KB로 과금</span>합니다(요금 페이지 원문 확인). 타일 평균이 30KB라 실제 429GB가 약 2TB로 계산됩니다.</p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="12" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="12" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%E2%9C%85-%EC%99%9C-b%EB%A5%BC-%EC%84%A0%ED%83%9D%ED%96%88%EB%82%98"><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/> 왜 B를 선택했나</h2>
 <div class="cols">
 <div class="col">
@@ -339,16 +339,17 @@
 <li>검증된 전체 백업과 <span class="hl-blue">묶기·검증 스크립트</span>가 있습니다</li>
 <li>최근 실수는 <span class="hl-green">버저닝 30일</span>이 S3 안에서 무료로 막아줍니다</li>
 </ul>
-<h3 id="%EA%B0%90%EC%88%98%ED%95%98%EB%8A%94-%EA%B2%83">감수하는 것</h3>
+<h3 id="%EA%B0%90%EC%88%98%ED%95%98%EB%8A%94-%EA%B2%83%EA%B3%BC-%EB%8C%80%EC%9D%91">감수하는 것과 대응</h3>
 <ul>
-<li>dsgn이 <span class="hl-amber">켜져 있어야</span> 갱신됩니다 (절전 안 함 설정 확인)</li>
+<li>dsgn이 <span class="hl-amber">켜져 있어야</span> 갱신됩니다 → 절전 안 함 설정 확인</li>
+<li><span class="hl-amber">윈도우 업데이트 재부팅</span> 가능 (9/9 05:49 사례) → 끊겨도 다음 날 이어서 하는 구조</li>
 <li>갱신 사이의 변경은 버저닝 30일 창에 의존합니다</li>
-<li>로컬 디스크 1개라 <span class="hl-amber">두 번째 사본</span>을 권장합니다</li>
+<li>디스크 1개 위험 → <span class="hl-green">2차 사본을 이 컴퓨터 디스크 2개에</span></li>
 </ul>
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="13" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="13" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%94%84-%EA%B5%AC%ED%98%84-%EB%B0%A9%EC%8B%9D--%EB%A7%A4%EC%9D%BC-0400-%EC%9E%A5%EC%86%8C-%EB%8B%A8%EC%9C%84-%EC%A6%9D%EB%B6%84-%EA%B0%B1%EC%8B%A0-span-classbadge-new%ED%99%95%EC%A0%95span"><img class="emoji" draggable="false" alt="🔄" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f504.svg" data-marp-twemoji=""/> 구현 방식 — 매일 04:00 장소 단위 증분 갱신 <span class="badge-new">확정</span></h2>
 <table>
 <thead>
@@ -395,7 +396,7 @@
 <p>장소 하나를 통째로 다시 받아도 비용은 작습니다: 중간값 49MB는 1원 미만, 재생성된 <code>pano/1/1773/</code>(0.5GB)은 약 80원, 가장 큰 <code>pano/0/100/</code>(8GB)도 약 1,500원입니다(추정).</p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="14" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="14" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%93%85-%EC%A3%BC%EA%B8%B0%EC%99%80-%EB%B3%B4%EA%B4%80-%EA%B7%9C%EC%B9%99--%EC%8B%A4%EC%B8%A1-%EB%B3%80%EA%B2%BD-%EB%B9%88%EB%8F%84%EB%A1%9C-%EC%A0%95%ED%96%88%EC%8A%B5%EB%8B%88%EB%8B%A4"><img class="emoji" draggable="false" alt="📅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f4c5.svg" data-marp-twemoji=""/> 주기와 보관 규칙 — 실측 변경 빈도로 정했습니다</h2>
 <div class="cols">
 <div class="col">
@@ -466,7 +467,62 @@
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="15" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="15" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
+<h2 id="%F0%9F%95%93-%EC%9D%BC%EC%A0%95%EA%B3%BC-%EC%9E%AC%EB%B6%80%ED%8C%85--%EC%84%9C%EB%A1%9C-%EA%B2%B9%EC%B9%98%EC%A7%80-%EC%95%8A%EA%B2%8C-%EB%B0%B0%EC%B9%98%ED%96%88%EC%8A%B5%EB%8B%88%EB%8B%A4"><img class="emoji" draggable="false" alt="🕓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f553.svg" data-marp-twemoji=""/> 일정과 재부팅 — 서로 겹치지 않게 배치했습니다</h2>
+<table>
+<thead>
+<tr>
+<th>시각</th>
+<th>무엇이</th>
+<th>어디서</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>04:00</td>
+<td>증분 갱신 (목록 비교 → 바뀐 장소 받기 → 검증)</td>
+<td>dsgn</td>
+<td>평소 몇 초~몇 분 · 대량 변경은 확인 요청으로 멈춤</td>
+</tr>
+<tr>
+<td>05:00</td>
+<td>재부팅 검사 (<span class="hl-amber">가동 3.5일 초과 시 재부팅</span>, 약 4일마다)</td>
+<td>이 컴퓨터</td>
+<td>T2 브릿지 하드정지 예방 장치 (8/10 설정)</td>
+</tr>
+<tr>
+<td>06:00</td>
+<td>2차 백업 (dsgn → archive1 → archive2 복사 + sha256 대조)</td>
+<td>이 컴퓨터</td>
+<td>dsgn 작업이 아직 돌면 그날은 건너뜀</td>
+</tr>
+<tr>
+<td>불규칙</td>
+<td>윈도우 업데이트 재부팅</td>
+<td>dsgn</td>
+<td>9/9 05:49 사례 · 정기 재부팅은 없음</td>
+</tr>
+</tbody>
+</table>
+<div class="cols">
+<div class="col">
+<h3 id="%EB%81%8A%EA%B2%A8%EB%8F%84-%EC%95%88%EC%A0%84%ED%95%9C-%EA%B5%AC%EC%A1%B0">끊겨도 안전한 구조</h3>
+<ul>
+<li>tar는 <span class="hl-blue"><code>.partial</code></span>로 받고 → 다시 읽어 md5 검증 → 정식 이름으로 변경</li>
+<li>상태 기록은 <span class="hl-green">검증이 끝난 뒤에만</span> 갱신 → 다음 날 같은 지점부터 재시도</li>
+</ul>
+</div>
+<div class="col">
+<h3 id="%EB%8F%99%EC%8B%9C-%EC%8B%A4%ED%96%89-%EB%B0%A9%EC%A7%80">동시 실행 방지</h3>
+<ul>
+<li>dsgn·이 컴퓨터 모두 <span class="hl-blue">잠금 파일</span>로 중복 실행 차단</li>
+<li>2차 백업은 dsgn 잠금을 확인해 <span class="hl-green">쓰는 중인 파일을 복사하지 않음</span></li>
+</ul>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="16" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%E2%9A%96%EF%B8%8F-%EC%9E%A5%EC%86%8C-%EB%8B%A8%EC%9C%84-vs-%ED%8C%8C%EC%9D%BC-%EB%8B%A8%EC%9C%84"><img class="emoji" draggable="false" alt="⚖️" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2696.svg" data-marp-twemoji=""/> 장소 단위 vs 파일 단위</h2>
 <table>
 <thead>
@@ -513,23 +569,23 @@
 <p>사고가 났을 때 필요한 것은 <span class="hl-amber">빠르고 틀리지 않는 복원</span>입니다. 약간의 추가 다운로드를 감수하고 복원 단순성을 택했습니다.</p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="16" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="17" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%A7%B0-%ED%95%84%EC%9A%94%ED%95%9C-%EA%B2%83%EA%B3%BC-%EB%B9%84%EC%9A%A9"><img class="emoji" draggable="false" alt="🧰" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f9f0.svg" data-marp-twemoji=""/> 필요한 것과 비용</h2>
 <div class="cols">
 <div class="col">
 <h3 id="aws-%EC%84%A4%EC%A0%95">AWS 설정</h3>
 <ul>
-<li><span class="hl-green">✓ 준비 완료</span> 목록 저장용 버킷 — <strong>파일 목록만</strong> 저장 · 7일 자동 삭제</li>
-<li><span class="hl-green">✓ 준비 완료</span> 무인 실행용 읽기 전용 인증</li>
-<li><code>look360-v1-files</code> 에 Inventory 설정 (매일 · 현재 버전 · 크기/수정시각/ETag)</li>
-<li>버킷 전체 <span class="hl-green">구버전 30일 보관 규칙</span> (임시 1일 규칙 교체)</li>
+<li><span class="hl-green">✓</span> 목록 저장용 버킷 — <strong>파일 목록만</strong> 저장 · 7일 자동 삭제</li>
+<li><span class="hl-green">✓</span> 무인 실행용 읽기 전용 인증</li>
+<li><span class="hl-green">✓</span> <code>look360-v1-files</code> 매일 목록 생성 (현재 버전 · 크기/수정시각/ETag)</li>
+<li><span class="hl-amber">9/16~17</span> 버킷 전체 구버전 30일 규칙 (임시 1일 규칙 교체)</li>
 <li>S3에는 <span class="hl-blue">백업 사본을 두지 않음</span> — dsgn이 원본에서 직접 받음</li>
 </ul>
-<h3 id="dsgn-%EC%84%A4%EC%A0%95">dsgn 설정</h3>
+<h3 id="%EC%8B%A4%ED%96%89-%EC%84%A4%EC%A0%95">실행 설정</h3>
 <ul>
-<li>갱신 스크립트 (기존 묶기·검증 코드 재사용)</li>
-<li>WSL cron <span class="hl-green">매일 04:00</span></li>
-<li>실패 · 대량 변경 확인 요청을 Slack으로</li>
+<li><span class="hl-green">✓</span> dsgn 갱신 스크립트 + cron <span class="hl-green">매일 04:00</span> (시험 7종 통과)</li>
+<li><span class="hl-green">✓</span> 이 컴퓨터 2차 백업 + cron <span class="hl-green">매일 06:00</span></li>
+<li><span class="hl-green">✓</span> 실패 · 대량 변경 · 미실행 시에만 Slack</li>
 </ul>
 </div>
 <div class="col">
@@ -572,7 +628,7 @@
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="17" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="18" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%94%91-%EB%AC%B4%EC%9D%B8-%EC%8B%A4%ED%96%89%EC%9A%A9-%EC%9D%B8%EC%A6%9D--%EC%9D%BD%EA%B8%B0-%EC%A0%84%EC%9A%A9-%EC%95%A1%EC%84%B8%EC%8A%A4-%ED%82%A4%EB%A1%9C-%EC%A4%80%EB%B9%84-%EC%99%84%EB%A3%8C-span-classbadge-date914span"><img class="emoji" draggable="false" alt="🔑" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f511.svg" data-marp-twemoji=""/> 무인 실행용 인증 — 읽기 전용 액세스 키로 준비 완료 <span class="badge-date">9/14</span></h2>
 <p>현재 로그인(SSO)은 최대 1일이라 매일 자동 실행에는 쓸 수 없습니다. <span class="hl-green"><code>look360-backup-reader</code> 를 만들어 검증까지 마쳤습니다</span> — 읽기는 허용, 쓰기·삭제·설정 변경은 정책 시뮬레이터에서 전부 <span class="hl-green">explicitDeny</span> (실제 삭제 호출 없이 판정). 키 교체 알림: 12/13.</p>
 <table>
@@ -609,7 +665,7 @@
 <p><img class="emoji" draggable="false" alt="🔴" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f534.svg" data-marp-twemoji=""/> 관리자 권한 액세스 키는 만들지 않습니다. 참고: SSO 세션은 <span class="hl-amber">CLI 로그인 시각이 아니라 브라우저 포털 로그인 시각</span>부터 계산되는 것으로 보입니다(9/14 토큰 기록 기반 추정).</p>
 </blockquote>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="18" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="19" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%8E%AF-%EA%B2%B0%EC%A0%95-%ED%98%84%ED%99%A9%EA%B3%BC-%ED%9B%84%EC%86%8D-%EC%9D%BC%EC%A0%95"><img class="emoji" draggable="false" alt="🎯" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f3af.svg" data-marp-twemoji=""/> 결정 현황과 후속 일정</h2>
 <div class="cols">
 <div class="col">
@@ -635,16 +691,16 @@
 <td><span class="hl-green">확정</span></td>
 </tr>
 <tr>
-<td>주간 요약 알림</td>
-<td><span class="hl-amber">결정 대기</span></td>
+<td>2차 사본</td>
+<td><span class="hl-green">확정</span> (이 컴퓨터 디스크 2개 · 매일)</td>
 </tr>
 <tr>
-<td>두 번째 사본 (월 1회 다른 디스크)</td>
-<td><span class="hl-amber">결정 대기</span></td>
+<td>알림</td>
+<td>실패·확인 필요 시에만 (주간 요약 없음)</td>
 </tr>
 <tr>
-<td>구현 착수</td>
-<td><span class="hl-amber">지시 대기</span></td>
+<td>구현</td>
+<td><span class="hl-green">완료 · 9/14 가동 시작</span></td>
 </tr>
 </tbody>
 </table>
@@ -652,6 +708,8 @@
 <div class="col">
 <h3 id="%EC%98%88%EC%A0%95%EB%90%9C-%ED%9B%84%EC%86%8D-%EC%9E%91%EC%97%85">예정된 후속 작업</h3>
 <ul>
+<li><span class="badge-date">9/14 저녁</span> 2차 백업 첫 복사·sha256 검증 완료 확인</li>
+<li><span class="badge-date">9/15~16</span> 첫 S3 목록 도착 → 첫 증분 갱신 결과 확인</li>
 <li><span class="badge-date">9/16~17</span> 구버전 정리 완료 확인 → 임시 1일 규칙을 <span class="hl-green">버킷 전체 30일 규칙</span>으로 교체</li>
 <li><span class="badge-date">9/17 10:00</span> Slack 자동 보고 — 캐시 용량 + 교체 시점 알림</li>
 <li>월 예산 알림 금액 재조정 (현재 $200 · CloudWatch $300)</li>
@@ -660,7 +718,7 @@
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="19" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-theme="clean" lang="ko-KR" data-marpit-pagination="20" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%F0%9F%A7%AF-%EC%9D%B4%EB%B2%88%EC%97%90-%ED%99%95%EC%9D%B8%ED%95%9C-%EC%9A%B4%EC%98%81-%ED%95%A8%EC%A0%95"><img class="emoji" draggable="false" alt="🧯" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f9ef.svg" data-marp-twemoji=""/> 이번에 확인한 운영 함정</h2>
 <table>
 <thead>
@@ -699,9 +757,9 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-class="closing" data-theme="clean" lang="ko-KR" class="closing" style="--class:closing;--theme:clean;">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="closing" data-theme="clean" lang="ko-KR" class="closing" style="--class:closing;--theme:clean;">
 <h2 id="%EC%A0%95%EB%A6%AC">정리</h2>
-<p>캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했습니다. 다음 단계는 dsgn에서 <span class="hl-green">매일 04:00 바뀐 장소만 받는 증분 갱신</span>을 자동화하는 것이며, 인증 준비를 마치고 <span class="hl-amber">구현 착수를 기다리고 있습니다</span>.</p>
+<p>캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했습니다. 9/14부터 dsgn이 <span class="hl-green">매일 04:00 바뀐 장소만 받고</span>, 이 컴퓨터가 <span class="hl-green">06:00 디스크 2개에 똑같이 복사</span>합니다. 첫 S3 목록이 도착하면 자동으로 동작을 시작합니다.</p>
 <hr />
 <p>Indyspot AI Corp  ·  Engineering Manager  ·  2026-09-14</p>
 </section>

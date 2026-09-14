@@ -45,10 +45,10 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14
 - <span class="hl-green">매일 04:00</span> dsgn에서 <span class="hl-green">바뀐 장소만 다시 받는 증분 갱신</span>, 예상 월 <span class="hl-blue">1,500~4,500원</span>
 - 보관은 <span class="hl-green">기간 기준</span>: 30일 전부 + 월간 12개월 + 기준본
 
-### 🎯 현재 단계
+### 🎯 현재 단계 (9/14)
 
-- <span class="hl-green">준비 완료</span>: 읽기 전용 인증 · 목록 저장용 버킷
-- <span class="hl-amber">구현 착수 대기</span>: 목록 생성 설정 · 갱신 스크립트 · 스케줄 · 알림
+- <span class="hl-green">구현·가동 시작</span>: 목록 생성 설정 · dsgn 04:00 증분 갱신 · 이 컴퓨터 06:00 2차 백업
+- <span class="hl-amber">대기</span>: 첫 S3 목록 도착(최대 48시간) · 2차 백업 첫 복사(457GB) 진행 중
 
 </div>
 </div>
@@ -236,11 +236,12 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 - 검증된 전체 백업과 <span class="hl-blue">묶기·검증 스크립트</span>가 있습니다
 - 최근 실수는 <span class="hl-green">버저닝 30일</span>이 S3 안에서 무료로 막아줍니다
 
-### 감수하는 것
+### 감수하는 것과 대응
 
-- dsgn이 <span class="hl-amber">켜져 있어야</span> 갱신됩니다 (절전 안 함 설정 확인)
+- dsgn이 <span class="hl-amber">켜져 있어야</span> 갱신됩니다 → 절전 안 함 설정 확인
+- <span class="hl-amber">윈도우 업데이트 재부팅</span> 가능 (9/9 05:49 사례) → 끊겨도 다음 날 이어서 하는 구조
 - 갱신 사이의 변경은 버저닝 30일 창에 의존합니다
-- 로컬 디스크 1개라 <span class="hl-amber">두 번째 사본</span>을 권장합니다
+- 디스크 1개 위험 → <span class="hl-green">2차 사본을 이 컴퓨터 디스크 2개에</span>
 
 </div>
 </div>
@@ -298,6 +299,36 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
+## 🕓 일정과 재부팅 — 서로 겹치지 않게 배치했습니다
+
+| 시각 | 무엇이 | 어디서 | 비고 |
+|---|---|---|---|
+| 04:00 | 증분 갱신 (목록 비교 → 바뀐 장소 받기 → 검증) | dsgn | 평소 몇 초~몇 분 · 대량 변경은 확인 요청으로 멈춤 |
+| 05:00 | 재부팅 검사 (<span class="hl-amber">가동 3.5일 초과 시 재부팅</span>, 약 4일마다) | 이 컴퓨터 | T2 브릿지 하드정지 예방 장치 (8/10 설정) |
+| 06:00 | 2차 백업 (dsgn → archive1 → archive2 복사 + sha256 대조) | 이 컴퓨터 | dsgn 작업이 아직 돌면 그날은 건너뜀 |
+| 불규칙 | 윈도우 업데이트 재부팅 | dsgn | 9/9 05:49 사례 · 정기 재부팅은 없음 |
+
+<div class="cols">
+<div class="col">
+
+### 끊겨도 안전한 구조
+
+- tar는 <span class="hl-blue">`.partial`</span>로 받고 → 다시 읽어 md5 검증 → 정식 이름으로 변경
+- 상태 기록은 <span class="hl-green">검증이 끝난 뒤에만</span> 갱신 → 다음 날 같은 지점부터 재시도
+
+</div>
+<div class="col">
+
+### 동시 실행 방지
+
+- dsgn·이 컴퓨터 모두 <span class="hl-blue">잠금 파일</span>로 중복 실행 차단
+- 2차 백업은 dsgn 잠금을 확인해 <span class="hl-green">쓰는 중인 파일을 복사하지 않음</span>
+
+</div>
+</div>
+
+---
+
 ## ⚖️ 장소 단위 vs 파일 단위
 
 | 항목 | 파일 단위 증분 | <span class="hl-green">장소 단위 갱신 (선택)</span> |
@@ -320,17 +351,17 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ### AWS 설정
 
-- <span class="hl-green">✓ 준비 완료</span> 목록 저장용 버킷 — **파일 목록만** 저장 · 7일 자동 삭제
-- <span class="hl-green">✓ 준비 완료</span> 무인 실행용 읽기 전용 인증
-- `look360-v1-files` 에 Inventory 설정 (매일 · 현재 버전 · 크기/수정시각/ETag)
-- 버킷 전체 <span class="hl-green">구버전 30일 보관 규칙</span> (임시 1일 규칙 교체)
+- <span class="hl-green">✓</span> 목록 저장용 버킷 — **파일 목록만** 저장 · 7일 자동 삭제
+- <span class="hl-green">✓</span> 무인 실행용 읽기 전용 인증
+- <span class="hl-green">✓</span> `look360-v1-files` 매일 목록 생성 (현재 버전 · 크기/수정시각/ETag)
+- <span class="hl-amber">9/16~17</span> 버킷 전체 구버전 30일 규칙 (임시 1일 규칙 교체)
 - S3에는 <span class="hl-blue">백업 사본을 두지 않음</span> — dsgn이 원본에서 직접 받음
 
-### dsgn 설정
+### 실행 설정
 
-- 갱신 스크립트 (기존 묶기·검증 코드 재사용)
-- WSL cron <span class="hl-green">매일 04:00</span>
-- 실패 · 대량 변경 확인 요청을 Slack으로
+- <span class="hl-green">✓</span> dsgn 갱신 스크립트 + cron <span class="hl-green">매일 04:00</span> (시험 7종 통과)
+- <span class="hl-green">✓</span> 이 컴퓨터 2차 백업 + cron <span class="hl-green">매일 06:00</span>
+- <span class="hl-green">✓</span> 실패 · 대량 변경 · 미실행 시에만 Slack
 
 </div>
 <div class="col">
@@ -381,15 +412,17 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 | 방식 · 인증 | <span class="hl-green">확정 · 준비 완료</span> |
 | 주기 · 보관 규칙 | <span class="hl-green">확정</span> (매일 04:00 · 기간 기준) |
 | 체크섬 재확인 · 대량 변경 확인 | <span class="hl-green">확정</span> |
-| 주간 요약 알림 | <span class="hl-amber">결정 대기</span> |
-| 두 번째 사본 (월 1회 다른 디스크) | <span class="hl-amber">결정 대기</span> |
-| 구현 착수 | <span class="hl-amber">지시 대기</span> |
+| 2차 사본 | <span class="hl-green">확정</span> (이 컴퓨터 디스크 2개 · 매일) |
+| 알림 | 실패·확인 필요 시에만 (주간 요약 없음) |
+| 구현 | <span class="hl-green">완료 · 9/14 가동 시작</span> |
 
 </div>
 <div class="col">
 
 ### 예정된 후속 작업
 
+- <span class="badge-date">9/14 저녁</span> 2차 백업 첫 복사·sha256 검증 완료 확인
+- <span class="badge-date">9/15~16</span> 첫 S3 목록 도착 → 첫 증분 갱신 결과 확인
 - <span class="badge-date">9/16~17</span> 구버전 정리 완료 확인 → 임시 1일 규칙을 <span class="hl-green">버킷 전체 30일 규칙</span>으로 교체
 - <span class="badge-date">9/17 10:00</span> Slack 자동 보고 — 캐시 용량 + 교체 시점 알림
 - 월 예산 알림 금액 재조정 (현재 $200 · CloudWatch $300)
@@ -417,7 +450,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ## 정리
 
-캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했습니다. 다음 단계는 dsgn에서 <span class="hl-green">매일 04:00 바뀐 장소만 받는 증분 갱신</span>을 자동화하는 것이며, 인증 준비를 마치고 <span class="hl-amber">구현 착수를 기다리고 있습니다</span>.
+캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했습니다. 9/14부터 dsgn이 <span class="hl-green">매일 04:00 바뀐 장소만 받고</span>, 이 컴퓨터가 <span class="hl-green">06:00 디스크 2개에 똑같이 복사</span>합니다. 첫 S3 목록이 도착하면 자동으로 동작을 시작합니다.
 
 <hr>
 
