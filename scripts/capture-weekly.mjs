@@ -33,36 +33,31 @@ const API = 'http://100.120.25.127:3001/v1.0';
 // ── 캡처 대상 ────────────────────────────────────────────────
 // crop: 'hero' 처럼 이름을 주면 아래 CROPS 의 좌표로 잘라 별도 파일도 함께 만든다.
 const SHOTS = [
-  { id: 'home-hero',    site: 'fe',    url: '/',                        wait: 3500, crop: 'hero',
-    desc: '홈 — 히어로 우측 정보블록 재구성(지역|카테고리) · 좌우 여백 제거' },
-  { id: 'vr-detail',    site: 'fe',    url: '/vr-info/v47cpxre',        wait: 3000,
-    desc: 'VR 상세 — 파노라마 목록 썸네일 반응형 + 캡션 번역 배선' },
-  { id: 'vr-detail-en', site: 'fe',    url: '/vr-info/v47cpxre',        wait: 3500, lang: 'en',
-    ls: { vr_auto_translate: '1' },
-    desc: 'VR 상세(영어·자동번역 ON) — 파노라마 목록 캡션까지 번역 (IND-6955)',
+  { id: 'home-hero',    site: 'fe',    url: '/',                        wait: 4000, crop: 'hero',
+    desc: '홈 — 히어로 핫스팟·건물 툴팁 포함 + 지역 표기 2 depth (IND-7235)' },
+  { id: 'vrlist-country', site: 'fe',  url: '/vr-list',                 wait: 3500,
+    desc: 'VR 목록 — 국가 선택 별도 분리(기본 대한민국) + 지역 필터 국가 컬럼 제거 (IND-7236)' },
+  { id: 'vr-detail-icons', site: 'fe', url: '/vr-info/v47cpxre',        wait: 3500,
+    desc: 'VR 상세 — 장소정보 항목 제목을 아이콘으로 전환 + Figma 2안 순서 (IND-7095)' },
+  { id: 'admin-sidebar',      site: 'admin', url: '/',                  wait: 3500,
+    desc: '관리자 — 사이드바 11그룹 재편 · 아이콘 · 고아 화면 2건 연결 (IND-7100 W2)' },
+  { id: 'admin-sidebar-edit', site: 'admin', url: '/',                  wait: 3000,
+    desc: '관리자 — 사이드바 편집 모드 (드래그 순서 · ★즐겨찾기 · 계정별 DB 저장) (IND-7100 W3)',
     actions: [
-      { do: 'click', sel: 'text=Panorama List' },
-      { do: 'wait',  ms: 2500 },
+      { do: 'click', sel: 'text=메뉴 편집' },
+      { do: 'wait',  ms: 2000 },
     ] },
-  { id: 'vrlist',       site: 'fe',    url: '/vr-list',                 wait: 3000,
-    desc: 'VR 목록 — 0건 필터 숨김 · 가격 역순 자동 교정' },
-  { id: 'post360-mobile', site: 'fe',  url: '/vr/v47cpxre',             wait: 6000, device: 'mobile',
-    desc: '모바일 VR 뷰어 — 360포스트 FAB · 하프시트 뷰포트 추종' },
-  { id: 'admin-bbs-manage',   site: 'admin', url: '/bbs/manage',        wait: 3000,
-    desc: '관리자 — 게시판 관리 페이지네이션 복구(33건 전량 접근)' },
-  { id: 'admin-bbs-category', site: 'admin', url: '/bbs/manage',        wait: 3000,
-    desc: '관리자 — 게시판 카테고리 인라인 편집(A안) + 언어 도트 + 자동번역 초안',
+  { id: 'admin-channel-verify', site: 'admin', url: '/channel',         wait: 3500,
+    desc: '관리자 — 채널 목록 「공식 채널」 인증 컬럼 + Edit 토글 (IND-7234)' },
+  { id: 'admin-i18n-approve',   site: 'admin', url: '/i18n-management', wait: 4000,
+    desc: '관리자 — 「번역 불충분」 원문 유지 승인·해제 UI (단건·일괄 + 승인목록) (IND-7114)',
     actions: [
-      // FAQ 게시판(카테고리 8개)을 열어야 인라인 펼침이 의미를 갖는다 — 카테고리 0개인 게시판은 빈 모달이다
-      { do: 'click', sel: 'tr:has-text("FAQ") button[title="카테고리 관리"]' },
-      { do: 'wait',  ms: 2500 },
-      { do: 'click', sel: '.cat-row' },
-      { do: 'wait',  ms: 1800 },
+      // 기본 탭은 「360뷰」다 — 승인 UI 는 「번역 불충분」 탭 안에 있으므로 반드시 열어야 한다
+      { do: 'click', sel: 'text=번역 불충분' },
+      { do: 'wait',  ms: 3000 },
     ] },
-  { id: 'admin-place',        site: 'admin', url: '/place-management',  wait: 3500,
-    desc: '관리자 — 장소 관리 (장소 유형 필터 400 오류 해소 · 수정 저장 복구)' },
-  { id: 'admin-unlinked', site: 'admin', url: '/admin/regions/unlinked-places', wait: 3500,
-    desc: '관리자 — 지역 미연결 place 화면(신설) · 후보 제안·확정 (IND-6897 파이프라인 봉합)' },
+  { id: 'admin-region-aliases', site: 'admin', url: '/admin/regions/aliases', wait: 3500,
+    desc: '관리자 — 「지역 관리」 그룹 신설로 진입 가능해진 지역 별칭 화면 (IND-7096)' },
 ];
 
 const CROPS = {
