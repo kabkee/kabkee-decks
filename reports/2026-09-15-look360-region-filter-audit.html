@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>행정구역 정합 감사</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   지형도 · 지적대장 계열 팔레트
+   ground = 지도 종이 / ink = 먹 / rule = 도곽선
+   verify = 정합(청록) · error = 폐지·오류(주묵) · newly = 신설(청람)
+   ============================================================ */
+:root{
+  --ground:#F2F2EE;
+  --sheet:#FAFAF7;
+  --sunk:#E9EAE4;
+  --ink:#1F2421;
+  --ink-2:#414841;
+  --ink-3:#6B7268;
+  --rule:#C9CCC2;
+  --rule-2:#8A8F87;
+
+  --verify:#2F5D50;
+  --verify-bg:#E2ECE6;
+  --error:#A8322D;
+  --error-bg:#F4E3E0;
+  --newly:#1F5673;
+  --newly-bg:#E1EAF0;
+  --warn:#8A6410;
+  --warn-bg:#F2EBD8;
+
+  --serif:'Noto Serif KR',ui-serif,Georgia,serif;
+  --sans:'IBM Plex Sans KR',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#161A18;
+    --sheet:#1C211E;
+    --sunk:#232925;
+    --ink:#E4E7E1;
+    --ink-2:#BFC5BC;
+    --ink-3:#8C948A;
+    --rule:#343C37;
+    --rule-2:#5B6459;
+
+    --verify:#7FBCA6;
+    --verify-bg:#1B2E28;
+    --error:#E58E86;
+    --error-bg:#331A18;
+    --newly:#86B4D1;
+    --newly-bg:#162A36;
+    --warn:#D9B45E;
+    --warn-bg:#2E260F;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#161A18; --sheet:#1C211E; --sunk:#232925;
+  --ink:#E4E7E1; --ink-2:#BFC5BC; --ink-3:#8C948A;
+  --rule:#343C37; --rule-2:#5B6459;
+  --verify:#7FBCA6; --verify-bg:#1B2E28;
+  --error:#E58E86; --error-bg:#331A18;
+  --newly:#86B4D1; --newly-bg:#162A36;
+  --warn:#D9B45E; --warn-bg:#2E260F;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--ground); color:var(--ink-2);
+  font-family:var(--sans); font-size:16px; line-height:1.78; font-weight:400;
+  -webkit-font-smoothing:antialiased;
+}
+.sheet{max-width:880px; margin:0 auto; padding-inline:22px}
+
+/* ---------- 도곽(圖廓) 표제부 ---------- */
+.masthead{
+  border-bottom:3px double var(--rule-2);
+  background:
+    repeating-linear-gradient(0deg,transparent 0 31px,color-mix(in srgb,var(--rule) 34%,transparent) 31px 32px),
+    repeating-linear-gradient(90deg,transparent 0 31px,color-mix(in srgb,var(--rule) 34%,transparent) 31px 32px),
+    var(--sheet);
+}
+.masthead .sheet{padding-block:44px 34px}
+.stamp{
+  display:inline-block; font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--error);
+  border:1.5px solid var(--error); padding:3px 11px; margin-bottom:20px;
+}
+h1{
+  font-family:var(--serif); font-weight:700; color:var(--ink);
+  font-size:clamp(30px,5.6vw,46px); line-height:1.26; letter-spacing:-.02em;
+  margin:0 0 18px; text-wrap:balance; max-width:20ch;
+}
+.standfirst{
+  font-size:clamp(15px,2.1vw,17px); color:var(--ink-2); margin:0; max-width:62ch; line-height:1.75;
+}
+.standfirst b{color:var(--ink); font-weight:600}
+
+/* 표제부 계기판 — 카드가 아니라 괘선으로 구획 */
+.gauges{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  margin-top:34px; border-top:1px solid var(--rule-2);
+}
+.gauge{padding:16px 18px 4px 0; border-right:1px solid var(--rule)}
+.gauge:last-child{border-right:none}
+.gauge .v{
+  font-family:var(--mono); font-size:29px; font-weight:600; color:var(--ink);
+  line-height:1.08; font-variant-numeric:tabular-nums; letter-spacing:-.03em;
+}
+.gauge .v u{text-decoration:none; font-size:14px; color:var(--ink-3); margin-left:2px}
+.gauge.bad .v{color:var(--error)}
+.gauge .k{font-size:12.5px; color:var(--ink-3); margin-top:5px; line-height:1.5}
+
+.colophon{
+  margin-top:26px; padding-top:14px; border-top:1px solid var(--rule);
+  font-family:var(--mono); font-size:11.5px; color:var(--ink-3);
+  display:flex; flex-wrap:wrap; gap:6px 26px;
+}
+
+/* ---------- 절(節) ---------- */
+main{padding-block:0 92px}
+section{padding-block:46px 0}
+section + section{border-top:1px solid var(--rule)}
+.shead{display:flex; gap:16px; align-items:baseline; margin-bottom:8px}
+.shead .no{
+  font-family:var(--mono); font-size:12px; font-weight:600; color:var(--error);
+  letter-spacing:.1em; flex:none; padding-top:5px;
+}
+h2{
+  font-family:var(--serif); font-size:clamp(20px,3vw,25px); font-weight:700; color:var(--ink);
+  margin:0; line-height:1.4; letter-spacing:-.015em; text-wrap:balance;
+}
+.deck{font-size:14.5px; color:var(--ink-3); margin:0 0 26px 38px; max-width:60ch}
+h3{
+  font-family:var(--sans); font-size:13px; font-weight:600; color:var(--ink-3);
+  letter-spacing:.09em; text-transform:uppercase; margin:38px 0 12px;
+  padding-bottom:7px; border-bottom:1px solid var(--rule);
+}
+p{margin:0 0 17px; max-width:66ch}
+p:last-child{margin-bottom:0}
+strong{color:var(--ink); font-weight:600}
+em{font-style:normal; box-shadow:inset 0 -.45em 0 var(--warn-bg)}
+
+/* ---------- 주제 고유 활자 요소 ---------- */
+.lv{
+  font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.04em;
+  color:var(--ink-3); border:1px solid var(--rule-2); padding:0 4px; vertical-align:12%;
+}
+.lv.on{color:var(--verify); border-color:var(--verify)}
+.lv.off{color:var(--ink-3); border-style:dashed}
+.uid{font-family:var(--mono); font-size:.85em; color:var(--ink-3); font-weight:500}
+.uid::before{content:'#'; opacity:.5}
+code{font-family:var(--mono); font-size:.86em; background:var(--sunk); color:var(--ink); padding:1px 5px}
+.path{white-space:nowrap}
+.path i{font-style:normal; color:var(--rule-2); margin:0 5px}
+.yr{font-family:var(--mono); font-size:.86em; color:var(--ink-3); font-variant-numeric:tabular-nums}
+
+.mark{font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.06em; white-space:nowrap}
+.mark.err{color:var(--error)}
+.mark.new{color:var(--newly)}
+.mark.ok{color:var(--verify)}
+.mark.wait{color:var(--warn)}
+.mark::before{margin-right:5px}
+.mark.err::before{content:'✕'}
+.mark.new::before{content:'＋'}
+.mark.ok::before{content:'✓'}
+.mark.wait::before{content:'◔'}
+
+/* ---------- 대장(臺帳) 표 ---------- */
+figure{margin:24px 0}
+figure figcaption{
+  font-family:var(--mono); font-size:11.5px; color:var(--ink-3);
+  letter-spacing:.05em; margin-bottom:9px; padding-bottom:7px; border-bottom:1px solid var(--rule-2);
+}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:14px; min-width:530px; background:var(--sheet)}
+th,td{padding:12px 15px; text-align:left; vertical-align:top; border-bottom:1px solid var(--rule)}
+thead th{
+  font-family:var(--mono); font-size:10.5px; font-weight:600; color:var(--ink-3);
+  letter-spacing:.1em; text-transform:uppercase; white-space:nowrap;
+  border-bottom:1.5px solid var(--rule-2); padding-block:9px; background:var(--sunk);
+}
+tbody tr:last-child td{border-bottom:1.5px solid var(--rule-2)}
+td .nm{color:var(--ink); font-weight:600}
+td.n{text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--ink)}
+td.sm{font-size:13px; color:var(--ink-3)}
+/* 어긋난 행 — 좌측 주묵 세로선 */
+tbody tr.off td:first-child{box-shadow:inset 3px 0 0 var(--error)}
+tbody tr.add td:first-child{box-shadow:inset 3px 0 0 var(--newly)}
+
+/* ---------- 대비 도해 ---------- */
+.plots{display:grid; grid-template-columns:repeat(auto-fit,minmax(236px,1fr)); gap:0; margin:26px 0; border:1px solid var(--rule-2)}
+.plot{padding:18px 20px; border-right:1px solid var(--rule); background:var(--sheet)}
+.plot:last-child{border-right:none}
+.plot.keep{background:var(--verify-bg)}
+.plot .lbl{font-family:var(--mono); font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-3); margin-bottom:13px}
+.plot.keep .lbl{color:var(--verify)}
+.plot ul{list-style:none; margin:0; padding:0; font-size:13.5px; line-height:2}
+.plot ul ul{padding-left:14px; margin-left:2px; border-left:1px dashed var(--rule-2)}
+.plot li.gone{color:var(--ink-3); text-decoration:line-through; text-decoration-color:var(--error); text-decoration-thickness:1px}
+.plot li.plus{color:var(--newly); font-weight:600}
+
+/* ---------- 방주(旁註) ---------- */
+.aside{
+  border-left:2px solid var(--rule-2); padding:2px 0 2px 20px; margin:24px 0;
+  font-size:14.5px; line-height:1.72; color:var(--ink-2);
+}
+.aside.err{border-left-color:var(--error)}
+.aside.new{border-left-color:var(--newly)}
+.aside.ok{border-left-color:var(--verify)}
+.aside .hd{
+  display:block; font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); margin-bottom:7px;
+}
+.aside.err .hd{color:var(--error)}
+.aside.new .hd{color:var(--newly)}
+.aside.ok .hd{color:var(--verify)}
+
+/* ---------- 결정 ---------- */
+.verdict{border:1.5px solid var(--ink); background:var(--sheet); margin:28px 0}
+.verdict .hd{
+  background:var(--ink); color:var(--ground); padding:11px 20px;
+  font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+}
+.verdict .hd span{color:color-mix(in srgb,var(--ground) 62%,transparent); font-weight:400}
+.verdict .bd{padding:20px}
+.verdict .bd > :last-child{margin-bottom:0}
+
+/* ---------- 항목 ---------- */
+ol.steps{list-style:none; counter-reset:s; margin:16px 0; padding:0}
+ol.steps li{
+  counter-increment:s; position:relative; padding:11px 0 11px 40px;
+  border-bottom:1px solid var(--rule); font-size:14.5px; line-height:1.68;
+}
+ol.steps li:last-child{border-bottom:none}
+ol.steps li::before{
+  content:counter(s,decimal-leading-zero); position:absolute; left:0; top:13px;
+  font-family:var(--mono); font-size:11px; color:var(--rule-2); font-weight:600;
+}
+ol.steps li b{color:var(--ink)}
+
+footer{
+  border-top:3px double var(--rule-2); margin-top:12px;
+  font-family:var(--mono); font-size:11.5px; color:var(--ink-3); line-height:1.95;
+}
+footer .sheet{padding-block:22px 0}
+
+@media (max-width:560px){
+  body{font-size:15px}
+  .masthead .sheet{padding-block:34px 26px}
+  .deck{margin-left:0}
+  .shead{gap:11px}
+  th,td{padding:11px 12px}
+  .gauge{padding-right:12px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="sheet">
+    <p class="stamp">정합 불일치 10건</p>
+    <h1>지도가 현실보다 늦다</h1>
+    <p class="standfirst">
+      「경기도에서 왜 여섯 개 시만 구가 나오는가」라는 물음에서 시작해 <code>l3_areas</code> 전국 노드를 전수 대조했다.
+      필터 규칙은 설계대로 동작하고 있었다. 어긋난 것은 <b>그 칸에 담긴 행정구역 자체</b>였다 —
+      폐지된 군이 살아 있고, 부활한 구가 잠들어 있고, 존재한 적 없는 구가 콘텐츠를 물고 있다.
+    </p>
+
+    <div class="gauges">
+      <div class="gauge"><div class="v">1,577</div><div class="k">대조한 KR 행정 노드</div></div>
+      <div class="gauge bad"><div class="v">10<u>건</u></div><div class="k">정합 불일치</div></div>
+      <div class="gauge bad"><div class="v">12<u>건</u></div><div class="k">현재 노출 중인 오표기</div></div>
+      <div class="gauge"><div class="v">235<u>건</u></div><div class="k">노출 규칙에 가려진 콘텐츠</div></div>
+    </div>
+
+    <div class="colophon">
+      <span>2026-09-15</span><span>l3_areas · l3_place</span><span>선행 IND-7078</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="sheet">
+  <div class="shead"><span class="no">壹</span><h2>필터는 정상이다 — 착시의 출처</h2></div>
+  <p class="deck">구가 보이는 시와 보이지 않는 시가 갈리는 건 규칙 탓이 아니라 행정구역 구조 탓이다.</p>
+
+  <p>
+    FE는 <code>areaUtils.js</code>의 <code>AREA_FILTER_MAX_LEVEL = 3</code>으로 <span class="lv">L4</span> 읍·면과
+    <span class="lv">L5</span> 동·리를 잘라낸다. 그러니 구가 화면에 뜨려면 그 시 아래에 실제 <span class="lv on">L3</span> 노드가 있어야 한다.
+    그런데 <strong>일반구는 법으로 정해진 시에만 설치된다.</strong>
+  </p>
+
+  <div class="plots">
+    <div class="plot">
+      <div class="lbl">고양시 — 구가 있다</div>
+      <ul>
+        <li><span class="lv">L2</span> 고양시
+          <ul>
+            <li><span class="lv on">L3</span> 덕양구</li>
+            <li><span class="lv on">L3</span> 일산동구</li>
+            <li><span class="lv on">L3</span> 일산서구</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="plot">
+      <div class="lbl">과천시 — 구가 없다</div>
+      <ul>
+        <li><span class="lv">L2</span> 과천시
+          <ul>
+            <li class="gone"><span class="lv off">L5</span> 중앙동</li>
+            <li class="gone"><span class="lv off">L5</span> 주암동</li>
+            <li class="gone"><span class="lv off">L5</span> 막계동</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <p>
+    경기도 28개 시 중 일반구를 둔 곳은 고양·성남·수원·안산·안양·용인 여섯이고,
+    나머지 22개 시는 시 아래가 곧바로 읍·면·동이라 컷에 전부 걸린다.
+    <strong>이천시가 시에서 멈추는 건 결함이 아니다.</strong>
+  </p>
+
+  <div class="aside">
+    <span class="hd">직전 상태는 더 어긋나 있었다</span>
+    IND-7078 이전에는 «컬럼 깊이»로 잘라서 과천시의 <em>구 자리</em>에 동이 밀고 올라왔다.
+    판정축을 <code>node.level</code>로 옮긴 것이 그 수정이었다.
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="shead"><span class="no">貳</span><h2>전수 대조에서 드러난 열 건</h2></div>
+  <p class="deck">현실의 행정구역 개편이 데이터에 도달하지 못했거나, 도달하면서 왜곡됐다.</p>
+
+  <h3>화면에 틀린 것이 보이는 경우</h3>
+  <figure>
+    <figcaption>count &gt; 0 — 사용자에게 실제 노출 중</figcaption>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>노드</th><th>소재</th><th class="n" style="text-align:right">콘텐츠</th><th>실제 이력</th></tr></thead>
+        <tbody>
+          <tr class="off">
+            <td><span class="nm">권석구</span> <span class="uid">1693</span></td>
+            <td class="sm"><span class="path">경기도 <i>›</i> 수원시</span></td>
+            <td class="n">1</td>
+            <td class="sm">「권선구」 오타. <strong>존재한 적 없는 구</strong></td>
+          </tr>
+          <tr class="off">
+            <td><span class="nm">청원군</span> <span class="uid">151</span></td>
+            <td class="sm">충청북도</td>
+            <td class="n">3</td>
+            <td class="sm"><span class="yr">2014-07-01</span> 청주시 통합 폐지. 청주시엔 <code>청원구</code>가 따로 있다</td>
+          </tr>
+          <tr class="off">
+            <td><span class="nm">연기군</span> <span class="uid">163</span></td>
+            <td class="sm">충청남도</td>
+            <td class="n">1</td>
+            <td class="sm"><span class="yr">2012-07-01</span> 세종시 전환 폐지</td>
+          </tr>
+          <tr class="off">
+            <td><span class="nm">남구</span> <span class="uid">76</span></td>
+            <td class="sm">인천시</td>
+            <td class="n">7</td>
+            <td class="sm"><span class="yr">2018-07-01</span> <strong>미추홀구</strong>로 개칭. 옛 이름 그대로다</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <h3>실재하는데 화면에 없는 경우</h3>
+  <figure>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>대상</th><th>현실</th><th>DB</th><th>원인</th></tr></thead>
+        <tbody>
+          <tr class="add">
+            <td><span class="nm">부천시</span> 3구</td>
+            <td class="sm">원미·소사·오정 <span class="mark new"><span class="yr">2024-01-01</span> 부활</span></td>
+            <td class="sm"><code>is_active=0</code></td>
+            <td class="sm">IND-7052가 「2019 폐지」를 근거로 승계 처리</td>
+          </tr>
+          <tr class="add">
+            <td><span class="nm">천안시</span> 2구</td>
+            <td class="sm">동남구 · 서북구</td>
+            <td class="sm">동남구만 존재</td>
+            <td class="sm">시드 SQL에 천안 2구가 없었다</td>
+          </tr>
+          <tr class="add">
+            <td><span class="nm">화성시</span> 4구</td>
+            <td class="sm">만세·효행·병점·동탄 <span class="mark new"><span class="yr">2026-02-01</span> 출범</span></td>
+            <td class="sm">노드 자체가 없음</td>
+            <td class="sm">신설 미반영</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <h3>정합성이 깨진 경우</h3>
+  <figure>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>대상</th><th>내용</th><th>영향</th></tr></thead>
+        <tbody>
+          <tr class="off">
+            <td><span class="nm">고성군</span> <span class="uid">201</span><br><span class="sm">경상남도</span></td>
+            <td class="sm"><code>superseded_by_uid = 130</code> — <strong>강원도 고성군</strong>으로 승계돼 있다.
+              서로 다른 실재 지자체인데 이름이 같다는 이유로 병합됐다.</td>
+            <td class="sm"><span class="mark wait">잠복</span><br>지금은 콘텐츠 0건이라 보이지 않지만, 경남 고성군 콘텐츠가 들어오면 강원으로 붙는다</td>
+          </tr>
+          <tr class="off">
+            <td><span class="nm">삼곡동</span> <span class="uid">762</span><br><span class="sm">부천시</span></td>
+            <td class="sm">부천시에 없는 법정동. 참조 place의 원본 주소가 <code>부천시 원미구 삼곡동 424</code>인데,
+              부천대학교의 실제 소재지는 <strong>심곡동</strong> 424다.</td>
+            <td class="sm"><span class="mark err">노출</span><br>오타가 주소 원문부터 박혀 파서가 노드로 승격시켰다</td>
+          </tr>
+          <tr class="off">
+            <td><span class="nm">세종특별자치시</span> <span class="uid">17</span></td>
+            <td class="sm">다른 시도는 모두 축약형(<code>서울시</code>·<code>제주도</code>)인데 세종만 풀네임이다.</td>
+            <td class="sm"><span class="mark wait">표기</span><br>일관성</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <div class="aside ok">
+    <span class="hd">대조 결과 정상</span>
+    경상남도는 <strong>창원시만</strong> 구를 갖는 것이 맞다(의창·성산·마산합포·마산회원·진해).
+    김해·진주·양산·거제·통영은 원래 일반구가 없다. 울산시는 광역시라 자치구 4개와 울주군이 정상 노출된다.
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="shead"><span class="no">參</span><h2>다음 감사에 쓸 판별축</h2></div>
+  <p class="deck">건수는 금세 낡는다. 이번에 실제로 결함을 골라낸 두 기준만 남긴다.</p>
+
+  <ol class="steps">
+    <li>
+      <b><code>slug</code>가 비어 있으면 런타임 생성 노드다.</b>
+      시드 SQL로 들어온 정규 노드는 <code>kr-gyeonggi-suwon-jangan</code> 같은 slug를 갖는다.
+      <code>NULL</code>이거나 빈 문자열이면 주소 파서가 place 주소에서 만들어낸 것이라 오타·폐지 구역일 확률이 높다.
+      <strong>권석구·천안 동남구·부천 3구·삼곡동이 모두 이 그물에 걸렸다.</strong>
+      전국 <span class="lv on">L3</span> 190건 중 slug 없는 건 8건뿐이라 훑는 비용도 작다.
+    </li>
+    <li>
+      <b><code>count = 0</code>이면 이미 화면에서 가려진다.</b>
+      <code>isRegionCountZero</code>(IND-6120/6768)가 콘텐츠 0건 노드를 숨긴다.
+      死노드라도 count가 0이면 사용자 영향은 없으니, 우선순위를 가를 때 이 축을 먼저 본다.
+    </li>
+  </ol>
+
+  <div class="aside err">
+    <span class="hd">동명이지역 함정</span>
+    경남 고성군이 강원 고성군으로 병합된 건 <strong>이름만으로 twin을 판정</strong>했기 때문이다.
+    승계 대상을 고를 때는 이름이 아니라 <em>조상 시도까지 같은지</em>를 본다.
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="shead"><span class="no">肆</span><h2>노출 깊이 규칙을 바꾼다</h2></div>
+  <p class="deck">오너 결정 2026-09-15 — IND-7078의 「L1~L3」 상한을 대체한다.</p>
+
+  <p>
+    L3 컷은 정확히 동작했지만 대가가 있었다. <strong>구가 없는 시 58곳이 아무것도 내놓지 못한다.</strong>
+    이천시를 눌러도 빈칸이다. 규칙을 고치기로 했고, 검토 도중 두 번 함정을 밟았다.
+  </p>
+
+  <figure>
+    <figcaption>검토안과 실측</figcaption>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>안</th><th>실측 결과</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="sm">L3 없으면 <strong>L4</strong></td>
+            <td class="sm">33개 시는 읍·면이 나오지만 <strong>25개 시는 여전히 빈칸</strong>. 과천·광명·시흥은 읍·면 자체가 없다</td>
+            <td><span class="mark err">기각</span></td>
+          </tr>
+          <tr>
+            <td class="sm">가장 <strong>얕은 레벨만</strong></td>
+            <td class="sm">혼재 시 29곳에서 L5가 잘려 <strong>콘텐츠 235건이 접근 불가</strong>. 제주시 하나가 51건</td>
+            <td><span class="mark err">기각</span></td>
+          </tr>
+          <tr>
+            <td class="sm"><strong>직속 자식 전부</strong></td>
+            <td class="sm">레벨을 묻지 않고 그 시의 직속 자식을 모두 노출. 누락 0건</td>
+            <td><span class="mark ok">채택</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <div class="aside err">
+    <span class="hd">기각 근거 — L4·L5 혼재 시</span>
+    제주시(읍·면 5 + 동 30) 51건 · 서귀포시 32건 · 춘천시 16건 · 파주시 15건 · 안성시 13건 …
+    <strong>29개 시, 약 235건.</strong> 제주시는 애월읍 같은 읍·면과 연동·노형동 같은 동을 함께 갖기에,
+    「읍·면만 남기기」를 하면 시내 콘텐츠가 통째로 사라진다.
+  </div>
+
+  <div class="verdict">
+    <div class="hd">채택 — 직속 자식 전부 <span>깊이 3단 · 3단은 리프</span></div>
+    <div class="bd">
+      <p>컬럼은 3개를 유지하고, 세 번째 칸에 <strong>그 시의 직속 자식을 레벨 구분 없이 전부</strong> 싣는다.
+        구가 있는 시는 동이 구 아래에 있으므로 직속 자식이 자연히 구뿐이고, 별도의 «L3 우선» 규칙조차 필요 없다.</p>
+      <div class="plots" style="margin-bottom:0">
+        <div class="plot keep">
+          <div class="lbl">변경 후</div>
+          <ul>
+            <li>수원시 → <span class="lv on">L3</span> 장안구·권선구·팔달구·영통구</li>
+            <li>이천시 → <span class="lv">L4</span> 장호원읍 <span style="color:var(--rule-2)">+</span> <span class="lv">L5</span> 관고동 … 16개</li>
+            <li>과천시 → <span class="lv">L5</span> 중앙동·주암동 … 6개</li>
+            <li class="plus">부천시 → <span class="lv on">L3</span> 원미구·소사구·오정구</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p>
+    판정축이 <code>node.level</code>에서 <strong>트리 깊이</strong>로 되돌아간다.
+    IND-7078이 «깊이로 자르지 말라»고 못박은 것을 뒤집는 변경이므로 코드 주석에 근거를 남긴다.
+    3단 노드는 리프로 만들어 <em>장안구 밑의 동</em>이 다시 올라오는 일은 막는다.
+  </p>
+</section>
+
+<section class="sheet">
+  <div class="shead"><span class="no">伍</span><h2>작업 범위</h2></div>
+  <p class="deck">FE 규칙 변경과 BE 데이터 교정은 서로 독립적이라 따로 적용할 수 있다.</p>
+
+  <h3>FE · look360_v3_client</h3>
+  <ol class="steps">
+    <li><b><code>areaUtils.js</code></b> — <code>pruneAreaNodesByLevel</code>을 깊이 기준 컷으로 교체. 공용 1곳이라 PC 캐스케이드와 모바일 오버레이가 함께 따라온다</li>
+    <li><b><code>vrListRegionRoute.js</code></b> — <code>region</code> 값의 area3 슬롯에 L4·L5 uid가 들어갈 수 있도록 계약(R-7)을 갱신. BE <code>regionArea3</code>가 이를 받아주는지 확인이 선행</li>
+    <li><b>spec</b> — <code>areaUtils.spec.js</code>의 「L3 컷」 테스트를 새 규칙으로 교체</li>
+  </ol>
+
+  <h3>BE · nestjs-look360-api 마이그레이션</h3>
+  <ol class="steps">
+    <li><b>승계</b> — 권석구→권선구 · 청원군→청주시 · 연기군→세종시 · 오창읍/성재리/조치원읍 twin 병합 · 삼곡동→심곡동</li>
+    <li><b>재배치</b> — 오목천동→권선구 · 내수읍→청원구 · 강내면→흥덕구 · 신안리→조치원읍</li>
+    <li><b>승계 해제</b> — 경남 고성군의 잘못된 강원 승계를 되돌리고 <code>is_active=1</code> 복구</li>
+    <li><b>개명</b> — 인천 남구→미추홀구 · 세종특별자치시→세종시. 각 9개 언어 i18n 동반</li>
+    <li><b>신설·부활</b> — 부천 3구 활성화와 동 12개 재배치 · 천안 서북구 신설 · 화성 4구 신설과 읍면동 14개 배치</li>
+    <li><b><code>l3_place</code> 재배선</b> — 폐지 노드를 가리키던 5건은 uid까지 특정 완료. 개명 건은 텍스트 컬럼도 함께 갱신</li>
+  </ol>
+
+  <div class="aside new">
+    <span class="hd">부천·화성 매핑은 공식 자료로 확정</span>
+    부천 12개 법정동은 구별 관할표로, 화성 14개 읍·면·동은 화성시청 「행정구역 현황」(기준일 2026-02-01) 원본으로 대조했다.
+    <strong>도당동은 오정구가 아니라 원미구</strong>이고, <strong>송산동(병점구)과 송산면(만세구)은 별개</strong>다.
+    화성 <code>남양동</code>은 2014년 <strong>남양읍</strong>으로 격하돼 지금은 존재하지 않는다 — 전국 최초의 동→읍 전환이었다.
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="sheet">
+    Look360 l3 플랫폼 · 행정구역 정합 감사 · 2026-09-15<br>
+    l3_areas · l3_areas_i18n · l3_place · GET /v1.0/regions/hierarchy · 선행 IND-7078 / IND-7052 / IND-6733
+  </div>
+</footer>
+
+</body>
+</html>
