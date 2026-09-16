@@ -1,0 +1,800 @@
+<!doctype html>
+<!-- 출처: Claude Artifact debd7417-28f8-4b0e-a869-f5c795931700 (v1789521205-9009) 를 단일 HTML 로 합침.
+     아티팩트 자가저장(window.claude)이 없는 환경이라 검수 결과는 브라우저 localStorage 에만 남음. -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IND-7127 귀속 검수</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --ground: #F1F3F2;
+  --surface: #FFFFFF;
+  --surface-sunk: #E8ECEA;
+  --ink: #16211F;
+  --ink-soft: #5A6866;
+  --ink-faint: #8A9694;
+  --line: #D6DDDB;
+  --line-soft: #E4E9E7;
+  --accent: #0F6B63;
+  --accent-soft: #DCEAE8;
+  --ok: #4A7A2B;
+  --ok-soft: #E4EEDA;
+  --issue: #A83A2C;
+  --issue-soft: #F6E1DD;
+  --shadow: 0 1px 2px rgba(22, 33, 31, .06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #101817;
+    --surface: #182322;
+    --surface-sunk: #101A19;
+    --ink: #E4EAE8;
+    --ink-soft: #9AA8A5;
+    --ink-faint: #6E7E7B;
+    --line: #2A3634;
+    --line-soft: #222D2C;
+    --accent: #4FB3A8;
+    --accent-soft: #14312E;
+    --ok: #93C766;
+    --ok-soft: #1D2C16;
+    --issue: #E3897C;
+    --issue-soft: #331915;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .35);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #101817;
+  --surface: #182322;
+  --surface-sunk: #101A19;
+  --ink: #E4EAE8;
+  --ink-soft: #9AA8A5;
+  --ink-faint: #6E7E7B;
+  --line: #2A3634;
+  --line-soft: #222D2C;
+  --accent: #4FB3A8;
+  --accent-soft: #14312E;
+  --ok: #93C766;
+  --ok-soft: #1D2C16;
+  --issue: #E3897C;
+  --issue-soft: #331915;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .35);
+}
+
+* { box-sizing: border-box; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding-inline: 20px;
+  padding-block: 32px 72px;
+}
+
+/* ---------- 헤더 ---------- */
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.masthead h1 {
+  margin: 0;
+  font-size: clamp(22px, 3.6vw, 30px);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 6px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.masthead p {
+  margin: 8px 0 0;
+  max-width: 54ch;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+}
+
+/* ---------- 계기판 ---------- */
+
+.gauges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 26px;
+  align-items: baseline;
+}
+
+.gauge {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.gauge b {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 22px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  letter-spacing: -.01em;
+}
+
+.gauge span {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.gauge.is-ok b { color: var(--ok); }
+.gauge.is-issue b { color: var(--issue); }
+
+/* ---------- 진행률 ---------- */
+
+.progress {
+  margin-top: 22px;
+}
+
+.progress-track {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--surface-sunk);
+}
+
+.progress-track i {
+  display: block;
+  transition: width .32s ease;
+}
+
+.progress-track .seg-ok { background: var(--ok); }
+.progress-track .seg-issue { background: var(--issue); }
+
+.progress-note {
+  margin-top: 8px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+/* ---------- 필터 ---------- */
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 8px;
+  align-items: center;
+  margin-top: 26px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 5px 13px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s;
+}
+
+.chip:hover { border-color: var(--accent); color: var(--ink); }
+
+.chip[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--ground);
+}
+
+.chip .n {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  opacity: .72;
+  margin-left: 5px;
+}
+
+.saveflag {
+  margin-left: auto;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.saveflag.is-active { color: var(--accent); }
+
+/* ---------- 채널 그룹 ---------- */
+
+.channel {
+  margin-top: 34px;
+}
+
+.channel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--line);
+}
+
+.channel-head h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+.channel-meta {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.channel-tally {
+  margin-left: auto;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+/* ---------- 콘텐츠 행 ---------- */
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 20px;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.row.is-ok { border-left: 3px solid var(--ok); padding-left: 12px; }
+.row.is-issue { border-left: 3px solid var(--issue); padding-left: 12px; }
+
+.row-main { min-width: 0; }
+
+.row-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 9px;
+  font-weight: 500;
+  letter-spacing: -.005em;
+}
+
+.row-title .name { overflow-wrap: anywhere; }
+
+.flag {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--issue-soft);
+  color: var(--issue);
+  white-space: nowrap;
+}
+
+.row-coords {
+  margin-top: 3px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.row-coords .posts { color: var(--accent); }
+
+.row-side {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.links {
+  display: flex;
+  gap: 10px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+}
+
+.links a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  white-space: nowrap;
+  padding-block: 2px;
+}
+
+.links a:hover { border-bottom-color: var(--accent); }
+
+.links .nolink {
+  color: var(--ink-faint);
+  white-space: nowrap;
+  padding-block: 2px;
+}
+
+/* ---------- 판정 세그먼트 ---------- */
+
+.verdict {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.verdict button {
+  appearance: none;
+  border: 0;
+  border-left: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .14s, color .14s;
+}
+
+.verdict button:first-child { border-left: 0; }
+.verdict button:hover { background: var(--surface-sunk); color: var(--ink); }
+
+.verdict button[aria-pressed="true"] { color: var(--ground); }
+.verdict button[data-v="pending"][aria-pressed="true"] { background: var(--ink-faint); }
+.verdict button[data-v="ok"][aria-pressed="true"] { background: var(--ok); }
+.verdict button[data-v="issue"][aria-pressed="true"] { background: var(--issue); }
+
+/* ---------- 메모 ---------- */
+
+.note {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+}
+
+.note textarea {
+  width: 100%;
+  min-height: 52px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+.note textarea::placeholder { color: var(--ink-faint); }
+.note textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+
+/* ---------- 빈 상태 · 푸터 ---------- */
+
+.empty {
+  margin-top: 40px;
+  padding: 30px 20px;
+  text-align: center;
+  color: var(--ink-faint);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  font-size: 13.5px;
+}
+
+.colophon {
+  margin-top: 54px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
+
+.colophon p { margin: 0 0 6px; }
+.colophon code {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+@media (max-width: 720px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .row-side {
+    flex-wrap: wrap;
+    gap: 10px 14px;
+  }
+  .channel-tally { margin-left: 0; width: 100%; }
+}
+</style>
+</head>
+<body>
+<script id="app-state" type="application/json">{"base":"https://look360-v3-client.netlify.app","devBase":"http://100.120.25.127:5174","totalPosts":548,"channelCount":18,"netlifyOk":41,"items":[{"posts":41,"domain":"vhnq4xjf","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1873,"panoCount":53,"published":1,"channelUid":3,"samplePost":927,"channelName":"경기관광공사","contentName":"[경기관광공사]동구릉(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":25,"domain":"5sbgr077","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1864,"panoCount":60,"published":1,"channelUid":3,"samplePost":879,"channelName":"경기관광공사","contentName":"[경기관광공사]한국민속촌(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":18,"domain":"i3wc2e2s","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1889,"panoCount":59,"published":1,"channelUid":3,"samplePost":1040,"channelName":"경기관광공사","contentName":"[경기관광공사]화담숲(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":17,"domain":"ngnw07qy","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1867,"panoCount":64,"published":1,"channelUid":3,"samplePost":987,"channelName":"경기관광공사","contentName":"[경기관광공사]서울동물원(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":17,"domain":"tejczdsr","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1892,"panoCount":33,"published":1,"channelUid":3,"samplePost":1062,"channelName":"경기관광공사","contentName":"[경기관광공사]이천세라피아(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":13,"domain":"sjqzoh0w","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1871,"panoCount":77,"published":1,"channelUid":3,"samplePost":1058,"channelName":"경기관광공사","contentName":"[경기관광공사]수원화성(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":11,"domain":"bbk2egcp","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1861,"panoCount":42,"published":1,"channelUid":3,"samplePost":861,"channelName":"경기관광공사","contentName":"[경기관광공사]용문산관광지(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":11,"domain":"2plqxntu","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1868,"panoCount":45,"published":1,"channelUid":3,"samplePost":1008,"channelName":"경기관광공사","contentName":"[경기관광공사]전곡리유적지(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":10,"domain":"av0gybv3","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1860,"panoCount":34,"published":1,"channelUid":3,"samplePost":872,"channelName":"경기관광공사","contentName":"[경기관광공사]광명동굴(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":9,"domain":"vsd6k0fd","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1874,"panoCount":33,"published":1,"channelUid":3,"samplePost":968,"channelName":"경기관광공사","contentName":"[경기관광공사]양주시립장욱진미술관(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":8,"domain":"84191tzl","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1872,"panoCount":55,"published":1,"channelUid":3,"samplePost":977,"channelName":"경기관광공사","contentName":"[경기관광공사]한국잡월드(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":8,"domain":"xely2v8m","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1887,"panoCount":24,"published":1,"channelUid":3,"samplePost":1031,"channelName":"경기관광공사","contentName":"[경기관광공사]신륵사(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":7,"domain":"ofrd3w8t","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1862,"panoCount":43,"published":1,"channelUid":3,"samplePost":914,"channelName":"경기관광공사","contentName":"[경기관광공사]국립수목원(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":7,"domain":"q6eu31y7","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1888,"panoCount":22,"published":1,"channelUid":3,"samplePost":1024,"channelName":"경기관광공사","contentName":"[경기관광공사]다산유적지(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":6,"domain":"av3w33e4","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1859,"panoCount":61,"published":1,"channelUid":3,"samplePost":1002,"channelName":"경기관광공사","contentName":"[경기관광공사]한화아쿠아플라넷 일산(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":5,"domain":"f1c1bmz2","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":2271,"panoCount":26,"published":1,"channelUid":3,"samplePost":4643,"channelName":"경기관광공사","contentName":"[경기 무장애 관광]썬밸리 호텔","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":4,"domain":"3dog81ri","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":978,"panoCount":28,"published":1,"channelUid":3,"samplePost":432,"channelName":"경기관광공사","contentName":"2018 찾아가는 경기관광박람회","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":4,"domain":"qmockom1","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1863,"panoCount":25,"published":1,"channelUid":3,"samplePost":921,"channelName":"경기관광공사","contentName":"[경기관광공사]자라섬(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":4,"domain":"xkfcvy3n","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1865,"panoCount":46,"published":1,"channelUid":3,"samplePost":909,"channelName":"경기관광공사","contentName":"[경기관광공사]아침고요수목원(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":4,"domain":"5p45qurb","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1869,"panoCount":42,"published":1,"channelUid":3,"samplePost":1019,"channelName":"경기관광공사","contentName":"[경기관광공사]임진각 평화누리(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":2,"domain":"wlaov7bb","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":1866,"panoCount":26,"published":1,"channelUid":3,"samplePost":905,"channelName":"경기관광공사","contentName":"[경기관광공사]경기도어린이박물관(문턱없는 경기관광)","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":1,"domain":"tkqlir9j","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":146,"panoCount":42,"published":1,"channelUid":3,"samplePost":84,"channelName":"경기관광공사","contentName":"[경기관광공사]명성황후생가유적지","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":1,"domain":"a8tzpk1x","hidden":0,"ownerId":"email_ggi@gto.or.kr","viewUid":2230,"panoCount":64,"published":1,"channelUid":3,"samplePost":2590,"channelName":"경기관광공사","contentName":"[경기 무장애 관광]광교호수공원","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":148,"domain":"ng1zza3q","hidden":0,"ownerId":"email_catfesta@look360.kr","viewUid":2218,"panoCount":35,"published":1,"channelUid":379,"samplePost":2278,"channelName":"궁디팡팡 캣페스타","contentName":"제17회 궁디팡팡 캣페스타","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":18,"domain":"fy3bm9ay","hidden":0,"ownerId":"email_catfesta@look360.kr","viewUid":2207,"panoCount":16,"published":1,"channelUid":379,"samplePost":2700,"channelName":"궁디팡팡 캣페스타","contentName":"제16회 궁디팡팡 캣페스타","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":37,"domain":"e940jcdf","hidden":0,"ownerId":"email_puredogi@look360.kr","viewUid":288,"panoCount":8,"published":1,"channelUid":30,"samplePost":150,"channelName":"푸레도기 연구소","contentName":"푸레도기 국립현대미술관 전시","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":28,"domain":"2g9orutd","hidden":0,"ownerId":"email_leeeeee2000@nate.com","viewUid":942,"panoCount":20,"published":1,"channelUid":89,"samplePost":310,"channelName":"허니잼","contentName":"씨엔블루펜션","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":22,"domain":"y5ti0msc","hidden":0,"ownerId":"email_gma@look360.kr","viewUid":65,"panoCount":18,"published":1,"channelUid":29,"samplePost":127,"channelName":"글로벌뮤직실용음악학원","contentName":"글로벌뮤직실용음악학원","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":19,"domain":"v47cpxre","hidden":0,"ownerId":"email_doolymuseum@look360.kr","viewUid":2443,"panoCount":50,"published":1,"channelUid":224,"samplePost":5962,"channelName":"둘리뮤지엄","contentName":"둘리뮤지엄","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":12,"domain":"nr81g9y9","hidden":0,"ownerId":"email_sbc@look360.kr","viewUid":941,"panoCount":10,"published":1,"channelUid":24,"samplePost":null,"channelName":"청년창업사관학교","contentName":"청년창업사관학교 어울림터","hiddenPosts":12,"usePassword":0,"netlify":"OK"},{"posts":11,"domain":"bveo7s7r","hidden":0,"ownerId":"email_piumstudio@look360.kr","viewUid":115,"panoCount":14,"published":1,"channelUid":14,"samplePost":56,"channelName":"온뜰에피움","contentName":"온뜰에피움","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":4,"domain":"qmwy4mq9","hidden":0,"ownerId":"email_gsmatt@look360.kr","viewUid":826,"panoCount":15,"published":1,"channelUid":27,"samplePost":289,"channelName":"지스마트","contentName":"네스프레소 아이스 팝업 라운지","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":3,"domain":"xjsf2iag","hidden":0,"ownerId":"email_dentalparadise@look360.kr","viewUid":102,"panoCount":9,"published":1,"channelUid":15,"samplePost":73,"channelName":"조훈치과","contentName":"조훈치과의원","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":3,"domain":"zy0ldobd","hidden":1,"ownerId":"kakao_982457110","viewUid":1152,"panoCount":6,"published":1,"channelUid":128,"samplePost":672,"channelName":"위주","contentName":"화곡본동시장","hiddenPosts":0,"usePassword":0,"netlify":"MISS"},{"posts":2,"domain":"qdvxwkch","hidden":0,"ownerId":"email_gg_slogan@look360.kr","viewUid":2514,"panoCount":1,"published":1,"channelUid":151,"samplePost":4967,"channelName":"기회의 경기","contentName":"[경기공유서비스]하남시청 미사강변텃밭","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":1,"domain":"mptycnp1","hidden":0,"ownerId":"email_gg_slogan@look360.kr","viewUid":2620,"panoCount":8,"published":1,"channelUid":151,"samplePost":5841,"channelName":"기회의 경기","contentName":"[경기공유서비스]포천 미디어센터","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":2,"domain":"7rnp27e7","hidden":0,"ownerId":"email_osanedu@look360.kr","viewUid":2399,"panoCount":6,"published":1,"channelUid":214,"samplePost":4480,"channelName":"오산시 징검다리교실","contentName":"[오산시 징검다리교실]북엔모어","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":1,"domain":"w6nue665","hidden":0,"ownerId":"email_sk8spot@look360.kr","viewUid":266,"panoCount":3,"published":1,"channelUid":5,"samplePost":2120,"channelName":"SK8SPOT","contentName":"구일 스케이트파크","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":1,"domain":"t4yqme5p","hidden":0,"ownerId":"email_precent14@look360.kr","viewUid":109,"panoCount":2,"published":1,"channelUid":10,"samplePost":281,"channelName":"프레센트.14","contentName":"프레센트.14[PRESCENT.14]","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":1,"domain":"y9k4glpy","hidden":0,"ownerId":"email_officepro@look360.kr","viewUid":113,"panoCount":3,"published":1,"channelUid":34,"samplePost":53,"channelName":"오피스프로","contentName":"오피스프로","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":1,"domain":"jp67j5f7","hidden":0,"ownerId":"email_sto@look360.kr","viewUid":1856,"panoCount":12,"published":1,"channelUid":162,"samplePost":4632,"channelName":"서울관광재단","contentName":"[서울관광재단]한양도성박물관","hiddenPosts":0,"usePassword":0,"netlify":"OK"},{"posts":1,"domain":"xo6jh8ib","hidden":0,"ownerId":"email_khu_ac_kr@look360.kr","viewUid":2813,"panoCount":29,"published":1,"channelUid":378,"samplePost":5961,"channelName":"경희대학교","contentName":"[경희대학교]경희판교VI캠퍼스","hiddenPosts":0,"usePassword":0,"netlify":"OK"}],"checks":{"102":{"status":"ok"},"115":{"status":"ok"},"826":{"status":"ok"},"1152":{"status":"ok"},"1864":{"status":"ok"},"1867":{"status":"ok"},"1873":{"status":"ok"},"1889":{"status":"ok"},"2443":{"status":"ok"}},"updatedAt":"2026-09-16T01:13:25.208Z"}</script>
+<div id="root"></div>
+<script>
+(function () {
+  'use strict';
+
+  var TITLE = 'IND-7127 귀속 검수';
+  var FONTS = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap';
+  var LS_CHECKS = 'ind7127.checks';
+  var LS_FILTER = 'ind7127.filter';
+
+  var raw = document.getElementById('app-state');
+  var state = JSON.parse(raw.textContent);
+  state.checks = state.checks || {};
+
+  var base = state.base;          // netlify — 외부에서 접속되는 배포본
+  var devBase = state.devBase;    // tailscale dev — netlify 에 안 뜨는 건만
+  var items = state.items;
+  var filter = 'all';
+  var ns = null;          // artifact capability namespace
+  var mode = 'pending';   // 'pending' | 'artifact' | 'local'
+  var saveTimer = null;
+
+  try {
+    var f = localStorage.getItem(LS_FILTER);
+    if (f) filter = f;
+  } catch (e) { /* 프라이빗 창 등에서 접근 불가 */ }
+
+  var root = document.getElementById('root');
+
+  /* ---------- 저장 ---------- */
+
+  function buildDoc(s) {
+    var json = JSON.stringify(s).replace(/</g, '\\u003c');
+    return '<!doctype html>\n<html lang="ko">\n<head>\n' +
+      '<meta charset="utf-8">\n' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+      '<title>' + TITLE + '</title>\n' +
+      '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
+      '<link rel="stylesheet" href="' + FONTS + '">\n' +
+      '<link rel="stylesheet" href="app.css">\n' +
+      '</head>\n<body>\n' +
+      '<script id="app-state" type="application/json">' + json + '<\/script>\n' +
+      '<div id="root"></div>\n' +
+      '<script src="app.js"><\/script>\n' +
+      '</body>\n</html>';
+  }
+
+  function saveLocal() {
+    try {
+      localStorage.setItem(LS_CHECKS, JSON.stringify(state.checks));
+      flag('로컬에 저장됨');
+    } catch (e) {
+      flag('저장 실패 — 브라우저가 저장을 막고 있어');
+    }
+  }
+
+  function queueSave() {
+    flag('저장 중…', true);
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(commit, 1200);
+  }
+
+  function commit() {
+    state.updatedAt = new Date().toISOString();
+    if (mode === 'artifact' && ns) {
+      ns.publish(buildDoc(state)).then(function () {
+        flag('저장됨');
+      }, function () {
+        // conflict 는 정상 — 모든 뷰가 승자 버전으로 리로드된다. 재시도하지 않는다.
+        mode = 'local';
+        saveLocal();
+      });
+    } else {
+      saveLocal();
+    }
+  }
+
+  function flag(text, active) {
+    var el = document.getElementById('saveflag');
+    if (!el) return;
+    el.textContent = text;
+    el.classList.toggle('is-active', !!active);
+  }
+
+  /* ---------- 집계 ---------- */
+
+  function counts() {
+    var c = { all: items.length, ok: 0, issue: 0, pending: 0 };
+    items.forEach(function (it) {
+      var v = (state.checks[it.viewUid] || {}).status || 'pending';
+      c[v] = (c[v] || 0) + 1;
+    });
+    return c;
+  }
+
+  /* ---------- 렌더 ---------- */
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch];
+    });
+  }
+
+  function render() {
+    var c = counts();
+    var done = c.ok + c.issue;
+    var pct = function (n) { return items.length ? (n / items.length * 100) : 0; };
+
+    var html = '<div class="wrap">';
+
+    html += '<header class="masthead">' +
+      '<div>' +
+        '<span class="eyebrow">IND-7127 · 육안 검수</span>' +
+        '<h1>360포스트 작성자 귀속 검수</h1>' +
+        '<p>작성자가 <code>look360.kr@gmail.com</code>에서 콘텐츠 소유 채널로 넘어간 360포스트 ' +
+        state.totalPosts + '건이 붙어 있는 VR 콘텐츠 전수야. 링크는 사내망 밖에서도 열리는 ' +
+        '<code>look360-v3-client.netlify.app</code> 배포본을 가리켜. 콘텐츠를 열어 포스트 작성자가 채널 이름·프로필로 뜨는지 확인해줘.</p>' +
+      '</div>' +
+      '<div class="gauges">' +
+        '<div class="gauge"><b>' + items.length + '</b><span>콘텐츠</span></div>' +
+        '<div class="gauge"><b>' + state.channelCount + '</b><span>채널</span></div>' +
+        '<div class="gauge"><b>' + state.totalPosts + '</b><span>포스트</span></div>' +
+        '<div class="gauge is-ok"><b>' + c.ok + '</b><span>정상</span></div>' +
+        '<div class="gauge is-issue"><b>' + c.issue + '</b><span>문제</span></div>' +
+      '</div>' +
+    '</header>';
+
+    html += '<div class="progress">' +
+      '<div class="progress-track">' +
+        '<i class="seg-ok" style="width:' + pct(c.ok).toFixed(2) + '%"></i>' +
+        '<i class="seg-issue" style="width:' + pct(c.issue).toFixed(2) + '%"></i>' +
+      '</div>' +
+      '<p class="progress-note">' + done + ' / ' + items.length + ' 확인 완료 · 미확인 ' + c.pending + '건</p>' +
+    '</div>';
+
+    html += '<div class="toolbar"><div class="filters">' +
+      chip('all', '전체', c.all) +
+      chip('pending', '미확인', c.pending) +
+      chip('ok', '정상', c.ok) +
+      chip('issue', '문제', c.issue) +
+      '</div><span class="saveflag" id="saveflag"></span></div>';
+
+    // 채널별 그룹 — 대상 포스트가 많은 채널부터
+    var groups = {};
+    var order = [];
+    items.forEach(function (it) {
+      if (!groups[it.channelUid]) { groups[it.channelUid] = []; order.push(it.channelUid); }
+      groups[it.channelUid].push(it);
+    });
+
+    var shown = 0;
+    order.forEach(function (cid) {
+      var list = groups[cid].filter(function (it) {
+        if (filter === 'all') return true;
+        return ((state.checks[it.viewUid] || {}).status || 'pending') === filter;
+      });
+      if (!list.length) return;
+      shown += list.length;
+
+      var head = groups[cid][0];
+      var gDone = groups[cid].filter(function (it) {
+        return ((state.checks[it.viewUid] || {}).status || 'pending') !== 'pending';
+      }).length;
+      var gPosts = groups[cid].reduce(function (a, it) { return a + it.posts; }, 0);
+
+      html += '<section class="channel">' +
+        '<div class="channel-head">' +
+          '<h2>' + esc(head.channelName) + '</h2>' +
+          '<span class="channel-meta">channel ' + cid + ' · ' + esc(head.ownerId || '소유자 미상') + '</span>' +
+          '<span class="channel-tally">' + gDone + '/' + groups[cid].length + ' 확인 · 포스트 ' + gPosts + '건</span>' +
+        '</div><ul class="rows">';
+
+      list.forEach(function (it) { html += rowHtml(it); });
+      html += '</ul></section>';
+    });
+
+    if (!shown) {
+      html += '<p class="empty">이 필터에 해당하는 콘텐츠가 없어.</p>';
+    }
+
+    html += '<footer class="colophon">' +
+      '<p>대상 판정 정본은 백업 테이블 <code>look360_v3_migration._backup_ind7127_author_20260912</code>의 <code>DISTINCT post_uid</code> ' + state.totalPosts + '건이고, ' +
+      '<code>l3_360post_idx.post_uid</code> → <code>view360_uid</code> → <code>l3_vc_360view</code>로 콘텐츠를 집계했어.</p>' +
+      '<p>링크 기준은 <code>' + esc(base) + '</code> (netlify · 프록시로 <code>api.look360.co.kr</code>를 봄). ' +
+      '대상 포스트 표본 15건을 dev API와 대조하니 작성자 <code>id</code>가 전건 동일했고, VR 콘텐츠는 ' +
+      state.netlifyOk + '/' + items.length + '건이 netlify에서 확인됐어. ' +
+      '나머지 1건은 <code>hidden=1</code>이라 netlify에 안 떠서 dev <code>' + esc(devBase) + '</code> 링크로 남겼어.</p>' +
+      '</footer>';
+
+    html += '</div>';
+    root.innerHTML = html;
+    bind();
+  }
+
+  function chip(key, label, n) {
+    return '<button class="chip" type="button" data-filter="' + key + '" aria-pressed="' +
+      (filter === key) + '">' + label + '<span class="n">' + n + '</span></button>';
+  }
+
+  function rowHtml(it) {
+    var chk = state.checks[it.viewUid] || {};
+    var v = chk.status || 'pending';
+    var cls = v === 'ok' ? ' is-ok' : (v === 'issue' ? ' is-issue' : '');
+
+    var offsite = it.netlify !== 'OK';   // netlify 에서 콘텐츠를 못 찾은 건
+    var host = offsite ? devBase : base;
+
+    var flags = '';
+    if (offsite) flags += '<span class="flag">netlify 미노출 · dev 전용</span>';
+    if (it.hidden) flags += '<span class="flag">숨김 콘텐츠</span>';
+    if (it.usePassword) flags += '<span class="flag">암호 걸림</span>';
+    if (!it.published) flags += '<span class="flag">미공개</span>';
+    if (it.hiddenPosts) flags += '<span class="flag">대상 포스트 ' + it.hiddenPosts + '건 숨김</span>';
+
+    var h = '<li class="row' + cls + '" data-uid="' + it.viewUid + '">' +
+      '<div class="row-main">' +
+        '<div class="row-title"><span class="name">' + esc(it.contentName) + '</span>' + flags + '</div>' +
+        '<div class="row-coords">' + esc(it.domain) + ' · view ' + it.viewUid +
+          ' · 파노 ' + it.panoCount + '장 · <span class="posts">대상 포스트 ' + it.posts + '건</span></div>' +
+      '</div>' +
+      '<div class="row-side">' +
+        '<span class="links">' +
+          '<a href="' + host + '/vr/' + encodeURIComponent(it.domain) + '" target="_blank" rel="noopener">VR 열기 ↗</a>' +
+          (it.samplePost
+            ? '<a href="' + host + '/post360/' + it.samplePost + '" target="_blank" rel="noopener">포스트 ' + it.samplePost + ' ↗</a>'
+            : '<span class="nolink">공개 포스트 없음</span>') +
+        '</span>' +
+        '<span class="verdict">' +
+          vbtn(it.viewUid, 'pending', '미확인', v) +
+          vbtn(it.viewUid, 'ok', '정상', v) +
+          vbtn(it.viewUid, 'issue', '문제', v) +
+        '</span>' +
+      '</div>';
+
+    if (v === 'issue') {
+      h += '<div class="note"><textarea id="note-' + it.viewUid + '" data-note="' + it.viewUid +
+        '" placeholder="뭐가 잘못됐는지 적어줘 — 작성자가 그대로 look360.kr@gmail.com이다, 포스트가 안 보인다 등">' +
+        esc(chk.note || '') + '</textarea></div>';
+    }
+
+    return h + '</li>';
+  }
+
+  function vbtn(uid, val, label, cur) {
+    return '<button type="button" data-v="' + val + '" data-target="' + uid +
+      '" aria-pressed="' + (cur === val) + '">' + label + '</button>';
+  }
+
+  /* ---------- 이벤트 ---------- */
+
+  function bind() {
+    root.querySelectorAll('.chip').forEach(function (b) {
+      b.addEventListener('click', function () {
+        filter = b.dataset.filter;
+        try { localStorage.setItem(LS_FILTER, filter); } catch (e) { /* 저장 불가 시 무시 */ }
+        render();
+      });
+    });
+
+    root.querySelectorAll('.verdict button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var uid = b.dataset.target;
+        var cur = state.checks[uid] || {};
+        if ((cur.status || 'pending') === b.dataset.v) return;
+        cur.status = b.dataset.v;
+        if (cur.status !== 'issue') delete cur.note;
+        state.checks[uid] = cur;
+        render();
+        queueSave();
+      });
+    });
+
+    root.querySelectorAll('textarea[data-note]').forEach(function (t) {
+      t.addEventListener('input', function () {
+        var uid = t.dataset.note;
+        state.checks[uid] = state.checks[uid] || { status: 'issue' };
+        state.checks[uid].note = t.value;
+        queueSave();
+      });
+    });
+  }
+
+  /* ---------- 부팅 ---------- */
+
+  render();
+  flag('저장 위치 확인 중…');
+
+  var use = window.claude && window.claude.use;
+  if (!use) {
+    mode = 'local';
+    mergeLocal();
+  } else {
+    window.claude.use('artifact').then(function (a) {
+      if (a) {
+        ns = a;
+        mode = 'artifact';
+        flag('체크하면 이 페이지에 저장돼');
+      } else {
+        mode = 'local';
+        mergeLocal();
+      }
+    }, function () {
+      mode = 'local';
+      mergeLocal();
+    });
+  }
+
+  function mergeLocal() {
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(LS_CHECKS) || 'null'); } catch (e) { /* 접근 불가 */ }
+    if (saved) {
+      Object.keys(saved).forEach(function (k) {
+        if (!state.checks[k]) state.checks[k] = saved[k];
+      });
+      render();
+    }
+    flag('이 브라우저에만 저장돼');
+  }
+})();
+</script>
+</body>
+</html>
