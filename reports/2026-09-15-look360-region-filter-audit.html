@@ -265,7 +265,7 @@ footer .sheet{padding-block:22px 0}
 
 <header class="masthead">
   <div class="sheet">
-    <p class="stamp">정합 불일치 10건</p>
+    <p class="stamp">정합 불일치 11건 · 교정 완료</p>
     <h1>지도가 현실보다 늦다</h1>
     <p class="standfirst">
       「경기도에서 왜 여섯 개 시만 구가 나오는가」라는 물음에서 시작해 <code>l3_areas</code> 전국 노드를 전수 대조했다.
@@ -275,13 +275,14 @@ footer .sheet{padding-block:22px 0}
 
     <div class="gauges">
       <div class="gauge"><div class="v">1,577</div><div class="k">대조한 KR 행정 노드</div></div>
-      <div class="gauge bad"><div class="v">10<u>건</u></div><div class="k">정합 불일치</div></div>
-      <div class="gauge bad"><div class="v">12<u>건</u></div><div class="k">현재 노출 중인 오표기</div></div>
+      <div class="gauge bad"><div class="v">11<u>건</u></div><div class="k">정합 불일치</div></div>
+      <div class="gauge bad"><div class="v">18<u>건</u></div><div class="k">노출 중이던 오표기</div></div>
       <div class="gauge"><div class="v">235<u>건</u></div><div class="k">노출 규칙에 가려진 콘텐츠</div></div>
+      <div class="gauge"><div class="v">21</div><div class="k">L1~L5 완전체 지역</div></div>
     </div>
 
     <div class="colophon">
-      <span>2026-09-15</span><span>l3_areas · l3_place</span><span>선행 IND-7078</span>
+      <span>2026-09-15</span><span>l3_areas · l3_place</span><span>IND-7354</span><span>선행 IND-7078</span>
     </div>
   </div>
 </header>
@@ -293,7 +294,7 @@ footer .sheet{padding-block:22px 0}
   <p class="deck">구가 보이는 시와 보이지 않는 시가 갈리는 건 규칙 탓이 아니라 행정구역 구조 탓이다.</p>
 
   <p>
-    FE는 <code>areaUtils.js</code>의 <code>AREA_FILTER_MAX_LEVEL = 3</code>으로 <span class="lv">L4</span> 읍·면과
+    FE는 <code>areaUtils.js</code>의 <code>AREA_FILTER_MAX_LEVEL = 3</code>(감사 시점의 상수 — 지금은 뒤의 肆 절에서 바뀐다)으로 <span class="lv">L4</span> 읍·면과
     <span class="lv">L5</span> 동·리를 잘라낸다. 그러니 구가 화면에 뜨려면 그 시 아래에 실제 <span class="lv on">L3</span> 노드가 있어야 한다.
     그런데 <strong>일반구는 법으로 정해진 시에만 설치된다.</strong>
   </p>
@@ -339,7 +340,7 @@ footer .sheet{padding-block:22px 0}
 </section>
 
 <section class="sheet">
-  <div class="shead"><span class="no">貳</span><h2>전수 대조에서 드러난 열 건</h2></div>
+  <div class="shead"><span class="no">貳</span><h2>전수 대조에서 드러난 열한 건</h2></div>
   <p class="deck">현실의 행정구역 개편이 데이터에 도달하지 못했거나, 도달하면서 왜곡됐다.</p>
 
   <h3>화면에 틀린 것이 보이는 경우</h3>
@@ -435,10 +436,48 @@ footer .sheet{padding-block:22px 0}
     </div>
   </figure>
 
+  <h3>구·군 자리를 건너뛴 경우</h3>
+  <p>
+    체인 패턴을 전수 집계하다 뒤늦게 드러난 열한 번째 유형이다. 구가 실재하는 시인데도 동이
+    <strong>시·도 직속</strong>에 매달려 있었다. 그래서 서울시를 누르면 자치구가 25개가 아니라
+    <strong>27개</strong>로 뜨고, 목록에 「방배3동」이 자치구인 척 끼어 있었다.
+  </p>
+
+  <figure>
+    <figcaption>원인은 파서가 아니라 원본 주소다 — 우편번호 6자리 시절 주소엔 구가 없다</figcaption>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>장소</th><th>원본 주소</th><th>실제 소재</th></tr></thead>
+        <tbody>
+          <tr class="off"><td class="sm"><span class="nm">백석예술대학교</span></td><td class="sm"><code>서울특별시 방배 3동 981-7</code></td><td class="sm">서울 <strong>서초구</strong></td></tr>
+          <tr class="off"><td class="sm"><span class="nm">명지대 자연캠퍼스</span></td><td class="sm"><code>경기도 용인시 남동 산38-2</code></td><td class="sm">용인시 <strong>처인구</strong></td></tr>
+          <tr class="off"><td class="sm"><span class="nm">용인송담대학교</span></td><td class="sm"><code>경기도 용인시 마평동 571-1</code></td><td class="sm">용인시 <strong>처인구</strong></td></tr>
+          <tr class="off"><td class="sm"><span class="nm">창신대학교</span></td><td class="sm"><code>경남 마산시 합성2동 1번지</code></td><td class="sm">창원시 <strong>마산회원구</strong></td></tr>
+          <tr class="off"><td class="sm"><span class="nm">창원대학교</span></td><td class="sm"><code>창원시 소나무5길 65 (사림동)</code></td><td class="sm">창원시 <strong>의창구</strong></td></tr>
+          <tr class="off"><td class="sm"><span class="nm">창원문성대학교</span></td><td class="sm"><code>경남 창원시 두대동 196번지</code></td><td class="sm">창원시 <strong>의창구</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <p>
+    파서 개선으로는 <em>원천적으로</em> 해결되지 않는 부류다 — 채울 근거가 원본에 없다.
+    그래서 처방도 사람이 확정한 값을 박는 시드다.
+  </p>
+
+  <div class="aside err">
+    <span class="hd">근거 없는 배정은 오배정이다</span>
+    같은 유형인 <strong>신사동</strong>은 <strong>배정하지 않고 비활성만</strong> 했다.
+    참조 place 가 0건이라 강남구인지 은평구인지 판별할 근거가 아예 없다.
+    동명이 하나뿐이겠거니 하고 찍으면 그 순간 오배정이 된다.
+  </div>
+
   <div class="aside ok">
     <span class="hd">대조 결과 정상</span>
     경상남도는 <strong>창원시만</strong> 구를 갖는 것이 맞다(의창·성산·마산합포·마산회원·진해).
     김해·진주·양산·거제·통영은 원래 일반구가 없다. 울산시는 광역시라 자치구 4개와 울주군이 정상 노출된다.
+    <strong>세종시 직속의 동 12개</strong>도 정상이다 — 시·군·구 자체가 없는 특별자치시라
+    동이 시 직속인 것이 맞다. 이걸 위반으로 세면 위양성이 난다.
   </div>
 </section>
 
@@ -458,6 +497,15 @@ footer .sheet{padding-block:22px 0}
       <b><code>count = 0</code>이면 이미 화면에서 가려진다.</b>
       <code>isRegionCountZero</code>(IND-6120/6768)가 콘텐츠 0건 노드를 숨긴다.
       死노드라도 count가 0이면 사용자 영향은 없으니, 우선순위를 가를 때 이 축을 먼저 본다.
+    </li>
+    <li>
+      <b>이름을 열거하지 말고 «구조»로 잡는다.</b>
+      열한 번째 결함은 이름 목록으로는 잡히지 않았다 — 체인 패턴을 세다 드러났다.
+      그래서 게이트를 두 벌 뒀다: 하나는 지정한 이름 여덟 종을 보고, 다른 하나는
+      <strong>「시·도 직속 L5」·「구를 가진 시의 직속 L5」</strong>라는 구조를 본다.
+      뒤엣것은 <em>같은 유형이 새로 생겨도 자동으로 걸린다.</em>
+      단 <code>EXISTS(구)</code>에는 반드시 <code>is_active = 1</code>을 걸어야 한다 —
+      死·유령 자식을 「구가 있다」로 신뢰하면 위반이 과다 계상된다.
     </li>
   </ol>
 
@@ -537,14 +585,83 @@ footer .sheet{padding-block:22px 0}
 </section>
 
 <section class="sheet">
-  <div class="shead"><span class="no">伍</span><h2>작업 범위</h2></div>
-  <p class="deck">FE 규칙 변경과 BE 데이터 교정은 서로 독립적이라 따로 적용할 수 있다.</p>
+  <div class="shead"><span class="no">伍</span><h2>이 나라 행정구역은 5단을 다 채우지 않는다</h2></div>
+  <p class="deck">교정을 마친 뒤 체인 패턴을 전수로 세어 봤다. 규칙이 왜 「직속 자식 전부」여야 했는지가 여기 다 들어 있다.</p>
+
+  <figure>
+    <figcaption>리프 노드 기준 · 짧은 체인부터</figcaption>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>체인</th><th class="n" style="text-align:right">노드</th><th>예시</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">L1›L2</td><td class="n">8</td><td class="sm"><span class="path">경상남도 <i>›</i> 거제시</span></td></tr>
+          <tr><td class="mono">L1›L3</td><td class="n">57</td><td class="sm"><span class="path">강원도 <i>›</i> 양구군</span></td></tr>
+          <tr><td class="mono">L1›L4</td><td class="n">9</td><td class="sm"><span class="path">세종시 <i>›</i> 금남면</span></td></tr>
+          <tr><td class="mono">L1›L5</td><td class="n">14</td><td class="sm"><span class="path">세종시 <i>›</i> 한솔동</span> <span class="mark ok">세종 12건은 정상</span></td></tr>
+          <tr><td class="mono">L1›L2›L5</td><td class="n">239</td><td class="sm"><span class="path">경기도 <i>›</i> 과천시 <i>›</i> 중앙동</span></td></tr>
+          <tr><td class="mono">L1›L3›L5</td><td class="n">294</td><td class="sm"><span class="path">광주시 <i>›</i> 광산구 <i>›</i> 서봉동</span></td></tr>
+          <tr><td class="mono">L1›L4›L5</td><td class="n">2</td><td class="sm"><span class="path">세종시 <i>›</i> 조치원읍 <i>›</i> 서창리</span></td></tr>
+          <tr><td class="mono">L1›L2›L3›L4</td><td class="n">1</td><td class="sm"><span class="path">충청남도 <i>›</i> 천안시 <i>›</i> 서북구 <i>›</i> 성환읍</span></td></tr>
+          <tr><td class="mono">L1›L2›L3›L5</td><td class="n">161</td><td class="sm"><span class="path">경기도 <i>›</i> 고양시 <i>›</i> 덕양구 <i>›</i> 덕은동</span></td></tr>
+          <tr><td class="mono">L1›L2›L4›L5</td><td class="n">221</td><td class="sm"><span class="path">강원도 <i>›</i> 강릉시 <i>›</i> 성산면 <i>›</i> 금산리</span></td></tr>
+          <tr><td class="mono">L1›L3›L4›L5</td><td class="n">76</td><td class="sm"><span class="path">강원도 <i>›</i> 고성군 <i>›</i> 토성면 <i>›</i> 천진리</span></td></tr>
+          <tr class="add"><td class="mono"><strong>L1›L2›L3›L4›L5</strong></td><td class="n">21</td><td class="sm"><span class="path">경기도 <i>›</i> 용인시 <i>›</i> 처인구 <i>›</i> 모현읍 <i>›</i> 왕산리</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <p>
+    다섯 단을 <strong>전부</strong> 채우는 지역은 전국에 <strong>21곳</strong>뿐이다. 나머지는 어딘가가 비어 있다 —
+    구가 없거나, 읍·면이 없거나, 둘 다 없거나. 「레벨 3까지만 그린다」가 58개 시를 빈 칸으로
+    만든 이유가 이 분포다.
+  </p>
+
+  <div class="aside new">
+    <span class="hd">완전체 21곳 — 그중 13곳은 이번 교정으로 생겼다</span>
+    원래 다섯 단을 다 채우던 곳은 <strong>용인 3 · 포항 3 · 천안 1 · 창원 1</strong>뿐이었다.
+    화성 9곳은 4구를 신설하면서, 청주 4곳은 청원군을 해체해 청원구·흥덕구로 재배치하면서
+    비어 있던 구 자리가 채워졌다.
+    <div class="plots" style="margin-bottom:0">
+      <div class="plot keep">
+        <div class="lbl">L1 › L2 › L3 › L4 › L5 전수</div>
+        <ul>
+          <li>경기도 › 용인시 › 처인구 › 모현읍 › 왕산리</li>
+          <li>경기도 › 용인시 › 처인구 › 백암면 › 근삼리</li>
+          <li>경기도 › 용인시 › 처인구 › 원삼면 › 사암리</li>
+          <li class="plus">경기도 › 화성시 › 만세구 › 남양읍 › 시청로</li>
+          <li class="plus">경기도 › 화성시 › 만세구 › 서신면 › 장외리</li>
+          <li class="plus">경기도 › 화성시 › 만세구 › 서신면 › 전곡리</li>
+          <li class="plus">경기도 › 화성시 › 만세구 › 서신면 › 제부리</li>
+          <li class="plus">경기도 › 화성시 › 만세구 › 향남읍 › 행정리</li>
+          <li class="plus">경기도 › 화성시 › 효행구 › 봉담읍 › 동화리</li>
+          <li class="plus">경기도 › 화성시 › 효행구 › 봉담읍 › 상리</li>
+          <li class="plus">경기도 › 화성시 › 효행구 › 봉담읍 › 와우리</li>
+          <li class="plus">경기도 › 화성시 › 효행구 › 정남면 › 보통리</li>
+          <li class="plus">충청북도 › 청주시 › 청원구 › 내수읍 › 덕암리</li>
+          <li class="plus">충청북도 › 청주시 › 청원구 › 오창읍 › 성재리</li>
+          <li class="plus">충청북도 › 청주시 › 흥덕구 › 강내면 › 다락리</li>
+          <li class="plus">충청북도 › 청주시 › 흥덕구 › 강내면 › 월곡리</li>
+          <li>충청남도 › 천안시 › 동남구 › 병천면 › 가전리</li>
+          <li>경상북도 › 포항시 › 북구 › 용해읍 › 죽천동</li>
+          <li>경상북도 › 포항시 › 북구 › 흥해읍 › 남송리</li>
+          <li>경상북도 › 포항시 › 북구 › 흥해읍 › 초곡동</li>
+          <li>경상남도 › 창원시 › 마산합포구 › 구산면 › 석곡리</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="shead"><span class="no">陸</span><h2>착지</h2></div>
+  <p class="deck">FE 규칙 변경과 BE 데이터 교정은 서로 독립적이라 따로 적용했다. 전부 dev 반영·검증 완료.</p>
 
   <h3>FE · look360_v3_client</h3>
   <ol class="steps">
     <li><b><code>areaUtils.js</code></b> — <code>pruneAreaNodesByLevel</code>을 깊이 기준 컷으로 교체. 공용 1곳이라 PC 캐스케이드와 모바일 오버레이가 함께 따라온다</li>
-    <li><b><code>vrListRegionRoute.js</code></b> — <code>region</code> 값의 area3 슬롯에 L4·L5 uid가 들어갈 수 있도록 계약(R-7)을 갱신. BE <code>regionArea3</code>가 이를 받아주는지 확인이 선행</li>
-    <li><b>spec</b> — <code>areaUtils.spec.js</code>의 「L3 컷」 테스트를 새 규칙으로 교체</li>
+    <li><b>spec</b> — <code>areaUtils.spec.js</code>의 「L3 컷」 테스트를 새 규칙으로 교체. 광역시 비대칭 회귀 케이스를 추가해 못을 박았다</li>
+    <li><b>BE <code>regionArea3</code></b> — level 5 도 수용하도록 확장. 안 고치면 과천·광명 등 L5 선택이 전부 <code>Invalid regionArea3</code> <strong>400</strong> 이다. LIKE 폴백 절은 건드리지 않았다 — FK 없는 레거시 행 전용이라 <code>IS NULL</code> 조건을 늘리면 기존 매칭이 되레 준다</li>
   </ol>
 
   <h3>BE · nestjs-look360-api 마이그레이션</h3>
@@ -554,7 +671,8 @@ footer .sheet{padding-block:22px 0}
     <li><b>승계 해제</b> — 경남 고성군의 잘못된 강원 승계를 되돌리고 <code>is_active=1</code> 복구</li>
     <li><b>개명</b> — 인천 남구→미추홀구 · 세종특별자치시→세종시. 각 9개 언어 i18n 동반</li>
     <li><b>신설·부활</b> — 부천 3구 활성화와 동 12개 재배치 · 천안 서북구 신설 · 화성 4구 신설과 읍면동 14개 배치</li>
-    <li><b><code>l3_place</code> 재배선</b> — 폐지 노드를 가리키던 5건은 uid까지 특정 완료. 개명 건은 텍스트 컬럼도 함께 갱신</li>
+    <li><b>구 건너뜀 교정</b> — 노드 5건을 소속 구로 이동, place 6건에 구를 시드. 목적지 구의 동명 twin 이 전부 <code>is_active=0</code> 이라 승계 타겟 자격이 없어 살아있는 쪽을 옮겼다</li>
+    <li><b><code>l3_place</code> 재배선</b> — 폐지 노드를 가리키던 5건은 uid까지 특정. 개명 건은 텍스트 컬럼도 함께 갱신</li>
   </ol>
 
   <div class="aside new">
@@ -563,13 +681,63 @@ footer .sheet{padding-block:22px 0}
     <strong>도당동은 오정구가 아니라 원미구</strong>이고, <strong>송산동(병점구)과 송산면(만세구)은 별개</strong>다.
     화성 <code>남양동</code>은 2014년 <strong>남양읍</strong>으로 격하돼 지금은 존재하지 않는다 — 전국 최초의 동→읍 전환이었다.
   </div>
+
+  <h3>재마이그레이션을 견디게 하는 3중 장치</h3>
+  <p>
+    조사 중 위험 지점이 예상과 달랐다. <code>l3_areas</code> 는 재마이그 TRUNCATE 대상이 아니라
+    <strong>노드 교정은 살아남는다.</strong> 반면 <code>l3_place</code> 는 레거시에서 재구축되고
+    후처리 룰들이 area1~5 를 다시 채우므로 <strong>구 배정과 텍스트 정정만 조용히 원복</strong>된다.
+    원본 주소가 그대로라 파서가 「삼곡동」 같은 오타도 다시 만든다. 그래서 같은 사실을 세 자리에 박았다.
+  </p>
+
+  <figure>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>자리</th><th>역할</th><th>판정축</th></tr></thead>
+        <tbody>
+          <tr><td class="sm">마이그레이션 <span class="mono">A·B·C·D</span></td><td class="sm">지금 DB 즉시 교정</td><td class="sm">uid (현재 실측값)</td></tr>
+          <tr><td class="sm">후처리 룰 <span class="mono">order 1.511</span></td><td class="sm">재마이그마다 동일 교정 재현</td><td class="sm"><strong>이름</strong> — uid 하드코딩 0</td></tr>
+          <tr><td class="sm">게이트 2종</td><td class="sm">누락되면 재마이그가 FAIL</td><td class="sm">이름 8종 + <strong>구조</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <div class="aside err">
+    <span class="hd">룰을 쓰다 룰의 버그를 찾았다 — 광역시에서 무음 스킵</span>
+    place 의 area3 uid 를 다시 맬 때 부모 슬롯을 <code>area2_uid</code> <strong>단일축</strong>으로 보면,
+    광역시는 area2 를 비우는 규약이라 <strong>조회가 0행이 돼 재배선이 통째로 건너뛰어진다.</strong>
+    에러도 나지 않는다. 정본은 <code>COALESCE(area2_uid, area1_uid)</code> 다 —
+    area5 도 같다(구 없는 시는 area4 가 비어 area3·area2 가 부모).
+  </div>
+
+  <h3>검증</h3>
+  <figure>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>축</th><th>결과</th></tr></thead>
+        <tbody>
+          <tr><td class="sm">게이트 <span class="mono">krAbolishedAreaResidual</span></td><td class="sm"><span class="mark ok">3축 합계 0</span></td></tr>
+          <tr><td class="sm">게이트 <span class="mono">krGuSkippedAreaNode</span></td><td class="sm"><span class="mark ok">6 → 0</span> 적용 전 6 을 먼저 확인해 «무음이 아님»을 증명</td></tr>
+          <tr><td class="sm">서울시 자치구</td><td class="sm"><span class="mark ok">27 → 25</span> 자치구만 남음</td></tr>
+          <tr><td class="sm">FE 테스트 · 빌드</td><td class="sm"><span class="mark ok">397건 PASS</span></td></tr>
+          <tr><td class="sm">BE <code>vr-list</code> 테스트</td><td class="sm"><span class="mark ok">113건 PASS</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <p>
+    적용 전 <code>l3_areas</code> 1,577행 · i18n 14,193행 · place 1,774행을 스냅샷으로 떠 두었다.
+    기록은 <strong>IND-7354</strong> 에 있다.
+  </p>
 </section>
 
 </main>
 
 <footer>
   <div class="sheet">
-    Look360 l3 플랫폼 · 행정구역 정합 감사 · 2026-09-15<br>
+    Look360 l3 플랫폼 · 행정구역 정합 감사 · 2026-09-15 (교정 착지분 반영 2026-09-16) · IND-7354<br>
     l3_areas · l3_areas_i18n · l3_place · GET /v1.0/regions/hierarchy · 선행 IND-7078 / IND-7052 / IND-6733
   </div>
 </footer>
