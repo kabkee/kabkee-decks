@@ -787,8 +787,11 @@ body {
     var saved = null;
     try { saved = JSON.parse(localStorage.getItem(LS_CHECKS) || 'null'); } catch (e) { /* 접근 불가 */ }
     if (saved) {
+      // 이 브라우저에서 사람이 직접 누른 값이, 페이지에 박힌 발행 시점 스냅샷을 이긴다.
+      // (구버전은 `if (!state.checks[k])` 가드 탓에 이미 판정이 박혀 있던 9건은
+      //  localStorage 에 저장돼도 새로고침하면 스냅샷 값으로 되돌아갔다)
       Object.keys(saved).forEach(function (k) {
-        if (!state.checks[k]) state.checks[k] = saved[k];
+        state.checks[k] = saved[k];
       });
       render();
     }
