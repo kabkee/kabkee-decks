@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>look360.kr 랜딩페이지 기획</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* 기획 문서 — 1열 본문 + 표. 배치(B1~B4)는 색 칩으로 구분 */
+:root{
+  --bg:#F4F6F5; --sheet:#FFFFFF; --ink:#13201D; --muted:#5B6B67; --line:#D8E0DD;
+  --accent:#0B7A62; --warm:#B87322; --risk:#B2402F;
+  --b1:#0B7A62; --b2:#2F6DB5; --b3:#8A5BB0; --b4:#B87322;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0E1614; --sheet:#152220; --ink:#E3ECE9; --muted:#97AAA5; --line:#28403B;
+  --accent:#3CC49F; --warm:#E2A65A; --risk:#E57B67;
+  --b1:#3CC49F; --b2:#79A9E8; --b3:#B795DA; --b4:#E2A65A; color-scheme:dark;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans)}
+.page{max-width:980px;margin:0 auto;padding:48px clamp(16px,4vw,40px) 80px}
+h1{font-size:clamp(28px,4.5vw,42px);line-height:1.25;letter-spacing:-.02em;margin:10px 0 14px;text-wrap:balance}
+h2{font-size:24px;margin:64px 0 14px;letter-spacing:-.01em;text-wrap:balance;padding-top:18px;border-top:2px solid var(--ink)}
+h3{font-size:17px;margin:28px 0 8px}
+p,li{max-width:46em}
+.eyebrow{font:700 13px var(--sans);letter-spacing:.04em;text-transform:uppercase;color:var(--warm)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.callout{background:var(--sheet);border:1px solid var(--line);border-left:4px solid var(--accent);padding:18px 22px;border-radius:4px;margin:20px 0}
+.callout.risk{border-left-color:var(--risk)}
+.callout strong{display:block;margin-bottom:4px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);background:var(--sheet);border-radius:4px;margin:24px 0}
+.kpi{padding:16px 18px}
+.kpi+.kpi{border-left:1px solid var(--line)}
+.kpi .n{font:500 30px var(--mono);letter-spacing:-.02em}
+.kpi .l{font-size:13px;color:var(--muted)}
+@media(max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi:nth-child(3){border-left:0}.kpi:nth-child(n+3){border-top:1px solid var(--line)}}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--sheet);margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:640px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{font-size:12.5px;color:var(--muted);font-weight:500;background:color-mix(in srgb,var(--bg) 60%,var(--sheet))}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.chip{display:inline-block;font:500 11px var(--mono);padding:1px 7px;border-radius:3px;color:var(--sheet);white-space:nowrap}
+.c1{background:var(--b1)}.c2{background:var(--b2)}.c3{background:var(--b3)}.c4{background:var(--b4)}
+.done{font:500 11px var(--mono);color:var(--accent)}
+a{color:var(--accent)}
+.timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:2px solid var(--ink);margin-top:18px}
+.timeline div{padding:12px 14px 0 0}
+.timeline b{display:block}
+.timeline span{font-size:14px;color:var(--muted)}
+@media(max-width:700px){.timeline{grid-template-columns:1fr}.timeline div{border-bottom:1px solid var(--line);padding:12px 0}}
+ol.q li,ul li{margin:6px 0}
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="eyebrow">기획 · 2026-10-04 · 레거시 look360.kr 전용</p>
+  <h1>look360.kr 홍보용 랜딩페이지<br>어떤 주제로 몇 장을 만들까</h1>
+  <p class="muted">VR 촬영 의뢰와 콘텐츠 방문을 늘리려고 주제별 랜딩페이지를 여러 장 깔아 두는 계획이야. <b>l3 플랫폼이 아니라 지금 운영 중인 레거시 look360.kr(PHP, AWS EC2)에 붙이는 것</b>을 전제로 썼어.</p>
+
+  <div class="callout">
+    <strong>한 줄 결론</strong>
+    총 <b>24장</b>을 <b>4번(B1~B4)</b>에 나눠 만들자. 첫 배치는 6장이고, 그중 1장(대학교 캠퍼스 투어)은 시안이 나와 있어 →
+    <a href="look360-landing/campus-vr-tour.html">시안 보기</a>.
+    한 배치를 올리면 색인되고 반응을 볼 때까지 3~4주 기다렸다가 다음 배치로 넘어가.
+  </div>
+
+  <h2>1. 왜 24장인가</h2>
+  <p>"낚시대를 많이 깔수록 좋다"는 맞는 말인데, 검색엔진에는 상한선이 있어. 지역명이나 업종명만 바꾼 비슷한 페이지는 구글이 <b>도어웨이 페이지(doorway pages)</b>로, AI로 대량 생산한 얇은 글은 <b>대량 생성 콘텐츠 남용(scaled content abuse)</b>으로 분류해서, 걸리면 <b>도메인 전체 순위</b>가 같이 떨어져. 네이버도 저품질 웹문서를 따로 걸러내.</p>
+  <p>그래서 기준을 이렇게 잡았어: <b>페이지마다 그 페이지에만 있는 실물이 있어야 한다.</b> 우리 DB에 실제 제작 사례가 충분한 주제만 남기니까 24장이 나왔어. 그 이상 늘리면 같은 포트폴리오를 돌려쓰게 돼서 위험해져.</p>
+  <ul>
+    <li>실물 = 그 주제의 실제 VR 사례, 고객 이름, 콘텐츠 수, 그 업종에 맞는 활용법과 FAQ</li>
+    <li>AI가 맡는 일 = 레이아웃, 문구 다듬기, FAQ 초안, 구조화 데이터(JSON-LD)</li>
+    <li>사람이 맡는 일 = 사례 고르기, 가격·기간 같은 사실 확인, 최종 검수</li>
+  </ul>
+
+  <h2>2. 데이터 근거</h2>
+  <p class="muted">로컬 마이그레이션 DB(<span class="mono">look360_v3_migration</span>, 레거시 데이터를 옮겨온 사본)를 2026-10-04에 집계했어. 숨김(hidden) 콘텐츠는 뺐어.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="n">4,383</div><div class="l">공개 VR 콘텐츠</div></div>
+    <div class="kpi"><div class="n">585</div><div class="l">학교 계열 (대학·초·중·고)</div></div>
+    <div class="kpi"><div class="n">1,315</div><div class="l">경기도 소재 콘텐츠</div></div>
+    <div class="kpi"><div class="n">375</div><div class="l">경기관광공사 채널</div></div>
+  </div>
+
+  <h3>카테고리 상위 (장소 + 테마)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>카테고리</th><th>상위 분류</th><th style="text-align:right">콘텐츠</th><th>주로 올린 채널</th></tr></thead>
+    <tbody>
+      <tr><td>공유공간</td><td>공공명소</td><td class="num">416</td><td>기회의 경기 220 · 오산시 징검다리교실 194</td></tr>
+      <tr><td>대학교</td><td>학교</td><td class="num">351</td><td>Campustown 341</td></tr>
+      <tr><td>초등학교</td><td>학교</td><td class="num">139</td><td>Campustown 139</td></tr>
+      <tr><td>스케이트파크</td><td>스포츠·레저</td><td class="num">115</td><td>SK8SPOT 114</td></tr>
+      <tr><td>관광·여행</td><td>테마</td><td class="num">111</td><td></td></tr>
+      <tr><td>공원</td><td>공공명소</td><td class="num">76</td><td></td></tr>
+      <tr><td>박람회·엑스포</td><td>테마·행사</td><td class="num">74</td><td></td></tr>
+      <tr><td>중학교 / 고등학교</td><td>학교</td><td class="num">52 / 43</td><td></td></tr>
+      <tr><td>체험장 / 테마파크</td><td>학원·교육 / 오락</td><td class="num">48 / 41</td><td></td></tr>
+      <tr><td>호텔</td><td>숙박</td><td class="num">41</td><td></td></tr>
+      <tr><td>박물관</td><td>전시·행사</td><td class="num">36</td><td></td></tr>
+      <tr><td>문화유산 / 유적지 / 궁궐</td><td>역사</td><td class="num">28 / 22 / 17</td><td></td></tr>
+    </tbody>
+  </table></div>
+  <p>1위는 공유공간이지만, 이건 <b>지자체 사업 두 건</b>에 몰려 있고 "공유공간 VR"로 검색하는 사람은 거의 없어. 그래서 랜딩 주제는 카테고리 이름이 아니라 <b>돈을 내는 사람(구매자)</b> 기준으로 묶었어. 학교 계열을 합치면 585건으로 실질 1위라서 첫 시안을 대학교로 잡았어.</p>
+
+  <h3>지역 상위</h3>
+  <p>서울 504 · 경기 오산 203 · 경기 용인 186 · 제주 181 (제주시 105, 서귀포 76) · 경기 수원 96 · 인천 81 · 경기 포천 60 · 이천 60 · 안산 59 · 파주 55</p>
+
+  <h2>3. 페이지 맵 (24장)</h2>
+  <p><span class="chip c1">B1</span> 10월 &nbsp; <span class="chip c2">B2</span> 11월 &nbsp; <span class="chip c3">B3</span> 12월 &nbsp; <span class="chip c4">B4</span> 2027년 1월</p>
+
+  <h3>A. 업종별 — 10장</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>배치</th><th>페이지</th><th>구매자</th><th>노릴 검색어</th><th style="text-align:right">근거 수치</th></tr></thead>
+    <tbody>
+      <tr><td><span class="chip c1">B1</span></td><td>대학교 VR 캠퍼스 투어 <span class="done">시안 완료</span></td><td>입학처·홍보팀</td><td>캠퍼스 투어 VR, 대학교 VR 제작</td><td class="num">351</td></tr>
+      <tr><td><span class="chip c1">B1</span></td><td>초·중·고 학교 VR 안내</td><td>학교 행정실, 교육청</td><td>학교 VR 촬영, 학교 시설 360</td><td class="num">234</td></tr>
+      <tr><td><span class="chip c1">B1</span></td><td>지자체·공공 공간 VR</td><td>시·군청, 공공기관</td><td>공공시설 VR, 지자체 VR 제작</td><td class="num">497</td></tr>
+      <tr><td><span class="chip c1">B1</span></td><td>관광지·관광공사 VR</td><td>관광공사, 관광재단</td><td>관광지 VR 투어, 관광 360 촬영</td><td class="num">111 + 채널 421</td></tr>
+      <tr><td><span class="chip c2">B2</span></td><td>박람회·전시회 VR 기록</td><td>박람회 주최사, 전시 기획사</td><td>박람회 VR, 전시회 360 촬영</td><td class="num">103</td></tr>
+      <tr><td><span class="chip c2">B2</span></td><td>스포츠·레저 시설 VR</td><td>시설 운영사, 체육 단체</td><td>스케이트파크 VR, 레저시설 360</td><td class="num">147</td></tr>
+      <tr><td><span class="chip c2">B2</span></td><td>호텔·펜션·리조트 VR</td><td>숙박업 사장님</td><td>펜션 VR 촬영, 호텔 360 투어</td><td class="num">65</td></tr>
+      <tr><td><span class="chip c3">B3</span></td><td>박물관·과학관·미술관 VR</td><td>관장, 학예팀</td><td>박물관 VR 전시, 온라인 전시관</td><td class="num">68</td></tr>
+      <tr><td><span class="chip c3">B3</span></td><td>문화유산·역사 공간 VR</td><td>문화재단, 지자체 문화과</td><td>문화유산 VR, 문화재 360 기록</td><td class="num">80</td></tr>
+      <tr><td><span class="chip c3">B3</span></td><td>체험장·테마파크 VR</td><td>운영사</td><td>체험장 VR, 테마파크 360</td><td class="num">89</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>B. 고민형·가이드 — 5장</h3>
+  <p class="muted">아직 업체를 고르기 전 사람이 검색하는 질문에 답하는 페이지야. 업종 페이지로 링크를 거는 허브 역할도 해.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>배치</th><th>페이지</th><th>노릴 검색어</th><th>필요한 실물</th></tr></thead>
+    <tbody>
+      <tr><td><span class="chip c1">B1</span></td><td>VR 촬영 비용은 무엇으로 정해지나</td><td>VR 촬영 비용, 360 촬영 견적</td><td>실제 견적 구성 요소 (오빠 확인 필요)</td></tr>
+      <tr><td><span class="chip c1">B1</span></td><td>VR 투어 제작 절차와 기간</td><td>VR 제작 과정, VR 투어 제작 기간</td><td>실제 진행 단계, 평균 기간</td></tr>
+      <tr><td><span class="chip c2">B2</span></td><td>360VIEW와 VR스토리, 뭘 골라야 하나</td><td>VR 투어 종류, 스토리형 VR</td><td>두 형태의 실제 사례 비교</td></tr>
+      <tr><td><span class="chip c3">B3</span></td><td>360° VR과 홍보영상 비교</td><td>VR vs 영상 홍보, 360 영상 차이</td><td>같은 공간을 두 방식으로 만든 예</td></tr>
+      <tr><td><span class="chip c3">B3</span></td><td>공공기관 VR 제작 발주 가이드</td><td>VR 제작 용역, 공공기관 VR 발주</td><td>지자체·관광공사 납품 경험</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>C. 목적별 — 4장</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>배치</th><th>페이지</th><th>노릴 검색어</th><th>근거</th></tr></thead>
+    <tbody>
+      <tr><td><span class="chip c2">B2</span></td><td>온라인 가상 전시관 만들기</td><td>가상 전시관 제작, 온라인 전시</td><td>가상전시회 23, 3D모델링 5</td></tr>
+      <tr><td><span class="chip c2">B2</span></td><td>스토리형 VR 안내 (VR스토리)</td><td>VR 안내 콘텐츠, 신입생 OT VR</td><td>한국기술교육대 「미리 가본 캠퍼스」</td></tr>
+      <tr><td><span class="chip c3">B3</span></td><td>지역 공간 디지털 아카이브</td><td>디지털 아카이브 VR, 지역 기록 사업</td><td>기회의 경기, 이천농촌나드리 등</td></tr>
+      <tr><td><span class="chip c3">B3</span></td><td>매장·숙소 VR로 방문 늘리기</td><td>매장 VR 투어, 가게 360 촬영</td><td>카페·음식점·숙박 사례</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>D. 지역별 — 5장</h3>
+  <p class="muted">⚠️ 지역 페이지가 도어웨이 페이지로 걸리기 제일 쉬워. 그 지역 실제 사례가 30건 이상인 곳만 만들고, 사례 목록과 지역 고객 이름이 페이지마다 달라야 해.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>배치</th><th>페이지</th><th style="text-align:right">근거 수치</th></tr></thead>
+    <tbody>
+      <tr><td><span class="chip c4">B4</span></td><td>서울 VR 촬영</td><td class="num">504</td></tr>
+      <tr><td><span class="chip c4">B4</span></td><td>경기 남부 (오산·용인·수원·안산) VR 촬영</td><td class="num">544</td></tr>
+      <tr><td><span class="chip c4">B4</span></td><td>제주 VR 촬영</td><td class="num">181</td></tr>
+      <tr><td><span class="chip c4">B4</span></td><td>경기 북부 (포천·파주) VR 촬영</td><td class="num">115</td></tr>
+      <tr><td><span class="chip c4">B4</span></td><td>인천 VR 촬영</td><td class="num">81</td></tr>
+    </tbody>
+  </table></div>
+  <p>합계: 업종 10 + 고민형 5 + 목적 4 + 지역 5 = <b>24장</b>.</p>
+
+  <div class="timeline">
+    <div><b><span class="chip c1">B1</span> 10월 · 6장</b><span>학교 2 · 공공 · 관광 · 비용 · 절차</span></div>
+    <div><b><span class="chip c2">B2</span> 11월 · 6장</b><span>박람회 · 스포츠 · 숙박 · 가상전시 · VR스토리 · 형태 비교</span></div>
+    <div><b><span class="chip c3">B3</span> 12월 · 7장</b><span>박물관 · 문화유산 · 체험장 · 아카이브 · 매장 · VR vs 영상 · 발주</span></div>
+    <div><b><span class="chip c4">B4</span> 1월 · 5장</b><span>지역 5곳. B1~B3 반응을 보고 진행 여부 결정</span></div>
+  </div>
+
+  <h2>4. 어디에 어떻게 올리나 (레거시 기준)</h2>
+  <div class="callout risk">
+    <strong>🔴 SPA로 만들면 안 돼</strong>
+    클라이언트 렌더링 SPA는 크롤러에게 빈 HTML을 줘. 네이버 크롤러(Yeti)는 JS 렌더링이 약해서 본문이 아예 색인되지 않을 수 있어. 만드는 도구는 무엇이든 괜찮지만 <b>빌드 결과물은 페이지마다 완성된 정적 HTML</b>이어야 해 (정적 사이트 생성, SSG).
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>안 A: PHP 문서 루트에 정적 HTML 추가 (추천)</th><th>안 B: 정적 빌드 → S3 + CloudFront</th></tr></thead>
+    <tbody>
+      <tr><td>주소</td><td><span class="mono">look360.kr/solutions/campus-vr-tour</span></td><td>같은 도메인 경로로 붙이려면 look360.kr 앞에 CloudFront가 있어야 함. 없으면 서브도메인(<span class="mono">solutions.look360.kr</span>)</td></tr>
+      <tr><td>도메인 신뢰도</td><td>기존 look360.kr의 신뢰도를 그대로 받음</td><td>서브도메인이면 검색엔진이 별도 사이트처럼 취급할 수 있음</td></tr>
+      <tr><td>배포</td><td>빌드한 HTML을 EC2에 rsync. 서버 설정 변경 거의 없음</td><td>S3 업로드 + CloudFront 무효화. 인프라 추가</td></tr>
+      <tr><td>위험</td><td>운영 서버 파일을 건드림 → 별도 디렉토리만 쓰고 기존 PHP는 손대지 않기</td><td>운영 서버와 완전히 분리돼 안전</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>제안:</b> 랜딩 원본은 별도 저장소에서 Astro 같은 정적 사이트 생성기로 만들고, 빌드 결과물만 <b>안 A</b>로 <span class="mono">/solutions/</span> 아래에 올리자. 나중에 안 B로 옮겨도 빌드 결과물은 그대로 쓸 수 있어.</p>
+
+  <h3>페이지마다 같이 넣을 것</h3>
+  <ul>
+    <li>실제 VR 링크와 임베드 (레거시 VR 주소로 연결)</li>
+    <li>JSON-LD: Service, FAQPage, Organization</li>
+    <li><span class="mono">sitemap.xml</span>에 추가하고 네이버 서치어드바이저와 구글 서치 콘솔에 제출</li>
+    <li>제작의뢰 폼으로 가는 링크에 <span class="mono">?from=landing-campus</span> 같은 출처 값 → 어느 페이지에서 문의가 왔는지 GA4와 문의 내역 양쪽에서 집계</li>
+    <li>페이지끼리 서로 링크 (고민형 페이지가 업종 페이지로 연결하는 허브)</li>
+  </ul>
+
+  <h2>5. 네이버 블로그와 같이 굴리기</h2>
+  <p>네이버 검색 결과에서는 블로그 탭이 웹사이트보다 위에 나와. 랜딩페이지는 주로 <b>구글과 네이버 웹문서 영역</b>을 잡는 거야. 랜딩 1장을 만들 때 같은 소재로 블로그 글 초안 1편을 같이 뽑아서, 블로그에서 랜딩으로 링크를 거는 구조로 가자. 블로그 활성화는 이미 진행 중이니까 랜딩 배치 일정에 블로그 주제를 맞추면 돼. 게시는 자동화하지 말고 사람이 직접 하는 걸 추천해 (네이버 블로그 자동 게시는 약관상 애매해).</p>
+
+  <h2>6. 성과 측정</h2>
+  <ul>
+    <li><b>배치마다 4주 뒤 확인:</b> 색인된 페이지 수, 검색 노출·클릭 (서치어드바이저, 구글 서치 콘솔), 랜딩별 문의 수</li>
+    <li><b>판단 기준:</b> 노출은 있는데 클릭이 없으면 제목과 설명을 고치고, 클릭은 있는데 문의가 없으면 본문과 CTA를 고쳐. 둘 다 0이면 그 축은 늘리지 않아.</li>
+    <li>B1~B3 결과가 괜찮을 때만 B4(지역)를 진행해.</li>
+  </ul>
+
+  <h2>7. 오빠가 확인해 줘야 할 것</h2>
+  <ol class="q">
+    <li><b>실적 범위:</b> Campustown(573), 경기관광공사(375), 기회의 경기(220) 같은 채널 콘텐츠가 <b>우리가 직접 촬영·납품한 것</b>인지, 고객이 직접 올린 건지. 우리 실적일 때만 랜딩에 "제작 사례"로 쓸 수 있어.</li>
+    <li><b>고객 이름 공개:</b> 대학·기관 이름을 사례로 노출해도 되는지</li>
+    <li><b>레거시 VR 주소 형식:</b> 랜딩에서 연결할 look360.kr의 VR 보기 URL 규칙</li>
+    <li><b>제작의뢰 폼 경로:</b> 레거시에 있는 문의 폼 주소. 시안의 폼은 동작하지 않는 데모야.</li>
+    <li><b>가격 공개 수준:</b> "비용" 페이지에 가격대를 적을지, 결정 요소만 설명할지</li>
+    <li><b>CloudFront 여부:</b> look360.kr 앞단에 CloudFront가 이미 있는지 (안 B 가능 여부)</li>
+  </ol>
+
+  <p class="muted" style="margin-top:48px">작성: 뮤뮤 🐈‍⬛ · 수치 출처: 로컬 <span class="mono">look360_v3_migration</span> DB, 2026-10-04 집계 (운영 DB와 다를 수 있음)</p>
+</div>
+</body>
+</html>

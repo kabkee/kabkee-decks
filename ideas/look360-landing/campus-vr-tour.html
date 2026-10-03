@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="대학교·학교 VR 캠퍼스 투어 제작. 입학 홍보와 신입생 안내용 360° 캠퍼스 투어를 촬영부터 홈페이지 임베드까지 제작합니다.">
+<title>캠퍼스 VR 투어 제작</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 파노라마 한 장(equirectangular 2:1)을 축으로 — 상단 띠처럼 펼쳐진 360° 캔버스, 아래로 방위(°) 눈금을 단 섹션들이 이어짐 */
+:root {
+  --bg: #F3F6F5;
+  --surface: #FFFFFF;
+  --ink: #10211D;
+  --muted: #566a65;
+  --line: #d5dfdc;
+  --accent: #0B7A62;
+  --accent-ink: #FFFFFF;
+  --warm: #C9822B;
+  --sky-top: #9ccbd8;
+  --sky-bot: #e8f1ee;
+  --bld: #6f8a84;
+  --bld-2: #8ea6a0;
+  --ground: #b9c9c2;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gutter: clamp(16px, 4vw, 48px);
+  --maxw: 1120px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1614; --surface: #142220; --ink: #e4eeeb; --muted: #93a8a2; --line: #26403b;
+    --accent: #3cc49f; --accent-ink: #062018; --warm: #e2a65a;
+    --sky-top: #0f2a35; --sky-bot: #1c3832; --bld: #2c4842; --bld-2: #3a5a53; --ground: #22362f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1614; --surface: #142220; --ink: #e4eeeb; --muted: #93a8a2; --line: #26403b;
+  --accent: #3cc49f; --accent-ink: #062018; --warm: #e2a65a;
+  --sky-top: #0f2a35; --sky-bot: #1c3832; --bld: #2c4842; --bld-2: #3a5a53; --ground: #22362f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.7; margin: 0; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding-inline: var(--gutter); }
+h1, h2, h3 { text-wrap: balance; line-height: 1.3; margin: 0; }
+h1 { font-size: clamp(30px, 5.2vw, 54px); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: clamp(24px, 3.2vw, 34px); font-weight: 700; letter-spacing: -0.015em; }
+h3 { font-size: 18px; font-weight: 700; }
+p { margin: 0; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.eyebrow { font-family: var(--font-body); font-weight: 700; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--warm); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.draft { background: var(--ink); color: var(--bg); font-size: 13px; }
+.draft .wrap { padding-block: 8px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.draft b { color: var(--warm); }
+
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.logo { font-weight: 700; font-size: 19px; letter-spacing: -0.01em; text-decoration: none; }
+.logo span { color: var(--accent); }
+nav.links { display: flex; gap: 22px; font-size: 14px; color: var(--muted); }
+nav.links a { text-decoration: none; }
+nav.links a:hover { color: var(--ink); }
+.btn { display: inline-flex; align-items: center; gap: 8px; border: 0; cursor: pointer; font: inherit; font-weight: 700; font-size: 15px; padding: 11px 20px; border-radius: 6px; background: var(--accent); color: var(--accent-ink); text-decoration: none; }
+.btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+@media (max-width: 760px) { nav.links { display: none; } }
+
+/* hero */
+.hero { padding-block: 48px 0; }
+.hero .lead { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 32px 56px; align-items: end; }
+.hero .lead p { color: var(--muted); font-size: 17px; max-width: 34em; }
+.hero .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+@media (max-width: 820px) { .hero .lead { grid-template-columns: 1fr; } }
+
+.pano { margin-top: 36px; position: relative; }
+.pano-frame { position: relative; width: 100%; aspect-ratio: 32 / 9; max-width: 100%; border-radius: 4px; overflow: hidden; cursor: grab; touch-action: pan-y; border: 1px solid var(--line); }
+.pano-frame:active { cursor: grabbing; }
+.pano canvas { width: 100%; height: 100%; display: block; }
+.pano .hud { position: absolute; left: 12px; top: 10px; font-family: var(--font-mono); font-size: 12px; background: color-mix(in srgb, var(--surface) 82%, transparent); padding: 3px 9px; border-radius: 3px; color: var(--ink); }
+.pano .hint { position: absolute; right: 12px; top: 10px; font-size: 12px; background: color-mix(in srgb, var(--surface) 82%, transparent); padding: 3px 9px; border-radius: 3px; color: var(--muted); }
+.ticks { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: var(--muted); padding: 6px 2px 0; }
+@media (max-width: 560px) { .pano-frame { aspect-ratio: 16 / 9; } .ticks span:nth-child(even) { visibility: hidden; } }
+
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-top: 40px; }
+.stat { padding: 22px 20px; display: grid; gap: 4px; }
+.stat + .stat { border-left: 1px solid var(--line); }
+.stat .n { font-family: var(--font-mono); font-size: clamp(28px, 4vw, 40px); font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.stat .l { font-size: 14px; color: var(--muted); }
+@media (max-width: 640px) { .stats { grid-template-columns: 1fr; } .stat + .stat { border-left: 0; border-top: 1px solid var(--line); } }
+
+section.block { padding-block: 72px 0; }
+.sec-head { display: grid; gap: 10px; margin-bottom: 28px; max-width: 40em; }
+.sec-head p { color: var(--muted); }
+
+/* use cases */
+.uses { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.use { background: var(--bg); padding: 26px 24px; display: grid; gap: 8px; align-content: start; }
+.use .deg { font-family: var(--font-mono); font-size: 12px; color: var(--warm); }
+.use p { color: var(--muted); font-size: 15px; }
+@media (max-width: 680px) { .uses { grid-template-columns: 1fr; } }
+
+/* portfolio */
+.featured { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 24px; margin-bottom: 20px; }
+.featured .thumb { aspect-ratio: 2 / 1; border-radius: 3px; overflow: hidden; }
+.featured .thumb canvas { width: 100%; height: 100%; display: block; }
+.tag { display: inline-block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 3px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+.featured .body { display: grid; gap: 10px; }
+.featured .body p { color: var(--muted); font-size: 15px; }
+@media (max-width: 760px) { .featured { grid-template-columns: 1fr; } }
+
+.schools { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0 24px; }
+.schools li { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; min-width: 0; }
+.schools li span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.schools li .t { font-family: var(--font-mono); font-size: 11px; color: var(--muted); white-space: nowrap; padding-top: 3px; }
+.more { margin-top: 16px; font-size: 14px; color: var(--muted); }
+
+/* compare */
+.compare-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+table.compare { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 15px; }
+.compare th, .compare td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.compare thead th { font-size: 13px; color: var(--muted); font-weight: 500; }
+.compare thead th:not(:first-child) { color: var(--ink); font-weight: 700; font-size: 16px; }
+.compare tbody th { font-weight: 500; color: var(--muted); width: 22%; }
+.compare tr:last-child td, .compare tr:last-child th { border-bottom: 0; }
+
+/* process */
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
+ol.steps li { padding: 16px 16px 0 0; display: grid; gap: 6px; align-content: start; }
+ol.steps .k { font-family: var(--font-mono); font-size: 12px; color: var(--warm); }
+ol.steps p { color: var(--muted); font-size: 14px; }
+@media (max-width: 860px) { ol.steps { grid-template-columns: 1fr; border-top: 0; } ol.steps li { border-top: 1px solid var(--line); padding: 14px 0; } }
+
+/* faq */
+.faq { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; padding: 18px 0; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-family: var(--font-mono); color: var(--accent); font-weight: 400; }
+.faq details[open] summary::after { content: "–"; }
+.faq details p { padding: 0 0 18px; color: var(--muted); max-width: 46em; }
+
+/* contact */
+.contact { margin-block: 88px 0; background: var(--ink); color: var(--bg); }
+.contact .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 40px; padding-block: 56px; }
+.contact h2 { color: var(--bg); }
+.contact .intro p { color: color-mix(in srgb, var(--bg) 72%, var(--ink)); margin-top: 12px; }
+form.req { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+form.req label { display: grid; gap: 6px; font-size: 13px; color: color-mix(in srgb, var(--bg) 78%, var(--ink)); min-width: 0; }
+form.req .full { grid-column: 1 / -1; }
+form.req input, form.req select, form.req textarea { font: inherit; font-size: 15px; padding: 10px 12px; border-radius: 4px; border: 1px solid color-mix(in srgb, var(--bg) 25%, var(--ink)); background: color-mix(in srgb, var(--bg) 8%, var(--ink)); color: var(--bg); width: 100%; }
+form.req textarea { min-height: 96px; resize: vertical; }
+form.req .btn { justify-self: start; }
+.sent { grid-column: 1 / -1; font-size: 14px; color: var(--accent); }
+@media (max-width: 820px) { .contact .wrap { grid-template-columns: 1fr; } form.req { grid-template-columns: 1fr; } }
+
+footer { padding-block: 28px; font-size: 13px; color: var(--muted); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<div class="draft"><div class="wrap">
+  <a href="../2026-10-04-look360-landing-plan.html" style="color:inherit">← 기획 문서</a>
+  <span><b>시안</b> · 레거시 look360.kr 용 (l3 플랫폼 아님)</span>
+  <span>예정 경로 <span class="mono">look360.kr/solutions/campus-vr-tour</span></span>
+  <span>수치: 2026-10-04 DB 집계 기준, 게시 전 재확인</span>
+</div></div>
+
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top">LOOK<span>360</span></a>
+  <nav class="links" aria-label="페이지 섹션">
+    <a href="#uses">활용</a><a href="#work">제작 사례</a><a href="#types">제작 형태</a><a href="#process">진행 절차</a><a href="#faq">FAQ</a>
+  </nav>
+  <a class="btn" href="#contact">제작 문의</a>
+</div></header>
+
+<main id="top">
+  <section class="hero"><div class="wrap">
+    <div class="lead">
+      <div>
+        <p class="eyebrow">대학교 · 학교 VR 캠퍼스 투어 제작</p>
+        <h1 style="margin-top:14px">설명회에 못 온 수험생도<br>캠퍼스를 직접 걸어볼 수 있게</h1>
+      </div>
+      <div>
+        <p>정문에서 강의실, 도서관, 기숙사까지 360° 파노라마로 촬영해 하나의 VR 투어로 엮어 드려요. 입학처 홈페이지와 SNS에 바로 붙일 수 있는 링크와 임베드 코드로 전달합니다.</p>
+        <div class="actions">
+          <a class="btn" href="#contact">촬영 상담 신청</a>
+          <a class="btn ghost" href="#work">대학 제작 사례 보기</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pano">
+      <div class="pano-frame" id="panoFrame" role="img" aria-label="캠퍼스 360도 파노라마 예시 그림. 드래그해서 둘러볼 수 있어요.">
+        <canvas id="pano"></canvas>
+        <span class="hud" id="hud">시선 000° · N</span>
+        <span class="hint">← 드래그해서 둘러보기 →</span>
+      </div>
+      <div class="ticks mono" aria-hidden="true"><span>0°</span><span>45°</span><span>90°</span><span>135°</span><span>180°</span><span>225°</span><span>270°</span><span>315°</span><span>360°</span></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span class="n">351</span><span class="l">LOOK360에 올라간 대학교 VR 콘텐츠</span></div>
+      <div class="stat"><span class="n">585</span><span class="l">초·중·고를 포함한 학교 VR 콘텐츠 전체</span></div>
+      <div class="stat"><span class="n">360°</span><span class="l">공간마다 위아래까지 촬영하는 전방위 파노라마</span></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="uses"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">어디에 쓰이나요</p>
+      <h2>한 번 촬영해 두면 입시 시즌마다 다시 꺼내 씁니다</h2>
+    </div>
+    <div class="uses">
+      <div class="use"><span class="deg">000° · 입시 홍보</span><h3>수시·정시 시즌 입학 홍보</h3><p>지방이나 해외에 사는 수험생도 학과 건물과 실습실을 미리 둘러봐요. 입학처 홈페이지 첫 화면이나 모집요강 페이지에 넣기 좋습니다.</p></div>
+      <div class="use"><span class="deg">090° · 신입생</span><h3>신입생 오리엔테이션</h3><p>강의동 위치, 학생식당, 행정실 동선을 투어 안에 표시해 입학 전에 길을 익히게 해요. 한국기술교육대학교 「미리 가본 캠퍼스」가 이런 방식이에요.</p></div>
+      <div class="use"><span class="deg">180° · 시설 안내</span><h3>시설·기숙사 안내</h3><p>기숙사 호실, 도서관 열람실, 체육시설처럼 사진 몇 장으로는 전하기 어려운 공간을 그대로 보여줘요.</p></div>
+      <div class="use"><span class="deg">270° · 대외 행사</span><h3>캠퍼스 행사·대외 홍보</h3><p>축제나 개교기념 행사, 기관 방문 안내용으로 같은 투어를 다시 활용할 수 있어요.</p></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="work"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">제작 사례</p>
+      <h2>LOOK360에서 볼 수 있는 대학 캠퍼스 VR</h2>
+      <p>아래는 실제로 LOOK360에 공개된 대학 VR의 일부예요. 이름을 누르면 해당 VR로 이동하도록 연결할 예정입니다.</p>
+    </div>
+
+    <div class="featured">
+      <div class="thumb"><canvas id="thumb" aria-hidden="true"></canvas></div>
+      <div class="body">
+        <span class="tag">VR스토리</span>
+        <h3>[한국기술교육대학교] 미리 가본 캠퍼스</h3>
+        <p>신입생을 위한 캠퍼스 안내를 장면 순서대로 따라가는 스토리형 VR로 만들었어요. 일반 안내판과 신입생용 버전을 따로 구성했습니다.</p>
+        <a class="btn ghost" href="#contact">이런 형태로 상담하기</a>
+      </div>
+    </div>
+
+    <ul class="schools">
+      <li><span>한양대학교 (서울캠퍼스)</span><span class="t">360VIEW</span></li>
+      <li><span>한양대학교 (ERICA캠퍼스)</span><span class="t">360VIEW</span></li>
+      <li><span>숭실대학교</span><span class="t">360VIEW</span></li>
+      <li><span>홍익대학교 (대학로캠퍼스)</span><span class="t">360VIEW</span></li>
+      <li><span>서경대학교</span><span class="t">360VIEW</span></li>
+      <li><span>한세대학교</span><span class="t">360VIEW</span></li>
+      <li><span>성결대학교</span><span class="t">360VIEW</span></li>
+      <li><span>총신대학교</span><span class="t">360VIEW</span></li>
+      <li><span>인제대학교 (서울캠퍼스)</span><span class="t">360VIEW</span></li>
+      <li><span>한국방송통신대학교</span><span class="t">360VIEW</span></li>
+      <li><span>경기과학기술대학교</span><span class="t">360VIEW</span></li>
+      <li><span>안산대학교</span><span class="t">360VIEW</span></li>
+    </ul>
+    <p class="more">외 대학교 VR 콘텐츠 300건 이상 · 초·중·고등학교 VR 234건</p>
+  </div></section>
+
+  <section class="block" id="types"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">제작 형태</p>
+      <h2>자유롭게 둘러보는 투어와 순서대로 안내하는 스토리</h2>
+      <p>목적에 따라 두 가지 형태 중에 고르거나 함께 쓸 수 있어요.</p>
+    </div>
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead><tr><th scope="col">구분</th><th scope="col">360VIEW</th><th scope="col">VR스토리</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">보는 방식</th><td>지도와 핫스팟을 눌러 원하는 곳으로 자유롭게 이동</td><td>정해진 장면 순서를 따라 설명과 함께 진행</td></tr>
+          <tr><th scope="row">잘 맞는 용도</th><td>캠퍼스 전체 안내, 시설 소개</td><td>신입생 OT, 학과 소개, 입학 설명회 대체</td></tr>
+          <tr><th scope="row">함께 넣을 수 있는 것</th><td>건물 설명, 사진, 외부 링크</td><td>장면별 안내 문구, 순서 진행 버튼</td></tr>
+          <tr><th scope="row">전달 방식</th><td colspan="2">공유 링크와 홈페이지 임베드 코드</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div></section>
+
+  <section class="block" id="process"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">진행 절차</p>
+      <h2>상담부터 게시까지 이렇게 진행돼요</h2>
+    </div>
+    <ol class="steps">
+      <li><span class="k">STEP 1</span><h3>상담</h3><p>목적과 촬영 범위, 일정과 예산을 함께 정해요.</p></li>
+      <li><span class="k">STEP 2</span><h3>동선 기획</h3><p>캠퍼스 지도 위에 촬영 지점과 이동 순서를 잡아요.</p></li>
+      <li><span class="k">STEP 3</span><h3>현장 촬영</h3><p>학사 일정과 날씨를 보고 지점별 360° 촬영을 진행해요.</p></li>
+      <li><span class="k">STEP 4</span><h3>편집·구성</h3><p>파노라마 보정과 핫스팟, 안내 문구를 넣어요.</p></li>
+      <li><span class="k">STEP 5</span><h3>검수·게시</h3><p>학교 확인을 거쳐 링크와 임베드 코드로 전달해요.</p></li>
+    </ol>
+  </div></section>
+
+  <section class="block" id="faq"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">자주 묻는 질문</p>
+      <h2>제작 전에 많이 물어보세요</h2>
+    </div>
+    <div class="faq">
+      <details><summary>비용은 어떻게 정해지나요?</summary><p>촬영 지점 수와 제작 형태(360VIEW, VR스토리), 핫스팟·문구 작업량에 따라 달라져요. 캠퍼스 지도나 촬영하고 싶은 건물 목록을 보내 주시면 견적을 드려요.</p></details>
+      <details><summary>학기 중에도 촬영할 수 있나요?</summary><p>네. 강의실처럼 사람이 많은 공간은 수업이 없는 시간이나 방학에 맞춰 일정을 잡아요.</p></details>
+      <details><summary>학교 홈페이지에 직접 넣을 수 있나요?</summary><p>공유 링크와 iframe 임베드 코드를 함께 드려요. 홈페이지 담당 부서에 그대로 전달하시면 됩니다.</p></details>
+      <details><summary>나중에 건물이 바뀌면 일부만 다시 찍을 수 있나요?</summary><p>바뀐 지점만 다시 촬영해서 기존 투어에 교체할 수 있어요.</p></details>
+    </div>
+  </div></section>
+
+  <section class="contact" id="contact"><div class="wrap">
+    <div class="intro">
+      <p class="eyebrow">제작 문의</p>
+      <h2 style="margin-top:10px">우리 학교 캠퍼스 투어, 상담부터 받아보세요</h2>
+      <p>학교 이름과 촬영하고 싶은 공간을 알려주시면 촬영 범위와 견적을 정리해서 연락드려요.</p>
+    </div>
+    <form class="req" id="req" novalidate>
+      <label>학교·기관명<input id="f-org" name="org" placeholder="예: OO대학교 입학처" required></label>
+      <label>담당자 이름<input id="f-name" name="name" required></label>
+      <label>연락처<input id="f-tel" name="tel" inputmode="tel" required></label>
+      <label>제작 형태
+        <select id="f-type" name="type"><option>아직 모르겠어요</option><option>360VIEW</option><option>VR스토리</option><option>둘 다</option></select>
+      </label>
+      <label class="full">촬영하고 싶은 공간·일정<textarea id="f-msg" name="msg" placeholder="예: 본관, 도서관, 기숙사 2개 동 / 수시 원서접수 전까지"></textarea></label>
+      <button class="btn" type="submit">상담 신청하기</button>
+      <p class="sent" id="sent" hidden>시안이라 실제로 전송되지는 않아요. 운영 버전은 레거시 제작의뢰 폼과 연결합니다.</p>
+    </form>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>LOOK360 · look360.kr</span>
+  <span>VR 촬영 · 360° 파노라마 · 캠퍼스 투어 제작</span>
+</div></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Service","name":"대학교 VR 캠퍼스 투어 제작","serviceType":"360도 VR 촬영 및 캠퍼스 투어 제작","provider":{"@type":"Organization","name":"LOOK360","url":"https://look360.kr"},"areaServed":"KR","audience":{"@type":"Audience","audienceType":"대학교 입학처, 홍보팀, 초·중·고등학교"}}
+</script>
+
+<script>
+(() => {
+  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 시드 고정 난수로 캠퍼스 스카이라인 생성 (equirectangular 한 바퀴)
+  function rng(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+  function makeScene(seed) {
+    const r = rng(seed), items = [];
+    let x = 0;
+    while (x < 1) {
+      const w = 0.03 + r() * 0.07;
+      const kind = r();
+      items.push({ x, w, h: 0.18 + r() * 0.3, kind: kind < 0.15 ? 'tree' : kind < 0.25 ? 'tower' : 'bld', win: 2 + Math.floor(r() * 5), far: r() < 0.4 });
+      x += w + r() * 0.025;
+    }
+    return items;
+  }
+
+  function draw(canvas, scene, offset, labels) {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const W = canvas.clientWidth, H = canvas.clientHeight;
+    if (!W || !H) return;
+    if (canvas.width !== Math.round(W * dpr)) { canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); }
+    const g = canvas.getContext('2d');
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const sky = g.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, css('--sky-top')); sky.addColorStop(1, css('--sky-bot'));
+    g.fillStyle = sky; g.fillRect(0, 0, W, H);
+    const horizon = H * 0.66;
+    const span = W * (W / H > 2.5 ? 1.15 : 2.1); // 화면에 보이는 비율
+    const bld = css('--bld'), bld2 = css('--bld-2'), ground = css('--ground'), warm = css('--warm'), bg = css('--sky-bot');
+    for (const pass of [true, false]) {
+      for (const it of scene) {
+        if (it.far !== pass) continue;
+        for (const k of [-1, 0, 1]) {
+          const px = ((it.x - offset + k) * span);
+          if (px > W || px + it.w * span < 0) continue;
+          const w = it.w * span, h = it.h * H * (pass ? 0.75 : 1);
+          g.fillStyle = pass ? bld2 : bld;
+          if (it.kind === 'tree') {
+            g.beginPath(); g.ellipse(px + w / 2, horizon - h * 0.45, w * 0.45, h * 0.45, 0, 0, Math.PI * 2); g.fill();
+          } else if (it.kind === 'tower') {
+            g.fillRect(px + w * 0.3, horizon - h * 1.5, w * 0.4, h * 1.5);
+            g.beginPath(); g.moveTo(px + w * 0.25, horizon - h * 1.5); g.lineTo(px + w / 2, horizon - h * 1.75); g.lineTo(px + w * 0.75, horizon - h * 1.5); g.fill();
+          } else {
+            g.fillRect(px, horizon - h, w, h);
+            if (!pass) {
+              g.fillStyle = bg; g.globalAlpha = 0.55;
+              const rows = Math.max(2, Math.floor(h / 14)), cols = it.win;
+              for (let a = 0; a < rows; a++) for (let b = 0; b < cols; b++)
+                g.fillRect(px + (b + 0.3) * w / cols, horizon - h + (a + 0.35) * h / rows, w / cols * 0.4, h / rows * 0.35);
+              g.globalAlpha = 1;
+            }
+          }
+        }
+      }
+    }
+    g.fillStyle = ground; g.fillRect(0, horizon, W, H - horizon);
+    g.strokeStyle = bg; g.globalAlpha = 0.5; g.lineWidth = 1;
+    for (let i = -6; i <= 6; i++) { g.beginPath(); g.moveTo(W / 2 + i * 8, horizon); g.lineTo(W / 2 + i * W * 0.18, H); g.stroke(); }
+    g.globalAlpha = 1;
+    if (labels) {
+      g.font = '500 11px ' + css('--font-mono');
+      for (const lb of labels) for (const k of [-1, 0, 1]) {
+        const px = (lb.at - offset + k) * span;
+        if (px < -60 || px > W + 60) continue;
+        g.fillStyle = warm; g.beginPath(); g.arc(px, horizon - 8, 5, 0, Math.PI * 2); g.fill();
+        g.fillStyle = css('--ink'); g.fillText(lb.t, px + 10, horizon - 4);
+      }
+    }
+  }
+
+  const canvas = document.getElementById('pano'), frame = document.getElementById('panoFrame'), hud = document.getElementById('hud');
+  const scene = makeScene(360);
+  const labels = [{ at: 0.04, t: '정문' }, { at: 0.2, t: '본관' }, { at: 0.38, t: '중앙도서관' }, { at: 0.57, t: '공학관' }, { at: 0.74, t: '기숙사' }, { at: 0.9, t: '학생회관' }];
+  let off = 0, drag = null, last = performance.now(), idleUntil = 0;
+  const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  function render() {
+    draw(canvas, scene, off, labels);
+    const deg = Math.round(((off % 1) + 1) % 1 * 360) % 360;
+    hud.textContent = '시선 ' + String(deg).padStart(3, '0') + '° · ' + dirs[Math.round(deg / 45) % 8];
+  }
+  function tick(t) {
+    const dt = t - last; last = t;
+    if (!drag && !reduce && t > idleUntil) off += dt * 0.000012;
+    render(); requestAnimationFrame(tick);
+  }
+  frame.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, o: off }; frame.setPointerCapture(e.pointerId); });
+  frame.addEventListener('pointermove', (e) => { if (drag) off = drag.o - (e.clientX - drag.x) / (canvas.clientWidth * 2); });
+  const end = () => { drag = null; idleUntil = performance.now() + 2500; };
+  frame.addEventListener('pointerup', end); frame.addEventListener('pointercancel', end);
+
+  const thumb = document.getElementById('thumb'), thumbScene = makeScene(4242);
+  const drawThumb = () => draw(thumb, thumbScene, 0.31, [{ at: 0.12, t: 'STEP 1 · 정문' }, { at: 0.42, t: 'STEP 2 · 학생식당' }]);
+  addEventListener('resize', drawThumb);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawThumb);
+  new MutationObserver(drawThumb).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  document.fonts && document.fonts.ready.then(drawThumb);
+  drawThumb();
+  requestAnimationFrame(tick);
+
+  document.getElementById('req').addEventListener('submit', (e) => { e.preventDefault(); document.getElementById('sent').hidden = false; });
+})();
+</script>
+</body>
+</html>
