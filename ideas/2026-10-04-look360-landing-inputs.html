@@ -9,220 +9,407 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* 기획 문서(2026-10-04-look360-landing-plan.html)와 같은 톤 — 1열 본문 + 표 */
+/* 답변서 형식: 질문 카드마다 「고르기/적기 → 페이지에 이렇게 들어감」 → 맨 아래에서 답변 텍스트로 모아 복사 */
 :root{
   --bg:#F4F6F5; --sheet:#FFFFFF; --ink:#13201D; --muted:#5B6B67; --line:#D8E0DD;
-  --accent:#0B7A62; --warm:#B87322; --risk:#B2402F;
+  --accent:#0B7A62; --accent-ink:#FFFFFF; --warm:#B87322; --risk:#B2402F; --tint:#E7F2EE;
   --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E1614; --sheet:#152220; --ink:#E3ECE9; --muted:#97AAA5; --line:#28403B;
-  --accent:#3CC49F; --warm:#E2A65A; --risk:#E57B67; color-scheme:dark;}}
+  --accent:#3CC49F; --accent-ink:#062018; --warm:#E2A65A; --risk:#E57B67; --tint:#16302A; color-scheme:dark;}}
 :root[data-theme="dark"]{
   --bg:#0E1614; --sheet:#152220; --ink:#E3ECE9; --muted:#97AAA5; --line:#28403B;
-  --accent:#3CC49F; --warm:#E2A65A; --risk:#E57B67; color-scheme:dark;}
+  --accent:#3CC49F; --accent-ink:#062018; --warm:#E2A65A; --risk:#E57B67; --tint:#16302A; color-scheme:dark;}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans)}
-.page{max-width:1040px;margin:0 auto;padding:48px clamp(16px,4vw,40px) 80px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--sans)}
+.page{max-width:920px;margin:0 auto;padding:48px clamp(16px,4vw,40px) 120px}
 h1{font-size:clamp(28px,4.5vw,40px);line-height:1.25;letter-spacing:-.02em;margin:10px 0 14px;text-wrap:balance;word-break:keep-all}
-h2{font-size:23px;margin:64px 0 14px;letter-spacing:-.01em;text-wrap:balance;word-break:keep-all;padding-top:18px;border-top:2px solid var(--ink)}
-h3{font-size:17px;margin:30px 0 8px;word-break:keep-all}
-p,li{max-width:48em}
+h2{font-size:23px;margin:64px 0 8px;letter-spacing:-.01em;word-break:keep-all;padding-top:18px;border-top:2px solid var(--ink)}
+h3{font-size:18px;margin:0;word-break:keep-all}
+p{margin:8px 0}
 .eyebrow{font:700 13px var(--sans);letter-spacing:.04em;color:var(--warm)}
-.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono)}
 .muted{color:var(--muted)}
 a{color:var(--accent)}
-.callout{background:var(--sheet);border:1px solid var(--line);border-left:4px solid var(--accent);padding:18px 22px;border-radius:4px;margin:20px 0}
-.callout.risk{border-left-color:var(--risk)}
-.callout strong{display:block;margin-bottom:4px}
-.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--sheet);margin:14px 0}
-table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:760px}
-th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
-thead th{font-size:12.5px;color:var(--muted);font-weight:500;background:color-mix(in srgb,var(--bg) 60%,var(--sheet))}
-tr:last-child td{border-bottom:0}
-td ul{margin:0;padding-left:18px}
-td li{margin:2px 0}
-.id{font:500 12px var(--mono);color:var(--sheet);background:var(--accent);padding:1px 6px;border-radius:3px;white-space:nowrap}
-.id.site{background:var(--warm)}
-.matrix td,.matrix th{text-align:center;font-size:13.5px}
-.matrix td:first-child,.matrix th:first-child{text-align:left;white-space:nowrap}
-.dot{color:var(--accent);font-weight:700}
-.none{color:var(--line)}
+.lead{color:var(--muted);font-size:17px;max-width:40em}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:24px 0}
+.how div{background:var(--sheet);padding:14px 16px;font-size:14.5px}
+.how b{display:block;font-family:var(--mono);color:var(--warm);font-size:12px}
+@media(max-width:640px){.how{grid-template-columns:1fr}}
+
+.q{background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:22px 22px 18px;margin:18px 0;scroll-margin-top:16px}
+.q-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin-bottom:6px}
+.qid{font:500 12px var(--mono);background:var(--accent);color:var(--accent-ink);padding:2px 7px;border-radius:3px}
+.qid.site{background:var(--warm)}
 .sev{font:500 11px var(--mono);padding:1px 6px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
-.sev.block{color:var(--risk)}
-.sev.weak{color:var(--warm)}
-ol.reply li{margin:6px 0}
-pre{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:14px 16px;overflow-x:auto;font:13.5px/1.6 var(--mono)}
+.sev.block{color:var(--risk)} .sev.weak{color:var(--warm)}
+.why{font-size:14.5px;color:var(--muted)}
+.opts{display:grid;gap:8px;margin:14px 0 4px}
+.opt{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;border:1px solid var(--line);border-radius:6px;padding:12px 14px;cursor:pointer}
+.opt:has(input:checked){border-color:var(--accent);background:var(--tint)}
+.opt input{margin-top:5px;accent-color:var(--accent)}
+.opt b{display:block}
+.opt span{font-size:14px;color:var(--muted)}
+.opt .rec{font:500 11px var(--mono);color:var(--accent);margin-left:6px}
+.fill{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:8px;font-size:15px}
+input[type=text],input[type=number],select,textarea{font:inherit;font-size:15px;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);min-width:0;max-width:100%}
+input[type=number]{width:6.5em}
+textarea{width:100%;min-height:70px;resize:vertical}
+.grid-rows{display:grid;gap:0;border-top:1px solid var(--line);margin-top:12px}
+.row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:8px 16px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.row .seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg label{position:relative;border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:13.5px;cursor:pointer;white-space:nowrap}
+.seg label:has(input:checked){background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.row small{display:block;color:var(--muted);font-size:13px}
+@media(max-width:640px){.row{grid-template-columns:1fr}}
+.preview{margin-top:14px;border-left:3px solid var(--accent);background:var(--tint);padding:10px 14px;border-radius:0 4px 4px 0;font-size:14.5px}
+.preview b:first-child{font:500 11px var(--mono);color:var(--accent);display:block;letter-spacing:.04em}
+.where{margin-top:10px;font-size:13.5px;color:var(--muted)}
+.where code{font-family:var(--mono);font-size:12.5px}
+
+.pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px}
+.pg{background:var(--sheet);border:1px solid var(--line);border-radius:6px;padding:16px 18px}
+.pg h3{font-size:16px;margin-bottom:6px}
+.pg ul{margin:0;padding-left:18px;font-size:14px}
+.pg li{margin:3px 0}
+.pg a.ref{font-family:var(--mono);font-size:12px;text-decoration:none;border:1px solid var(--line);border-radius:3px;padding:0 5px;margin-right:4px}
+
+.out textarea{min-height:260px;font-family:var(--mono);font-size:13.5px;background:var(--sheet)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;font:inherit;font-weight:700;font-size:15px;padding:10px 18px;border-radius:6px;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+.toast{font-size:14px;color:var(--accent)}
+.prog{position:sticky;bottom:0;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-top:1px solid var(--line);padding:10px 0;margin-top:40px;display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px}
 </style>
 </head>
 <body>
 <div class="page">
-  <p class="eyebrow">랜딩 B1 · 2026-10-04 · <a href="2026-10-04-look360-landing-plan.html">← 기획 문서</a></p>
-  <h1>사람이 채워야 하는 것과<br>그게 페이지 어디에 들어가는지</h1>
-  <p>B1 시안 6장(<a href="look360-landing/campus-vr-tour.html">대학교</a> · <a href="look360-landing/school-vr-tour.html">초·중·고</a> · <a href="look360-landing/public-space-vr.html">공공시설</a> · <a href="look360-landing/tourism-vr.html">관광지</a> · <a href="look360-landing/vr-cost.html">비용</a> · <a href="look360-landing/vr-production-process.html">절차</a>)을 look360.kr에 올리기 전에 <b>DB나 코드로는 알 수 없어서 사람이 정해주거나 확인해줘야 하는 것</b>을 전부 모았어. 항목마다 페이지 어느 섹션에 어떻게 쓰이는지, 안 주면 어떻게 되는지를 같이 적었어.</p>
+  <p class="eyebrow">랜딩 B1 · 2026-10-04 · <a href="2026-10-04-look360-landing-plan.html">← 기획 문서</a> · paperclip <a href="https://kabkee-macbookpro-2020.tailfe017f.ts.net:8443/IND/issues/IND-7960" class="mono">IND-7960</a></p>
+  <h1>랜딩 게시 전에 오빠가 정해줄 것 13개</h1>
+  <p class="lead">질문마다 <b>고르거나 숫자만 적으면 돼.</b> 고르면 페이지에 실제로 들어갈 문장이 바로 아래에 보여. 다 하고 맨 아래 「답변 복사」를 눌러서 뮤뮤한테 붙여넣어 줘.</p>
 
-  <div class="callout risk">
-    <strong>⏸ 당장 작업하지 않음 (backlog)</strong>
-    이 목록이 채워질 때까지 look360.kr 반영은 시작하지 않아. 진행 상태는 paperclip 이슈 <a href="https://kabkee-macbookpro-2020.tailfe017f.ts.net:8443/IND/issues/IND-7960"><span class="mono">IND-7960</span></a>에서 확인해. 이 문서는 「무엇이 필요한가」만 담고, 상태는 적지 않아.
+  <div class="how">
+    <div><b>STEP 1</b>질문마다 고르기 / 숫자 적기. 안 고른 질문은 <b>추천값</b>으로 처리해</div>
+    <div><b>STEP 2</b>초록 박스에서 페이지에 들어갈 문장 확인</div>
+    <div><b>STEP 3</b>맨 아래 「답변 복사」 → 뮤뮤에게 붙여넣기</div>
+  </div>
+  <p class="muted" style="font-size:14px">입력한 값은 이 브라우저에만 임시 저장돼. 다른 사람이나 서버로는 안 가. 진행 상태는 paperclip 이슈에서 봐.</p>
+
+  <h2>A. 게시하려면 꼭 필요한 것</h2>
+  <p class="muted">이 5개가 없으면 페이지를 못 올려.</p>
+
+  <section class="q" id="C2">
+    <div class="q-head"><span class="qid">C2</span><h3>학교·기관 이름을 사례에 실명으로 보여줘도 돼?</h3><span class="sev block">게시 차단</span></div>
+    <p class="why">사례 목록에 「숭의초등학교」「경기관광공사」처럼 이름이 그대로 나와. 이름이 곧 검색어라 실명이 SEO에 제일 유리해.</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="C2" value="전부 실명 OK" data-default><div><b>전부 실명 OK <span class="rec">추천</span></b><span>지금 시안 그대로 가.</span></div></label>
+      <label class="opt"><input type="radio" name="C2" value="실명 OK, 몇 곳만 빼기"><div><b>실명 OK, 몇 곳만 빼기</b><span>뺄 곳을 아래에 적어줘. 그곳은 목록에서 아예 빠져.</span></div></label>
+      <label class="opt"><input type="radio" name="C2" value="전부 익명"><div><b>전부 익명</b><span>「제주 ○○고등학교」처럼 바뀌어. 페이지 경쟁력이 크게 떨어져서 비추천.</span></div></label>
+    </div>
+    <div class="fill">뺄 곳: <input type="text" name="C2-ex" placeholder="예: 리라초등학교, 예일여자고등학교" style="flex:1"></div>
+    <div class="preview" data-preview="C2"></div>
+    <p class="where">들어가는 곳: 대학교·초·중·고·공공시설·관광지 <code>#work</code> 사례 목록, 공공시설·관광지 히어로 숫자와 검색 결과 설명문(<code>meta description</code>)</p>
+  </section>
+
+  <section class="q" id="C5">
+    <div class="q-head"><span class="qid">C5</span><h3>페이지에 적은 「우리가 해주는 것」 11개, 실제로 해?</h3><span class="sev block">게시 차단</span></div>
+    <p class="why">DB로는 확인할 수 없어서 뮤뮤가 일반적인 VR 제작 방식으로 썼어. 안 하는 건 <b>X</b>로 고르면 그 문장을 지울게. 조건이 붙으면 <b>수정</b>을 고르고 메모에 적어줘.</p>
+    <div class="grid-rows" data-rows="C5">
+      <div class="row"><div>찍힌 사람을 편집에서 지워 줘요<small>초·중·고 FAQ · 절차 STEP 4 · 비용 표</small></div><div class="seg" data-name="C5-1"></div></div>
+      <div class="row"><div>공개 전에 검수용 미리보기 링크를 드려요<small>절차 STEP 4·5 · 절차 FAQ</small></div><div class="seg" data-name="C5-2"></div></div>
+      <div class="row"><div>야외는 비 오면 예비일로 옮겨요<small>절차 STEP 3 · 절차 FAQ</small></div><div class="seg" data-name="C5-3"></div></div>
+      <div class="row"><div>바뀐 지점만 다시 찍어 교체해요<small>대학교 FAQ · 절차 「게시 이후」</small></div><div class="seg" data-name="C5-4"></div></div>
+      <div class="row"><div>지점을 나중에 추가해 이어 붙일 수 있어요<small>비용 FAQ</small></div><div class="seg" data-name="C5-5"></div></div>
+      <div class="row"><div>외국어판은 재촬영 없이 문구만 입혀요<small>관광지 · 공공시설 · 비용 · 절차</small></div><div class="seg" data-name="C5-6"></div></div>
+      <div class="row"><div>계절별로 같은 지점을 다시 찍어 바꿔 넣을 수 있어요<small>관광지 FAQ</small></div><div class="seg" data-name="C5-7"></div></div>
+      <div class="row"><div>휴관일·개장 전 촬영 가능해요<small>공공시설 FAQ · 비용 표</small></div><div class="seg" data-name="C5-8"></div></div>
+      <div class="row"><div>여러 곳을 묶으면 장소당 부담이 줄어요<small>비용 FAQ · 초·중·고 FAQ</small></div><div class="seg" data-name="C5-9"></div></div>
+      <div class="row"><div>현장엔 담당자 1명이면 돼요<small>절차 STEP 3 · 절차 FAQ</small></div><div class="seg" data-name="C5-10"></div></div>
+      <div class="row"><div>학기 중엔 수업 없는 시간·방학에 찍어요<small>대학교 FAQ · 초·중·고 FAQ</small></div><div class="seg" data-name="C5-11"></div></div>
+    </div>
+    <div class="fill" style="display:block;margin-top:10px">수정 메모 <textarea name="C5-memo" placeholder="예: 5번 — 추가 지점은 최소 3지점부터"></textarea></div>
+  </section>
+
+  <section class="q" id="C7">
+    <div class="q-head"><span class="qid">C7</span><h3>페이지 하단 문의 띠에 넣을 연락처</h3><span class="sev block">게시 차단</span></div>
+    <p class="why">6장 모두 맨 아래에 「VR 제작 의뢰하기」 버튼과 연락처가 들어가. 버튼은 레거시 의뢰 게시판으로 연결돼.</p>
+    <div class="fill">전화번호 <input type="text" name="C7-tel" value="070-7518-3600"> <span class="muted" style="font-size:13px">(레거시 Contact Us 페이지 값. 다르면 고쳐줘)</span></div>
+    <div class="grid-rows">
+      <div class="row"><div>카카오톡 채널 버튼도 넣을까?<small>레거시 Contact Us에 있는 채널 (pf.kakao.com/_MxeFxej)</small></div><div class="seg" data-name="C7-kakao" data-choices="넣기,빼기"></div></div>
+      <div class="row"><div>이메일 주소도 보여줄까?</div><div class="seg" data-name="C7-mail" data-choices="보여주기,빼기"></div></div>
+    </div>
+    <div class="preview" data-preview="C7"></div>
+  </section>
+
+  <section class="q" id="C8">
+    <div class="q-head"><span class="qid">C8</span><h3>페이지 숫자(351곳, 평균 4.4지점 등)를 어느 데이터로 낼까?</h3><span class="sev block">게시 차단</span></div>
+    <p class="why">지금 숫자는 전부 <b>로컬 마이그레이션 DB, 2026-10-04 집계</b>야. 운영 사이트 데이터와 조금 다를 수 있어. 숫자는 검색 결과에도 그대로 보여.</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="C8" value="올리기 직전에 운영 데이터로 다시 세서 보여주기" data-default><div><b>올리기 직전에 운영 데이터로 다시 세기 <span class="rec">추천</span></b><span>다시 센 숫자를 표로 보여줄 테니 그것만 OK 해줘.</span></div></label>
+      <label class="opt"><input type="radio" name="C8" value="지금 숫자 그대로"><div><b>지금 숫자 그대로</b><span>빠르지만 운영 데이터와 어긋날 수 있어.</span></div></label>
+    </div>
+  </section>
+
+  <section class="q" id="S1">
+    <div class="q-head"><span class="qid site">S1</span><h3>look360.kr 어디에 랜딩 모음 링크를 걸까? (여러 개 골라도 돼)</h3><span class="sev block">게시 차단</span></div>
+    <p class="why">사이트 안에서 링크가 없으면 구글이 「중요하지 않은 페이지」로 봐서 순위가 잘 안 올라. 링크는 랜딩 모음 페이지(<span class="mono">/solutions/</span>)로 가.</p>
+    <div class="opts">
+      <label class="opt"><input type="checkbox" name="S1" value="상단 메뉴 (VR제작의뢰 옆)" data-default><div><b>상단 메뉴, 「VR제작의뢰」 옆 <span class="rec">추천</span></b><span>모든 페이지에 보여서 효과가 제일 커.</span></div></label>
+      <label class="opt"><input type="checkbox" name="S1" value="푸터" data-default><div><b>푸터 <span class="rec">추천</span></b><span>눈에는 덜 띄지만 모든 페이지에 링크가 생겨. 메뉴와 같이 쓰는 걸 추천해.</span></div></label>
+      <label class="opt"><input type="checkbox" name="S1" value="메인 페이지 섹션"><div><b>메인 페이지에 섹션 추가</b><span>「업종별 제작 사례」 카드 띠. 메인 디자인을 건드려야 해.</span></div></label>
+    </div>
+    <div class="fill">메뉴 이름 <input type="text" name="S1-label" value="제작 사례"> <span class="muted" style="font-size:13px">예: 제작 사례 / 업종별 VR / 솔루션</span></div>
+    <div class="preview" data-preview="S1"></div>
+  </section>
+
+  <h2>B. 특정 페이지에 필요한 것</h2>
+  <p class="muted">없으면 해당 페이지만 못 올리거나 내용이 빈약해져.</p>
+
+  <section class="q" id="C3">
+    <div class="q-head"><span class="qid">C3</span><h3>「비용」 페이지에 가격을 얼마나 적을까?</h3><span class="sev block">비용 페이지 게시 차단</span></div>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="C3" value="공개 안 함" data-default><div><b>금액은 안 적기 <span class="rec">무난</span></b><span>결정 요소만 설명하고 「견적으로 안내」로 마무리.</span></div></label>
+      <label class="opt"><input type="radio" name="C3" value="최소 금액만"><div><b>최소 금액만 적기</b><span>「○○만 원부터」. 문의 문턱이 낮아지고 검색 결과에서 눈에 띄어.</span></div></label>
+      <label class="opt"><input type="radio" name="C3" value="지점 단가 구간"><div><b>지점당 가격 구간 적기</b><span>「1지점당 ○~○만 원, 최소 ○지점」. 가장 투명하지만 경쟁사도 봐.</span></div></label>
+    </div>
+    <div class="fill" data-show="C3=최소 금액만">최소 금액 <input type="number" name="C3-min" min="0" placeholder="50"> 만 원부터 · 부가세 <select name="C3-vat"><option>별도</option><option>포함</option></select></div>
+    <div class="fill" data-show="C3=지점 단가 구간">1지점당 <input type="number" name="C3-lo" min="0" placeholder="5"> ~ <input type="number" name="C3-hi" min="0" placeholder="10"> 만 원 · 최소 <input type="number" name="C3-unit" min="1" placeholder="3"> 지점 · VR스토리 추가 <input type="text" name="C3-story" placeholder="예: +30% / 별도 견적" style="width:10em"></div>
+    <div class="preview" data-preview="C3"></div>
+    <p class="where">들어가는 곳: 비용 <code>#factors</code> 표 아래 · 대학교·초·중·고·공공시설·절차의 「비용」 FAQ 답변 · 공개하면 구글 검색 결과에 가격이 보이도록 구조화 데이터에도 넣어</p>
+  </section>
+
+  <section class="q" id="C4">
+    <div class="q-head"><span class="qid">C4</span><h3>상담부터 공개까지 보통 얼마나 걸려?</h3><span class="sev block">절차 페이지 게시 차단</span></div>
+    <p class="why">「VR 투어 제작 기간」이 이 페이지가 노리는 검색어라서 숫자가 꼭 필요해. 대략적인 값이면 충분해. 이건 추천값이 없어서 꼭 적어줘야 해.</p>
+    <div class="grid-rows">
+      <div class="row"><div>소규모 — 5지점 이하<small>예: 초·중·고 한 곳</small></div><div class="fill" style="margin:0"><input type="number" name="C4-s" min="0" step="0.5" placeholder="?"> 주 · 그중 촬영 <input type="number" name="C4-s-d" min="0" step="0.5" placeholder="?"> 일</div></div>
+      <div class="row"><div>중규모 — 6~30지점<small>예: 관광지 한 곳, 작은 캠퍼스</small></div><div class="fill" style="margin:0"><input type="number" name="C4-m" min="0" step="0.5" placeholder="?"> 주 · 그중 촬영 <input type="number" name="C4-m-d" min="0" step="0.5" placeholder="?"> 일</div></div>
+      <div class="row"><div>대규모 — 31지점 이상<small>예: 큰 캠퍼스, 테마파크</small></div><div class="fill" style="margin:0"><input type="number" name="C4-l" min="0" step="0.5" placeholder="?"> 주 · 그중 촬영 <input type="number" name="C4-l-d" min="0" step="0.5" placeholder="?"> 일</div></div>
+    </div>
+    <div class="preview" data-preview="C4"></div>
+    <p class="where">들어가는 곳: 절차 <code>#steps</code> 소개 문단 (지금 주황 자리표시) · 절차 구조화 데이터의 총 소요 시간 · 대학교 「진행 절차」</p>
+  </section>
+
+  <section class="q" id="C1">
+    <div class="q-head"><span class="qid">C1</span><h3>이 채널 콘텐츠도 우리가 찍은 거야?</h3><span class="sev weak">약해짐</span></div>
+    <p class="why">「우리가 찍음」인 것만 사례로 써. 안 고르면 「모름」으로 보고 빼고 갈게.</p>
+    <div class="grid-rows">
+      <div class="row"><div>기회의 경기 — 220건<small>우리가 찍었다면 공공시설에 「지자체 사업」 사례 블록이 생겨</small></div><div class="seg" data-name="C1-1" data-choices="우리가 찍음,고객이 올림,모름"></div></div>
+      <div class="row"><div>오산시 징검다리교실 — 194건<small>우리가 찍었다면 공공시설 「지자체 사업」 블록에 들어가</small></div><div class="seg" data-name="C1-2" data-choices="우리가 찍음,고객이 올림,모름"></div></div>
+      <div class="row"><div>서울관광재단 — 46건<small>우리가 찍었다면 관광지 페이지에 서울 사례가 추가돼</small></div><div class="seg" data-name="C1-3" data-choices="우리가 찍음,고객이 올림,모름"></div></div>
+      <div class="row"><div>남한산성 — 7건 (VR스토리 4)<small>우리가 찍었다면 공공시설 문화유산·관광지 코스에 추가돼</small></div><div class="seg" data-name="C1-4" data-choices="우리가 찍음,고객이 올림,모름"></div></div>
+    </div>
+    <div class="preview" data-preview="C1"></div>
+  </section>
+
+  <section class="q" id="C6">
+    <div class="q-head"><span class="qid">C6</span><h3>페이지마다 맨 앞에 크게 보여줄 대표 사례 1개</h3><span class="sev weak">약해짐</span></div>
+    <p class="why">썸네일, 2~3줄 소개, 「VR 열기」 버튼이 들어가는 카드야. 소개 문구를 직접 써주면 그걸 우선 쓸게. 안 바꾸면 첫 번째 값(현재 시안)으로 가.</p>
+    <div class="grid-rows">
+      <div class="row"><div>대학교</div><select name="C6-campus"><option>[한국기술교육대학교] 미리 가본 캠퍼스 (현재)</option><option>다른 VR (메모에 이름)</option></select></div>
+      <div class="row"><div>초·중·고<small>지금은 대표 사례 칸이 없어</small></div><select name="C6-school"><option>제주과학고등학교 (18지점)</option><option>강원체육고등학교 (10지점)</option><option>한림공업고등학교 (9지점)</option><option>제주외국어고등학교 (7지점)</option><option>대표 사례 없이 가기</option><option>다른 VR (메모에 이름)</option></select></div>
+      <div class="row"><div>공공시설</div><select name="C6-public"><option>국립수목원 · 문턱없는 경기관광 (현재)</option><option>국립과천과학관 · 무장애</option><option>경기도어린이박물관 · 무장애</option><option>다른 VR (메모에 이름)</option></select></div>
+      <div class="row"><div>관광지</div><select name="C6-tour"><option>수원/오산 코스 VR스토리 (현재)</option><option>아침고요수목원 1박2일 코스 (국문·영문)</option><option>쁘띠프랑스 1박2일 코스</option><option>다른 VR (메모에 이름)</option></select></div>
+    </div>
+    <div class="fill" style="display:block;margin-top:10px">메모 / 직접 쓴 소개 문구 <textarea name="C6-memo" placeholder="예: 관광지 — 아침고요수목원. 소개: 해외 홍보용으로 국문·영문을 함께 만들었어요."></textarea></div>
+  </section>
+
+  <h2>C. 작업 방식</h2>
+  <p class="muted">페이지 내용과는 상관없고, 작업을 어떻게 진행할지 정하는 거야.</p>
+
+  <section class="q" id="S5">
+    <div class="q-head"><span class="qid site">S5</span><h3>누가 작업할까?</h3></div>
+    <p class="why">이건 추천값으로 정하지 않아. 꼭 골라줘.</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="S5" value="뮤뮤가 직접 구현"><div><b>뮤뮤가 직접</b><span>시안을 만든 맥락이 그대로 이어져. 6장 + 모음 페이지 규모면 직접 하는 게 빨라.</span></div></label>
+      <label class="opt"><input type="radio" name="S5" value="paperclip 발주 (IND-7960)"><div><b>paperclip 에이전트에게 발주</b><span>IND-7960을 todo로 바꾸고 하위 이슈로 나눠서 진행해.</span></div></label>
+    </div>
+  </section>
+
+  <section class="q" id="S2">
+    <div class="q-head"><span class="qid site">S2</span><h3>페이지 원본을 어떻게 관리할까?</h3></div>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="S2" value="B1은 지금 HTML 그대로, B2 전에 다시 판단" data-default><div><b>B1은 지금 HTML 그대로, B2 전에 다시 판단 <span class="rec">추천</span></b><span>6장이면 손으로 관리할 만해. 12장이 넘어가면 공통 부분 수정이 번거로워져.</span></div></label>
+      <label class="opt"><input type="radio" name="S2" value="지금 바로 Astro"><div><b>지금 바로 Astro 같은 정적 사이트 생성기로</b><span>처음에 손이 더 가지만 24장까지 관리가 편해.</span></div></label>
+    </div>
+  </section>
+
+  <section class="q" id="S3">
+    <div class="q-head"><span class="qid site">S3</span><h3>구글 서치 콘솔 · 네이버 서치어드바이저는 누가 맡을까?</h3></div>
+    <p class="why">올린 다음 「색인 생성 요청」과 4주 뒤 성과 확인에 필요해.</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="S3" value="오빠가 직접 (뮤뮤가 주소 목록·순서 전달)" data-default><div><b>오빠가 직접 할게 <span class="rec">추천</span></b><span>올린 뒤에 요청할 주소 목록과 클릭 순서를 정리해서 줄게.</span></div></label>
+      <label class="opt"><input type="radio" name="S3" value="뮤뮤 브라우저 세션에 권한"><div><b>뮤뮤 브라우저 세션에 권한 줄게</b><span>로그인은 오빠가 하고, 요청과 성과 확인은 뮤뮤가 해.</span></div></label>
+      <label class="opt"><input type="radio" name="S3" value="등록돼 있는지 모름"><div><b>등록돼 있는지 모르겠어</b><span>소유 확인 절차부터 안내할게.</span></div></label>
+    </div>
+  </section>
+
+  <section class="q" id="S4">
+    <div class="q-head"><span class="qid site">S4</span><h3>「어느 랜딩에서 의뢰가 왔는지」 어떻게 셀까?</h3></div>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="S4" value="GA4로만 보기" data-default><div><b>GA4로만 보기 <span class="rec">추천 (시작용)</span></b><span>레거시 코드 수정 없음. 의뢰 글에는 출처가 안 남아서 게시글마다는 알 수 없어.</span></div></label>
+      <label class="opt"><input type="radio" name="S4" value="의뢰 게시판 글에도 출처 저장"><div><b>의뢰 글에도 출처를 남기기</b><span>레거시 게시판 수정이 필요해. 어떤 의뢰가 어느 랜딩에서 왔는지 정확히 보여.</span></div></label>
+    </div>
+  </section>
+
+  <h2>D. 페이지별로 보면</h2>
+  <p class="muted">페이지 하나만 먼저 올리고 싶을 때, 그 페이지에 필요한 질문만 골라 보면 돼. 번호를 누르면 해당 질문으로 이동해.</p>
+  <div class="pages">
+    <div class="pg"><h3><a href="look360-landing/campus-vr-tour.html">대학교 캠퍼스 투어</a></h3><ul>
+      <li><a class="ref" href="#C2">C2</a>대학 12곳 실명</li><li><a class="ref" href="#C5">C5</a>FAQ 「일부만 다시」「학기 중」</li><li><a class="ref" href="#C6">C6</a>대표 사례 (한기대)</li><li><a class="ref" href="#C3">C3</a><a class="ref" href="#C4">C4</a>FAQ 비용 · 진행 절차</li><li><a class="ref" href="#C7">C7</a><a class="ref" href="#C8">C8</a>공통</li></ul></div>
+    <div class="pg"><h3><a href="look360-landing/school-vr-tour.html">초·중·고 학교</a></h3><ul>
+      <li><a class="ref" href="#C2">C2</a>학교 19곳 실명</li><li><a class="ref" href="#C5">C5</a>FAQ 「학생 얼굴」「여러 학교」</li><li><a class="ref" href="#C6">C6</a>대표 사례 (신설)</li><li><a class="ref" href="#C3">C3</a>FAQ 비용</li><li><a class="ref" href="#C7">C7</a><a class="ref" href="#C8">C8</a>공통 · 지역별 숫자</li></ul></div>
+    <div class="pg"><h3><a href="look360-landing/public-space-vr.html">지자체·공공시설</a></h3><ul>
+      <li><a class="ref" href="#C1">C1</a>기회의 경기·오산 → 「지자체 사업」 블록</li><li><a class="ref" href="#C2">C2</a>경기관광공사 · 시설 23곳</li><li><a class="ref" href="#C5">C5</a>FAQ 「휴관일」「외국어판」</li><li><a class="ref" href="#C6">C6</a>대표 사례 (국립수목원)</li><li><a class="ref" href="#C3">C3</a><a class="ref" href="#C7">C7</a><a class="ref" href="#C8">C8</a></li></ul></div>
+    <div class="pg"><h3><a href="look360-landing/tourism-vr.html">관광지·관광공사</a></h3><ul>
+      <li><a class="ref" href="#C1">C1</a>서울관광재단 · 남한산성</li><li><a class="ref" href="#C2">C2</a>코스 12편 · 관광지 12곳</li><li><a class="ref" href="#C5">C5</a>FAQ 「외국어판」「계절」</li><li><a class="ref" href="#C6">C6</a>대표 사례 (수원/오산 코스)</li><li><a class="ref" href="#C7">C7</a><a class="ref" href="#C8">C8</a></li></ul></div>
+    <div class="pg"><h3><a href="look360-landing/vr-cost.html">VR 촬영 비용</a></h3><ul>
+      <li><a class="ref" href="#C3">C3</a><b>가격 문장 (필수)</b></li><li><a class="ref" href="#C5">C5</a>표 「편집 범위」「촬영 조건」, FAQ 「지점 추가」</li><li><a class="ref" href="#C8">C8</a>지점 수 분포 숫자</li><li><a class="ref" href="#C7">C7</a>공통</li></ul></div>
+    <div class="pg"><h3><a href="look360-landing/vr-production-process.html">VR 제작 절차</a></h3><ul>
+      <li><a class="ref" href="#C4">C4</a><b>기간 숫자 (필수)</b></li><li><a class="ref" href="#C5">C5</a>STEP 3·4·5 약속 다수</li><li><a class="ref" href="#C3">C3</a>FAQ 비용</li><li><a class="ref" href="#C7">C7</a>공통</li></ul></div>
+    <div class="pg"><h3>모음 페이지 <span class="mono">/solutions/</span> · 사이트 전체</h3><ul>
+      <li><a class="ref" href="#S1">S1</a><b>링크 위치 · 메뉴 이름 (필수)</b></li><li><a class="ref" href="#S3">S3</a>색인 요청</li><li><a class="ref" href="#S2">S2</a><a class="ref" href="#S4">S4</a><a class="ref" href="#S5">S5</a>작업 방식</li></ul></div>
   </div>
 
-  <h2>1. 한눈에 보기 — 입력 항목 × 페이지</h2>
-  <p class="muted">● = 그 페이지에 들어감. <span class="id">C</span>는 콘텐츠 입력, <span class="id site">S</span>는 사이트 단위 결정이야.</p>
-  <div class="tbl"><table class="matrix">
-    <thead><tr><th>입력 항목</th><th>대학교</th><th>초·중·고</th><th>공공시설</th><th>관광지</th><th>비용</th><th>절차</th><th>허브·사이트</th></tr></thead>
-    <tbody>
-      <tr><td><span class="id">C1</span> 미확인 채널 실적</td><td class="none">–</td><td class="none">–</td><td class="dot">●</td><td class="dot">●</td><td class="none">–</td><td class="none">–</td><td class="none">–</td></tr>
-      <tr><td><span class="id">C2</span> 고객 이름 공개 범위</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="none">–</td></tr>
-      <tr><td><span class="id">C3</span> 가격 공개 수준·가격대</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="none">–</td><td class="dot">●</td><td class="dot">●</td><td class="none">–</td></tr>
-      <tr><td><span class="id">C4</span> 단계별 제작 기간</td><td class="dot">●</td><td class="none">–</td><td class="none">–</td><td class="none">–</td><td class="none">–</td><td class="dot">●</td><td class="none">–</td></tr>
-      <tr><td><span class="id">C5</span> 서비스 설명 사실 확인</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="none">–</td></tr>
-      <tr><td><span class="id">C6</span> 대표 사례 선정</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="none">–</td><td class="none">–</td><td class="none">–</td></tr>
-      <tr><td><span class="id">C7</span> 연락처·문의 창구</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td></tr>
-      <tr><td><span class="id">C8</span> 수치 기준 DB·기준일</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="none">–</td></tr>
-      <tr><td><span class="id site">S1</span> 사이트 안 링크 위치</td><td class="none">–</td><td class="none">–</td><td class="none">–</td><td class="none">–</td><td class="none">–</td><td class="none">–</td><td class="dot">●</td></tr>
-      <tr><td><span class="id site">S2</span> 원본 관리 방식</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td></tr>
-      <tr><td><span class="id site">S3</span> 서치 콘솔 계정</td><td class="none">–</td><td class="none">–</td><td class="none">–</td><td class="none">–</td><td class="none">–</td><td class="none">–</td><td class="dot">●</td></tr>
-      <tr><td><span class="id site">S4</span> 문의 출처 집계 방식</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="none">–</td></tr>
-      <tr><td><span class="id site">S5</span> 진행 방식 (직접 / paperclip)</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td><td class="dot">●</td></tr>
-    </tbody>
-  </table></div>
+  <h2 id="answer">E. 답변 복사</h2>
+  <p class="muted">안 고른 질문은 <b>추천값</b>으로 채워지고 「(추천값)」이 붙어. C4 기간과 S5 진행 방식은 추천값이 없어서 비어 있으면 「?」로 나와.</p>
+  <div class="bar"><button class="btn" type="button" id="copy">답변 복사</button><button class="btn ghost" type="button" id="reset">전부 지우기</button><span class="toast" id="toast" role="status"></span></div>
+  <div class="out"><textarea id="out" readonly aria-label="답변 텍스트"></textarea></div>
 
-  <h2>2. 콘텐츠 입력 (C1~C8)</h2>
-  <p class="muted"><span class="sev block">게시 차단</span> = 안 주면 그 페이지를 올릴 수 없음 · <span class="sev weak">약해짐</span> = 올릴 수는 있지만 내용이 빈약해짐</p>
+  <div class="prog"><span id="prog">직접 답한 질문 0 / 13</span><a href="#answer">답변 복사로 이동 ↓</a></div>
 
-  <h3><span class="id">C1</span> 미확인 채널이 우리 촬영 실적인지 <span class="sev weak">약해짐</span></h3>
-  <p><b>필요한 것:</b> 아래 채널 콘텐츠를 우리가 직접 촬영·납품했는지 채널별로 O/X. Campustown·경기관광공사는 2026-10-04에 확인됐어.</p>
-  <div class="tbl"><table>
-    <thead><tr><th>채널 (공개 콘텐츠 수)</th><th>O일 때 들어가는 곳</th><th>X이거나 미확인일 때</th></tr></thead>
-    <tbody>
-      <tr><td>기회의 경기 (220)</td><td>공공시설 <span class="mono">#work</span>에 「지자체 사업」 블록 신설, 히어로 수치(<span class="mono">.stats</span>) 보강. B3 「지역 공간 디지털 아카이브」 페이지의 핵심 근거</td><td rowspan="2">현재 시안처럼 경기관광공사 공공시설만 사례로 씀. B3 아카이브 페이지는 근거가 부족해짐</td></tr>
-      <tr><td>오산시 징검다리교실 (194)</td><td>공공시설 <span class="mono">#work</span> 「지자체 사업」 블록, B4 「경기 남부」 지역 페이지</td></tr>
-      <tr><td>서울관광재단 (46)</td><td>관광지 <span class="mono">#work</span>에 서울 사례 그룹 추가, 히어로 문구를 「경기관광공사」에서 「관광공사·관광재단」으로 넓힘. B4 「서울」 지역 페이지</td><td>관광지 사례가 경기도에만 몰려 있음</td></tr>
-      <tr><td>남한산성 (7, VR스토리 4)</td><td>공공시설 <span class="mono">#work</span> 문화유산 그룹, 관광지 <span class="mono">#course</span></td><td>경기관광공사의 남한산성 360VIEW만 씀</td></tr>
-    </tbody>
-  </table></div>
-
-  <h3><span class="id">C2</span> 고객 이름 공개 범위 <span class="sev block">게시 차단</span></h3>
-  <p><b>필요한 것:</b> 학교·기관 이름을 사례로 실명 노출해도 되는지. 「전부 OK / 공공기관만 OK / 전부 익명」 중 하나, 또는 빼야 할 곳의 목록.</p>
-  <div class="tbl"><table>
-    <thead><tr><th>페이지</th><th>실명이 들어간 곳</th></tr></thead>
-    <tbody>
-      <tr><td>대학교</td><td><span class="mono">#work</span> 대표 사례(한국기술교육대학교)와 대학 12곳 목록, 활용 섹션 <span class="mono">#uses</span> 본문</td></tr>
-      <tr><td>초·중·고</td><td><span class="mono">#work</span> 학교 19곳 목록(지역별), 지역별 수치</td></tr>
-      <tr><td>공공시설</td><td>히어로 수치·<span class="mono">meta description</span>의 「경기관광공사」, <span class="mono">#bf</span> 대표 사례·8곳, <span class="mono">#work</span> 15곳, FAQ 답변</td></tr>
-      <tr><td>관광지</td><td>히어로 수치·<span class="mono">meta description</span>의 「경기관광공사」, <span class="mono">#course</span> 코스 12편, <span class="mono">#work</span> 12곳, FAQ 답변</td></tr>
-      <tr><td>비용·절차</td><td>FAQ와 「게시 이후」 섹션의 경기관광공사·동구릉·화담숲·아침고요수목원 언급</td></tr>
-    </tbody>
-  </table></div>
-  <p><b>익명으로 가면:</b> 사례 링크는 그대로 두고 표시 이름만 「경기도 관광공사 A」처럼 바꿀 수는 있지만, 「그 페이지에만 있는 실물」이 약해져서 도어웨이 페이지 위험이 커져. 기관 이름이 검색어(예: 「경기관광공사 VR」)로도 쓰이니까 실명 공개가 SEO에 훨씬 유리해.</p>
-
-  <h3><span class="id">C3</span> 가격 공개 수준과 가격대 <span class="sev block">비용 페이지만 게시 차단</span></h3>
-  <p><b>필요한 것:</b> ① 공개 수준: 「공개 안 함 / 최소 금액만 / 지점 단가 구간」 중 하나 ② 공개한다면 실제 금액과 최소 제작 단위.</p>
-  <ul>
-    <li><b>비용</b> <span class="mono">#factors</span> 표 아래의 주황 자리표시(<span class="mono">[가격대 공개 여부 결정 후 채움]</span>)에 들어감. 공개하지 않기로 하면 이 자리표시를 지우고 「상담 후 견적」 문장으로 바꿈.</li>
-    <li><b>대학교·초·중·고·공공시설</b> FAQ의 「비용은 어떻게 정해지나요 / 어느 정도인가요 / 견적서」 답변. 지금은 「지점 수에 따라 달라요 → 비용 페이지로」만 있음.</li>
-    <li><b>절차</b> FAQ 「비용은 언제 정해지나요」 답변.</li>
-    <li>JSON-LD: 가격을 공개하면 <span class="mono">Service</span>에 <span class="mono">offers.priceSpecification</span>을 추가할 수 있음 (구글 검색 결과에 가격이 보일 수 있어).</li>
-  </ul>
-
-  <h3><span class="id">C4</span> 단계별 평균 제작 기간 <span class="sev block">절차 페이지만 게시 차단</span></h3>
-  <p><b>필요한 것:</b> 규모별로 상담부터 공개까지 걸리는 기간. 예: 소규모(5지점 이하) / 중규모(6~30) / 대규모(31 이상)에서 STEP별 영업일, 또는 전체 기간 범위. DB에는 근거가 없어.</p>
-  <ul>
-    <li><b>절차</b> <span class="mono">#steps</span> 소개 문단의 주황 자리표시(<span class="mono">[단계별 평균 기간 — 오너 확인 후 기입]</span>), 각 STEP 옆에 기간 표시.</li>
-    <li><b>절차</b> JSON-LD <span class="mono">HowTo.totalTime</span>.</li>
-    <li><b>대학교</b> <span class="mono">#process</span> 다섯 단계 (선택: 입시 시즌 역산 일정 문구에 활용).</li>
-    <li>검색어 「VR 투어 제작 기간」을 노리는 페이지라서, 기간 숫자가 없으면 이 페이지의 존재 이유가 약해져.</li>
-  </ul>
-
-  <h3><span class="id">C5</span> 서비스 설명이 사실인지 확인 <span class="sev block">게시 차단</span></h3>
-  <p><b>필요한 것:</b> 시안 문구 중 DB로 확인할 수 없는 「우리가 이렇게 해준다」는 약속들. 항목마다 O(그대로) / X(삭제) / 수정 문구.</p>
-  <div class="tbl"><table>
-    <thead><tr><th>약속</th><th>들어간 곳</th></tr></thead>
-    <tbody>
-      <tr><td>화면에 찍힌 사람을 편집에서 지워 준다</td><td>초·중·고 FAQ 「학생 얼굴」, 절차 STEP 4, 비용 <span class="mono">#factors</span> 「편집 범위」</td></tr>
-      <tr><td>공개 전에 검수용 미리보기 링크를 준다</td><td>절차 STEP 4·5, 절차 FAQ 「공개 전에」, 절차 JSON-LD</td></tr>
-      <tr><td>야외는 날씨를 보고 예비일로 옮긴다</td><td>절차 STEP 3, 절차 FAQ 「비가 오면」</td></tr>
-      <tr><td>바뀐 지점만 다시 찍어 교체 / 지점을 나중에 추가해 이어 붙인다</td><td>대학교 FAQ 「일부만 다시」, 비용 FAQ 「지점 추가」, 절차 <span class="mono">#after</span> 「부분 교체」</td></tr>
-      <tr><td>외국어판은 재촬영 없이 안내 문구만 입힌다</td><td>관광지 <span class="mono">#uses</span>·FAQ, 공공시설 <span class="mono">#uses</span>·FAQ, 비용 <span class="mono">#factors</span> 「언어판」, 절차 <span class="mono">#after</span></td></tr>
-      <tr><td>계절별로 같은 지점을 다시 찍어 바꿔 넣을 수 있다</td><td>관광지 FAQ 「계절마다」</td></tr>
-      <tr><td>휴관일·개장 전 촬영이 가능하다</td><td>공공시설 FAQ 「휴관일」, 비용 <span class="mono">#factors</span> 「촬영 조건」</td></tr>
-      <tr><td>여러 곳을 묶으면 장소당 부담이 줄어든다</td><td>비용 FAQ 「여러 곳」, 초·중·고 FAQ 「여러 학교」</td></tr>
-      <tr><td>현장에는 담당자 1명이면 된다</td><td>절차 STEP 3 「준비할 것」, 절차 FAQ 「촬영 당일」</td></tr>
-      <tr><td>공유 링크와 iframe 임베드 코드로 전달한다</td><td>6장 전부 (FAQ·STEP 5·제작 형태 표)</td></tr>
-      <tr><td>학기 중에는 수업 없는 시간·방학에 촬영한다</td><td>대학교 FAQ, 초·중·고 FAQ</td></tr>
-    </tbody>
-  </table></div>
-
-  <h3><span class="id">C6</span> 페이지별 대표 사례 <span class="sev weak">약해짐</span></h3>
-  <p><b>필요한 것:</b> 각 업종 페이지 맨 앞에 크게 보여줄 사례 1건. 지금은 뮤뮤가 골랐어. 바꾸고 싶으면 VR 이름을 알려주고, 가능하면 한두 줄 소개(어떤 목적으로 만들었는지)도 같이 줘.</p>
-  <div class="tbl"><table>
-    <thead><tr><th>페이지</th><th>현재 대표 사례 (<span class="mono">.featured</span>)</th><th>들어가는 것</th></tr></thead>
-    <tbody>
-      <tr><td>대학교</td><td>[한국기술교육대학교] 미리 가본 캠퍼스 (VR스토리)</td><td rowspan="4">대표 썸네일 이미지(올릴 때 실제 VR 썸네일로 교체), 2~3줄 소개, 「VR 열기」 링크. 소개 문구는 사람이 쓴 게 있으면 그걸 우선 써</td></tr>
-      <tr><td>초·중·고</td><td>없음 → 하나 고르면 추가</td></tr>
-      <tr><td>공공시설</td><td>[경기관광공사] 국립수목원 (문턱없는 경기관광)</td></tr>
-      <tr><td>관광지</td><td>[경기관광공사] 수원/오산 코스 (VR스토리)</td></tr>
-    </tbody>
-  </table></div>
-
-  <h3><span class="id">C7</span> 연락처와 문의 창구 <span class="sev block">게시 차단</span></h3>
-  <p><b>필요한 것:</b> 아래 값이 지금도 맞는지 확인, 추가할 창구가 있는지.</p>
-  <ul>
-    <li>전화 <span class="mono">070-7518-3600</span> — 6장 전부 하단 <span class="mono">#contact</span> (레거시 <span class="mono">pages/contactus.php</span>에서 가져옴)</li>
-    <li>의뢰 폼 <span class="mono">/?m=bbs&amp;bid=pano_request&amp;mod=write</span> — 6장 전부 하단 버튼과 상단 「제작 문의」 버튼. ⚠️ 대학교 시안은 아직 동작하지 않는 데모 폼이라 올릴 때 이 링크로 바꿔야 해 (개발 작업).</li>
-    <li>카카오톡 채널(<span class="mono">pf.kakao.com/_MxeFxej</span>)이나 이메일을 같이 보여줄지 — 넣는다면 6장 전부 <span class="mono">#contact</span>와 JSON-LD <span class="mono">Organization.contactPoint</span>.</li>
-  </ul>
-
-  <h3><span class="id">C8</span> 수치의 기준 DB와 기준일 <span class="sev block">게시 차단</span></h3>
-  <p><b>필요한 것:</b> 페이지 숫자를 어느 DB 기준으로 낼지 승인. 지금 숫자는 전부 <b>로컬 마이그레이션 DB(<span class="mono">look360_v3_migration</span>) 2026-10-04 집계</b>라 운영 DB와 다를 수 있어. 올리기 직전에 기준 DB로 다시 세고, 그 숫자를 사람이 한 번 보고 승인해 줘.</p>
-  <ul>
-    <li>히어로 수치(<span class="mono">.stats</span>) — 6장 중 절차를 뺀 5장: 351 / 585 / 230 / 163 / 4.4 / 133 / 85 / 375 / 26 / 77 / 22.7 / 24.2</li>
-    <li>초·중·고 <span class="mono">.regions</span> 지역별 수치, 비용·초·중·고의 지점 수 분포 막대(<span class="mono">.bars</span>)</li>
-    <li>사례 목록 옆 지점 수(<span class="mono">.cases .t</span>), 본문 속 「185지점」 「영문판 77건」 같은 문장</li>
-    <li><span class="mono">meta description</span> 안의 숫자 (검색 결과에 그대로 노출됨)</li>
-  </ul>
-
-  <h2>3. 사이트 단위 결정 (S1~S5)</h2>
-  <div class="tbl"><table>
-    <thead><tr><th>항목</th><th>필요한 결정</th><th>어디에 쓰이나</th><th>안 정하면</th></tr></thead>
-    <tbody>
-      <tr><td><span class="id site">S1</span> 사이트 안 링크 위치</td><td>look360.kr에서 <span class="mono">/solutions/</span> 허브로 거는 링크 위치: 상단 메뉴(「VR제작의뢰」 옆) / 푸터 / 메인 페이지 섹션 중 어디인지, 메뉴 이름</td><td>레거시 레이아웃 <span class="mono">layouts/look360/_cross/top.php</span>(메뉴)·푸터·<span class="mono">pages/main.php</span>. 허브 페이지 <span class="mono">/solutions/</span>는 새로 만듦</td><td><span class="sev block">게시 차단</span> 링크가 없으면 구글이 중요하지 않은 페이지로 봐서 사이트맵만으로는 순위가 잘 안 올라</td></tr>
-      <tr><td><span class="id site">S2</span> 원본 관리 방식</td><td>지금처럼 손으로 쓴 HTML을 그대로 쓸지, Astro 같은 정적 사이트 생성기로 옮길지</td><td>6장 전부와 허브의 공통 부분(헤더·푸터·문의 띠·JSON-LD). 24장까지 늘어나면 공통 수정이 반복됨</td><td>작업 방식이 정해지지 않아 발주 범위를 못 잡음</td></tr>
-      <tr><td><span class="id site">S3</span> 서치 콘솔 계정</td><td>look360.kr이 등록된 구글 서치 콘솔·네이버 서치어드바이저 계정, 뮤뮤가 쓸 수 있는 권한이 있는지</td><td>사이트맵 재제출, 랜딩 주소별 「색인 생성 요청」, 4주 뒤 성과 측정(기획 문서 6장)</td><td>사이트맵에만 의존하게 돼서 색인이 몇 주 늦어질 수 있음</td></tr>
-      <tr><td><span class="id site">S4</span> 문의 출처 집계 방식</td><td>의뢰 버튼의 <span class="mono">from=landing-xxx</span> 값을 어떻게 셀지: GA4 페이지 주소만 볼지, 의뢰 게시판 글에도 저장되게 고칠지</td><td>6장 전부의 의뢰 버튼, 레거시 게시판(<span class="mono">pano_request</span>) 저장 로직, 기획 문서 6장 성과 측정</td><td>지금은 게시판 글에 출처가 남지 않아서 「어느 랜딩에서 의뢰가 왔는지」를 GA4로만 추정할 수 있음</td></tr>
-      <tr><td><span class="id site">S5</span> 진행 방식</td><td>뮤뮤가 직접 구현할지, paperclip 에이전트에게 발주할지</td><td>위 전부</td><td>착수 불가</td></tr>
-    </tbody>
-  </table></div>
-
-  <h2>4. 사람 입력이 아닌 것 (개발이 처리)</h2>
-  <p class="muted">놓치지 않게 같이 적어 둬. 위 입력이 채워지면 개발 쪽에서 처리할 일이야.</p>
-  <ul>
-    <li>시안 띠·<span class="mono">noindex</span> 제거, <span class="mono">canonical</span>·<span class="mono">og:</span> 태그, 제목 끝에 「| LOOK360」</li>
-    <li>상대 링크를 <span class="mono">/solutions/…</span> 절대 경로로 변환</li>
-    <li>캔버스 그림 대신 실제 VR 썸네일 이미지 넣기 (규격은 레거시 <span class="mono">view_500</span> 등)</li>
-    <li>대학교 시안의 데모 폼을 실제 의뢰 폼 링크로 교체</li>
-    <li><span class="mono">sitemap.php</span>의 <span class="mono">sitemap-static.xml</span> 목록에 랜딩 주소 추가</li>
-    <li>고칠 때마다 CloudFront 무효화 <span class="mono">/solutions/*</span> (이 경로는 <span class="mono">/files</span>를 떼지 않아)</li>
-  </ul>
-
-  <h2>5. 답을 줄 때는 이렇게</h2>
-  <p>한 번에 다 줄 필요 없어. 항목 번호로 답해 주면 돼. 게시 차단 항목(C2·C5·C7·C8·S1)부터 주면 그만큼 먼저 진행할 수 있어.</p>
-<pre>C1  기회의 경기 O / 오산 X / 서울관광재단 O / 남한산성 O
-C2  전부 실명 OK (단, ○○대학교는 빼기)
-C3  공개 안 함
-C4  소규모 2주, 중규모 3~4주, 대규모 6주
-C5  인물 지우기 O, 미리보기 링크 O, 예비일 O, …
-C6  초·중·고 대표 = 제주과학고등학교
-C7  전화 맞음, 카카오톡 채널도 추가
-C8  운영 DB 기준으로 다시 세서 보여줘
-S1  상단 메뉴 「VR제작의뢰」 옆, 이름은 「제작 사례」
-S2  손 HTML 유지
-S3  서치 콘솔은 ○○ 계정, 권한 줄게
-S4  게시판에도 저장
-S5  paperclip 으로</pre>
-
-  <p class="muted" style="margin-top:48px">작성: 뮤뮤 🐈‍⬛ · 2026-10-04 · 위치 근거: kabkee-decks <span class="mono">ideas/look360-landing/</span> 시안 6장 기준. 시안이 바뀌면 섹션 이름(<span class="mono">#work</span> 등)도 같이 확인할 것</p>
+  <p class="muted" style="margin-top:32px;font-size:13px">작성: 뮤뮤 🐈‍⬛ · 2026-10-04 · 「들어가는 곳」의 섹션 이름(<span class="mono">#work</span> 등)은 kabkee-decks 시안 6장 기준</p>
 </div>
+
+<script>
+(() => {
+  const KEY = 'look360-landing-inputs-v2';
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // 세그먼트 버튼 생성 (기본: O/X/수정)
+  $$('.seg').forEach((seg) => {
+    const name = seg.dataset.name;
+    const choices = (seg.dataset.choices || 'O 해요,X 안 해요,수정').split(',');
+    seg.innerHTML = choices.map((c) => `<label><input type="radio" name="${name}" value="${c}">${c}</label>`).join('');
+  });
+
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+  $$('input, select, textarea').forEach((el) => {
+    if (!el.name || !(el.name in saved)) return;
+    const v = saved[el.name];
+    if (el.type === 'radio') el.checked = el.value === v;
+    else if (el.type === 'checkbox') el.checked = Array.isArray(v) && v.includes(el.value);
+    else el.value = v;
+  });
+
+  const val = (n) => { const el = $(`input[name="${n}"]:checked`); return el ? el.value : ''; };
+  const multi = (n) => $$(`input[name="${n}"]:checked`).map((e) => e.value);
+  const txt = (n) => { const el = $(`[name="${n}"]`); return el ? el.value.trim() : ''; };
+  const defOf = (n) => $$(`input[name="${n}"][data-default]`).map((e) => e.value);
+  const pick = (n) => val(n) || defOf(n)[0] || '';
+  const S1_DEF = defOf('S1');
+
+  function previews() {
+    const c2 = pick('C2'), ex = txt('C2-ex');
+    $('[data-preview="C2"]').innerHTML = '<b>페이지에 이렇게 들어가</b>' + (
+      c2 === '전부 익명' ? '사례 목록: 「제주 ○○고등학교 · 5지점」, 「경기도 관광 공공기관 A」'
+      : '사례 목록: 「숭의초등학교 · 4지점」, 「[경기관광공사] 국립수목원」' + (c2.includes('빼기') && ex ? ` — 단, <b>${esc(ex)}</b> 은(는) 목록에서 빠짐` : ''));
+
+    const kakao = val('C7-kakao') || '넣기', mail = val('C7-mail') || '빼기';
+    $('[data-preview="C7"]').innerHTML = '<b>페이지에 이렇게 들어가</b>[VR 제작 의뢰하기] 버튼 · 전화 ' + esc(txt('C7-tel') || '—') + (kakao === '넣기' ? ' · [카카오톡 상담] 버튼' : '') + (mail === '보여주기' ? ' · 이메일 주소' : '');
+
+    const s1 = multi('S1').length ? multi('S1') : S1_DEF, lab = txt('S1-label') || '제작 사례';
+    $('[data-preview="S1"]').innerHTML = `<b>사이트에 이렇게 들어가</b>${esc(s1.join(' + '))}에 「${esc(lab)}」 링크 → look360.kr/solutions/`;
+
+    const c3 = pick('C3');
+    $$('[data-show]').forEach((el) => { el.style.display = el.dataset.show === 'C3=' + c3 ? 'flex' : 'none'; });
+    let s3;
+    if (c3 === '최소 금액만') s3 = `「360° VR 투어 제작은 <b>${esc(txt('C3-min') || '○○')}만 원부터</b>예요 (부가세 ${esc(txt('C3-vat'))}). 정확한 금액은 지점 수에 따라 견적으로 안내해요.」`;
+    else if (c3 === '지점 단가 구간') s3 = `「촬영 지점 1곳당 <b>${esc(txt('C3-lo') || '○')}~${esc(txt('C3-hi') || '○')}만 원</b>이고, 최소 <b>${esc(txt('C3-unit') || '○')}지점</b>부터 제작해요.${txt('C3-story') ? ' VR스토리는 ' + esc(txt('C3-story')) + '.' : ''}」`;
+    else s3 = '「정확한 비용은 보여주고 싶은 공간 목록을 받은 뒤 지점 수를 세어 견적으로 안내해요.」';
+    $('[data-preview="C3"]').innerHTML = '<b>비용 페이지에 이렇게 들어가</b>' + s3;
+
+    const w = (k) => esc(txt(k) || '○');
+    $('[data-preview="C4"]').innerHTML = `<b>절차 페이지에 이렇게 들어가</b>「상담부터 공개까지 5지점 이하는 보통 <b>${w('C4-s')}주</b>, 6~30지점은 <b>${w('C4-m')}주</b>, 31지점 이상은 <b>${w('C4-l')}주</b> 걸려요. 현장 촬영은 그중 ${w('C4-s-d')}~${w('C4-l-d')}일이에요.」`;
+
+    const ours = ['기회의 경기', '오산시 징검다리교실', '서울관광재단', '남한산성'].filter((_, i) => val('C1-' + (i + 1)) === '우리가 찍음');
+    $('[data-preview="C1"]').innerHTML = '<b>페이지에 이렇게 반영돼</b>' + (ours.length ? `사례 추가: ${ours.join(', ')}` : '추가 없음 — 지금 시안처럼 Campustown·경기관광공사 사례만 사용');
+  }
+
+  function answer() {
+    let done = 0;
+    const L = [];
+    const D = (isDef) => (isDef ? ' (추천값)' : '');
+    const mark = (ok) => { if (ok) done++; };
+
+    mark(!!val('C2'));
+    L.push(`C2 고객 이름: ${pick('C2')}${txt('C2-ex') ? ' / 빼기: ' + txt('C2-ex') : ''}${D(!val('C2'))}`);
+
+    const c5 = $$('[data-rows="C5"] .row').map((_, i) => `${i + 1}${(val('C5-' + (i + 1)) || '?').split(' ')[0]}`);
+    mark(c5.every((s) => !s.endsWith('?')));
+    L.push(`C5 서비스 약속: ${c5.join(' ')}${c5.some((s) => s.endsWith('?')) ? ' (?=미답)' : ''}${txt('C5-memo') ? ' / 메모: ' + txt('C5-memo') : ''}`);
+
+    mark(!!(val('C7-kakao') && val('C7-mail')));
+    L.push(`C7 연락처: 전화 ${txt('C7-tel')} / 카카오 ${val('C7-kakao') || '넣기 (추천값)'} / 이메일 ${val('C7-mail') || '빼기 (추천값)'}`);
+
+    mark(!!val('C8'));
+    L.push(`C8 숫자 기준: ${pick('C8')}${D(!val('C8'))}`);
+
+    mark(multi('S1').length > 0);
+    L.push(`S1 사이트 링크: ${(multi('S1').length ? multi('S1') : S1_DEF).join(' + ')} / 이름 「${txt('S1-label')}」${D(!multi('S1').length)}`);
+
+    const c3 = pick('C3');
+    mark(!!val('C3'));
+    L.push(`C3 가격: ${c3 === '최소 금액만' ? `${txt('C3-min') || '?'}만 원부터 (부가세 ${txt('C3-vat')})` : c3 === '지점 단가 구간' ? `지점당 ${txt('C3-lo') || '?'}~${txt('C3-hi') || '?'}만 원, 최소 ${txt('C3-unit') || '?'}지점${txt('C3-story') ? ', VR스토리 ' + txt('C3-story') : ''}` : '공개 안 함'}${D(!val('C3'))}`);
+
+    const c4 = ['s', 'm', 'l'].map((k) => txt('C4-' + k));
+    mark(c4.every(Boolean));
+    L.push(`C4 기간: 소규모 ${c4[0] || '?'}주(촬영 ${txt('C4-s-d') || '?'}일) / 중규모 ${c4[1] || '?'}주(촬영 ${txt('C4-m-d') || '?'}일) / 대규모 ${c4[2] || '?'}주(촬영 ${txt('C4-l-d') || '?'}일)`);
+
+    mark([1, 2, 3, 4].every((i) => val('C1-' + i)));
+    L.push(`C1 채널 실적: ${['기회의 경기', '오산', '서울관광재단', '남한산성'].map((n, i) => `${n} ${val('C1-' + (i + 1)) || '모름'}`).join(' / ')}`);
+
+    const c6Touched = ['C6-campus', 'C6-school', 'C6-public', 'C6-tour'].some((n) => $(`[name="${n}"]`).selectedIndex > 0) || !!txt('C6-memo');
+    mark(c6Touched);
+    L.push(`C6 대표 사례: 대학교 ${txt('C6-campus')} / 초·중·고 ${txt('C6-school')} / 공공 ${txt('C6-public')} / 관광 ${txt('C6-tour')}${txt('C6-memo') ? ' / 메모: ' + txt('C6-memo') : ''}${D(!c6Touched)}`);
+
+    mark(!!val('S5'));
+    L.push(`S5 진행 방식: ${val('S5') || '?'}`);
+    for (const [id, t] of [['S2', '원본 관리'], ['S3', '서치 콘솔'], ['S4', '문의 출처']]) {
+      mark(!!val(id));
+      L.push(`${id} ${t}: ${pick(id)}${D(!val(id))}`);
+    }
+    $('#out').value = '[look360 랜딩 입력 답변 · IND-7960]\n' + L.join('\n');
+    $('#prog').textContent = `직접 답한 질문 ${done} / 13`;
+  }
+
+  function save() {
+    const data = {};
+    $$('input, select, textarea').forEach((el) => {
+      if (!el.name) return;
+      if (el.type === 'radio') { if (el.checked) data[el.name] = el.value; }
+      else if (el.type === 'checkbox') { (data[el.name] = data[el.name] || []); if (el.checked) data[el.name].push(el.value); }
+      else data[el.name] = el.value;
+    });
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
+  }
+  const refresh = () => { previews(); answer(); save(); };
+  document.addEventListener('input', refresh);
+  document.addEventListener('change', refresh);
+  $('#copy').addEventListener('click', async () => {
+    answer();
+    try { await navigator.clipboard.writeText($('#out').value); $('#toast').textContent = '복사했어! 뮤뮤한테 붙여넣어 줘'; }
+    catch (e) { $('#out').focus(); $('#out').select(); $('#toast').textContent = '자동 복사가 막혀서 글을 선택해 뒀어. Ctrl+C 해줘'; }
+  });
+  $('#reset').addEventListener('click', () => { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); });
+  previews(); answer();
+})();
+</script>
 </body>
 </html>
