@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>look360.kr 랜딩페이지 기획</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -184,9 +185,9 @@ ol.q li,ul li{margin:6px 0}
   <div class="tbl"><table>
     <thead><tr><th></th><th>안 A: PHP 문서 루트에 정적 HTML 추가 (추천)</th><th>안 B: 정적 빌드 → S3 + CloudFront</th></tr></thead>
     <tbody>
-      <tr><td>주소</td><td><span class="mono">look360.kr/solutions/campus-vr-tour</span></td><td>같은 도메인 경로로 붙이려면 look360.kr 앞에 CloudFront가 있어야 함. 없으면 서브도메인(<span class="mono">solutions.look360.kr</span>)</td></tr>
+      <tr><td>주소</td><td><span class="mono">look360.kr/solutions/campus-vr-tour</span></td><td>look360.kr 앞에 CloudFront(<span class="mono">E134ZI2PZY55NN</span>)가 이미 있어서 같은 도메인 경로로 붙일 수 있음. 다만 경로별 오리진 설정을 추가해야 함</td></tr>
       <tr><td>도메인 신뢰도</td><td>기존 look360.kr의 신뢰도를 그대로 받음</td><td>서브도메인이면 검색엔진이 별도 사이트처럼 취급할 수 있음</td></tr>
-      <tr><td>배포</td><td>빌드한 HTML을 EC2에 rsync. 서버 설정 변경 거의 없음</td><td>S3 업로드 + CloudFront 무효화. 인프라 추가</td></tr>
+      <tr><td>배포</td><td>정적 HTML을 <span class="mono">Look360_ksq1.2</span> 저장소에 커밋 → <span class="mono">paperclip</span> 브랜치 push → 서버에서 <span class="mono">git pull</span>. 서버 설정 변경 없음 <span class="muted">(🔧 처음엔 rsync라고 적었는데 틀렸어. 이 서버는 git 배포만 써)</span></td><td>S3 업로드 + CloudFront 무효화. 인프라 추가</td></tr>
       <tr><td>위험</td><td>운영 서버 파일을 건드림 → 별도 디렉토리만 쓰고 기존 PHP는 손대지 않기</td><td>운영 서버와 완전히 분리돼 안전</td></tr>
     </tbody>
   </table></div>
@@ -213,12 +214,51 @@ ol.q li,ul li{margin:6px 0}
 
   <h2>7. 오빠가 확인해 줘야 할 것</h2>
   <ol class="q">
-    <li><b>실적 범위:</b> Campustown(573), 경기관광공사(375), 기회의 경기(220) 같은 채널 콘텐츠가 <b>우리가 직접 촬영·납품한 것</b>인지, 고객이 직접 올린 건지. 우리 실적일 때만 랜딩에 "제작 사례"로 쓸 수 있어.</li>
+    <li><b>실적 범위:</b> <span class="done">일부 확인</span> Campustown·경기관광공사는 우리 실적으로 확인됐어(2026-10-04). <b>남은 것:</b> 기회의 경기(220)·오산시 징검다리교실(194)·서울관광재단(46)·남한산성(7). 확인 전이라 시안에서는 뺐어.</li>
     <li><b>고객 이름 공개:</b> 대학·기관 이름을 사례로 노출해도 되는지</li>
-    <li><b>레거시 VR 주소 형식:</b> 랜딩에서 연결할 look360.kr의 VR 보기 URL 규칙</li>
-    <li><b>제작의뢰 폼 경로:</b> 레거시에 있는 문의 폼 주소. 시안의 폼은 동작하지 않는 데모야.</li>
+    <li><b>레거시 VR 주소 형식:</b> <span class="done">해결</span> <span class="mono">look360.kr/vr/{장소 도메인}</span> (예: <span class="mono">/vr/shinnam.es</span>), 실응답 200 확인</li>
+    <li><b>제작의뢰 폼 경로:</b> <span class="done">해결</span> <span class="mono">/?m=bbs&amp;bid=pano_request&amp;mod=write</span>. 짧은 주소 <span class="mono">/b/pano_request/write</span>는 리라이트 규칙에 QSA가 없어서 <span class="mono">?from=</span> 값이 사라지므로 쓰지 않아.</li>
     <li><b>가격 공개 수준:</b> "비용" 페이지에 가격대를 적을지, 결정 요소만 설명할지</li>
-    <li><b>CloudFront 여부:</b> look360.kr 앞단에 CloudFront가 이미 있는지 (안 B 가능 여부)</li>
+    <li><b>CloudFront 여부:</b> <span class="done">해결</span> 이미 있어 (<span class="mono">E134ZI2PZY55NN</span>). 그래도 안 A가 더 단순해서 안 A로 가.</li>
+    <li><b>제작 기간:</b> 「절차」 페이지에 넣을 단계별 평균 제작 기간 (DB에 근거가 없음)</li>
+  </ol>
+
+  <h2>8. look360.kr 배포와 구글 노출 실행 계획</h2>
+  <div class="callout risk">
+    <strong>⏸ 구현 정지 (2026-10-04 오너 지시)</strong>
+    아래 「확정이 필요한 것」이 정해질 때까지 look360.kr 쪽 작업은 시작하지 않아. 지금은 kabkee-decks의 시안만 있고, 시안에는 <span class="mono">noindex</span>를 넣어서 구글이 색인하지 않게 해 뒀어.
+  </div>
+
+  <h3>2026-10-04에 확인한 사실</h3>
+  <ul>
+    <li><span class="mono">look360.kr/solutions/…</span>는 CloudFront를 거쳐 EC2 Apache로 가고, 지금은 404가 나와. 비어 있는 경로라서 기존 PHP 라우팅과 겹치지 않아.</li>
+    <li><span class="mono">robots.txt</span>는 <span class="mono">/solutions/</span>를 막지 않아.</li>
+    <li><span class="mono">sitemap.xml</span>은 사이트맵 인덱스이고 그 안에 <span class="mono">sitemap-static.xml</span>이 있어. 둘 다 <span class="mono">sitemap.php</span>가 만들어.</li>
+    <li>운영 서버 배포는 git으로만 해 (rsync·scp 금지). CEO 배포 승인이 필요해.</li>
+  </ul>
+
+  <h3>진행 순서 (확정 후)</h3>
+  <ol class="q">
+    <li><b>정적 HTML로 넣기:</b> <span class="mono">Look360_ksq1.2</span> 저장소에 <span class="mono">solutions/{slug}/index.html</span>로 넣고, 공용 CSS·JS는 <span class="mono">solutions/_assets/</span>에 둬. 주소는 <span class="mono">look360.kr/solutions/{slug}/</span>야. 기존 PHP 파일은 건드리지 않아.</li>
+    <li><b>올리기 전 정리:</b> 상단 시안 띠와 <span class="mono">noindex</span>를 빼고, <span class="mono">canonical</span>·<span class="mono">og:</span> 태그를 넣고, 제목 끝에 「| LOOK360」을 붙여. 상대 링크는 <span class="mono">/solutions/…</span> 절대 경로로 바꾸고, 사례 카드에는 실제 VR 썸네일 이미지를 넣어 (지금은 캔버스 그림뿐이라 이미지 검색에 걸릴 게 없어).</li>
+    <li><b>허브 페이지:</b> <span class="mono">/solutions/</span>에 랜딩 목록 페이지를 하나 만들어.</li>
+    <li><b>사이트 안에서 링크 걸기:</b> look360.kr 상단 메뉴(「VR제작의뢰」 옆)나 푸터에서 <span class="mono">/solutions/</span>로 링크를 걸어. 사이트맵만 있으면 구글이 중요하지 않은 페이지로 볼 수 있어.</li>
+    <li><b>사이트맵:</b> <span class="mono">sitemap.php</span>의 <span class="mono">sitemap-static.xml</span> 목록에 랜딩 주소를 추가해.</li>
+    <li><b>배포:</b> <span class="mono">paperclip</span> 브랜치에 push한 다음 서버에서 <span class="mono">git pull</span>을 해. CEO 배포 지시가 있어야 진행해.</li>
+    <li><b>색인 요청:</b> 구글 서치 콘솔과 네이버 서치어드바이저에서 사이트맵을 다시 제출하고, 랜딩 주소마다 「색인 생성 요청」을 해.</li>
+    <li><b>캐시:</b> 페이지를 고칠 때마다 CloudFront 무효화를 <span class="mono">/solutions/*</span>로 걸어. 이 경로는 <span class="mono">/files</span>를 떼는 규칙에 해당하지 않으니 주소 그대로 걸면 돼. 확인은 응답 헤더 <span class="mono">x-cache</span>와 <span class="mono">age</span>로 해.</li>
+  </ol>
+
+  <h3>⚠️ 중복 색인 주의</h3>
+  <p>kabkee-decks 시안이 look360.kr보다 먼저 색인되면, 같은 내용의 look360.kr 페이지가 「중복 페이지」로 밀릴 수 있어. 그래서 시안 전부에 <span class="mono">&lt;meta name="robots" content="noindex, nofollow"&gt;</span>를 넣어 뒀어 (2026-10-04).</p>
+
+  <h3>확정이 필요한 것 (이게 정해지면 진행)</h3>
+  <ol class="q">
+    <li><b>진행 방식:</b> 뮤뮤가 직접 구현할지, paperclip 에픽 이슈로 발주할지</li>
+    <li><b>사이트 안 링크 위치:</b> 상단 메뉴, 푸터, 메인 페이지 중 어디에 <span class="mono">/solutions/</span> 링크를 걸지</li>
+    <li><b>원본 관리 방식:</b> 지금처럼 손으로 쓴 HTML을 그대로 쓸지, Astro 같은 정적 사이트 생성기로 옮길지 (24장까지 가면 공통 부분 수정이 많아져)</li>
+    <li><b>서치 콘솔 권한:</b> look360.kr 구글 서치 콘솔·네이버 서치어드바이저에 등록된 계정이 무엇인지 (색인 요청은 그 계정으로만 할 수 있어)</li>
+    <li>7장에 남아 있는 확인 사항: 미확인 채널 실적 여부, 고객 이름 공개, 가격 공개 수준, 제작 기간</li>
   </ol>
 
   <p class="muted" style="margin-top:48px">작성: 뮤뮤 🐈‍⬛ · 수치 출처: 로컬 <span class="mono">look360_v3_migration</span> DB, 2026-10-04 집계 (운영 DB와 다를 수 있음)</p>
