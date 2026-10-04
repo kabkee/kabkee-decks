@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="지자체·공공기관 공공시설 VR 제작. 공원·박물관·문화유산 같은 공공시설을 360°로 촬영하고, 무장애 관광 정보와 영문판까지 경기관광공사와 함께 만든 경험으로 제작합니다.">
+<title>공공시설 VR 제작</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="_landing.css">
+</head>
+<body>
+
+<div class="draft"><div class="wrap">
+  <a href="../2026-10-04-look360-landing-plan.html" style="color:inherit">← 기획 문서</a>
+  <span><b>시안 B1-3</b> · 레거시 look360.kr 용</span>
+  <span>예정 경로 <span class="mono">look360.kr/solutions/public-space-vr</span></span>
+  <span>수치: 2026-10-04 DB 집계 · 확인된 실적(경기관광공사·학교)만 사용</span>
+  <span><span class="todo">확인 필요</span> 기회의 경기(220)·오산시 징검다리교실(194)이 우리 실적이면 「지자체 사업」 사례 블록을 추가할 수 있어</span>
+</div></div>
+
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top">LOOK<span>360</span></a>
+  <nav class="links" aria-label="페이지 섹션">
+    <a href="#uses">활용</a><a href="#bf">무장애 VR</a><a href="#work">제작 사례</a><a href="#order">발주 준비</a><a href="#faq">FAQ</a>
+  </nav>
+  <a class="btn" href="#contact">제작 문의</a>
+</div></header>
+
+<main id="top">
+  <section class="hero"><div class="wrap">
+    <div class="lead">
+      <div>
+        <p class="eyebrow">지자체 · 공공기관 공공시설 VR</p>
+        <h1 style="margin-top:14px">누구나 미리 확인하고<br>찾아올 수 있는 공공시설</h1>
+      </div>
+      <div>
+        <p>공원, 박물관, 과학관, 문화유산처럼 시민이 쓰는 공공시설을 360° VR로 안내해요. 휠체어·유아차 이용객을 위한 무장애 정보와 외국어판까지 한 번의 촬영으로 함께 준비할 수 있어요.</p>
+        <div class="actions">
+          <a class="btn" href="#contact">공공시설 VR 상담</a>
+          <a class="btn ghost" href="#bf">무장애 VR 사례</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pano">
+      <div class="pano-frame" data-pano data-mood="nature" data-seed="2024" data-labels='[{"at":0.04,"t":"입구"},{"at":0.22,"t":"안내센터"},{"at":0.42,"t":"경사로"},{"at":0.62,"t":"전시동"},{"at":0.82,"t":"편의시설"}]' role="img" aria-label="공공시설 360도 파노라마 예시 그림. 드래그해서 둘러볼 수 있어요.">
+        <canvas></canvas>
+        <span class="hud">시선 000° · N</span>
+        <span class="hint">← 드래그해서 둘러보기 →</span>
+      </div>
+      <div class="ticks mono" aria-hidden="true"><span>0°</span><span>45°</span><span>90°</span><span>135°</span><span>180°</span><span>225°</span><span>270°</span><span>315°</span><span>360°</span></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span class="n">133</span><span class="l">「문턱없는 경기관광」 무장애 VR</span></div>
+      <div class="stat"><span class="n">85</span><span class="l">공원·박물관·과학관·문화유산 VR (경기관광공사)</span></div>
+      <div class="stat"><span class="n">3</span><span class="l">한 촬영본으로 공개한 언어 (국문·영문·중문)</span></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="uses"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">어디에 쓰이나요</p>
+      <h2>시설 안내, 접근성 정보, 기록을 한 번에</h2>
+    </div>
+    <div class="uses">
+      <div class="use"><span class="deg">000° · 시설 안내</span><h3>기관 홈페이지 시설 안내</h3><p>「시설 소개」 메뉴의 사진 몇 장을 VR로 바꾸면 처음 오는 시민도 입구와 주요 공간을 미리 알아요.</p></div>
+      <div class="use"><span class="deg">090° · 접근성</span><h3>무장애 이동 정보</h3><p>휠체어·유아차로 다닐 수 있는 동선과 편의시설을 현장 그대로 보여줘요. 글로 쓴 접근성 안내보다 판단하기 쉬워요.</p></div>
+      <div class="use"><span class="deg">180° · 외국어</span><h3>외국인 방문객 안내</h3><p>같은 촬영본에 영문·중문 안내를 입혀 따로 공개해요. 다시 촬영할 필요가 없어요.</p></div>
+      <div class="use"><span class="deg">270° · 기록</span><h3>공간 기록·아카이브</h3><p>리모델링이나 철거 전 공간을 360°로 남겨 두면 기록물과 홍보 자료로 계속 쓸 수 있어요.</p></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="bf"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">무장애 VR</p>
+      <h2>「문턱없는 경기관광」 — 무장애 관광 정보를 VR로</h2>
+      <p>경기관광공사와 함께 경기도 공공시설과 관광지를 무장애 관광 안내용으로 구성한 VR이에요. 같은 장소라도 일반판과 무장애판을 따로 공개했어요.</p>
+    </div>
+
+    <div class="featured">
+      <div class="thumb"><div class="pano-frame" data-pano data-still data-mood="nature" data-seed="6061" data-offset="0.2" data-labels='[{"at":0.27,"t":"주출입구"},{"at":0.55,"t":"경사로"}]' style="aspect-ratio:2/1;border:0;cursor:default" aria-hidden="true"><canvas></canvas></div></div>
+      <div class="body">
+        <span class="tag">360VIEW · 무장애</span>
+        <h3>[경기관광공사] 국립수목원 (문턱없는 경기관광)</h3>
+        <p>같은 국립수목원을 일반 관람용과 무장애 안내용 두 가지 VR로 공개했어요. 공공시설 한 곳을 목적에 따라 나눠 안내하는 방식이에요.</p>
+        <a class="btn ghost" href="https://look360.kr/vr/ggtour_kna_go_kr">VR 열기</a>
+      </div>
+    </div>
+
+    <ul class="cases">
+      <li><a href="https://look360.kr/vr/bfggtour_sciencecenter_gwacheon"><span>국립과천과학관</span><span class="t">무장애</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_gcm"><span>경기도어린이박물관</span><span class="t">무장애</span></a></li>
+      <li><a href="https://look360.kr/vr/bfggtour_childrensmuseum_gyeongginorthern"><span>경기북부어린이박물관</span><span class="t">무장애</span></a></li>
+      <li><a href="https://look360.kr/vr/bfggtour_gglakepark"><span>광교호수공원</span><span class="t">무장애</span></a></li>
+      <li><a href="https://look360.kr/vr/bfggtour_hantariver"><span>한탄강지질공원</span><span class="t">무장애</span></a></li>
+      <li><a href="https://look360.kr/vr/bfggtour_haengju"><span>행주산성</span><span class="t">무장애</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_hwaseongfortress"><span>수원화성</span><span class="t">무장애</span></a></li>
+      <li><a href="https://look360.kr/vr/bfggtour_hoeamsajimuseum"><span>회암사지박물관</span><span class="t">무장애</span></a></li>
+    </ul>
+  </div></section>
+
+  <section class="block" id="work"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">공공시설 제작 사례</p>
+      <h2>공원부터 궁릉까지, 경기도 공공시설 VR</h2>
+    </div>
+    <h3 class="group-h">공원</h3>
+    <ul class="cases">
+      <li><a href="https://look360.kr/vr/ggtour_siheung_valley_ecological_park"><span>시흥갯골생태공원</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_chomaggolpark"><span>군포 초막골생태공원</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_anyangartpark"><span>안양예술공원</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_gwanggyo_historical_park"><span>수원 광교역사공원</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/bfggtour_gimpomarinepark"><span>김포 함상공원</span><span class="t">360VIEW</span></a></li>
+    </ul>
+    <h3 class="group-h">박물관 · 과학관</h3>
+    <ul class="cases">
+      <li><a href="https://look360.kr/vr/ggtour_jgpm_ggcf"><span>전곡선사박물관</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_comicsmuseum"><span>한국만화박물관</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_anseong_astronomical_science_museum"><span>안성맞춤천문과학관</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_artvalley_pocheon"><span>포천아트밸리 천문과학관</span><span class="t">360VIEW</span></a></li>
+    </ul>
+    <h3 class="group-h">문화유산 · 유적지</h3>
+    <ul class="cases">
+      <li><a href="https://look360.kr/vr/ggtour_donggureung_royal_tomb"><span>구리 동구릉</span><span class="t">360VIEW · VR스토리</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_gwangleung"><span>남양주 광릉</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_namhansanseong"><span>남한산성</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_jeongyakyong"><span>다산 정약용 유적지</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_simgogseowon"><span>용인 심곡서원</span><span class="t">360VIEW</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_gwacheon_hyanggyo"><span>과천향교</span><span class="t">360VIEW</span></a></li>
+    </ul>
+    <p class="more">공립 초·중·고등학교 VR은 <a href="school-vr-tour.html">학교 VR 안내</a>, 관광지와 여행 코스 VR은 <a href="tourism-vr.html">관광지 VR</a> 페이지에서 볼 수 있어요.</p>
+  </div></section>
+
+  <section class="block" id="order"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">발주 전 준비</p>
+      <h2>과업지시서에 이것만 정해 두면 견적이 정확해져요</h2>
+      <p>공공기관 VR 용역은 촬영 범위가 모호하면 견적과 일정이 크게 흔들려요. 아래 다섯 가지를 먼저 정해 주세요.</p>
+    </div>
+    <ul class="checklist">
+      <li><div><h3>촬영 대상 시설 목록</h3><p>시설 이름과 주소. 여러 곳이면 시·군별로 나눠 주시면 동선을 짜기 쉬워요.</p></div></li>
+      <li><div><h3>시설별 공개 범위</h3><p>실내까지 볼지, 외부와 주요 동선만 볼지. 촬영 지점 수가 여기서 정해져요.</p></div></li>
+      <li><div><h3>공개 언어</h3><p>국문만인지, 영문·중문판도 필요한지.</p></div></li>
+      <li><div><h3>무장애 정보 포함 여부</h3><p>접근성 안내를 넣는다면 일반판과 별도로 구성할지도 함께 정해요.</p></div></li>
+      <li><div><h3>게시 위치</h3><p>기관 홈페이지, 관광 포털, 키오스크 등 VR을 올릴 곳. 임베드 방식이 달라질 수 있어요.</p></div></li>
+    </ul>
+  </div></section>
+
+  <section class="block" id="faq"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">자주 묻는 질문</p>
+      <h2>공공기관 담당자가 많이 물어보세요</h2>
+    </div>
+    <div class="faq">
+      <details><summary>휴관일이나 개장 전에 촬영할 수 있나요?</summary><p>네. 관람객이 없는 시간에 촬영하는 게 가장 깔끔해요. 시설 운영 일정에 맞춰 잡아요.</p></details>
+      <details><summary>시설이 여러 시·군에 흩어져 있어도 되나요?</summary><p>지역별로 묶어 촬영 일정을 나눠요. 경기관광공사 VR도 경기도 26개 시·군을 나눠 진행했어요.</p></details>
+      <details><summary>외국어판은 어떻게 만드나요?</summary><p>같은 촬영본에 외국어 장면 이름과 안내 문구를 입혀 별도 VR로 공개해요.</p></details>
+      <details><summary>견적서와 과업 범위를 먼저 받을 수 있나요?</summary><p>시설 목록과 공개 범위를 보내 주시면 지점 수 기준으로 범위와 견적을 정리해 드려요. 비용이 정해지는 기준은 <a href="vr-cost.html">VR 촬영 비용</a>에 정리해 뒀어요.</p></details>
+    </div>
+  </div></section>
+
+  <section class="block"><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">함께 보면 좋은 페이지</p></div>
+    <div class="related">
+      <a href="tourism-vr.html"><b>관광지·관광공사 VR</b><span>여행 코스형 VR스토리</span></a>
+      <a href="school-vr-tour.html"><b>초·중·고 학교 VR 안내</b><span>학교 230곳 제작 사례</span></a>
+      <a href="vr-production-process.html"><b>VR 투어 제작 절차</b><span>상담부터 게시까지</span></a>
+    </div>
+  </div></section>
+
+  <section class="cta-band" id="contact"><div class="wrap">
+    <div>
+      <p class="eyebrow">제작 문의</p>
+      <h2 style="margin-top:10px">공공시설 VR, 과업 범위부터 같이 잡아요</h2>
+      <p>기관명과 시설 목록을 남겨 주시면 촬영 지점과 견적을 정리해서 연락드려요.</p>
+    </div>
+    <div class="acts">
+      <a class="btn" href="https://look360.kr/?m=bbs&amp;bid=pano_request&amp;mod=write&amp;from=landing-public">VR 제작 의뢰하기</a>
+      <span class="tel">전화 <a href="tel:07075183600">070-7518-3600</a></span>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>LOOK360 · look360.kr</span>
+  <span>VR 촬영 · 360° 파노라마 · 공공시설 VR 제작</span>
+</div></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Service","name":"지자체·공공기관 공공시설 VR 제작","serviceType":"공공시설 360도 VR 촬영, 무장애 VR, 다국어 VR 제작","provider":{"@type":"Organization","name":"LOOK360","url":"https://look360.kr"},"areaServed":"KR","audience":{"@type":"Audience","audienceType":"지자체, 공공기관, 관광공사"}},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"휴관일이나 개장 전에 촬영할 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"관람객이 없는 시간에 시설 운영 일정에 맞춰 촬영합니다."}},
+{"@type":"Question","name":"외국어판은 어떻게 만드나요?","acceptedAnswer":{"@type":"Answer","text":"같은 촬영본에 외국어 장면 이름과 안내 문구를 입혀 별도 VR로 공개합니다."}},
+{"@type":"Question","name":"견적서와 과업 범위를 먼저 받을 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"시설 목록과 공개 범위를 보내 주시면 지점 수 기준으로 범위와 견적을 정리해 드립니다."}}]}
+]}
+</script>
+<script src="_pano.js"></script>
+</body>
+</html>

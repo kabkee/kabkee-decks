@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="초등학교·중학교·고등학교 VR 학교 안내 제작. 제주·서울·경기·강원 230여 개 학교를 360°로 촬영한 경험으로 학교 홈페이지용 VR 투어를 만듭니다.">
+<title>학교 VR 안내 제작</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="_landing.css">
+</head>
+<body>
+
+<div class="draft"><div class="wrap">
+  <a href="../2026-10-04-look360-landing-plan.html" style="color:inherit">← 기획 문서</a>
+  <span><b>시안 B1-2</b> · 레거시 look360.kr 용</span>
+  <span>예정 경로 <span class="mono">look360.kr/solutions/school-vr-tour</span></span>
+  <span>수치: 2026-10-04 DB 집계 · Campustown 채널 = 자사 실적 (오너 확인)</span>
+</div></div>
+
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top">LOOK<span>360</span></a>
+  <nav class="links" aria-label="페이지 섹션">
+    <a href="#uses">활용</a><a href="#work">제작 사례</a><a href="#scale">촬영 규모</a><a href="#faq">FAQ</a>
+  </nav>
+  <a class="btn" href="#contact">제작 문의</a>
+</div></header>
+
+<main id="top">
+  <section class="hero"><div class="wrap">
+    <div class="lead">
+      <div>
+        <p class="eyebrow">초·중·고등학교 VR 학교 안내</p>
+        <h1 style="margin-top:14px">교문부터 교실까지,<br>학교를 화면 안에서 먼저 걸어보게</h1>
+      </div>
+      <div>
+        <p>입학을 앞둔 학생과 학부모, 전학을 고민하는 가족이 학교 홈페이지에서 교실·도서실·급식실·운동장을 360°로 둘러봐요. 학교 한 곳은 보통 3~6개 지점이면 충분해서 짧은 일정으로 촬영할 수 있습니다.</p>
+        <div class="actions">
+          <a class="btn" href="#contact">학교 촬영 상담</a>
+          <a class="btn ghost" href="#work">학교 제작 사례 보기</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pano">
+      <div class="pano-frame" data-pano data-seed="1484" data-labels='[{"at":0.03,"t":"교문"},{"at":0.21,"t":"본관 현관"},{"at":0.4,"t":"도서실"},{"at":0.6,"t":"급식실"},{"at":0.79,"t":"운동장"}]' role="img" aria-label="학교 360도 파노라마 예시 그림. 드래그해서 둘러볼 수 있어요.">
+        <canvas></canvas>
+        <span class="hud">시선 000° · N</span>
+        <span class="hint">← 드래그해서 둘러보기 →</span>
+      </div>
+      <div class="ticks mono" aria-hidden="true"><span>0°</span><span>45°</span><span>90°</span><span>135°</span><span>180°</span><span>225°</span><span>270°</span><span>315°</span><span>360°</span></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span class="n">230</span><span class="l">LOOK360이 촬영한 초·중·고등학교 VR</span></div>
+      <div class="stat"><span class="n">163</span><span class="l">그중 제주 지역 학교 (제주시 95 · 서귀포시 68)</span></div>
+      <div class="stat"><span class="n">4.4</span><span class="l">학교 한 곳당 평균 촬영 지점 수</span></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="uses"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">어디에 쓰이나요</p>
+      <h2>학교 홈페이지의 「학교 소개」 메뉴가 달라져요</h2>
+    </div>
+    <div class="uses">
+      <div class="use"><span class="deg">000° · 입학 안내</span><h3>신입생·학부모 안내</h3><p>입학식 전에 교실 위치와 등굣길을 미리 보여줘요. 처음 학교에 오는 1학년 학부모의 문의가 줄어듭니다.</p></div>
+      <div class="use"><span class="deg">090° · 학교 선택</span><h3>고교 선택·전학 상담</h3><p>특성화고·과학고·외국어고처럼 실습실과 기숙사가 중요한 학교는 중학생이 진학을 고를 때 시설을 직접 확인해요.</p></div>
+      <div class="use"><span class="deg">180° · 분교·소규모 학교</span><h3>작은 학교 알리기</h3><p>학생 모집이 중요한 분교와 농어촌 학교가 자연환경과 넓은 운동장을 그대로 보여줄 수 있어요. 제주의 분교장 여러 곳도 이렇게 만들었어요.</p></div>
+      <div class="use"><span class="deg">270° · 기록</span><h3>리모델링 전후 기록</h3><p>공사 전 모습을 360°로 남겨 두면 개교 기념 자료나 학교사 편찬에 다시 씁니다.</p></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="work"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">제작 사례</p>
+      <h2>지역별로 둘러보는 학교 VR</h2>
+      <p>LOOK360에서 지금 바로 볼 수 있는 학교들이에요. 이름을 누르면 해당 학교 VR이 열려요.</p>
+    </div>
+
+    <div class="regions" aria-label="지역별 학교 VR 수">
+      <div><b>95</b><span>제주 제주시</span></div>
+      <div><b>68</b><span>제주 서귀포시</span></div>
+      <div><b>34</b><span>서울</span></div>
+      <div><b>14</b><span>경기 용인</span></div>
+      <div><b>10</b><span>강원 춘천</span></div>
+      <div><b>12</b><span>경기 수원·안산·광명</span></div>
+    </div>
+    <p class="more" style="margin-top:8px">지역 수치는 LOOK360에 공개된 학교 VR 전체(234건) 기준이에요.</p>
+
+    <h3 class="group-h">제주</h3>
+    <ul class="cases">
+      <li><a href="https://look360.kr/vr/jeju-s.hs"><span>제주과학고등학교</span><span class="t">18지점</span></a></li>
+      <li><a href="https://look360.kr/vr/hallim-th.hs"><span>한림공업고등학교</span><span class="t">9지점</span></a></li>
+      <li><a href="https://look360.kr/vr/jejufl.hs"><span>제주외국어고등학교</span><span class="t">7지점</span></a></li>
+      <li><a href="https://look360.kr/vr/jejujeil.hs"><span>제주제일고등학교</span><span class="t">5지점</span></a></li>
+      <li><a href="https://look360.kr/vr/ohyun.hs"><span>오현고등학교</span><span class="t">4지점</span></a></li>
+      <li><a href="https://look360.kr/vr/seogwipo.es"><span>서귀포초등학교</span><span class="t">3지점</span></a></li>
+      <li><a href="https://look360.kr/vr/sgc_dgbg.es"><span>서광초등학교 동광분교장</span><span class="t">2지점</span></a></li>
+    </ul>
+    <h3 class="group-h">서울</h3>
+    <ul class="cases">
+      <li><a href="https://look360.kr/vr/soongeui.es"><span>숭의초등학교</span><span class="t">4지점</span></a></li>
+      <li><a href="https://look360.kr/vr/sudo.hs"><span>수도전기공업고등학교</span><span class="t">4지점</span></a></li>
+      <li><a href="https://look360.kr/vr/hs_gaepo.hs"><span>개포고등학교</span><span class="t">4지점</span></a></li>
+      <li><a href="https://look360.kr/vr/yangjae.es"><span>서울양재초등학교</span><span class="t">3지점</span></a></li>
+      <li><a href="https://look360.kr/vr/lila.es"><span>리라초등학교</span><span class="t">3지점</span></a></li>
+    </ul>
+    <h3 class="group-h">경기 · 강원</h3>
+    <ul class="cases">
+      <li><a href="https://look360.kr/vr/gangwon-ph.hs"><span>강원체육고등학교</span><span class="t">10지점</span></a></li>
+      <li><a href="https://look360.kr/vr/ncc.ms"><span>남춘천중학교</span><span class="t">8지점</span></a></li>
+      <li><a href="https://look360.kr/vr/gms.hs"><span>경기모바일과학고등학교</span><span class="t">6지점</span></a></li>
+      <li><a href="https://look360.kr/vr/shinnam.es"><span>신남초등학교</span><span class="t">6지점</span></a></li>
+      <li><a href="https://look360.kr/vr/sanghy.es"><span>상현초등학교</span><span class="t">5지점</span></a></li>
+      <li><a href="https://look360.kr/vr/e-hyun.ms"><span>이현중학교</span><span class="t">5지점</span></a></li>
+      <li><a href="https://look360.kr/vr/adc.hs"><span>안산디자인문화고등학교</span><span class="t">4지점</span></a></li>
+    </ul>
+    <p class="more">초등학교 139 · 중학교 52 · 고등학교 39 · 대학교는 <a href="campus-vr-tour.html">캠퍼스 VR 투어</a> 페이지에서</p>
+  </div></section>
+
+  <section class="block" id="scale"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">촬영 규모</p>
+      <h2>학교 VR은 대부분 5지점 안에서 끝나요</h2>
+      <p>230개 학교 VR의 촬영 지점 수를 세어 봤어요. 일반 학교는 현관·교실·도서실·급식실·운동장 정도로 구성되고, 실습동이 있는 특성화고·과학고는 10지점 이상으로 늘어나요.</p>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><span class="lbl">초·중·고 230곳</span>
+        <div class="stack" role="img" aria-label="5지점 이하 180곳, 6~15지점 49곳, 16~30지점 1곳"><i class="s1" style="width:78.3%"></i><i class="s2" style="width:21.3%"></i><i class="s3" style="width:0.4%"></i></div>
+        <span class="avg">평균 4.4</span></div>
+      <div class="bar-row"><span class="lbl">대학교 341곳</span>
+        <div class="stack" role="img" aria-label="5지점 이하 44곳, 6~15지점 152곳, 16~30지점 72곳, 31지점 이상 73곳"><i class="s1" style="width:12.9%"></i><i class="s2" style="width:44.6%"></i><i class="s3" style="width:21.1%"></i><i class="s4" style="width:21.4%"></i></div>
+        <span class="avg">평균 22.7</span></div>
+    </div>
+    <div class="legend"><span><i class="s1"></i>5지점 이하</span><span><i class="s2"></i>6~15</span><span><i class="s3"></i>16~30</span><span><i class="s4"></i>31 이상</span></div>
+  </div></section>
+
+  <section class="block" id="faq"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">자주 묻는 질문</p>
+      <h2>학교에서 많이 물어보세요</h2>
+    </div>
+    <div class="faq">
+      <details><summary>학생 얼굴이 찍히지 않게 할 수 있나요?</summary><p>수업이 없는 시간이나 방과 후, 방학에 촬영 일정을 잡아요. 그래도 찍힌 인물은 편집 단계에서 지워 드려요.</p></details>
+      <details><summary>여러 학교를 한꺼번에 맡길 수 있나요?</summary><p>네. 같은 지역의 여러 학교를 묶어 동선을 짜면 이동 시간이 줄어요. LOOK360에는 제주 지역 학교만 160곳 넘게 올라가 있어요.</p></details>
+      <details><summary>학교 홈페이지에 넣으려면 무엇이 필요한가요?</summary><p>공유 링크와 iframe 임베드 코드를 드려요. 학교 홈페이지 관리 업체에 그대로 전달하시면 됩니다.</p></details>
+      <details><summary>비용은 어느 정도인가요?</summary><p>촬영 지점 수와 이동 거리에 따라 달라져요. 자세한 기준은 <a href="vr-cost.html">VR 촬영 비용은 무엇으로 정해지나</a>에 정리해 뒀어요.</p></details>
+    </div>
+  </div></section>
+
+  <section class="block"><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">함께 보면 좋은 페이지</p></div>
+    <div class="related">
+      <a href="campus-vr-tour.html"><b>대학교 VR 캠퍼스 투어</b><span>대학 341곳 제작 사례</span></a>
+      <a href="vr-production-process.html"><b>VR 투어 제작 절차</b><span>상담부터 게시까지 단계별 준비물</span></a>
+      <a href="vr-cost.html"><b>VR 촬영 비용 기준</b><span>견적이 달라지는 요소</span></a>
+    </div>
+  </div></section>
+
+  <section class="cta-band" id="contact"><div class="wrap">
+    <div>
+      <p class="eyebrow">제작 문의</p>
+      <h2 style="margin-top:10px">우리 학교 VR 안내, 상담부터 받아보세요</h2>
+      <p>학교 이름과 보여주고 싶은 공간을 남겨 주시면 촬영 지점과 일정을 정리해서 연락드려요.</p>
+    </div>
+    <div class="acts">
+      <a class="btn" href="https://look360.kr/?m=bbs&amp;bid=pano_request&amp;mod=write&amp;from=landing-school">VR 제작 의뢰하기</a>
+      <span class="tel">전화 <a href="tel:07075183600">070-7518-3600</a></span>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>LOOK360 · look360.kr</span>
+  <span>VR 촬영 · 360° 파노라마 · 학교 VR 안내 제작</span>
+</div></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Service","name":"초·중·고등학교 VR 학교 안내 제작","serviceType":"360도 VR 촬영 및 학교 VR 투어 제작","provider":{"@type":"Organization","name":"LOOK360","url":"https://look360.kr"},"areaServed":"KR","audience":{"@type":"Audience","audienceType":"초·중·고등학교, 교육청"}},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"학생 얼굴이 찍히지 않게 할 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"수업이 없는 시간이나 방과 후, 방학에 촬영 일정을 잡고, 찍힌 인물은 편집 단계에서 지웁니다."}},
+{"@type":"Question","name":"여러 학교를 한꺼번에 맡길 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"같은 지역의 여러 학교를 묶어 동선을 짜면 이동 시간이 줄어듭니다."}},
+{"@type":"Question","name":"학교 홈페이지에 넣으려면 무엇이 필요한가요?","acceptedAnswer":{"@type":"Answer","text":"공유 링크와 iframe 임베드 코드를 함께 드립니다."}}]}
+]}
+</script>
+<script src="_pano.js"></script>
+</body>
+</html>

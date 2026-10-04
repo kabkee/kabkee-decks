@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="VR 투어 제작 과정과 기간. 상담, 동선 기획, 360° 촬영, 편집, 검수·게시까지 단계별로 무엇을 준비하고 무엇을 받는지 정리했습니다.">
+<title>VR 투어 제작 절차</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="_landing.css">
+</head>
+<body>
+
+<div class="draft"><div class="wrap">
+  <a href="../2026-10-04-look360-landing-plan.html" style="color:inherit">← 기획 문서</a>
+  <span><b>시안 B1-6</b> · 고민형 가이드 · 레거시 look360.kr 용</span>
+  <span>예정 경로 <span class="mono">look360.kr/solutions/vr-production-process</span></span>
+  <span><span class="todo">확인 필요</span> 단계별 소요 기간은 DB에 근거가 없어서 비워 뒀어. 실제 평균 기간을 알려주면 채울게</span>
+</div></div>
+
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top">LOOK<span>360</span></a>
+  <nav class="links" aria-label="페이지 섹션">
+    <a href="#steps">단계별 진행</a><a href="#after">게시 이후</a><a href="#faq">FAQ</a>
+  </nav>
+  <a class="btn" href="#contact">제작 문의</a>
+</div></header>
+
+<main id="top">
+  <section class="hero"><div class="wrap">
+    <div class="lead">
+      <div>
+        <p class="eyebrow">VR 투어 제작 절차와 기간</p>
+        <h1 style="margin-top:14px">상담부터 홈페이지 게시까지,<br>VR 투어는 이렇게 만들어져요</h1>
+      </div>
+      <div>
+        <p>처음 VR을 맡기는 담당자가 가장 궁금해하는 건 「우리가 뭘 준비해야 하지?」예요. 다섯 단계마다 맡기는 쪽이 할 일과 받는 결과물을 나눠 적었어요.</p>
+        <div class="actions">
+          <a class="btn" href="#contact">제작 상담 신청</a>
+          <a class="btn ghost" href="#steps">단계별로 보기</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pano">
+      <div class="pano-frame" data-pano data-seed="5555" data-labels='[{"at":0.05,"t":"STEP 1 상담"},{"at":0.25,"t":"STEP 2 기획"},{"at":0.45,"t":"STEP 3 촬영"},{"at":0.65,"t":"STEP 4 편집"},{"at":0.85,"t":"STEP 5 게시"}]' role="img" aria-label="제작 단계를 360도 파노라마 위 지점으로 표시한 예시 그림. 드래그해서 둘러볼 수 있어요.">
+        <canvas></canvas>
+        <span class="hud">시선 000° · N</span>
+        <span class="hint">← 드래그해서 둘러보기 →</span>
+      </div>
+      <div class="ticks mono" aria-hidden="true"><span>0°</span><span>45°</span><span>90°</span><span>135°</span><span>180°</span><span>225°</span><span>270°</span><span>315°</span><span>360°</span></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="steps"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">단계별 진행</p>
+      <h2>다섯 단계, 단계마다 할 일과 받는 것</h2>
+      <p>기간은 촬영 지점 수와 장소 수에 따라 달라져요. <span class="todo-inline">[단계별 평균 기간 — 오너 확인 후 기입]</span></p>
+    </div>
+    <ol class="steps detail">
+      <li><span class="k">STEP 1<br>상담</span>
+        <div><h3>목적과 범위 정하기</h3><p>어디에 쓸 VR인지, 어느 공간을 보여줄지, 언제까지 공개해야 하는지 이야기해요.</p></div>
+        <p class="who"><b>준비할 것</b>공간 목록, 배치도나 지도, 공개 희망일<br><b>받는 것</b>촬영 지점 수 기준 견적</p></li>
+      <li><span class="k">STEP 2<br>동선 기획</span>
+        <div><h3>촬영 지점과 이동 순서 잡기</h3><p>배치도 위에 지점을 찍고, 보는 사람이 어떤 순서로 이동할지 정해요. VR스토리라면 장면 순서와 안내 문구 초안도 이때 잡아요.</p></div>
+        <p class="who"><b>준비할 것</b>지점 목록 확인, 촬영 불가 공간 알려주기<br><b>받는 것</b>지점 배치안, 촬영 일정</p></li>
+      <li><span class="k">STEP 3<br>현장 촬영</span>
+        <div><h3>지점마다 360° 촬영</h3><p>사람이 적은 시간에 맞춰 지점별로 위아래까지 전방위를 촬영해요. 날씨가 중요한 야외는 예비일을 함께 잡아요.</p></div>
+        <p class="who"><b>준비할 것</b>출입 협조, 공간 정리, 현장 담당자 1명<br><b>받는 것</b>—</p></li>
+      <li><span class="k">STEP 4<br>편집·구성</span>
+        <div><h3>보정, 연결, 안내 넣기</h3><p>파노라마를 이어 붙여 보정하고, 지점 사이 이동 버튼과 설명·사진·링크를 넣어요. 화면에 찍힌 사람은 지워요.</p></div>
+        <p class="who"><b>준비할 것</b>지점별 설명 문구, 넣을 사진·링크<br><b>받는 것</b>검수용 미리보기 링크</p></li>
+      <li><span class="k">STEP 5<br>검수·게시</span>
+        <div><h3>확인하고 공개하기</h3><p>미리보기에서 고칠 곳을 받아 반영한 뒤 공개해요.</p></div>
+        <p class="who"><b>준비할 것</b>수정 요청 정리, 홈페이지 담당자 연결<br><b>받는 것</b>공유 링크, iframe 임베드 코드</p></li>
+    </ol>
+  </div></section>
+
+  <section class="block" id="after"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">게시 이후</p>
+      <h2>한 번 찍은 VR은 이렇게 다시 쓰여요</h2>
+      <p>VR은 공개로 끝나지 않아요. 실제로 LOOK360에서 많이 이어진 작업들이에요.</p>
+    </div>
+    <div class="uses">
+      <div class="use"><span class="deg">언어판 추가</span><h3>영문·중문판 만들기</h3><p>같은 촬영본에 외국어 안내만 입혀요. 경기관광공사 VR은 영문판 77건을 이렇게 만들었어요.</p><p><a href="https://look360.kr/vr/ggtour_morningcalm">아침고요수목원 국문·영문판 보기 →</a></p></div>
+      <div class="use"><span class="deg">형태 확장</span><h3>360VIEW → VR스토리</h3><p>이미 찍은 지점으로 장면 순서와 안내 문구를 구성해 스토리형으로 다시 공개해요. 동구릉·화담숲이 두 형태를 함께 가지고 있어요.</p><p><a href="https://look360.kr/vr/ggtour_hwadamsup">화담숲 보기 →</a></p></div>
+      <div class="use"><span class="deg">목적별 분리</span><h3>일반판과 무장애판</h3><p>같은 장소를 일반 관람용과 무장애 안내용으로 나눠 공개해요. 「문턱없는 경기관광」 VR이 133건이에요.</p><p><a href="public-space-vr.html">공공시설 VR 보기 →</a></p></div>
+      <div class="use"><span class="deg">부분 교체</span><h3>바뀐 곳만 다시 찍기</h3><p>공간이 바뀌면 그 지점만 다시 촬영해서 교체해요. 전체를 다시 만들 필요가 없어요.</p></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="faq"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">자주 묻는 질문</p>
+      <h2>진행하면서 많이 물어보세요</h2>
+    </div>
+    <div class="faq">
+      <details><summary>촬영 당일에 저희가 꼭 있어야 하나요?</summary><p>출입과 공간 개방을 도와줄 담당자 한 분이 있으면 좋아요. 촬영 자체는 저희가 진행해요.</p></details>
+      <details><summary>비가 오면 어떻게 되나요?</summary><p>야외 지점이 있으면 날씨를 보고 예비일로 옮겨요. 실내 지점은 그대로 진행할 수 있어요.</p></details>
+      <details><summary>공개 전에 내부에서만 먼저 볼 수 있나요?</summary><p>검수용 미리보기 링크로 먼저 확인하신 뒤 공개해요.</p></details>
+      <details><summary>비용은 언제 정해지나요?</summary><p>STEP 1 상담에서 촬영 지점 수가 정해지면 견적이 나와요. 기준은 <a href="vr-cost.html">VR 촬영 비용</a>에 정리해 뒀어요.</p></details>
+    </div>
+  </div></section>
+
+  <section class="block"><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">업종별 제작 사례</p></div>
+    <div class="related">
+      <a href="campus-vr-tour.html"><b>대학교 VR 캠퍼스 투어</b><span>대학 341곳</span></a>
+      <a href="school-vr-tour.html"><b>초·중·고 학교 VR 안내</b><span>학교 230곳</span></a>
+      <a href="public-space-vr.html"><b>지자체·공공시설 VR</b><span>무장애·다국어</span></a>
+      <a href="tourism-vr.html"><b>관광지·관광공사 VR</b><span>여행 코스형 VR스토리</span></a>
+    </div>
+  </div></section>
+
+  <section class="cta-band" id="contact"><div class="wrap">
+    <div>
+      <p class="eyebrow">제작 문의</p>
+      <h2 style="margin-top:10px">STEP 1부터 같이 시작해요</h2>
+      <p>보여주고 싶은 공간과 공개 희망일을 남겨 주시면 진행 일정을 정리해서 연락드려요.</p>
+    </div>
+    <div class="acts">
+      <a class="btn" href="https://look360.kr/?m=bbs&amp;bid=pano_request&amp;mod=write&amp;from=landing-process">VR 제작 의뢰하기</a>
+      <span class="tel">전화 <a href="tel:07075183600">070-7518-3600</a></span>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>LOOK360 · look360.kr</span>
+  <span>VR 촬영 · 360° 파노라마 · VR 투어 제작</span>
+</div></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"HowTo","name":"VR 투어 제작 절차","step":[
+{"@type":"HowToStep","position":1,"name":"상담","text":"목적, 공개할 공간, 공개 희망일을 정하고 촬영 지점 수 기준 견적을 받습니다."},
+{"@type":"HowToStep","position":2,"name":"동선 기획","text":"배치도 위에 촬영 지점과 이동 순서를 정합니다."},
+{"@type":"HowToStep","position":3,"name":"현장 촬영","text":"지점마다 360도 전방위 촬영을 합니다."},
+{"@type":"HowToStep","position":4,"name":"편집·구성","text":"파노라마 보정, 이동 버튼, 설명·사진·링크를 넣고 미리보기 링크를 전달합니다."},
+{"@type":"HowToStep","position":5,"name":"검수·게시","text":"수정 사항을 반영해 공유 링크와 임베드 코드로 공개합니다."}]},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"촬영 당일에 저희가 꼭 있어야 하나요?","acceptedAnswer":{"@type":"Answer","text":"출입과 공간 개방을 도와줄 담당자 한 분이 있으면 좋습니다."}},
+{"@type":"Question","name":"공개 전에 내부에서만 먼저 볼 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"검수용 미리보기 링크로 먼저 확인한 뒤 공개합니다."}}]}
+]}
+</script>
+<script src="_pano.js"></script>
+</body>
+</html>

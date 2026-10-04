@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="관광지·관광공사 VR 투어 제작. 경기관광공사와 경기도 26개 시·군 관광지 375건을 360° VR과 여행 코스형 VR스토리, 영문판으로 제작했습니다.">
+<title>관광지 VR 투어 제작</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="_landing.css">
+</head>
+<body>
+
+<div class="draft"><div class="wrap">
+  <a href="../2026-10-04-look360-landing-plan.html" style="color:inherit">← 기획 문서</a>
+  <span><b>시안 B1-4</b> · 레거시 look360.kr 용</span>
+  <span>예정 경로 <span class="mono">look360.kr/solutions/tourism-vr</span></span>
+  <span>수치: 2026-10-04 DB 집계 · 경기관광공사 채널 = 자사 실적 (오너 확인)</span>
+  <span><span class="todo">확인 필요</span> 서울관광재단(46)·남한산성(7) 채널은 아직 미확인이라 사례에서 뺐어</span>
+</div></div>
+
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top">LOOK<span>360</span></a>
+  <nav class="links" aria-label="페이지 섹션">
+    <a href="#uses">활용</a><a href="#course">코스형 VR</a><a href="#work">제작 사례</a><a href="#faq">FAQ</a>
+  </nav>
+  <a class="btn" href="#contact">제작 문의</a>
+</div></header>
+
+<main id="top">
+  <section class="hero"><div class="wrap">
+    <div class="lead">
+      <div>
+        <p class="eyebrow">관광지 · 관광공사 VR 투어 제작</p>
+        <h1 style="margin-top:14px">떠나기 전에 먼저 걸어보는<br>여행지 VR</h1>
+      </div>
+      <div>
+        <p>관광지 한 곳을 360°로 담는 것에서 끝나지 않고, 여러 관광지를 하루·1박2일 여행 코스로 엮은 VR스토리까지 만들어요. 외국인 관광객용 영문판도 같은 촬영본으로 제작합니다.</p>
+        <div class="actions">
+          <a class="btn" href="#contact">관광 VR 상담</a>
+          <a class="btn ghost" href="#course">코스형 VR 보기</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pano">
+      <div class="pano-frame" data-pano data-mood="nature" data-seed="7303" data-labels='[{"at":0.05,"t":"매표소"},{"at":0.24,"t":"전망대"},{"at":0.45,"t":"산책로"},{"at":0.66,"t":"호수"},{"at":0.85,"t":"주차장"}]' role="img" aria-label="관광지 360도 파노라마 예시 그림. 드래그해서 둘러볼 수 있어요.">
+        <canvas></canvas>
+        <span class="hud">시선 000° · N</span>
+        <span class="hint">← 드래그해서 둘러보기 →</span>
+      </div>
+      <div class="ticks mono" aria-hidden="true"><span>0°</span><span>45°</span><span>90°</span><span>135°</span><span>180°</span><span>225°</span><span>270°</span><span>315°</span><span>360°</span></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span class="n">375</span><span class="l">경기관광공사와 함께 만든 관광 VR</span></div>
+      <div class="stat"><span class="n">26</span><span class="l">VR로 담은 경기도 시·군</span></div>
+      <div class="stat"><span class="n">77</span><span class="l">외국인 관광객용 영문판 VR</span></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="uses"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">어디에 쓰이나요</p>
+      <h2>관광 홍보 사이트, 해외 박람회, 무장애 안내까지</h2>
+    </div>
+    <div class="uses">
+      <div class="use"><span class="deg">000° · 관광 홍보</span><h3>관광 포털·지자체 홈페이지</h3><p>관광지 소개 글 옆에 VR을 붙이면 사진보다 공간의 크기와 동선이 잘 전해져요.</p></div>
+      <div class="use"><span class="deg">090° · 코스 상품</span><h3>여행 코스 안내</h3><p>「수원/오산 코스」처럼 시·군을 묶은 하루 코스나 1박2일 코스를 장면 순서대로 따라가는 VR스토리로 만들어요.</p></div>
+      <div class="use"><span class="deg">180° · 해외 마케팅</span><h3>외국인 관광객·해외 박람회</h3><p>같은 촬영본에 영문 안내를 입혀 따로 공개해요. 경기관광공사 VR은 영문판 77건, 중문판도 있어요.</p></div>
+      <div class="use"><span class="deg">270° · 무장애 관광</span><h3>휠체어·유아차 이용 정보</h3><p>휠체어·유아차 이용객이 이동 동선과 편의시설을 미리 확인할 수 있어요. 「문턱없는 경기관광」 VR이 133건이에요.</p></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="course"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">코스형 VR스토리</p>
+      <h2>관광지 여러 곳을 하나의 여행 코스로 엮어요</h2>
+      <p>경기관광공사와 만든 VR스토리 58편 중 일부예요. 지역 코스는 시·군 두세 곳을 묶고, 1박2일 코스는 숙박지 주변 관광지를 이어요.</p>
+    </div>
+
+    <div class="featured">
+      <div class="thumb"><div class="pano-frame" data-pano data-still data-mood="nature" data-seed="5151" data-offset="0.12" data-labels='[{"at":0.16,"t":"STEP 1 · 수원"},{"at":0.45,"t":"STEP 2 · 오산"}]' style="aspect-ratio:2/1;border:0;cursor:default" aria-hidden="true"><canvas></canvas></div></div>
+      <div class="body">
+        <span class="tag">VR스토리 · 지역 코스</span>
+        <h3>[경기관광공사] 수원/오산 코스, 도심 속 100배 즐기기</h3>
+        <p>수원과 오산의 관광지를 장면 순서대로 따라가는 VR스토리예요. 같은 방식으로 11개 지역 코스를 만들었어요.</p>
+        <a class="btn ghost" href="https://look360.kr/vr/suwonpaldalro">VR스토리 열기</a>
+      </div>
+    </div>
+
+    <h3 class="group-h">지역 코스</h3>
+    <ul class="cases">
+      <li><a href="https://look360.kr/vr/ggtour_seoulland"><span>과천/광명/의왕 코스</span><span class="t">VR스토리</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_jeongyakyong"><span>남양주/양평 코스</span><span class="t">VR스토리</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_comicsmuseum"><span>부천/김포 코스</span><span class="t">VR스토리</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_silleuksa"><span>여주/이천 코스</span><span class="t">VR스토리</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_pyeongtaek_railstreet"><span>평택/화성 코스</span><span class="t">VR스토리</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_nhasfarmland"><span>안성 코스</span><span class="t">VR스토리</span></a></li>
+    </ul>
+    <h3 class="group-h">1박2일 코스 (국문·영문)</h3>
+    <ul class="cases">
+      <li><a href="https://look360.kr/vr/ggtour_morningcalm"><span>가평 아침고요수목원</span><span class="t">KR · EN</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_jaraisland"><span>자라섬</span><span class="t">KR · EN</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_hantan"><span>한탄강 관광지</span><span class="t">KR · EN</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_sjlake"><span>산정호수</span><span class="t">KR · EN</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_naturestar"><span>자연과별 천문대</span><span class="t">KR · EN</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_herbisland"><span>포천 허브아일랜드</span><span class="t">KR · EN</span></a></li>
+    </ul>
+  </div></section>
+
+  <section class="block" id="work"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">관광지 360VIEW</p>
+      <h2>관광지 한 곳을 자유롭게 둘러보는 VR</h2>
+      <p>관광지 VR은 한 곳에 평균 24지점을 촬영했어요. 테마파크·수목원처럼 넓은 곳은 30지점을 넘기도 해요.</p>
+    </div>
+    <ul class="cases">
+      <li><a href="https://look360.kr/vr/ggtour_pfcamp"><span>쁘띠프랑스</span><span class="t">테마파크</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_paju_provence"><span>파주 프로방스마을</span><span class="t">테마파크</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_nhasfarmland"><span>안성팜랜드</span><span class="t">테마파크</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_ooozooo"><span>별빛정원 우주</span><span class="t">테마파크</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_hwadamsup"><span>화담숲</span><span class="t">수목원</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_morningcalm"><span>아침고요수목원</span><span class="t">수목원</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_homyeong_lake"><span>호명호수</span><span class="t">호수</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_cheongpyeonghoban"><span>청평호반</span><span class="t">호수</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_astrocafe"><span>중미산천문대</span><span class="t">천문대</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_yongmoonsan_tour"><span>용문산 관광지</span><span class="t">관광단지</span></a></li>
+      <li><a href="https://look360.kr/vr/pyeontaek_tourist_complex"><span>평택호관광단지</span><span class="t">관광단지</span></a></li>
+      <li><a href="https://look360.kr/vr/ggtour_yumyeong_huyang"><span>유명산 자연휴양림</span><span class="t">휴양림</span></a></li>
+    </ul>
+    <p class="more">포천 39 · 수원 30 · 파주 19 · 성남 17 · 여주 17 · 안성 13 외 경기도 26개 시·군. 박물관·궁릉 같은 공공시설은 <a href="public-space-vr.html">공공시설 VR</a> 페이지에 따로 모았어요.</p>
+  </div></section>
+
+  <section class="block" id="faq"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">자주 묻는 질문</p>
+      <h2>관광 VR을 준비할 때 많이 물어보세요</h2>
+    </div>
+    <div class="faq">
+      <details><summary>관광지 여러 곳을 한 번에 맡길 수 있나요?</summary><p>네. 지역별로 묶어 촬영 동선을 짜요. 경기관광공사 VR도 시·군 26곳을 나눠 촬영했어요.</p></details>
+      <details><summary>영문판을 따로 만들려면 다시 촬영해야 하나요?</summary><p>아니요. 같은 촬영본에 영문 장면 이름과 안내 문구를 입혀 별도 VR로 공개해요.</p></details>
+      <details><summary>계절마다 모습이 다른데 어떻게 하나요?</summary><p>대표 계절에 맞춰 촬영하고, 필요하면 같은 지점을 다른 계절에 다시 찍어 바꿔 넣을 수 있어요.</p></details>
+      <details><summary>관광 포털에 넣을 수 있나요?</summary><p>공유 링크와 iframe 임베드 코드를 드려요. 관광지 상세 페이지마다 해당 VR을 붙이시면 됩니다.</p></details>
+    </div>
+  </div></section>
+
+  <section class="block"><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">함께 보면 좋은 페이지</p></div>
+    <div class="related">
+      <a href="public-space-vr.html"><b>지자체·공공시설 VR</b><span>무장애 정보와 공공시설 안내</span></a>
+      <a href="vr-production-process.html"><b>VR 투어 제작 절차</b><span>상담부터 게시까지</span></a>
+      <a href="vr-cost.html"><b>VR 촬영 비용 기준</b><span>견적이 달라지는 요소</span></a>
+    </div>
+  </div></section>
+
+  <section class="cta-band" id="contact"><div class="wrap">
+    <div>
+      <p class="eyebrow">제작 문의</p>
+      <h2 style="margin-top:10px">관광지 VR, 코스 기획부터 같이 해요</h2>
+      <p>촬영할 관광지 목록과 공개할 언어를 알려주시면 촬영 동선과 일정을 정리해서 연락드려요.</p>
+    </div>
+    <div class="acts">
+      <a class="btn" href="https://look360.kr/?m=bbs&amp;bid=pano_request&amp;mod=write&amp;from=landing-tourism">VR 제작 의뢰하기</a>
+      <span class="tel">전화 <a href="tel:07075183600">070-7518-3600</a></span>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>LOOK360 · look360.kr</span>
+  <span>VR 촬영 · 360° 파노라마 · 관광지 VR 투어 제작</span>
+</div></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Service","name":"관광지·관광공사 VR 투어 제작","serviceType":"360도 VR 촬영, 여행 코스형 VR스토리, 다국어 VR 제작","provider":{"@type":"Organization","name":"LOOK360","url":"https://look360.kr"},"areaServed":"KR","audience":{"@type":"Audience","audienceType":"관광공사, 관광재단, 지자체 관광과, 관광지 운영사"}},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"관광지 여러 곳을 한 번에 맡길 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"지역별로 묶어 촬영 동선을 짭니다."}},
+{"@type":"Question","name":"영문판을 따로 만들려면 다시 촬영해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"같은 촬영본에 영문 장면 이름과 안내 문구를 입혀 별도 VR로 공개합니다."}},
+{"@type":"Question","name":"관광 포털에 넣을 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"공유 링크와 iframe 임베드 코드를 드립니다."}}]}
+]}
+</script>
+<script src="_pano.js"></script>
+</body>
+</html>
