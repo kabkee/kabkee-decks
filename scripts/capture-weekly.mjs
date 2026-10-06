@@ -39,6 +39,29 @@ const SHOTS = [
     desc: 'VR 뷰어 모바일 미니바 — 파노라마명 2줄 · 경로 축약 (IND-7893)' },
   { id: 'admin-extvr-classify', site: 'admin', url: '/external-vr-classification', wait: 4000,
     desc: '관리자 — 외부VR 분류 검증 목록 · 신뢰도 배지 · 빠른 검수 (IND-7623·IND-7932)' },
+  // ── 360영상 재생 시연 (IND-7810) — 자동재생·재생버튼이 보이도록 넉넉히 기다린다
+  { id: 'video-1788',      site: 'fe', url: '/vr/6lmp0o6a?pano=19747', wait: 12000, waitUntil: 'load', desc: '영상 1788 재생버튼·자동재생' },
+  { id: 'video-882',       site: 'fe', url: '/vr/l55md6ls?pano=6673',  wait: 12000, waitUntil: 'load', desc: '영상 882 재생버튼·자동재생' },
+  { id: 'video-288',       site: 'fe', url: '/vr/e940jcdf?pano=4079',  wait: 12000, waitUntil: 'load', desc: '영상 288 클릭 토글' },
+  { id: 'video-2859-1f',   site: 'fe', url: '/vr/c7bce52b?pano=33132', wait: 12000, waitUntil: 'load', desc: '영상 2859 1F 로비 404 복구' },
+  { id: 'video-2859-3f',   site: 'fe', url: '/vr/c7bce52b?pano=33146', wait: 12000, waitUntil: 'load', desc: '영상 2859 3F 404 복구' },
+  { id: 'video-826-ok',    site: 'fe', url: '/vr/qmwy4mq9?pano=6196',  wait: 12000, waitUntil: 'load', desc: '영상 826 정상 기준' },
+  { id: 'video-826-5',     site: 'fe', url: '/vr/qmwy4mq9?pano=6200',  wait: 12000, waitUntil: 'load', desc: '영상 826 livepano_5' },
+  { id: 'video-954',       site: 'fe', url: '/vr/19w11wcp?pano=7558',  wait: 12000, waitUntil: 'load', desc: '영상 954' },
+  { id: 'video-2323',      site: 'fe', url: '/vr/27ayk33n?pano=27838', wait: 12000, waitUntil: 'load', desc: '영상 2323' },
+  { id: 'video-2430',      site: 'fe', url: '/vr/ddtf13lr',            wait: 12000, waitUntil: 'load', desc: '영상 2430 (첫 장면)' },
+  { id: 'video-2436',      site: 'fe', url: '/vr/hmsjc4mf?pano=28744', wait: 12000, waitUntil: 'load', desc: '영상 2436' },
+  { id: 'video-2578',      site: 'fe', url: '/vr/2l6aav48?pano=29886', wait: 12000, waitUntil: 'load', desc: '영상 2578' },
+  // ── 「그 밖의 VR 뷰어 개선」 항목별 시연 (2026-10-06 추가)
+  { id: 'free-list',       site: 'fe', url: '/vr-info/xo6jh8ib',        wait: 4000, desc: '무료 콘텐츠 상세 — 파노라마 목록' },
+  { id: 'free-jump',       site: 'fe', url: '/vr/xo6jh8ib?pano=33068',  wait: 9000, waitUntil: 'load', desc: '무료 — 주차장 출입구 장면으로 바로 열림' },
+  { id: 'lang-group-ko',   site: 'fe', url: '/vr/wrpkbkcy?pano=4322',   wait: 9000, waitUntil: 'load', desc: '언어 전환 전 — 고공전경 그룹(한국어)' },
+  { id: 'home-hero-ko',    site: 'fe', url: '/',                        wait: 5000, crop: 'hero', desc: '홈 히어로 — 한국어' },
+  { id: 'home-hero-ja',    site: 'fe', url: '/',                        wait: 5000, crop: 'hero', lang: 'ja', desc: '홈 히어로 — 일본어' },
+  { id: 'video-plan-doc',  site: 'fe', url: '/', abs: 'http://100.120.25.127:8088/ideas/2026-09-18-look360-360video-content-plan.html', wait: 2500, desc: '360동영상 기획서' },
+  { id: 'post-avatar',     site: 'fe', url: '/vr/xo6jh8ib?pano=33044&tab=post', wait: 9000, waitUntil: 'load', desc: '360포스트 탭 바로 열기 + 프로필 동그라미' },
+  { id: 'intro-gallery',   site: 'fe', url: '/vr/09a2e3fd?tab=intro',   wait: 9000, waitUntil: 'load', desc: '장소소개 탭 (갤러리 탭 표시)' },
+  { id: 'channel-ellipsis', site: 'fe', url: '/vr/1lfn283t',            wait: 9000, waitUntil: 'load', device: 'mobile', desc: '긴 채널명 한 줄 말줄임 (모바일)' },
 ];
 
 const CROPS = {
@@ -178,7 +201,7 @@ for (const shot of targets) {
       await pg.goto(origin + '/', { waitUntil: 'domcontentloaded', timeout: 45000 });
       await pg.evaluate((kv) => { for (const [k, v] of Object.entries(kv)) localStorage.setItem(k, v); }, ls);
     }
-    await pg.goto(origin + shot.url, { waitUntil: 'networkidle', timeout: 45000 });
+    await pg.goto(shot.abs ?? (origin + shot.url), { waitUntil: shot.waitUntil ?? 'networkidle', timeout: 45000 });
     await pg.waitForTimeout(shot.wait ?? 2000);
 
     if (shot.type) {
