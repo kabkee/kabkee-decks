@@ -33,31 +33,12 @@ const API = 'http://100.120.25.127:3001/v1.0';
 // ── 캡처 대상 ────────────────────────────────────────────────
 // crop: 'hero' 처럼 이름을 주면 아래 CROPS 의 좌표로 잘라 별도 파일도 함께 만든다.
 const SHOTS = [
-  { id: 'home-hero',    site: 'fe',    url: '/',                        wait: 4000, crop: 'hero',
-    desc: '홈 — 히어로 핫스팟·건물 툴팁 포함 + 지역 표기 2 depth (IND-7235)' },
-  { id: 'vrlist-country', site: 'fe',  url: '/vr-list',                 wait: 3500,
-    desc: 'VR 목록 — 국가 선택 별도 분리(기본 대한민국) + 지역 필터 국가 컬럼 제거 (IND-7236)' },
-  { id: 'vr-detail-icons', site: 'fe', url: '/vr-info/v47cpxre',        wait: 3500,
-    desc: 'VR 상세 — 장소정보 항목 제목을 아이콘으로 전환 + Figma 2안 순서 (IND-7095)' },
-  { id: 'admin-sidebar',      site: 'admin', url: '/',                  wait: 3500,
-    desc: '관리자 — 사이드바 11그룹 재편 · 아이콘 · 고아 화면 2건 연결 (IND-7100 W2)' },
-  { id: 'admin-sidebar-edit', site: 'admin', url: '/',                  wait: 3000,
-    desc: '관리자 — 사이드바 편집 모드 (드래그 순서 · ★즐겨찾기 · 계정별 DB 저장) (IND-7100 W3)',
-    actions: [
-      { do: 'click', sel: 'text=메뉴 편집' },
-      { do: 'wait',  ms: 2000 },
-    ] },
-  { id: 'admin-channel-verify', site: 'admin', url: '/channel',         wait: 3500,
-    desc: '관리자 — 채널 목록 「공식 채널」 인증 컬럼 + Edit 토글 (IND-7234)' },
-  { id: 'admin-i18n-approve',   site: 'admin', url: '/i18n-management', wait: 4000,
-    desc: '관리자 — 「번역 불충분」 원문 유지 승인·해제 UI (단건·일괄 + 승인목록) (IND-7114)',
-    actions: [
-      // 기본 탭은 「360뷰」다 — 승인 UI 는 「번역 불충분」 탭 안에 있으므로 반드시 열어야 한다
-      { do: 'click', sel: 'text=번역 불충분' },
-      { do: 'wait',  ms: 3000 },
-    ] },
-  { id: 'admin-region-aliases', site: 'admin', url: '/admin/regions/aliases', wait: 3500,
-    desc: '관리자 — 「지역 관리」 그룹 신설로 진입 가능해진 지역 별칭 화면 (IND-7096)' },
+  { id: 'place-page',     site: 'fe',    url: '/place/fzkets8c',          wait: 4500,
+    desc: '장소 페이지 신설 — 장소 상세 + 연결 콘텐츠 + 같은 지역 장소 (IND-7753·IND-7841)' },
+  { id: 'vr-minibar-mobile', site: 'fe', url: '/vr/1xdrlfot/31636',       wait: 6000, device: 'mobile',
+    desc: 'VR 뷰어 모바일 미니바 — 파노라마명 2줄 · 경로 축약 (IND-7893)' },
+  { id: 'admin-extvr-classify', site: 'admin', url: '/external-vr-classification', wait: 4000,
+    desc: '관리자 — 외부VR 분류 검증 목록 · 신뢰도 배지 · 빠른 검수 (IND-7623·IND-7932)' },
 ];
 
 const CROPS = {
