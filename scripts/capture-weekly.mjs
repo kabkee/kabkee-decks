@@ -62,6 +62,11 @@ const SHOTS = [
   { id: 'post-avatar',     site: 'fe', url: '/vr/xo6jh8ib?pano=33044&tab=post', wait: 9000, waitUntil: 'load', desc: '360포스트 탭 바로 열기 + 프로필 동그라미' },
   { id: 'intro-gallery',   site: 'fe', url: '/vr/09a2e3fd?tab=intro',   wait: 9000, waitUntil: 'load', desc: '장소소개 탭 (갤러리 탭 표시)' },
   { id: 'channel-ellipsis', site: 'fe', url: '/vr/1lfn283t',            wait: 9000, waitUntil: 'load', device: 'mobile', desc: '긴 채널명 한 줄 말줄임 (모바일)' },
+  // ── 채널 · VR 상세 · 목록 시연 (2026-10-06 추가)
+  { id: 'channel-badge',   site: 'fe', url: '/channel/channel-cd5q7v89', wait: 4000, desc: '인증 채널 뱃지 — Look360 채널' },
+  { id: 'channels-list',   site: 'fe', url: '/channels',                 wait: 4000, desc: '채널 탐색 목록 — 채널 이름 표시' },
+  { id: 'breadcrumb-mobile', site: 'fe', url: '/vr-info/xo6jh8ib',       wait: 4000, device: 'mobile', desc: 'VR 상세 모바일 경로 한 줄' },
+  { id: 'vr-list-country', site: 'fe', url: '/vr-list',                  wait: 4000, desc: 'VR 목록 — 국가 선택' },
 ];
 
 const CROPS = {
