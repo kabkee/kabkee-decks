@@ -39,7 +39,7 @@ const SHOTS = [
     desc: 'VR 뷰어 모바일 미니바 — 파노라마명 2줄 · 경로 축약 (IND-7893)' },
   { id: 'admin-extvr-classify', site: 'admin', url: '/external-vr-classification', wait: 4000,
     desc: '관리자 — 외부VR 분류 검증 목록 · 신뢰도 배지 · 빠른 검수 (IND-7623·IND-7932)' },
-  // ── 360영상 재생 시연 (IND-7810) — 자동재생·재생버튼이 보이도록 넉넉히 기다린다
+  // ── distorted 영상 핫스팟 재생 시연 (IND-7810) — 자동재생·재생버튼이 보이도록 넉넉히 기다린다
   { id: 'video-1788',      site: 'fe', url: '/vr/6lmp0o6a?pano=19747', wait: 12000, waitUntil: 'load', desc: '영상 1788 재생버튼·자동재생' },
   { id: 'video-882',       site: 'fe', url: '/vr/l55md6ls?pano=6673',  wait: 12000, waitUntil: 'load', desc: '영상 882 재생버튼·자동재생' },
   { id: 'video-288',       site: 'fe', url: '/vr/e940jcdf?pano=4079',  wait: 12000, waitUntil: 'load', desc: '영상 288 클릭 토글' },
