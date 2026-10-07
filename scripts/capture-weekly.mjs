@@ -67,6 +67,21 @@ const SHOTS = [
   { id: 'channels-list',   site: 'fe', url: '/channels',                 wait: 4000, desc: '채널 탐색 목록 — 채널 이름 표시' },
   { id: 'breadcrumb-mobile', site: 'fe', url: '/vr-info/xo6jh8ib',       wait: 4000, device: 'mobile', desc: 'VR 상세 모바일 경로 한 줄' },
   { id: 'vr-list-country', site: 'fe', url: '/vr-list',                  wait: 4000, desc: 'VR 목록 — 국가 선택' },
+  // ── 10/6~10/7 추가분 (2026-10-07 추가)
+  { id: 'hero-next',       site: 'fe', url: '/',                        wait: 5000, crop: 'hero',
+    actions: [{ do: 'click', sel: '.heroArrowNext' }, { do: 'wait', ms: 1500 }],
+    desc: '홈 히어로 — 다음 슬라이드로 넘긴 직후 (IND-7974·IND-7984)' },
+  { id: 'gallery-deeplink', site: 'fe', url: '/vr/09a2e3fd?tab=intro&section=gallery', wait: 9000, waitUntil: 'load',
+    desc: '장소소개 갤러리 딥링크 — 링크로 진입 시 갤러리 섹션 (IND-7988)' },
+  { id: 'story-reset',     site: 'fe', url: '/vr/59f1c404?story=6-5',   wait: 12000, waitUntil: 'load',
+    actions: [{ do: 'click', sel: 'button:has-text("시작하기")' }, { do: 'wait', ms: 9000 }],
+    desc: 'VR 스토리 아이템 진입 — 시점 초기화 · 컨트롤러 (IND-8002·IND-8005)' },
+  { id: 'story-controls-mobile', site: 'fe', url: '/vr/59f1c404?story=6-5', wait: 12000, waitUntil: 'load', device: 'mobile',
+    actions: [{ do: 'click', sel: 'button:has-text("시작하기")' }, { do: 'wait', ms: 9000 }],
+    desc: 'VR 스토리 컨트롤러 모바일 — 카운터 겹침·특수문자 정리 (IND-8005)' },
+  { id: 'admin-pano-search', site: 'admin', url: '/panorama?tab=edit&subTab=info', wait: 4000,
+    actions: [{ do: 'fill', sel: 'input[placeholder*="콘텐츠 제목"]', text: '4qorh7b8' }, { do: 'press', key: 'Enter' }, { do: 'wait', ms: 3000 }],
+    desc: '관리자 파노라마 통합 검색 — 콘텐츠 주소로 검색 (IND-7987)' },
 ];
 
 const CROPS = {
