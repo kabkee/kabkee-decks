@@ -13,7 +13,7 @@
 <ul>
 <li>설정탭 <span class="hl-green">언어 서브탭</span> 신설 · 첫 로딩 <span class="hl-blue">4초 → 1~2초</span></li>
 <li>이관 때 사라진 <span class="hl-red">동영상·미니게임·특수 파노라마</span> 복구</li>
-<li>VR스토리 이관 결함 <span class="hl-green">복구 완료 (10/7)</span> · 시점 초기화 규칙 신설</li>
+<li>VR스토리 이관 결함 <span class="hl-green">복구 (10/7)</span> · 360영상 재생은 <span class="hl-amber">후속 발주</span></li>
 <li>홈 히어로 전환 <span class="hl-blue">2초 → 0.2초</span> (10/6 · 운영 미배포)</li>
 </ul>
 <h3 id="%F0%9F%A7%AD-l3-%ED%94%8C%EB%9E%AB%ED%8F%BC--%EC%82%AC%EC%9A%A9%EC%9E%90-%ED%8E%98%EC%9D%B4%EC%A7%80%EC%99%80-%EC%99%B8%EB%B6%80vr"><img class="emoji" draggable="false" alt="🧭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f9ed.svg" data-marp-twemoji=""/> l3 플랫폼 · 사용자 페이지와 외부VR</h3>
@@ -853,7 +853,7 @@
 <tr>
 <td>VR스토리 주야간 전환·레거시 구면 360영상·시작 연출</td>
 <td>엔진 기능 신설</td>
-<td><span class="hl-green">복구</span></td>
+<td><span class="hl-green">복구</span> · 360영상 재생은 <span class="hl-amber">IND-8024</span></td>
 </tr>
 <tr>
 <td>영문 콘텐츠 6건이 한국어 나레이션 재생</td>
@@ -936,8 +936,8 @@
 </tr>
 <tr>
 <td>레거시 구면 360영상 장면</td>
-<td>오너 카드 <code>restore-legacy</code> 승인 후 레거시 그대로 복원</td>
-<td><span class="hl-green">완료</span></td>
+<td>장면은 복원했으나 자연 진행 시 영상이 재생되지 않음 (14개 스토리)</td>
+<td><span class="hl-red">재생 결함 발견</span> → <span class="hl-amber">IND-8024 발주 (10/8)</span></td>
 </tr>
 <tr>
 <td>인수 검증 (스토리 3~91번)</td>
@@ -957,18 +957,19 @@
 </tbody>
 </table>
 <blockquote>
-<p>운영에는 배포하지 않았습니다. 「l3 제목 카드가 핫스팟을 덮을 수 있다」는 화면 배치 문제는 오너 검토 목록에 올렸습니다.</p>
+<p>운영 미배포입니다. 10/8 오너 확인에서 360영상 장면 재생 결함이 발견되어 IND-8024로 발주했습니다. 검수가 아이콘 직접 클릭 경로만 측정해 놓친 결함입니다.</p>
 </blockquote>
 <div class="links">
 <span class="lbl">확인</span>
 <a class="lnk" href="https://kabkee-macbookpro-2020.tailfe017f.ts.net:8443/IND/issues/IND-7864" target="_blank">IND-7864 VR스토리 이관 결함 복구</a>
 <a class="lnk" href="https://kabkee-macbookpro-2020.tailfe017f.ts.net:8443/IND/issues/IND-7957" target="_blank">IND-7957 56번 완주</a>
 <a class="lnk" href="https://kabkee-macbookpro-2020.tailfe017f.ts.net:8443/IND/issues/IND-8012" target="_blank">IND-8012 옛 주소 교체</a>
+<a class="lnk" href="https://kabkee-macbookpro-2020.tailfe017f.ts.net:8443/IND/issues/IND-8024" target="_blank">IND-8024 360영상 재생 결함</a>
 </div>
 <div class="links">
 <span class="lbl">직접 확인</span>
 <a class="lnk" href="http://100.120.25.127:5174/vr/59f1c404" target="_blank">56 성곽투어</a>
-<a class="lnk" href="http://100.120.25.127:5174/vr/152165ca?story=5-3" target="_blank">12 수목원 5-3 (구면 360영상)</a>
+<a class="lnk" href="http://100.120.25.127:5174/vr/152165ca?story=5-3" target="_blank">12 수목원 5-3 (재생 결함 재현)</a>
 <a class="lnk" href="http://100.120.25.127:5174/vr/6e08bd19?story=7-1" target="_blank">67 유형문화재 7-1</a>
 <a class="lnk" href="http://100.120.25.127:5174/vr/c7b8d75a?story=7-1" target="_blank">69 영문판 7-1</a>
 </div>
@@ -992,7 +993,7 @@
 </tr>
 <tr>
 <td>12 · 아침고요수목원 5-3</td>
-<td>썰매 아이콘을 누르면 레거시 구면 360영상 장면으로 이동해 재생</td>
+<td><img class="emoji" draggable="false" alt="🔴" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f534.svg" data-marp-twemoji=""/> 재생 결함 재현: 나레이션 중 썰매 아이콘이 안 보이고, 360영상 장면으로 넘어가도 영상이 재생되지 않음 (IND-8024)</td>
 <td><a href="http://100.120.25.127:5174/vr/152165ca?story=5-3" target="_blank">열기</a></td>
 </tr>
 <tr>
@@ -1018,7 +1019,7 @@
 <div class="links">
 <span class="lbl">직접 확인</span>
 <a class="lnk" href="http://100.120.25.127:5174/vr/59f1c404" target="_blank">56 성곽투어</a>
-<a class="lnk" href="http://100.120.25.127:5174/vr/152165ca?story=5-3" target="_blank">12 수목원 5-3 (구면 360영상)</a>
+<a class="lnk" href="http://100.120.25.127:5174/vr/152165ca?story=5-3" target="_blank">12 수목원 5-3 (재생 결함 재현)</a>
 <a class="lnk" href="http://100.120.25.127:5174/vr/6e08bd19?story=7-1" target="_blank">67 유형문화재 7-1</a>
 <a class="lnk" href="http://100.120.25.127:5174/vr/c7b8d75a?story=7-1" target="_blank">69 영문판 7-1</a>
 </div>
