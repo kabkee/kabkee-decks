@@ -127,10 +127,9 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14
 | Azure (데이터 디스크 + 스냅샷 + 백업 볼트) | 154,781원 | 기준 |
 | AWS — 캐시 439GB가 쌓였을 때 | <span class="hl-red">256,383원</span> | <span class="hl-red">+66%</span> |
 | AWS — 캐시 데이터를 비운 뒤 (파일 항목 158.9GB 남음 · 교체 전) | <span class="hl-amber">약 116,000원</span> | <span class="hl-amber">−25%</span> |
-| AWS — 파일시스템 교체 후 | <span class="hl-green">약 38,500원</span> | <span class="hl-green">−75%</span> |
-| AWS — 교체 + 중복 구버전 정리 | <span class="hl-green">약 20,000원</span> | <span class="hl-green">−87%</span> |
+| AWS — 파일시스템 교체 후 (9/29 실측 · 고성능 계층 78,000 + 버킷 23,000) | <span class="hl-green">약 101,000원</span> | <span class="hl-green">−35%</span> |
 
-> 이전 결정 자체는 옳았습니다. <span class="hl-amber">S3 Files의 기본 캐시 설정</span>이 켜진 채 대량 작업을 만난 것이 비용을 뒤집었습니다. 교체 후 금액은 새 파일시스템 용량을 0에 가깝게 본 추정이며, <span class="hl-blue">9/17 자동 보고</span>로 확인합니다.
+> 이전 결정 자체는 옳았습니다. <span class="hl-amber">S3 Files의 기본 캐시 설정</span>이 켜진 채 대량 작업을 만난 것이 비용을 뒤집었습니다. 9/14 작성 당시 «교체 후 약 38,500원(−75%)» · «교체 + 정리 약 20,000원(−87%)» 은 새 파일시스템 용량을 0에 가깝게 본 추정이었고, <span class="hl-red">틀린 값</span>으로 확인돼 9/29 실측으로 정정했습니다. 새 파일시스템도 9/18~9/20 마운트 전체 탐색으로 파일 항목 기록이 169.92GB까지 다시 찼고(항목 기록은 만료되지 않음), 이 값이 상한이라 월 비용은 더 늘지 않고 고정됩니다.
 
 ---
 
