@@ -32,9 +32,21 @@ function findPlaywright() {
   throw new Error('playwright-core 를 찾지 못했습니다.');
 }
 
+/** 시스템 크롬 → ms-playwright 캐시의 chromium(최신 리비전) 순으로 찾는다 (capture-weekly.mjs 와 동일) */
+function findChrome() {
+  if (fs.existsSync('/usr/bin/google-chrome')) return '/usr/bin/google-chrome';
+  const cache = path.join(process.env.HOME || '', '.cache/ms-playwright');
+  const revs = fs.existsSync(cache) ? fs.readdirSync(cache).filter((d) => /^chromium-\d+$/.test(d)).sort().reverse() : [];
+  for (const d of revs) {
+    const p = path.join(cache, d, 'chrome-linux64/chrome');
+    if (fs.existsSync(p)) return p;
+  }
+  return undefined;
+}
+
 const { chromium } = findPlaywright();
 const browser = await chromium.launch({
-  executablePath: '/usr/bin/google-chrome',
+  executablePath: findChrome(),
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
 });
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });

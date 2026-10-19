@@ -26,9 +26,9 @@ const require_ = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const API_REPO = '/home/kabkee/projects/Look360_Platform_Project/nestjs-look360-api';
 
-const FE = 'http://100.120.25.127:5174';
-const ADMIN = 'http://100.120.25.127:5277';
-const API = 'http://100.120.25.127:3001/v1.0';
+const FE = 'http://100.64.25.50:5174';
+const ADMIN = 'http://100.64.25.50:5277';
+const API = 'http://100.64.25.50:3001/v1.0';
 
 // ── 캡처 대상 ────────────────────────────────────────────────
 // crop: 'hero' 처럼 이름을 주면 아래 CROPS 의 좌표로 잘라 별도 파일도 함께 만든다.
@@ -58,7 +58,7 @@ const SHOTS = [
   { id: 'lang-group-ko',   site: 'fe', url: '/vr/wrpkbkcy?pano=4322',   wait: 9000, waitUntil: 'load', desc: '언어 전환 전 — 고공전경 그룹(한국어)' },
   { id: 'home-hero-ko',    site: 'fe', url: '/',                        wait: 5000, crop: 'hero', desc: '홈 히어로 — 한국어' },
   { id: 'home-hero-ja',    site: 'fe', url: '/',                        wait: 5000, crop: 'hero', lang: 'ja', desc: '홈 히어로 — 일본어' },
-  { id: 'video-plan-doc',  site: 'fe', url: '/', abs: 'http://100.120.25.127:8088/ideas/2026-09-18-look360-360video-content-plan.html', wait: 2500, desc: '360동영상 기획서' },
+  { id: 'video-plan-doc',  site: 'fe', url: '/', abs: 'http://100.64.25.50:8088/ideas/2026-09-18-look360-360video-content-plan.html', wait: 2500, desc: '360동영상 기획서' },
   { id: 'post-avatar',     site: 'fe', url: '/vr/xo6jh8ib?pano=33044&tab=post', wait: 9000, waitUntil: 'load', desc: '360포스트 탭 바로 열기 + 프로필 동그라미' },
   { id: 'intro-gallery',   site: 'fe', url: '/vr/09a2e3fd?tab=intro',   wait: 9000, waitUntil: 'load', desc: '장소소개 탭 (갤러리 탭 표시)' },
   { id: 'channel-ellipsis', site: 'fe', url: '/vr/1lfn283t',            wait: 9000, waitUntil: 'load', device: 'mobile', desc: '긴 채널명 한 줄 말줄임 (모바일)' },
@@ -107,6 +107,18 @@ const SHOTS = [
   { id: 'story-planet-normal', site: 'fe', url: '/vr/b600e6a4?story=6-1', wait: 12000, waitUntil: 'load',
     actions: [{ do: 'click', sel: 'button:has-text("시작하기")' }, { do: 'wait', ms: 8000 }],
     desc: 'VR 스토리 시작 후 리틀플래닛 → 일반 뷰 (IND-8112·IND-8113)' },
+  // ── 10/13~10/19 추가분 (2026-10-19 추가)
+  { id: 'licenses',        site: 'fe', url: '/licenses',                 wait: 4000,
+    desc: '오픈소스 라이선스 페이지 신설 — dr5hn ODbL 데이터 출처 (IND-8196)' },
+  { id: 'policy-ja',       site: 'fe', url: '/policy?tab=agreement',     wait: 5000, lang: 'ja',
+    desc: '약관 — 일본어 번역본 (IND-8396)' },
+  { id: 'policy-ko-youth', site: 'fe', url: '/policy?tab=youth',         wait: 4000,
+    desc: '약관 — 청소년 보호대책 책임자 문갑기(CTO) (IND-8321)' },
+  { id: 'v360-yt-ourbar',  site: 'fe', url: '/vr/ind8027fx?pano=33663', wait: 12000, waitUntil: 'load',
+    desc: 'YouTube형 360동영상 — YouTube 자체 UI 제거 · 우리 컨트롤바 (IND-8272)' },
+  { id: 'story-53',        site: 'fe', url: '/vr/152165ca?story=5-3',    wait: 12000, waitUntil: 'load',
+    actions: [{ do: 'click', sel: 'button:has-text("시작하기")' }, { do: 'wait', ms: 9000 }],
+    desc: 'VR 스토리 아침고요 5-3 — 매체 수명주기 공통 장치 (IND-8041)' },
 ];
 
 const CROPS = {
@@ -201,16 +213,29 @@ if (needAdmin && !health.admin) { console.error(`❌ ADMIN(${ADMIN}) 응답 없�
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
+/** 시스템 크롬 → ms-playwright 캐시의 chromium(최신 리비전) 순으로 찾는다. 찾은 playwright-core 가 기대하는 리비전이 캐시에 없을 수 있어서 경로를 직접 넘긴다 */
+function findChrome() {
+  if (fs.existsSync('/usr/bin/google-chrome')) return '/usr/bin/google-chrome';
+  const cache = path.join(process.env.HOME || '', '.cache/ms-playwright');
+  const revs = fs.existsSync(cache) ? fs.readdirSync(cache).filter((d) => /^chromium-\d+$/.test(d)).sort().reverse() : [];
+  for (const d of revs) {
+    const p = path.join(cache, d, 'chrome-linux64/chrome');
+    if (fs.existsSync(p)) return p;
+  }
+  return undefined;
+}
+
 const { chromium } = findPlaywright();
 const browser = await chromium.launch({
-  executablePath: '/usr/bin/google-chrome',
+  // 시스템 크롬이 없는 머신(kabkee-main WSL)은 playwright 번들 chromium 으로 대체한다
+  executablePath: findChrome(),
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
 });
 const ctx = await browser.newContext({ viewport: VIEWPORT, locale: 'ko-KR', deviceScaleFactor: 2 });
 
 if (needAdmin) {
   const token = adminToken();
-  await ctx.addCookies([{ name: 'accessToken', value: token, domain: '100.120.25.127', path: '/' }]);
+  await ctx.addCookies([{ name: 'accessToken', value: token, domain: '100.64.25.50', path: '/' }]);
   console.log('🔑 관리자 accessToken 쿠키 주입 완료 (60분 유효)');
 }
 
