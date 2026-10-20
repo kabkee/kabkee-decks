@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>레거시 XML 404 수정</title>
+<style>
+:root{--bg:#F4F5F3;--card:#fff;--ink:#17201E;--soft:#5B6866;--line:#DCE2E0;--accent:#0F6B63;--accent-soft:#DDEBE8;--warn:#9A5B12;--warn-soft:#F7EBD8;}
+@media (prefers-color-scheme:dark){:root{--bg:#121716;--card:#1A2120;--ink:#E6ECEA;--soft:#9AA8A5;--line:#2C3634;--accent:#5CC2B6;--accent-soft:#1F3532;--warn:#E3A857;--warn-soft:#3A2D1B;}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.5em;margin:0 0 4px}.sub{color:var(--soft);margin:0 0 24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:20px}
+h2{font-size:1.15em;margin:0 0 12px}h2 .count{color:var(--accent);font-weight:600}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.box{background:var(--bg);border-radius:8px;padding:12px 14px}.box h3{font-size:.85em;color:var(--soft);margin:0 0 6px;font-weight:600}
+.box ul{margin:0;padding-left:18px}.box li{margin:2px 0}
+details{margin-top:14px}summary{cursor:pointer;color:var(--accent);font-weight:600}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.9em}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--soft);font-weight:600}
+.mono{font-family:ui-monospace,Menlo,monospace}.small{font-size:.85em;color:var(--soft);word-break:break-all}
+a{color:var(--accent)}.tag{display:inline-block;margin-left:6px;padding:0 6px;border-radius:4px;font-size:.75em;background:var(--accent-soft);color:var(--accent)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}.note{background:var(--warn-soft);color:var(--ink);border-radius:8px;padding:10px 14px;font-size:.92em}
+code{font-family:ui-monospace,Menlo,monospace;font-size:.9em;background:var(--bg);padding:1px 4px;border-radius:4px}
+</style></head><body><main>
+<h1>레거시 VR XML 404 수정 — 영향 콘텐츠 85개</h1>
+<p class="sub">2026-10-21 반영 · look360_ksq1.2 레거시 · IND-8521 / IND-8524 · 2026-10-19 자산 404 리포트 후속</p>
+
+<div class="card">
+<h2>한눈에 보기</h2>
+<div class="note">⏳ CloudFront 캐시(TTL 24h) 때문에 일부는 <b>2026-10-21 21:44 무렵까지</b> 옛 파일이 보일 수 있어. 그 이후에 확인하면 확실해.
+확인은 브라우저 개발자도구 <b>Console</b> 탭을 열어 두고 하면 돼.</div>
+<ul>
+<li><b>navi 버튼 잔재 제거</b> — 투어 60개 · 화면 변화 없음, 콘솔 에러만 사라짐</li>
+<li><b>없는 include 제거</b> — 투어 XML 5개 · 화면 변화 없음, 콘솔 에러만 사라짐</li>
+<li><b>안내 이미지 경로 수정</b> — VR 스토리 20개 · <b>눈에 보이는 변화 있음</b> (안 뜨던 안내 이미지가 뜸)</li>
+</ul>
+<p class="small">적용 방식: git 추적 파일은 레거시 커밋 <code>b197bf3d9</code>(panostory)·<code>427a20f44</code>(navi) push → 서버 pull / git 밖 투어 XML 5개는 서버 <code>/var/www/html/files</code> 직접 수정(원본 백업 <code>/home/ubuntu/backup/IND-8524/</code>). S3 직접 업로드 없음 — EFS→S3 자동 동기화로 반영 확인(85/85).</p>
+</div>
+
+<div class="card">
+<h2>1. navi 버튼 잔재 제거 <span class="count">· 투어 60개</span></h2>
+<div class="grid">
+<div class="box"><h3>무엇이 바뀌었나</h3><ul>
+<li>투어 <code>custom.xml</code> 에서 동작하지 않던 「안내 영상」 토글 버튼 <code>navi_open</code> 레이어를 삭제했어(파일당 25줄 삭제, 추가 0)</li>
+<li>하위 버튼(navi_1~5)이 원래 전부 주석이라 눌러도 아무 일 없던 잔재야. 작동하는 길찾기 버튼이 있는 22개 투어는 건드리지 않았어</li></ul></div>
+<div class="box"><h3>확인할 것</h3><ul>
+<li>콘솔에 <code>ERROR: layer[navi_open] - loading of '…/hotspot/icons/navi.png' failed!</code> 가 <b>더 이상 안 나와야</b> 해</li>
+<li>좌하단 다른 버튼(지도/안내 <code>map_open</code>, 사운드클라우드, 내레이션)은 <b>전처럼 동작</b>해야 해</li>
+<li>화면 모양은 바뀌지 않는 게 정상이야(아이콘이 404 라 원래도 안 보였어)</li></ul></div>
+</div>
+<details><summary>투어 60개 목록 펼치기</summary><div class="tablewrap"><table><thead><tr><th>id</th><th>콘텐츠</th><th>뷰어</th><th>수정 파일</th></tr></thead><tbody>
+<tr><td class="mono">2230</td><td>광교호수공원</td><td><a href="https://look360.kr/vr/bfggtour_gglakepark/bfggtour_gglakepark" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1359/customxml/2230/custom.xml</td></tr>
+<tr><td class="mono">2234</td><td>전곡리유적지</td><td><a href="https://look360.kr/vr/ggtour_jeongok_ri_historic_sites/bfggtour_jeongok_ri_historic_sites_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/366/customxml/2234/custom.xml</td></tr>
+<tr><td class="mono">2240</td><td>포천아트밸리</td><td><a href="https://look360.kr/vr/ggtour_artvalley_pocheon/bfggtour_artvalley_pocheon_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/356/customxml/2240/custom.xml</td></tr>
+<tr><td class="mono">2241</td><td>경기북부어린이박물관</td><td><a href="https://look360.kr/vr/bfggtour_childrensmuseum_gyeongginorthern/bfggtour_childrensmuseum_gyeongginorthern" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1361/customxml/2241/custom.xml</td></tr>
+<tr><td class="mono">2248</td><td>곤지암도자공원</td><td><a href="https://look360.kr/vr/bfggtour_kocef/bfggtour_kocef" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1367/customxml/2248/custom.xml</td></tr>
+<tr><td class="mono">2255</td><td>한국잡월드</td><td><a href="https://look360.kr/vr/ggtour_koreajobworld/bfggtour_koreajobworld_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1202/customxml/2255/custom.xml</td></tr>
+<tr><td class="mono">2257</td><td>백남준아트센터</td><td><a href="https://look360.kr/vr/bfggtour_paiknamjune/bfggtour_paiknamjune" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1375/customxml/2257/custom.xml</td></tr>
+<tr><td class="mono">2260</td><td>한국민속촌</td><td><a href="https://look360.kr/vr/ggtour_koreanfolk/bfggtour_koreanfolk_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1193/customxml/2260/custom.xml</td></tr>
+<tr><td class="mono">2263</td><td>소나기마을</td><td><a href="https://look360.kr/vr/bfggtour_sonagivill/bfggtour_sonagivill" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1378/customxml/2263/custom.xml</td></tr>
+<tr><td class="mono">2264</td><td>경기도어린이박물관</td><td><a href="https://look360.kr/vr/ggtour_gcm/bfggtour_gcm_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1194/customxml/2264/custom.xml</td></tr>
+<tr><td class="mono">2265</td><td>렛츠런파크</td><td><a href="https://look360.kr/vr/bfggtour_park_kra_seoul/bfggtour_park_kra_seoul" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/335/customxml/2265/custom.xml</td></tr>
+<tr><td class="mono">2266</td><td>잣향기 푸른숲</td><td><a href="https://look360.kr/vr/bfggtour_farm89/bfggtour_farm89" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1382/customxml/2266/custom.xml</td></tr>
+<tr><td class="mono">2267</td><td>안성맞춤랜드</td><td><a href="https://look360.kr/vr/ggtour_anseongmatchumland/bfggtour_anseongmatchumland" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/527/customxml/2267/custom.xml</td></tr>
+<tr><td class="mono">2268</td><td>연꽃테마파크</td><td><a href="https://look360.kr/vr/bfggtour_lotus_themepark/bfggtour_lotus_themepark" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1391/customxml/2268/custom.xml</td></tr>
+<tr><td class="mono">2276</td><td>벽초지수목원</td><td><a href="https://look360.kr/vr/bfggtour_byukchoji/bfggtour_byukchoji" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1392/customxml/2276/custom.xml</td></tr>
+<tr><td class="mono">2282</td><td>임진각 평화누리</td><td><a href="https://look360.kr/vr/ggtour_imjingak/bfggtour_imjingak_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1201/customxml/2282/custom.xml</td></tr>
+<tr><td class="mono">2284</td><td>다산유적지</td><td><a href="https://look360.kr/vr/ggtour_jeongyakyong/bfggtour_jeongyakyong_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/127/customxml/2284/custom.xml</td></tr>
+<tr><td class="mono">2285</td><td>두물머리</td><td><a href="https://look360.kr/vr/ggtour_dumulmeori/bfggtour_dumulmeori_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/129/customxml/2285/custom.xml</td></tr>
+<tr><td class="mono">2286</td><td>세미원</td><td><a href="https://look360.kr/vr/ggtour_semiwon/bfggtour_semiwon_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/506/customxml/2286/custom.xml</td></tr>
+<tr><td class="mono">2289</td><td>소풍정원캠핑장</td><td><a href="https://look360.kr/vr/bfggtour_sopungjeongwon/bfggtour_sopungjeongwon" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1400/customxml/2289/custom.xml</td></tr>
+<tr><td class="mono">2290</td><td>평택호관광단지</td><td><a href="https://look360.kr/vr/pyeontaek_tourist_complex/bfggtour_pyeontaekho" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/497/customxml/2290/custom.xml</td></tr>
+<tr><td class="mono">2291</td><td>화담숲</td><td><a href="https://look360.kr/vr/ggtour_hwadamsup/bfggtour_hwadamsup_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/542/customxml/2291/custom.xml</td></tr>
+<tr><td class="mono">2293</td><td>양떼목장</td><td><a href="https://look360.kr/vr/bfggtour_sheepranch/bfggtour_sheepranch" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1403/customxml/2293/custom.xml</td></tr>
+<tr><td class="mono">2295</td><td>용문산관광지</td><td><a href="https://look360.kr/vr/ggtour_yongmoonsan_tour/bfggtour_yongmoonsan_tour_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/507/customxml/2295/custom.xml</td></tr>
+<tr><td class="mono">2296</td><td>양주시립장욱진미술관</td><td><a href="https://look360.kr/vr/ggtour_changucchin/bfggtour_changucchin_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1204/customxml/2296/custom.xml</td></tr>
+<tr><td class="mono">2297</td><td>산정호수</td><td><a href="https://look360.kr/vr/ggtour_sjlake/bfggtour_sjlake" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/359/customxml/2297/custom.xml</td></tr>
+<tr><td class="mono">2300</td><td>한탄강지질공원</td><td><a href="https://look360.kr/vr/bfggtour_hantariver/bfggtour_hantariver" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1404/customxml/2300/custom.xml</td></tr>
+<tr><td class="mono">2301</td><td>한화아쿠아플라넷 일산</td><td><a href="https://look360.kr/vr/ggtour_aquaplanet_ilsan/bfggtour_aquaplanet_ilsan_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1195/customxml/2301/custom.xml</td></tr>
+<tr><td class="mono">2302</td><td>현대모터스튜디오 고양</td><td><a href="https://look360.kr/vr/bfggtour_hyundaimotorstudio/bfggtour_hyundaimotorstudio" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1408/customxml/2302/custom.xml</td></tr>
+<tr><td class="mono">2303</td><td>퍼스트가든</td><td><a href="https://look360.kr/vr/bfggtour_firstgarden/bfggtour_firstgarden" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1409/customxml/2303/custom.xml</td></tr>
+<tr><td class="mono">2304</td><td>김포 함상공원</td><td><a href="https://look360.kr/vr/bfggtour_gimpomarinepark/bfggtour_gimpomarinepark" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1410/customxml/2304/custom.xml</td></tr>
+<tr><td class="mono">2306</td><td>바다향기 수목원</td><td><a href="https://look360.kr/vr/bfggtour_badahyanggi/bfggtour_badahyanggi" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1411/customxml/2306/custom.xml</td></tr>
+<tr><td class="mono">2307</td><td>별빛정원 우주</td><td><a href="https://look360.kr/vr/ggtour_ooozooo/bfggtour_ooozooo" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/509/customxml/2307/custom.xml</td></tr>
+<tr><td class="mono">2312</td><td>용인 농촌테마파크</td><td><a href="https://look360.kr/vr/bfggtour_nongchonthemepark/bfggtour_nongchonthemepark" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1412/customxml/2312/custom.xml</td></tr>
+<tr><td class="mono">2314</td><td>동구릉</td><td><a href="https://look360.kr/vr/ggtour_donggureung_royal_tomb/bfggtour_donggureung_royal_tomb_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1203/customxml/2314/custom.xml</td></tr>
+<tr><td class="mono">2315</td><td>애기봉 평화 생태공원</td><td><a href="https://look360.kr/vr/bfggtour_aegibong/bfggtour_aegibong" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1419/customxml/2315/custom.xml</td></tr>
+<tr><td class="mono">2316</td><td>융건릉</td><td><a href="https://look360.kr/vr/bfggtour_yunggeonleung/bfggtour_yunggeonleung" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1420/customxml/2316/custom.xml</td></tr>
+<tr><td class="mono">2324</td><td>과천과학관</td><td><a href="https://look360.kr/vr/bfggtour_sciencecenter_gwacheon/bfggtour_sciencecenter_gwacheon" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1381/customxml/2324/custom.xml</td></tr>
+<tr><td class="mono">2326</td><td>화성행궁</td><td><a href="https://look360.kr/vr/ggtour_hwaseong_temporary_palace/bfggtour_hwaseong_temporary_palace_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1192/customxml/2326/custom.xml</td></tr>
+<tr><td class="mono">2327</td><td>의왕레일파크</td><td><a href="https://look360.kr/vr/ggtour_uwrailpark/bfggtour_uwrailpark" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/537/customxml/2327/custom.xml</td></tr>
+<tr><td class="mono">2328</td><td>수원화성</td><td><a href="https://look360.kr/vr/ggtour_hwaseongfortress/bfggtour_hwaseongfortress_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1191/customxml/2328/custom.xml</td></tr>
+<tr><td class="mono">2330</td><td>아침고요수목원</td><td><a href="https://look360.kr/vr/ggtour_morningcalm/bfggtour_morningcalm_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/346/customxml/2330/custom.xml</td></tr>
+<tr><td class="mono">2332</td><td>안성팜랜드</td><td><a href="https://look360.kr/vr/ggtour_nhasfarmland/bfggtour_nhasfarmland_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/534/customxml/2332/custom.xml</td></tr>
+<tr><td class="mono">2337</td><td>물향기수목원</td><td><a href="https://look360.kr/vr/ggtour_mulhyanggi_arboretum/bfggtour_mulhyanggi_arboretum" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/493/customxml/2337/custom.xml</td></tr>
+<tr><td class="mono">2338</td><td>동탄호수공원</td><td><a href="https://look360.kr/vr/bfggtour_lakepark_dongtan/bfggtour_lakepark_dongtan" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1390/customxml/2338/custom.xml</td></tr>
+<tr><td class="mono">2339</td><td>서오릉</td><td><a href="https://look360.kr/vr/bfggtour_seooreung/bfggtour_seooreung" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1414/customxml/2339/custom.xml</td></tr>
+<tr><td class="mono">2340</td><td>한국만화박물관</td><td><a href="https://look360.kr/vr/ggtour_comicsmuseum/bfggtour_comicsmuseum_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/535/customxml/2340/custom.xml</td></tr>
+<tr><td class="mono">2341</td><td>행주산성</td><td><a href="https://look360.kr/vr/bfggtour_haengju/bfggtour_haengju" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1415/customxml/2341/custom.xml</td></tr>
+<tr><td class="mono">2342</td><td>안양예술공원</td><td><a href="https://look360.kr/vr/ggtour_anyangartpark/bfggtour_anyangartpark_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/122/customxml/2342/custom.xml</td></tr>
+<tr><td class="mono">2343</td><td>초막골생태공원</td><td><a href="https://look360.kr/vr/ggtour_chomaggolpark/bfggtour_chomaggolpark_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/120/customxml/2343/custom.xml</td></tr>
+<tr><td class="mono">2368</td><td>영릉</td><td><a href="https://look360.kr/vr/bfggtour_sejong_cha/bfggtour_sejong_cha" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1424/customxml/2368/custom.xml</td></tr>
+<tr><td class="mono">2369</td><td>회암사지박물관</td><td><a href="https://look360.kr/vr/bfggtour_hoeamsajimuseum/bfggtour_hoeamsajimuseum" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1421/customxml/2369/custom.xml</td></tr>
+<tr><td class="mono">2372</td><td>이천세라피아</td><td><a href="https://look360.kr/vr/bf_ggtour_icheon_cerapia/bfggtour_icheon_serapia_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1207/customxml/2372/custom.xml</td></tr>
+<tr><td class="mono">2373</td><td>국립수목원</td><td><a href="https://look360.kr/vr/ggtour_kna_go_kr/bfggtour_kna_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/137/customxml/2373/custom.xml</td></tr>
+<tr><td class="mono">2398</td><td>자라섬</td><td><a href="https://look360.kr/vr/ggtour_jaraisland/bfggtour_jarasum_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/376/customxml/2398/custom.xml</td></tr>
+<tr><td class="mono">2429</td><td>서울대공원</td><td><a href="https://look360.kr/vr/ggtour_seoulgrandpark_animal/bfggtour_seoulgrandpark_animal_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1200/customxml/2429/custom.xml</td></tr>
+<tr><td class="mono">2431</td><td>신륵사</td><td><a href="https://look360.kr/vr/ggtour_silleuksa/bfggtour_silleuksa_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/139/customxml/2431/custom.xml</td></tr>
+<tr><td class="mono">2433</td><td>광명동굴</td><td><a href="https://look360.kr/vr/ggtour_gm_go_kr/bfggtour_gm_go_kr_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/528/customxml/2433/custom.xml</td></tr>
+<tr><td class="mono">2434</td><td>시흥갯골생태공원</td><td><a href="https://look360.kr/vr/ggtour_siheung_valley_ecological_park/bfggtour_siheung_valley_ecological_park_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/490/customxml/2434/custom.xml</td></tr>
+<tr><td class="mono">2435</td><td>시화나래조력문화관</td><td><a href="https://look360.kr/vr/ggtour_tlight_kwater/bfggtour_tlight_kwater_2021" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1205/customxml/2435/custom.xml</td></tr>
+</tbody></table></div></details>
+</div>
+
+<div class="card">
+<h2>2. 없는 customxml include 제거 <span class="count">· 투어 XML 5개</span></h2>
+<div class="grid">
+<div class="box"><h3>무엇이 바뀌었나</h3><ul>
+<li>투어 XML 에서 <b>실제 파일이 없는</b> <code>&lt;include url="customxml/…"/&gt;</code> 줄 36개를 삭제했어</li>
+<li>2189 둘리뮤지엄: 2025-10 정리 때 지운 <code>custom_24256.xml</code>(폐기 코드) 참조 1줄</li>
+<li>1969: 다른 투어로 옮겨간 코드 참조 · 2100: 복사본이라 원래 없던 폴더 · 2583/2584: DB 에서 삭제된 투어</li></ul></div>
+<div class="box"><h3>확인할 것</h3><ul>
+<li>둘리뮤지엄 씬 「(1F)초능력이 생겼어요」 진입 시 콘솔에 <code>custom_24256.xml</code> 로딩 에러가 <b>안 나와야</b> 해</li>
+<li>씬은 정상 로드되고, 다른 씬의 커스텀 콘텐츠(제품 핫스팟·영상 등)는 <b>그대로</b>여야 해</li>
+<li>나머지는 화면 변화 없음 — 콘솔의 customxml 404 만 사라지면 정상</li></ul></div>
+</div>
+<details><summary>투어 5개 목록 펼치기</summary><div class="tablewrap"><table><thead><tr><th>id</th><th>콘텐츠</th><th>뷰어</th><th>수정 파일</th></tr></thead><tbody>
+<tr><td class="mono">2189</td><td>[2021]둘리뮤지엄<span class="tag">숨김</span></td><td><a href="https://look360.kr/vr/doolymuseum/2021doolymuseum/24256" target="_blank" rel="noopener">문제 씬 열기 ↗</a></td><td class="mono small">/files/pano/1/1212/2189.xml</td></tr>
+<tr><td class="mono">1969</td><td>[경기공유서비스]경기도평생교육진흥원(양평)</td><td><a href="https://look360.kr/vr/gg_gill_ypcampus/gg_gill_ypcampus" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1242/1969.xml</td></tr>
+<tr><td class="mono">2100</td><td>Keimyung Univ. Dongsan Hospital<span class="tag">숨김</span></td><td><a href="https://look360.kr/vr/dongsan_dsmc/dongsan_dsmc_copy" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/1/1329/2100.xml</td></tr>
+<tr><td class="mono">2583</td><td>K-Seafood VR Showroom<span class="tag warn">DB 삭제됨</span></td><td>—</td><td class="mono small">/files/pano/1/1542/2583.xml</td></tr>
+<tr><td class="mono">2584</td><td>K-Seafood VR Showroom<span class="tag warn">DB 삭제됨</span></td><td>—</td><td class="mono small">/files/pano/1/1542/2584.xml</td></tr>
+</tbody></table></div></details>
+</div>
+
+<div class="card">
+<h2>3. 안내 이미지 경로 수정 (%CURRENTXML% 슬래시 누락) <span class="count">· VR 스토리 20개</span></h2>
+<div class="grid">
+<div class="box"><h3>무엇이 바뀌었나</h3><ul>
+<li><code>%CURRENTXML%panostory/…</code> → <code>%CURRENTXML%/panostory/…</code> 로 80곳 수정했어</li>
+<li>슬래시가 빠져 <code>/files/pano/0/346panostory/…</code> 처럼 잘못된 경로가 되어 안내 이미지가 404 였어</li>
+<li>대상 이미지: <code>sliding_info</code>·<code>morningcalm_info</code>·<code>kart_info</code>·<code>chiong_info</code>·<code>place_info_point1~4</code> 등(한·영)</li></ul></div>
+<div class="box"><h3>확인할 것 — 눈에 보이는 변화</h3><ul>
+<li>스토리 진행 중 장소의 <b>정보(ⓘ) 아이콘을 누르면 안내 이미지가 떠야</b> 해 (이전엔 빈 화면/무반응)</li>
+<li>대표 예: 아침고요수목원 스토리의 <b>사계절썰매장</b> 씬 → 썰매장 정보 이미지</li>
+<li>영어판(_en)은 영문 이미지(<code>*_en.png</code>)가 떠야 해</li></ul></div>
+</div>
+<details><summary>VR 스토리 20개 목록 펼치기</summary><div class="tablewrap"><table><thead><tr><th>id</th><th>콘텐츠</th><th>뷰어</th><th>수정 파일</th></tr></thead><tbody>
+<tr><td class="mono">14</td><td>[경기관광공사] 자연과별 천문대 1박2일 코스 [kr]</td><td><a href="https://look360.kr/vrstory/ggtour_naturestar/naturestar_story" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/377/panostory_14.xml</td></tr>
+<tr><td class="mono">25</td><td>[GGTour] &quot;Nature &amp; Star Astronomical Observatory&quot;  [us]</td><td><a href="https://look360.kr/vrstory/ggtour_naturestar/naturestar_story_en" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/377/panostory_25.xml</td></tr>
+<tr><td class="mono">12</td><td>[경기관광공사] 가평 아침고요수목원 1박2일 코스 [kr]</td><td><a href="https://look360.kr/vrstory/ggtour_morningcalm/gapyeong_story" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/346/panostory_12.xml</td></tr>
+<tr><td class="mono">31</td><td>[GGTour] &quot;The Garden of Morning Calm&quot; Overnight Traveling Course [us]</td><td><a href="https://look360.kr/vrstory/ggtour_morningcalm/gapyeong_story_en" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/346/panostory_31.xml</td></tr>
+<tr><td class="mono">23</td><td>[GGTour] &quot;Herb Island&quot; Overnight Traveling Course [us]</td><td><a href="https://look360.kr/vrstory/ggtour_herbisland/herbisland_panostory_en" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/369/panostory_23.xml</td></tr>
+<tr><td class="mono">18</td><td>[경기관광공사] 포천 허브아일랜드 1박2일 코스 [kr]</td><td><a href="https://look360.kr/vrstory/ggtour_herbisland/herbisland_panostory" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/369/panostory_18.xml</td></tr>
+<tr><td class="mono">26</td><td>[GGTour] &quot;Jaraseom Island&quot; Overnight Traveling Course [us]</td><td><a href="https://look360.kr/vrstory/ggtour_jaraisland/jarasum_story_en" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/376/panostory_26.xml</td></tr>
+<tr><td class="mono">15</td><td>[경기관광공사] 자라섬 1박2일 코스 [kr]</td><td><a href="https://look360.kr/vrstory/ggtour_jaraisland/jarasum_story" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/376/panostory_15.xml</td></tr>
+<tr><td class="mono">21</td><td>[경기관광공사] 프로방스 1박2일 코스 [kr]</td><td><a href="https://look360.kr/vrstory/ggtour_paju_provence/provence_panostory" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/380/panostory_21.xml</td></tr>
+<tr><td class="mono">22</td><td>[GGTour] &quot;Provence&quot; Overnight Traveling Course [us]</td><td><a href="https://look360.kr/vrstory/ggtour_paju_provence/provence_panostory_en" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/380/panostory_22.xml</td></tr>
+<tr><td class="mono">17</td><td>[경기관광공사] 유명산 자연휴양림 1박2일 코스 [kr]</td><td><a href="https://look360.kr/vrstory/ggtour_yumyeong_huyang/yumyeong_story" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/372/panostory_17.xml</td></tr>
+<tr><td class="mono">28</td><td>[GGTour] &quot;Yumyeongsan Natural Recreation Forest&quot; Overnight Traveling Course [us]</td><td><a href="https://look360.kr/vrstory/ggtour_yumyeong_huyang/yumyeong_story_en" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/372/panostory_28.xml</td></tr>
+<tr><td class="mono">19</td><td>[경기관광공사] 한탄강 관광지 1박2일 코스 [kr]</td><td><a href="https://look360.kr/vrstory/ggtour_hantan/hantan_panostory" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/368/panostory_19.xml</td></tr>
+<tr><td class="mono">29</td><td>[GGTour] &quot;Hantangang Tourist Site&quot; Overnight Traveling Course [us]</td><td><a href="https://look360.kr/vrstory/ggtour_hantan/hantan_panostory_en" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/368/panostory_29.xml</td></tr>
+<tr><td class="mono">27</td><td>[GGTour] &quot;Sanjeong Lake&quot; Overnight Traveling Course [us]</td><td><a href="https://look360.kr/vrstory/ggtour_sjlake/sjlake_story_en" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/359/panostory_27.xml</td></tr>
+<tr><td class="mono">16</td><td>[경기관광공사] 산정호수 1박2일 코스 [kr]</td><td><a href="https://look360.kr/vrstory/ggtour_sjlake/sjlake_story" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/359/panostory_16.xml</td></tr>
+<tr><td class="mono">13</td><td>[경기관광공사] 포천 아트밸리 천문과학관 1박2일 코스 [kr]</td><td><a href="https://look360.kr/vrstory/ggtour_artvalley_pocheon/pocheon_story" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/356/panostory_13.xml</td></tr>
+<tr><td class="mono">24</td><td>[GGTour] &quot;Pocheon Art Valley&quot; Overnight Traveling  [us]</td><td><a href="https://look360.kr/vrstory/ggtour_artvalley_pocheon/pocheon_story_en" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/356/panostory_24.xml</td></tr>
+<tr><td class="mono">30</td><td>[GGTour] &quot;Petite France&quot; Overnight Traveling Course [us]</td><td><a href="https://look360.kr/vrstory/ggtour_pfcamp/pfcamp_panostory_en" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/352/panostory_30.xml</td></tr>
+<tr><td class="mono">20</td><td>[경기관광공사] 가평 쁘띠프랑스 1박2일 코스 [kr]</td><td><a href="https://look360.kr/vrstory/ggtour_pfcamp/pfcamp_panostory" target="_blank" rel="noopener">열기 ↗</a></td><td class="mono small">/files/pano/0/352/panostory_20.xml</td></tr>
+</tbody></table></div></details>
+</div>
+
+<div class="card">
+<h2>참고 — l3 플랫폼</h2>
+<p class="small">플랫폼(look360_v3)에는 세 건 모두 형태가 바뀌어 이관돼 있지만 화면 영향은 0이야: navi 는 <code>custom_buttons</code> JSON(FE 가 토글 버튼을 필터) · include 는 <code>custom_xml_text</code> 인라인 · panostory 는 <code>story_actions</code> JSON(빌더가 슬래시를 자동 보정). 플랫폼 쪽은 수정하지 않았어.</p>
+</div>
+</main></body></html>
