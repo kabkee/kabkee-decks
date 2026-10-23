@@ -49,7 +49,8 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; scroll-padding-top: 76px; -webkit-text-size-adjust: 100%; }
+  /* scroll-padding-top 은 JS 가 목차 실측 높이로 덮어쓴다. 아래는 그 전까지의 근사값. */
+  html { scroll-behavior: smooth; scroll-padding-top: 58px; -webkit-text-size-adjust: 100%; }
   body {
     font-family: 'Noto Sans KR', 'Inter', system-ui, sans-serif;
     background: var(--bg); color: var(--ink);
@@ -195,6 +196,27 @@
   .minus { color: #DC2626; font-weight: 700; font-family: 'Inter', sans-serif; white-space: nowrap; }
   @media (prefers-color-scheme: dark) { .minus { color: #FCA5A5; } }
 
+  /* 숏리스트 매물 셀 — 링크 + 상태 */
+  td.listing { white-space: normal !important; min-width: 220px; }
+  td.listing a {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-weight: 600; text-decoration: none; border-bottom: 1px solid transparent;
+  }
+  td.listing a:hover { border-bottom-color: var(--accent); }
+  td.listing a .ext { font-size: .8em; opacity: .6; }
+  td.listing .status {
+    display: block; margin-top: 4px; font-size: .74rem; font-weight: 600;
+  }
+  td.listing .status.gone { color: #DC2626; }
+  td.listing .status.sold { color: #B45309; }
+  td.listing .status.hint { color: var(--ink-mute); font-weight: 500; }
+  @media (prefers-color-scheme: dark) {
+    td.listing .status.gone { color: #FCA5A5; }
+    td.listing .status.sold { color: #FCD34D; }
+  }
+  tr.is-dead td { opacity: .62; }
+  tr.is-dead td.listing a { color: var(--ink-mute); text-decoration: line-through; text-decoration-thickness: 1px; }
+
   /* ---------- 가격 산식 ---------- */
   .formula {
     background: var(--bg-soft); border: 1px solid var(--line); border-radius: 12px;
@@ -313,7 +335,7 @@
     <div class="chips">
       <span>구매가격</span><span>옵션 가치</span><span>타이어 · 정비</span><span>현장 점검</span><span>가격 협상</span>
     </div>
-    <div class="date">2026-08-03 · F56 MINI Electric (32.6 kWh · 복합 159 km)</div>
+    <div class="date">2026-08-03 작성 · <strong>2026-08-24 엔카 전수 재조사 반영</strong> · F56 MINI Electric (32.6 kWh · 복합 159 km)</div>
   </div>
 </div>
 
@@ -326,7 +348,7 @@
     <a href="#s5">5. 타이어·정비</a>
     <a href="#s6">6. 현장 점검표</a>
     <a href="#s7">7. 협상 기준</a>
-    <a href="#s8">8. 매물 숏리스트</a>
+    <a href="#s8">8. 실매물 전수</a>
     <a href="#s9">9. 참고자료</a>
   </div>
 </nav>
@@ -335,7 +357,7 @@
 
   <div class="callout verdict" style="margin-top:32px">
     <span class="label">한 줄 결론</span>
-    <p>집과 회사 모두 충전 가능하다면 <strong>F56 MINI Electric이 1순위</strong>다. 2022년식 3만~5만 km를 <strong>2,200만~2,400만 원</strong>에 사는 <strong>가성비안</strong>과, 2024년형 상위 옵션 차량을 <strong>2,550만~2,700만 원</strong>에 사는 <strong>완성형안</strong>이 좋다.</p>
+    <p>집과 회사 모두 충전 가능하다면 <strong>F56 MINI Electric이 1순위</strong>다. 다만 2026-08-24 전수 재조사 결과 <strong>가성비 축은 2022년형에서 2024년형으로 넘어갔다.</strong> 2024년형 3.5만~5만 km를 <strong>2,430만~2,500만 원</strong>에 잡는 것이 현재 유일하게 합리적인 안이고, 2022년형은 <strong>2,400만 원을 넘기면 살 이유가 사라진다.</strong></p>
   </div>
 
   <!-- ============ 1 ============ -->
@@ -374,19 +396,40 @@
   <!-- ============ 2 ============ -->
   <section id="s2">
     <h2><span class="num">02</span>적정 매입가격</h2>
+    <div class="callout warn">
+      <span class="label">2026-08-24 재조사 — 08-03판의 결론이 뒤집혔다</span>
+      <p>엔카 전국 F56 매물을 전수 조사했다. 광고는 21건이지만 같은 차의 중복 등록 6건을 접으면 <strong>실제 15대</strong>다. 그 15대에서 <strong>2022년형 3만~4.5만 km 호가는 2,350 · 2,480 · 2,600만 원</strong>, <strong>2024년형 3.5만~6만 km 호가는 2,550 · 2,560 · 2,580 · 2,590만 원</strong>으로 <strong>두 구간이 겹친다.</strong> 08-03판이 가성비안으로 권했던 &lsquo;2022년형 3만~5만 km · 2,200만~2,400만 원&rsquo; 매물은 <strong>현재 시장에 한 대도 없다</strong>(이 구간의 최저 정상 호가가 2,350만 원이다).</p>
+    </div>
+
+    <h3>이 표의 금액은 어떻게 나왔나</h3>
+    <p><strong>신차가 감가 계산이 아니라 실제 공개 매물 호가에서 역산한 값이다.</strong> ① 2026-08-24 엔카 전수 15대의 호가를 구간별로 모으고 ② <strong>적정 계약가격</strong>은 &lsquo;구간 최저호가 &minus;5% ~ 구간 중앙호가 &minus;3%&rsquo;로 잡는다. 딜러 호가와 실제 체결가 사이의 통상 간격이다. ③ <strong>상한선</strong>은 구간 중앙호가이며, 다만 그 값을 그대로 쓰면 2024년형이 더 싸지는 구간에서는 <em>갈아타기 컷</em>을 대신 쓴다. 2022년형 3만~4.5만 km가 그렇다 &mdash; 산식대로면 적정 상단이 2,410만 원이지만, 2,400만 원을 넘는 순간 2024년형이 유리해지므로 <strong>2,380만 원으로 눌러 잡았다.</strong> 여기에 05의 소모품비는 <strong>포함돼 있지 않다.</strong> <strong>이상 저가 2대는 표본에서 뺐다.</strong> 하나는 전손 이력, 하나는 하부 프레임 판금으로 <strong>딜러가 직접 고지한</strong> 차량이라 시세가 아니라 사고차 가격이기 때문이다.</p>
+
     <div class="table-wrap">
       <table>
-        <thead><tr><th>연식 · 주행거리</th><th class="num">적정 계약가격</th><th class="num">상한선</th></tr></thead>
+        <thead><tr><th>형식 · 주행거리</th><th class="num">2026-08-24 관측 호가</th><th class="num">적정 계약가격</th><th class="num">상한선</th></tr></thead>
         <tbody>
-          <tr><td>2022 · 5만~7만 km</td><td class="num">2,000~2,250만 원</td><td class="num">2,300만 원</td></tr>
-          <tr><td>2022 · 2만~5만 km</td><td class="num">2,150~2,400만 원</td><td class="num">2,500만 원</td></tr>
-          <tr><td>2023 · 3만~6만 km</td><td class="num">2,200~2,500만 원</td><td class="num">2,600만 원</td></tr>
-          <tr><td>2023 · 1만~3만 km</td><td class="num">2,400~2,650만 원</td><td class="num">2,750만 원</td></tr>
-          <tr><td>2024년형 · 2만 km 이하</td><td class="num">2,600~2,800만 원</td><td class="num">2,850만 원</td></tr>
+          <tr><td>2022년형 · 3만~4.5만 km</td><td class="num">2,350 / 2,480 / 2,600 <span class="pill mute">3대</span></td><td class="num">2,230~2,380만 원 <span class="pill c">컷 적용</span></td><td class="num">2,400만 원 <span class="pill c">갈아타기 컷</span></td></tr>
+          <tr><td>2022년형 · 5만~8만 km</td><td class="num">2,289 / 2,349 <span class="pill mute">2대</span></td><td class="num">2,170~2,250만 원</td><td class="num">2,320만 원</td></tr>
+          <tr><td>2022년형 · 8만 km 이상</td><td class="num">1,860 / 2,180 <span class="pill mute">2대</span></td><td class="num">1,770~1,960만 원</td><td class="num">2,020만 원</td></tr>
+          <tr><td><strong>2024년형 · 3.5만~5만 km</strong> <span class="pill a">권장 구간</span></td><td class="num">2,560 / 2,580 / 2,590 <span class="pill mute">3대</span></td><td class="num"><strong>2,430~2,500만 원</strong></td><td class="num">2,580만 원</td></tr>
+          <tr><td>2024년형 · 5만~6만 km</td><td class="num">2,550 <span class="pill mute">1대</span></td><td class="num">2,420~2,470만 원</td><td class="num">2,550만 원</td></tr>
+          <tr><td>2024년형 · 1.9만~2.1만 km</td><td class="num">2,690 / 2,850 <span class="pill mute">2대</span></td><td class="num">2,560~2,690만 원</td><td class="num">2,770만 원</td></tr>
+          <tr class="is-dead"><td>이상 저가 2대<br>2022년형 4.63만 km · 2023년형 2.33만 km</td><td class="num">1,899 / 1,920 <span class="pill d">이상치</span></td><td class="num" colspan="2">전손 이력 · 하부 프레임 판금. 딜러가 직접 고지한 건이라 <strong>시세가 아니라 사고차 가격</strong>이다 (08 참조)</td></tr>
         </tbody>
       </table>
     </div>
-    <p>2026년 8월 공개 매물에는 1,900만 원대의 이례적 저가 차량부터 2,800만 원대 완전옵션 저주행 차량까지 분포한다. 가장 맛있는 구간은 <strong>2022년식 3만~5만 km 약 2,200만~2,400만 원</strong>, 또는 <strong>2024년형 2만~4만 km 약 2,550만~2,700만 원</strong>이다. 저가 매물은 사고·용도·압류/저당·배터리 하부부터 확인한다.</p>
+
+    <div class="callout bad">
+      <span class="label">2022년형에 2,400만 원 넘게 주면 안 되는 이유</span>
+      <p>2022년형 최고 호가 <strong>2,600만 원</strong>(3.86만 km)은 2024년형 3.5만~6만 km 네 대 <strong>전부보다 비싸다.</strong> 2022년형 중간 호가 2,480만 원과 2024년형 최저 호가 2,550만 원의 차이는 <strong>70만 원뿐이다.</strong> 배터리 보증 잔여기간과 재판매성을 생각하면 이 70만 원은 <strong>아끼는 게 아니라 버리는 돈</strong>이다.</p>
+    </div>
+
+    <h3>주행거리는 생각보다 가격을 설명하지 못한다</h3>
+    <ul class="bullets">
+      <li><strong>2022년형 SE 일렉트릭 4대는 주행거리와 호가의 상관이 약하다(r = &minus;0.55).</strong> <span class="pill mute">젠 ZE 에디션 2대와 이상 저가 1대 제외</span> 3.86만 km 차가 2,600만 원인데 7.09만 km 차가 2,289만 원이다. 주행거리가 두 배 가까이 많은 쪽이 311만 원 싸다. 즉 이 구간의 가격차는 주행거리가 아니라 <strong>딜러의 호가 배짱</strong>에서 나온다 &mdash; 협상 여지가 그만큼 크다는 뜻이다.</li>
+      <li><strong>2024년형 6대는 상관이 뚜렷하다(r = &minus;0.81).</strong> 1.9만 km 2,690만 원에서 5.8만 km 2,550만 원까지, <strong>1만 km당 약 36만 원</strong>씩 내려간다.</li>
+      <li>바꿔 말하면 2024년형에서 <strong>저주행 프리미엄은 얇다.</strong> 1.9만 km와 5.8만 km의 가격차가 140만 원뿐이라면, 상태 좋은 5만 km 차를 사고 남는 돈을 타이어와 정비에 쓰는 편이 낫다.</li>
+    </ul>
 
     <div class="callout info">
       <span class="label">예산 규칙</span>
@@ -451,14 +494,18 @@
       </table>
     </div>
 
-    <h3>실전 가격 산식</h3>
-    <p>기준차량은 <strong>같은 연식·주행거리의 무사고 기본형</strong>으로 잡는다. 여기에 옵션 프리미엄을 더하고, 곧 필요한 정비비를 뺀다.</p>
+    <h3>실전 가격 산식 <span class="pill a">08-24 갱신</span></h3>
+    <p>기준값은 추정한 &lsquo;기본형 가격&rsquo;이 아니라 <strong>그 구간에서 실제로 붙어 있는 호가의 중앙값</strong>으로 잡는다. 거기서 협상폭과 곧 나갈 정비비를 뺀다.</p>
     <div class="formula">
-      <div class="row"><span>2023년식 3만 km 기준가</span><span class="v">2,550만 원</span></div>
-      <div class="row"><span>＋ 상위 옵션 패키지</span><span class="v">＋150만 원</span></div>
+      <div class="row"><span>2024년형 4만 km 관측 호가 중앙값</span><span class="v">2,580만 원</span></div>
+      <div class="row"><span>− 호가→계약가 협상폭 (약 3%)</span><span class="v sub">−80만 원</span></div>
       <div class="row"><span>− 출고 타이어</span><span class="v sub">−60만 원</span></div>
       <div class="row"><span>− 최초 12V 배터리</span><span class="v sub">−30만 원</span></div>
-      <div class="row total"><span>목표 계약가</span><span class="v">약 2,610만 원</span></div>
+      <div class="row total"><span>목표 계약가</span><span class="v">약 2,410만 원</span></div>
+    </div>
+    <div class="callout info">
+      <span class="label">08-03판에서 바뀐 점</span>
+      <p>이전 산식은 기준가에 <strong>상위 옵션 패키지 +150만 원을 더했다.</strong> 지금은 더하지 않는다. 기준값이 실제 매물 호가라서 <strong>옵션값이 이미 그 호가 안에 들어가 있기 때문</strong>이다. 여기에 또 더하면 같은 옵션을 두 번 계산하게 된다. 옵션은 03의 상한(기본형 대비 120만~180만 원)을 <strong>매물끼리 비교할 때만</strong> 쓴다.</p>
     </div>
     <ul class="bullets">
       <li>보험이력의 <strong>금액</strong>보다 <strong>교환 부위와 주요 골격 손상 여부</strong>를 본다.</li>
@@ -554,8 +601,12 @@
 
     <h3>찾아야 할 한 대</h3>
     <div class="callout ok">
-      <span class="label">최종 추천 사양</span>
-      <p><strong>가성비</strong>는 2022년식 3만~5만 km를 2,200만~2,400만 원에, <strong>완성형</strong>은 2024년형 2만~4만 km ACC/HUD/하만카돈 구성을 2,550만~2,700만 원에 찾는다. 두 경우 모두 <strong>주요 골격·배터리 하부 무사고, 리콜 완료</strong>를 조건으로 한다.</p>
+      <span class="label">최종 추천 사양 <span class="pill a">08-24 갱신</span></span>
+      <p><strong>2024년형 3.5만~5만 km를 2,430만~2,500만 원에 계약하는 것</strong>이 현재 유일하게 합리적인 안이다. 상한은 2,580만 원. 이 한 줄이 08-03판의 가성비안·완성형안 두 갈래를 대체한다. <strong>주요 골격·배터리 하부 무사고, 리콜 완료</strong>는 그대로 조건이다.</p>
+    </div>
+    <div class="callout bad">
+      <span class="label">2022년형을 아직 고려한다면</span>
+      <p>계약가 <strong>2,380만 원 이하</strong>일 때만 의미가 있다. 그 위로 올라가는 순간 같은 돈에 2024년형이 잡히기 때문이다. 3만~4.5만 km 구간에서 호가가 2,400만 원 이하인 매물은 <strong>경기 부천 3.25만 km · 2,350만 원 한 대뿐</strong>이고, 그마저 엔카 진단 표기가 없어 실차 점검 부담이 크다.</p>
     </div>
     <p>ACC를 자주 쓸 출퇴근 환경이라면 하만카돈보다 ACC가 우선이다. 음악을 즐기고 정체·고속도로 비중이 낮다면 하만카돈을 먼저 챙겨도 된다. 내비게이션 단독에는 돈을 거의 더 주지 않는다. 모든 옵션이 있는 차를 찾다가 상태 좋은 매물을 놓치지 말고, 옵션은 <strong>‘상태가 동급일 때의 타이브레이커’</strong>로 사용한다.</p>
     <p>그리고 가장 중요한 원칙은 <strong>예산을 모두 차값에 쓰지 않는 것</strong>이다. 좋은 타이어와 확실한 초기 점검에 쓸 <strong>150만~250만 원</strong>을 남겨야 이 차가 가진 단단함과 민첩함을 제대로 즐길 수 있다.</p>
@@ -563,52 +614,222 @@
 
   <!-- ============ 8 ============ -->
   <section id="s8">
-    <h2><span class="num">08</span>2026년 8월 공개 매물 숏리스트</h2>
-    <p class="lead">매물은 수시로 가격이 바뀌거나 판매 종료된다. 아래 평가는 <strong>공개 검색 결과만으로 만든 1차 선별</strong>이며, 성능기록부·보험이력·실차 옵션·배터리 하부를 확인하기 전에는 구매 확정으로 보지 않는다.</p>
+    <h2><span class="num">08</span>전국 실매물 전수 <span class="pill a">2026-08-24</span></h2>
+    <p class="lead">엔카에 걸린 F56 MINI Electric <strong>전국 전량</strong>이다. 표본 추출이 아니라 전수라서, 여기 없는 가격대는 <strong>지금 살 수 없는 가격대</strong>다. 다만 아래 평가는 공개 정보만으로 만든 1차 선별이며, 성능기록부·보험이력·실차 옵션·배터리 하부를 확인하기 전에는 구매 확정으로 보지 않는다.</p>
+
+    <div class="callout info">
+      <span class="label">08-03판에서 고쳐진 것</span>
+      <p>이전 판은 <strong>엔카 4건의 개별 주소가 없어 검색 목록으로만 연결</strong>했고, 표의 연식·주행거리로 직접 대조하라고 안내했다. 이번에는 <strong>15대 모두 매물 상세 페이지로 바로 연결</strong>된다. 게재 일수와 조회수도 함께 넣었다. <strong>조회수는 높은데 오래 안 팔린 차</strong>는 시장이 이미 한 번 걸러낸 차라는 뜻이다.</p>
+    </div>
+
+    <div class="callout bad">
+      <span class="label">엔카 화면의 게재일을 그대로 믿으면 안 된다</span>
+      <p>15대 중 <strong>6대가 재등록된 매물</strong>이었다. 광고가 약 60일에 만료되면 딜러가 다시 올리는데, 그때 <strong>화면에 보이는 게재일이 0일로 리셋된다.</strong> 예를 들어 김포 38,548 km 매물은 화면상 12일차지만 실제로는 <strong>2026-06-11부터 74일째</strong> 팔리지 않고 있다. 아래 표는 <strong>최초 등록일 기준 실제 체류일</strong>로 적었고, 리셋된 매물은 괄호로 표기했다. <strong>체류일이 길수록 협상 여지가 크다</strong> &mdash; 이 표에서 가장 쓸모 있는 숫자다.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
-        <thead><tr><th>등급</th><th>매물</th><th class="num">가격</th><th>1차 판단</th></tr></thead>
+        <thead><tr><th>등급</th><th>매물</th><th class="num">호가</th><th>1차 판단</th></tr></thead>
         <tbody>
-          <tr><td><span class="pill a">A</span></td><td>엔카 · 23/06(24년형) · 31,312 km</td><td class="num">2,600만 원</td><td>균형형. 옵션·무사고 확인 후 우선 검토</td></tr>
-          <tr><td><span class="pill a">A−</span></td><td>엔카 · 23/05(24년형) · 38,548 km</td><td class="num">2,599만 원</td><td>엔카믿고 / 환불 가능. 가격은 적정</td></tr>
-          <tr><td><span class="pill b">B+</span></td><td>엔카 · 22/06 · 38,760 km</td><td class="num">2,290만 원</td><td>가성비형. 소모품과 트림 확인</td></tr>
-          <tr><td><span class="pill b">B</span></td><td>KB차차차 · 23/02 · 43,939 km</td><td class="num">2,199만 원</td><td>저렴하나 Classic · 일반 크루즈로 표시</td></tr>
-          <tr><td><span class="pill c">조건부</span></td><td>KB차차차 · 24년형 Resolute · 41,812 km</td><td class="num">2,790만 원</td><td>에디션 선호 아니면 비쌈</td></tr>
-          <tr><td><span class="pill d">긴급확인</span></td><td>엔카 · 23/05 · 23,250 km · 부산</td><td class="num">1,990만 원</td><td>시세보다 너무 낮음. 이력 이상 없을 때만 기회</td></tr>
+          <tr>
+            <td><span class="pill a">A</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42562242" target="_blank" rel="noopener">엔카 · 23/08 등록 · <strong>2024년형</strong> · 48,938 km · 서울 강서구 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/08 게시 · 6일차 · 찜 13 · 조회 228 · 엔카진단 P2</span>
+            </td>
+            <td class="num">2,580만 원</td><td><strong>검증이 가장 두껍다.</strong> 1인신조·비흡연, 엔카 하부스캐너 69항목 진단(P2), 구매 후 90일·5천 km 엔카 종합보증. 보험 1건은 <em>주차 중 뒷범퍼 긁힘</em>으로 내용까지 밝혀놨다. ACC·하만카돈. 다만 게재 6일차라 값은 안 깎일 것이다.</td>
+          </tr>
+          <tr>
+            <td><span class="pill a">A</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42169698" target="_blank" rel="noopener">엔카 · 23/05 등록 · <strong>2024년형</strong> · 38,548 km · 경기 김포시 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/06 게시 · 74일차 <strong>(26/08 재등록으로 표기는 12일)</strong> · 찜 54 · 조회 732 · 엔카진단 P1</span>
+            </td>
+            <td class="num">2,560만 원</td><td><strong>밴드 최저가인데 옵션은 가장 많다.</strong> ACC·하만카돈·열선 핸들에 MSI 보증(5년·6만 km) 잔여분까지 붙는다. 찜 54개로 15대 중 1위인데 <strong>74일간 안 팔렸다</strong> &mdash; 가격만 남은 걸림돌이라는 뜻이다.</td>
+          </tr>
+          <tr>
+            <td><span class="pill b">B+</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42425136" target="_blank" rel="noopener">엔카 · 23/08 등록 · <strong>2024년형</strong> · 58,038 km · 부산 기장군 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/07 게시 · 31일차 · 찜 20 · 조회 1,565 · 진단 없음</span>
+            </td>
+            <td class="num">2,550만 원</td><td>호가는 밴드 최저지만 <strong>본넷 단순교환 1건</strong>이 있다(딜러 자진 고지). ACC·하만카돈, 타이어 교환 완료. 5.8만 km까지 감안하면 2,550만 원은 비싸다.</td>
+          </tr>
+          <tr>
+            <td><span class="pill b">B</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42218869" target="_blank" rel="noopener">엔카 · 23/06 등록 · <strong>2024년형</strong> · 40,834 km · 경기 용인시 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/06 게시 · 66일차 <strong>(26/08 재등록으로 표기는 5일)</strong> · 찜 4 · 조회 76 · 진단 없음</span>
+            </td>
+            <td class="num">2,590만 원</td><td>완전무사고를 강조하지만 <strong>ACC·하만카돈 언급이 없다.</strong> 밴드 최고가인데 66일간 찜이 4개뿐이다 &mdash; 시장이 값을 인정하지 않고 있다.</td>
+          </tr>
+          <tr>
+            <td><span class="pill b">B</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42432468" target="_blank" rel="noopener">엔카 · 23/07 등록 · <strong>2024년형</strong> · 19,000 km · 대구 달서구 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/07 게시 · 28일차 · 찜 8 · 조회 600 · 진단 미표기</span>
+            </td>
+            <td class="num">2,690만 원</td><td>2024년형 최저주행. 설명글이 327자뿐이고 사고이력 서술이 없다. 엔카진단 표기도 없어 <strong>확인 부담을 전부 떠안는다.</strong></td>
+          </tr>
+          <tr>
+            <td><span class="pill c">C</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42550409" target="_blank" rel="noopener">엔카 · 23/08 등록 · <strong>2024년형</strong> · 20,355 km · 충북 청주시 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/08 게시 · 10일차 · 찜 4 · 조회 170 · 진단 없음</span>
+            </td>
+            <td class="num">2,850만 원</td><td>이 표 전체 최고가인데 <strong>딜러 설명글이 아예 없다.</strong> 2.04만 km라도 2024년형 4만~4.9만 km대(2,580~2,590만 원)와 260만~270만 원 차이는 근거 없이 과하다.</td>
+          </tr>
+          <tr>
+            <td><span class="pill b">B−</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42431886" target="_blank" rel="noopener">엔카 · 22/03 등록 · <strong>2022년형</strong> · 32,500 km · 경기 부천시 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/07 게시 · 29일차 · 찜 11 · 조회 865 · 진단 미표기</span>
+            </td>
+            <td class="num">2,350만 원</td><td>2022년형 중 값이 가장 맞다. 타이어 잔량·정비 내역까지 적은 성실한 설명글이지만 <strong>후드 단순교환 1건과 소유주 변경 6회</strong>가 있다(딜러가 리스금융 변경+딜러간 거래로 설명).</td>
+          </tr>
+          <tr>
+            <td><span class="pill c">C</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42527429" target="_blank" rel="noopener">엔카 · 22/03 등록 · <strong>2022년형</strong> · 41,607 km · 서울 강서구 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/08 게시 · 13일차 · 찜 19 · 조회 544 · 엔카진단 P2</span>
+            </td>
+            <td class="num">2,480만 원</td><td>2022년형 중 상태 서술이 가장 구체적이다(완전무사고·보험 1건 범퍼보수, 타이어 앞뒤 70%, 엔카진단 P2). 그래도 <strong>2024년형 최저가와 70만 원 차이</strong>다.</td>
+          </tr>
+          <tr>
+            <td><span class="pill c">C</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42212096" target="_blank" rel="noopener">엔카 · 22/06 등록 · <strong>2022년형</strong> · 56,829 km · 서울 강서구 <span class="ext">↗</span></a>
+              <span class="status hint">젠 ZE 에디션 · 광고 26/06 게시 · 67일차 <strong>(26/08 재등록으로 표기는 6일)</strong> · 찜 30 · 조회 157 · 엔카진단 P1</span>
+            </td>
+            <td class="num">2,349만 원</td><td>1인신조·비흡연, 보험이력 0원 주장. 젠 ZE 에디션 5.68만 km에 2,349만 원은 에디션값을 그대로 인정해준 가격이다.</td>
+          </tr>
+          <tr>
+            <td><span class="pill c">C</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42220368" target="_blank" rel="noopener">엔카 · 22/03 등록 · <strong>2022년형</strong> · 70,900 km · 대구 동구 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/06 게시 · 67일차 <strong>(26/08 재등록으로 표기는 5일)</strong> · 찜 19 · 조회 363 · 엔카진단 P1</span>
+            </td>
+            <td class="num">2,289만 원</td><td>&lsquo;단순교환 없는 무사고&rsquo;. 7.09만 km로 이번 표의 5만~8만 km 구간 상한 2,320만 원 안에는 들어온다.</td>
+          </tr>
+          <tr>
+            <td><span class="pill c">C−</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42086200" target="_blank" rel="noopener">엔카 · 22/05 등록 · <strong>2022년형</strong> · 82,534 km · 경기 수원시 <span class="ext">↗</span></a>
+              <span class="status hint">젠 ZE 에디션 · 광고 26/05 게시 · 89일차 <strong>(26/07 재등록으로 표기는 28일)</strong> · 찜 34 · 조회 1,025 · 진단 없음</span>
+            </td>
+            <td class="num">2,180만 원</td><td>젠 ZE 에디션 8.25만 km이고 <strong>사고유무가 단순교환</strong>이다. 에디션 프리미엄을 빼면 이번 표 기준 1,960만 원선이 적정.</td>
+          </tr>
+          <tr>
+            <td><span class="pill mute">참고</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42533887" target="_blank" rel="noopener">엔카 · 22/05 등록 · <strong>2022년형</strong> · 105,712 km · 인천 서구 <span class="ext">↗</span></a>
+              <span class="status hint">SE 클래식 · 광고 26/08 게시 · 12일차 · 찜 13 · 조회 932 · 진단 없음</span>
+            </td>
+            <td class="num">1,860만 원</td><td>10.57만 km · SE 클래식(하위 트림) · 사고유무 단순교환. 값은 싸지만 <strong>ACC가 없을 확률이 높다.</strong></td>
+          </tr>
+          <tr class="is-dead">
+            <td><span class="pill d">제외</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42458459" target="_blank" rel="noopener">엔카 · 22/03 등록 · <strong>2022년형</strong> · 38,604 km · 경기 수원시 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/07 게시 · 25일차 · 찜 8 · 조회 381 · 진단 없음</span>
+            </td>
+            <td class="num">2,600만 원</td><td><strong>2024년형 3.5만~6만 km 네 대 전부보다 비싸다.</strong> 게다가 설명글에 사고이력 서술이 없다. 2022년형에 이 값을 줄 이유가 없다.</td>
+          </tr>
+          <tr class="is-dead">
+            <td><span class="pill d">제외</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42050099" target="_blank" rel="noopener">엔카 · 22/05 등록 · <strong>2022년형</strong> · 46,311 km · 경기 김포시 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/05 게시 · 96일차 <strong>(26/07 재등록으로 표기는 34일)</strong> · 찜 34 · 조회 4,192 · 진단 미표기</span>
+            </td>
+            <td class="num">1,899만 원</td><td><strong>딜러가 &ldquo;하부 프레임 조수석 인사이드 패널 단순 판금&rdquo;이라고 직접 밝혔다.</strong> 06 점검표의 <em>골격 손상은 협상이 아니라 매물 제외</em> 원칙에 해당한다. 96일간 안 팔린 이유다.</td>
+          </tr>
+          <tr class="is-dead">
+            <td><span class="pill d">제외</span></td>
+            <td class="listing">
+              <a href="https://fem.encar.com/cars/detail/42303751" target="_blank" rel="noopener">엔카 · 23/05 등록 · <strong>2023년형</strong> · 23,250 km · 부산 남구 <span class="ext">↗</span></a>
+              <span class="status hint">SE 일렉트릭 · 광고 26/07 게시 · 52일차 · 찜 32 · 조회 6,544 · 진단 미표기</span>
+            </td>
+            <td class="num">1,920만 원</td><td><strong>딜러가 &ldquo;전손 이력 있는 차량&rdquo;이라고 직접 밝혔다.</strong> 52일간 6,544명이 보고 아무도 안 산 이유가 이것이다. 싼 게 아니라 <strong>전손차 시세</strong>다.</td>
+          </tr>
         </tbody>
       </table>
     </div>
 
+    <h3>이 15대가 말하는 것</h3>
+    <ul class="bullets">
+      <li><strong>2024년형이 6대, 2022년형이 8대, 2023년형이 1대다.</strong> 매물 자체가 15대뿐이라 &lsquo;조건 다 맞는 차를 기다린다&rsquo;는 전략이 성립하지 않는다.</li>
+      <li><strong>광고 21건 중 6건이 중복이었다.</strong> 같은 차를 딜러가 보증용·홈서비스용으로 두 번 올린 것이다. 목록을 훑을 때 &lsquo;후보가 많다&rsquo;고 느끼는 착시의 정체다.</li>
+      <li><strong>15대 전부 압류·저당이 0건이다.</strong> 이건 안심 재료가 아니라 <strong>변별력이 없다</strong>는 뜻이다. 걸러내는 일은 성능기록부와 리프트에서 해야 한다.</li>
+      <li><strong>딜러 설명글이 성능기록부보다 먼저 말해준다.</strong> 전손·프레임 판금·본넷 교환·소유주 6회 같은 결정적 정보를 <strong>딜러들이 본문에 직접 적어놨다.</strong> 표의 &lsquo;제외&rsquo; 세 대는 전부 이 방식으로 걸러졌다. 매물을 열면 사진보다 <strong>설명글 본문을 먼저 읽는 게 빠르다.</strong></li>
+      <li><strong>2022년형 상단(2,480~2,600만 원)은 2024년형과 가격이 겹친다.</strong> 이 겹침이 이번 재조사에서 가장 중요한 발견이다.</li>
+    </ul>
+
+    <h3>08-03판 숏리스트는 지금 어떻게 됐나</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>08-03 숏리스트</th><th class="num">당시 호가</th><th>2026-08-24 상태</th></tr></thead>
+        <tbody>
+          <tr class="is-dead"><td><span class="pill a">A</span> 엔카 23/06(2024년형) · 31,312 km</td><td class="num">2,600만 원</td><td>목록에서 사라짐 &mdash; 판매 추정</td></tr>
+          <tr><td><span class="pill a">A−</span> 엔카 23/05(2024년형) · 38,548 km</td><td class="num">2,599만 원</td><td><strong>생존 · 2,560만 원</strong> (39만 원 인하). 이번 표의 A등급</td></tr>
+          <tr class="is-dead"><td><span class="pill b">B+</span> 엔카 22/06 · 38,760 km</td><td class="num">2,290만 원</td><td>목록에서 사라짐 &mdash; 판매 추정</td></tr>
+          <tr class="is-dead"><td><span class="pill b">B</span> KB차차차 23/02 · 43,939 km</td><td class="num">2,199만 원</td><td>08-03 시점에 이미 페이지 삭제</td></tr>
+          <tr class="is-dead"><td><span class="pill c">조건부</span> KB차차차 Resolute · 41,812 km</td><td class="num">2,790만 원</td><td>08-03 시점에 이미 판매 완료</td></tr>
+          <tr><td><span class="pill d">긴급확인</span> 엔카 부산 23/05 · 23,250 km</td><td class="num">1,990만 원</td><td><strong>생존 · 1,920만 원</strong> (70만 원 인하). 게재 52일차</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <span class="label">&ldquo;시세가 올랐다&rdquo;가 아니라 &ldquo;싼 게 팔렸다&rdquo;</span>
+      <p>3주 사이에 벌어진 일은 단순하다. <strong>2,290만 원짜리와 2,600만 원짜리가 팔려 나갔고, 안 팔린 두 대는 값을 내렸는데도 여전히 안 팔린다.</strong> 남은 재고의 평균 호가가 올라간 것이지, 차 한 대의 값이 오른 게 아니다. 실제로 08-03에 있던 두 매물은 모두 <strong>가격이 내렸다.</strong> 그러니 지금 2022년형 호가가 높아 보이는 것은 <strong>싼 매물이 빠진 자리에 비싼 매물만 남은 결과</strong>로 읽는 게 맞다.</p>
+    </div>
+
+    <div class="callout info">
+      <span class="label">참고 &mdash; 4세대 J01은 얼마인가</span>
+      <p>같은 날 엔카 기준 4세대 MINI 쿠퍼 일렉트릭은 중복 제외 <strong>21대, 3,158만~4,800만 원</strong>이다. 최저가는 <strong>인천 9,600 km · 3,158만 원</strong>. F56 최고가(2,850만 원)와의 간격이 <strong>약 310만 원</strong>이다. 01의 후보 4순위였던 J01이 생각보다 가깝다는 뜻이니, 예산 상단을 고민 중이라면 시승 한 번은 해볼 값어치가 있다.</p>
+    </div>
+
     <h3>바로 확인할 링크</h3>
     <ul class="link-list">
-      <li><a href="https://car.encar.com/list/car/미니/쿠퍼/쿠퍼.일렉트릭" target="_blank" rel="noopener">엔카 MINI Electric 검색 <span class="host">encar.com</span><span class="arrow">→</span></a></li>
-      <li><a href="https://m.kbchachacha.com/public/web/car/detail.kbc?carSeq=27994656" target="_blank" rel="noopener">KB · 2023년 43,939 km · 2,199만 원 <span class="host">kbchachacha</span><span class="arrow">→</span></a></li>
-      <li><a href="https://m.kbchachacha.com/public/web/car/detail.kbc?carSeq=28449563" target="_blank" rel="noopener">KB · Resolute 2024년형 41,812 km · 2,790만 원 <span class="host">kbchachacha</span><span class="arrow">→</span></a></li>
-      <li><a href="https://bussancar.com/direct" target="_blank" rel="noopener">부싼카 직영매물 <span class="host">bussancar.com</span><span class="arrow">→</span></a></li>
+      <li><a href="https://car.encar.com/list/car/미니/쿠퍼/쿠퍼.일렉트릭" target="_blank" rel="noopener">엔카 F56 MINI Electric 전체 목록 <span class="host">encar.com</span><span class="arrow">→</span></a></li>
+      <li><a href="https://fem.encar.com/cars/detail/42169698" target="_blank" rel="noopener">A · 2024년형 38,548 km · 2,560만 원 <span class="host">경기 김포</span><span class="arrow">→</span></a></li>
+      <li><a href="https://fem.encar.com/cars/detail/42562242" target="_blank" rel="noopener">A · 2024년형 48,938 km · 2,580만 원 <span class="host">서울 강서</span><span class="arrow">→</span></a></li>
+      <li><a href="https://fem.encar.com/cars/detail/42425136" target="_blank" rel="noopener">A− · 2024년형 58,038 km · 2,550만 원 <span class="host">부산 기장 · 31일 체류</span><span class="arrow">→</span></a></li>
       <li><a href="https://www.mini.co.kr/ko_KR/home/corporation-and-used/mini-next-bak.html" target="_blank" rel="noopener">MINI 공식 인증중고차 안내 / 딜러 연락처 <span class="host">mini.co.kr</span><span class="arrow">→</span></a></li>
       <li><a href="https://www.bavarian-bps.co.kr/" target="_blank" rel="noopener">바바리안모터스 인증중고차 검색 <span class="host">bavarian-bps</span><span class="arrow">→</span></a></li>
     </ul>
 
     <h3>플랫폼별 현재 판단</h3>
     <ul class="bullets">
-      <li><strong>엔카:</strong> 현재 비교 가능한 후보가 가장 많다. 2,290만~2,600만 원대 후보를 먼저 본다.</li>
-      <li><strong>KB차차차:</strong> 상세 링크가 확인되는 두 대가 있으나 옵션 자동표기에 오류 가능성이 있다. 실차 확인이 필수다.</li>
-      <li><strong>부싼카:</strong> 공개 직영 목록에서 MINI Electric을 확인하지 못했다. 입고 알림을 요청할 수 있다.</li>
-      <li><strong>리볼트:</strong> 전기차 전문점이지만 공개 검색에서 현재 MINI Electric 상세 매물을 확인하지 못했다.</li>
-      <li><strong>MINI NEXT · 바바리안:</strong> 공개 검색에서 해당 차종 재고가 확인되지 않았다. 인증차는 일반 매물보다 100만~200만 원 비싸도 보증·상품화가 명확하면 비교 가치가 있다.</li>
+      <li><strong>엔카:</strong> 사실상 이 차종의 유일한 시장이다. 위 15대가 전부이므로 다른 곳을 더 뒤지는 것보다 <strong>이 목록에서 고르는 편</strong>이 빠르다.</li>
+      <li><strong>KB차차차:</strong> 08-03판이 걸어둔 두 매물은 그때 이미 삭제·판매 완료였다. 이번 재조사에서는 <strong>공개 API로 목록을 확인하지 못했다</strong>(엔드포인트 응답 없음). 브라우저로 직접 검색해 교차 확인할 필요가 있다.</li>
+      <li><strong>부싼카 · 리볼트:</strong> 08-03과 같다. 공개 목록에서 F56 MINI Electric을 확인하지 못했다.</li>
+      <li><strong>MINI NEXT · 바바리안:</strong> 여전히 공개 재고가 확인되지 않는다. 인증차는 일반 매물보다 100만~200만 원 비싸도 보증·상품화가 명확하면 비교 가치가 있다.</li>
     </ul>
 
     <div class="callout bad">
       <span class="label">가장 먼저 할 전화</span>
-      <p>부산 23/05식 23,250 km 1,990만 원 매물에 <strong>차량번호 · 성능기록부 · 보험이력 · 용도이력 · 압류/저당 · 실제 현금가격 · ACC/HUD/하만카돈 · 배터리 하부 사진</strong>을 요청한다. <strong>하나라도 답을 피하면 이동하지 않는다.</strong></p>
+      <p><strong>김포 2024년형 38,548 km · 2,560만 원</strong>부터 건다. 밴드 최저가에 옵션(ACC·하만카돈·열선 핸들)은 가장 많고, <strong>찜 54개로 15대 중 1위인데 74일째 안 팔렸다.</strong> 8월 3일에 2,599만 원이던 값을 이미 39만 원 내렸으니 <strong>딜러가 값을 움직일 의사가 있다는 증거도 있다.</strong> 목표는 2,430만~2,500만 원이다.</p>
+      <p style="margin-top:10px">두 번째는 <strong>서울 강서 48,938 km · 2,580만 원</strong>이다. 값은 20만 원 비싸고 1만 km 더 탔지만 <strong>엔카진단 P2 · 하부스캐너 69항목 · 90일 5천 km 종합보증</strong>으로 검증이 가장 두껍다. 게재 6일차라 값은 안 깎이니, <strong>김포 차와 붙여 협상 카드로 쓰는 편</strong>이 낫다.</p>
+    </div>
+
+    <div class="callout warn">
+      <span class="label">1,899만 · 1,920만 원 두 대는 &lsquo;기회&rsquo;가 아니다 &mdash; 이유가 밝혀졌다</span>
+      <p>08-03판은 이 두 대를 <em>&lsquo;시세보다 너무 낮음, 이력 이상 없을 때만 기회&rsquo;</em>로 분류했다. <strong>그 판단은 틀렸다.</strong> 딜러 설명글을 읽어보니 두 대 모두 이유를 이미 적어놨다.</p>
+      <p style="margin-top:10px">부산 남구 23,250 km 1,920만 원은 딜러가 <strong>&ldquo;전손 이력 있는 차량&rdquo;</strong>이라고 직접 밝혔다. 52일간 6,544명이 보고 아무도 사지 않은 이유가 이것이다. 싼 게 아니라 <strong>전손차 시세</strong>다. 김포 46,311 km 1,899만 원은 <strong>&ldquo;하부 프레임 조수석 인사이드 패널 단순 판금&rdquo;</strong>이다. 96일째 안 팔렸다. 06 점검표의 <strong>&lsquo;골격 손상은 가격 협상이 아니라 매물 제외&rsquo;</strong> 원칙이 그대로 적용된다.</p>
+      <p style="margin-top:10px">전화할 필요가 없다. <strong>두 대 다 후보에서 지운다.</strong></p>
     </div>
   </section>
 
   <!-- ============ 9 ============ -->
   <section id="s9">
     <h2><span class="num">09</span>참고자료</h2>
+    <div class="callout info">
+      <span class="label">가격 데이터 출처와 수집 방법</span>
+      <p><strong>엔카 공개 검색 API, 2026-08-24 수집.</strong> 미니 &rsaquo; 쿠퍼 &rsaquo; 쿠퍼 일렉트릭(3세대 F56) 전국 전체 광고 21건을 받아, <strong>(등록연월 · 주행거리 · 호가 · 트림)</strong>이 같은 중복 광고 6건을 접어 15대로 정리했다. 각 매물의 <strong>최초 등록일</strong>·조회수·찜 수·엔카진단 등급·압류/저당 건수는 매물 상세 응답에서 가져왔다. <strong>체류일은 화면에 보이는 게재일이 아니라 최초 등록일 기준</strong>으로 계산했다 &mdash; 15대 중 6대가 재등록으로 게재일이 리셋돼 있었다. 사고이력·옵션(ACC·하만카돈·열선 핸들)·소유주 변경 횟수는 <strong>딜러가 쓴 설명글 본문에서 읽어낸 것으로, 딜러의 주장이지 검증된 사실이 아니다.</strong> 성능기록부와 보험이력으로 반드시 대조해야 한다. <strong>모든 금액은 딜러 호가이며 실제 계약가가 아니다.</strong> 4세대 J01 비교값은 같은 날 같은 방법으로 21대(중복 제외)를 수집했다.</p>
+    </div>
     <ul class="refs">
+      <li>엔카 공개 검색 · 매물 상세 API — 2026-08-24 수집, F56 15대 / J01 21대 (중복 광고 제외 기준). 사고이력·옵션은 딜러 설명글 원문 기준</li>
       <li>BMW Group Korea, MINI Electric 국내 공식 출시자료 — 32.6 kWh, 복합 159 km, 급속 80% 약 35분</li>
       <li>MINI Korea, 2022 MINI Electric 공식 브로셔 — 트림별 크루즈 · 드라이빙 어시스턴트 · HUD 등 장비</li>
       <li>BMW Group Korea, 2024년형 MINI Electric 출시자료 — 내비 · CarPlay · HUD · 하만카돈 등 기본 사양</li>
@@ -620,7 +841,7 @@
 </main>
 
 <footer>
-  <p><strong>주의</strong> — 중고차 시세와 소모품 가격은 지역·차량 상태·판매 채널에 따라 달라진다. 이 문서의 금액은 <strong>2026년 8월 구매 협상을 위한 판단 범위</strong>이며, 개별 매물은 성능기록부와 리프트 점검을 우선한다.</p>
+  <p><strong>주의</strong> — 이 문서의 가격은 <strong>2026-08-24 엔카 호가 15대에서 역산한 값</strong>이지 신차가 감가 계산이 아니다. 표본이 15대뿐이라 통계가 아니라 <strong>그날의 전수 스냅샷</strong>으로 읽어야 한다. 매물은 수시로 팔리고 값이 바뀌며, 개별 매물은 성능기록부와 리프트 점검을 항상 우선한다. 소모품 가격은 지역·판매 채널에 따라 달라진다.</p>
   <a class="back" href="../">← kabkee-decks 목록으로</a>
 </footer>
 
@@ -662,18 +883,40 @@
   });
 
   // 목차 스크롤 스파이 — 현재 읽는 섹션 표시
+  var toc = document.querySelector('.toc');
+  var tocBox = document.querySelector('.toc-inner');
   var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
   var sections = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+
+  // 목차 높이를 실측해 앵커 착지 지점과 관측 경계를 맞춘다 (하드코딩하면 폰트 로딩 후 어긋남).
+  var offset = toc.offsetHeight + 8;
+  document.documentElement.style.scrollPaddingTop = offset + 'px';
+
+  // 활성 탭을 목차 가로 스크롤 안으로 끌어온다.
+  // scrollIntoView 는 조상 체인의 «문서 수직 스크롤»까지 건드려서, 진행 중인 앵커
+  // smooth 스크롤을 취소시킨다(탭을 누르면 중간에 멈추는 원인). 가로 위치만 직접 옮긴다.
+  function centerTab(el) {
+    var target = el.offsetLeft - (tocBox.clientWidth - el.offsetWidth) / 2;
+    var max = tocBox.scrollWidth - tocBox.clientWidth;
+    tocBox.scrollLeft = Math.max(0, Math.min(target, max));
+  }
+
+  var current = -1;
+  function activate(i) {
+    if (i === current) return;
+    current = i;
+    links.forEach(function (l) { l.classList.remove('active'); });
+    links[i].classList.add('active');
+    centerTab(links[i]);
+  }
+
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (!entry.isIntersecting) return;
       var i = sections.indexOf(entry.target);
-      if (i < 0) return;
-      links.forEach(function (l) { l.classList.remove('active'); });
-      links[i].classList.add('active');
-      links[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      if (i >= 0) activate(i);
     });
-  }, { rootMargin: '-76px 0px -70% 0px' });
+  }, { rootMargin: '-' + offset + 'px 0px -70% 0px' });
   sections.forEach(function (s) { if (s) observer.observe(s); });
 })();
 </script>
