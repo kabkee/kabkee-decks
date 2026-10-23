@@ -839,11 +839,9 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 </div>
 <div class="col">
 
-### 🗑️ 삭제 규칙 — «그냥 지우면 끝»은 <span class="hl-amber">180일이 지난 뒤부터</span> 맞습니다
+### 🗑️ 삭제 규칙 — <span class="hl-red">180일 전에 지우면 6개월치는 낸다</span>
 
-- 최소 보관 기간 <span class="hl-red">180일</span>: 그 전에 지우면 <span class="hl-amber">남은 일수만큼 저장비를 한 번에</span> 청구 ($0.002 / GB·월 비례)
-- 오늘 올리고 바로 전부 지워도 최대 <span class="hl-amber">6개월치 저장비 약 $6 (약 8,700원)</span>로 끝나고, 그 밖의 추가 비용은 없습니다
-- 180일이 지난 뒤 지우면 <span class="hl-green">추가 비용 0</span>
+- 올리자마자 지워도 <span class="hl-amber">월 비용 × 6개월</span>이 청구됩니다 (490GB 기준 약 $6) → 계산과 예시는 p.38
 
 ### 🔐 설계 원칙
 
@@ -854,6 +852,49 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 </div>
 
 > 출처: AWS 공식 가격 파일 `AmazonS3GlacierDeepArchive` · `AmazonS3` · `AWSDataTransfer` (서울 리전, 10/23 조회) · S3 문서 「Comparing the Amazon S3 storage classes」(최소 보관 180일 · 객체당 메타데이터 40KB — tar 묶음이라 무시 수준). 내려받기 금액은 월 100GB 무료 전송분 사용 여부에 따라 달라집니다.
+
+---
+
+## 🗑️ Deep Archive 삭제 비용 — 180일 전에 지우면 «월 비용 × 6개월»을 냅니다
+
+<div class="cols">
+<div class="col">
+
+### 규칙 (S3 문서 · 서울 공식 가격표)
+
+- 최소 보관 기간 <span class="hl-red">180일</span>
+- 그 전에 <span class="hl-amber">지우거나 덮어쓰면</span> 남은 일수만큼의 저장비를 그 자리에서 한 번에 청구 (`EarlyDelete-GDA` $0.002 / GB·월, 일할 계산)
+- 계산식: <span class="hl-blue">용량(GB) × $0.002 × (180 − 보관한 날) ÷ 30</span>
+- 그래서 «언제 지우든» 객체 하나당 <span class="hl-amber">최소 180일치 저장비</span>는 반드시 나갑니다. 그 이상의 위약금은 없습니다
+
+### 490GB 전체를 올렸다가 지우는 경우
+
+| 지운 시점 | 이미 낸 저장비 | 삭제 때 추가 청구 | 총액 |
+|---|---|---|---|
+| <span class="hl-red">올리자마자 (0일)</span> | $0 | <span class="hl-red">$5.88 = 월 $0.98 × 6</span> | 약 8,700원 |
+| 30일 뒤 | $0.98 | $4.90 (5개월치) | 약 8,700원 |
+| 90일 뒤 | $2.94 | $2.94 (3개월치) | 약 8,700원 |
+| 180일 뒤 | $5.88 | <span class="hl-green">$0</span> | 약 8,700원 |
+
+</div>
+<div class="col">
+
+### 우리 운영에서 생기는 경우
+
+| 상황 | 영향 (추정) |
+|---|---|
+| 매일 올리는 변경분 tar (평소 수십 KB~수 MB) | 30일 보관 뒤 지워도 180일치 — <span class="hl-green">1원 미만</span> |
+| 기준점 재생성 (장소마다 45~59일) → 옛 기준 tar 삭제 | 1GB 장소 1곳당 약 $0.009 (약 13원) |
+| 10/22 같은 일괄 변경 71곳이 한꺼번에 기준 재생성 | 57GB 기준 약 $0.5 (약 730원) |
+| 시험 삼아 전체를 올렸다가 «안 쓰기로» 하고 바로 삭제 | <span class="hl-red">약 $6 (약 8,700원)</span> |
+
+### 🔑 그래서
+
+- Deep Archive 사본은 <span class="hl-green">로컬 보관 규칙(30일·월 1개 12개월)을 그대로 따르지 않고</span>, 180일 미만 삭제를 피하는 쪽으로 따로 정하는 것이 맞습니다 (구현 때 결정)
+- 금액 자체가 작아서 «실수로 지워도 큰돈은 안 나간다» — 다만 <span class="hl-amber">0원은 아니다</span>
+
+</div>
+</div>
 
 ---
 
