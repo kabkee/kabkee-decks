@@ -2,7 +2,7 @@
 marp: true
 theme: clean
 paginate: true
-title: Look360 파일 백업 전략 — S3 Files 비용 사고 정리 · 파일시스템 교체 · 로컬 전체 백업 · 장소 단위 증분 갱신 설계
+title: Look360 파일 백업 전략 — S3 Files 비용 사고 정리 · 파일시스템 교체 · 로컬 전체 백업 · 증분 갱신 설계 (10/23 개정 — 변경분 세대 전환)
 ---
 
 <!-- _class: cover -->
@@ -10,17 +10,71 @@ title: Look360 파일 백업 전략 — S3 Files 비용 사고 정리 · 파일�
 
 # Look360 파일 백업 전략
 
-## S3 Files 비용 사고 정리 &nbsp;·&nbsp; 파일시스템 교체 &nbsp;·&nbsp; 로컬 전체 백업 &nbsp;·&nbsp; 장소 단위 증분 갱신
+## S3 Files 비용 사고 정리 &nbsp;·&nbsp; 파일시스템 교체 &nbsp;·&nbsp; 로컬 전체 백업 &nbsp;·&nbsp; 증분 갱신 (10/22 변경분 세대로 전환)
 
 <hr>
 
-Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14
+Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14 작성 &nbsp;·&nbsp; 2026-10-23 개정
+
+---
+
+## 📜 개정 이력 — 무엇이 언제 왜 바뀌었나
+
+원안 슬라이드는 <span class="hl-amber">지우지 않고 남겼습니다</span>. 바뀐 슬라이드 제목에는 <span class="badge">변경됨</span> 표시를 달고, 새 내용은 <span class="hl-blue">Section 04</span>에 따로 정리했습니다.
+
+| 날짜 | 무엇이 바뀌었나 | 왜 | 근거 |
+|---|---|---|---|
+| 9/14 | 원안 — 바뀐 장소는 <span class="hl-blue">장소 전체를 새 tar로</span> 다시 받기 | 복원 시 tar 하나만 풀면 끝나는 단순함 | Section 01~03 |
+| 10/08 | 백업 대상에 <span class="hl-green">`l3-platform-file-storage` 버킷 추가</span> · 버전관리 + 구버전 30일 | 플랫폼 파일(영상·XML 등)이 백업 0이었음 · 오너 카드 「둘 다」 | IND-8045 |
+| 10/14~15 | 실행 머신 표기 dsgn → <span class="hl-blue">kabkee-main</span> · 2차 백업도 같은 머신의 D:·E: | 개발 서버 이전 | cron `813e106` |
+| 10/15 | Azure 비교표 «교체 후» 금액을 9/29 실측으로 정정 | 9/14 추정이 틀림 | 덱 `2278b2e` |
+| 10/22 | 04:00 갱신이 <span class="hl-red">57.2GiB 안전장치</span>에 걸려 멈춤 → <span class="hl-amber">승인 안 함</span> | 실제 변경은 XML 88개(2.3MB)뿐 · 오너 결정 | IND-8672 |
+| 10/22 | 증분 방식을 <span class="hl-green">바뀐 파일만 담는 변경분(delta) 세대</span>로 전환 | 작은 변경이 여러 장소에 흩어지면 전송량 폭증 | IND-8673 |
+| 10/23 | 검증 7축 통과 · 첫 정기 실행 3건 정상 | — | IND-8685 |
 
 ---
 
 <!-- _class: agenda -->
 
-## 한 장 요약 — 「캐시가 만든 비용을 끄고, 백업은 AWS 밖에 두기로」
+## 한 장 요약 (10/23 현재) — 「바뀐 장소」가 아니라 「바뀐 파일」만 받습니다
+
+<div class="cols">
+<div class="col">
+
+### 🔁 무엇이 바뀌었나
+
+- 9/14 원안: 파일 1개만 바뀌어도 <span class="hl-red">그 장소 전체(평균 0.8GB)</span>를 다시 받음
+- 10/22 XML 88개 일괄 수정이 장소 71곳에 흩어져 <span class="hl-red">57.2GiB</span> 예정 → 안전장치가 멈춤
+- 10/22부터 <span class="hl-green">바뀐 파일만 tar에 담고</span>, 목록표에는 장소의 <span class="hl-green">모든 파일과 «어느 tar에 있는지»</span>를 기록
+- 같은 변경을 <span class="hl-green">2.3MB</span>로 처리 (약 2만 6천 분의 1)
+
+### 🧭 오너 결정 (10/22)
+
+- 막힌 57.2GiB는 <span class="hl-amber">옛 방식으로 승인하지 않고</span>, 새 방식으로 다시 처리
+
+</div>
+<div class="col">
+
+### ✅ 지금 상태 (10/23 실측)
+
+- <span class="hl-green">look360-v1-files</span> 04:00 · <span class="hl-green">l3-platform-file-storage</span> 04:30 · 2차 백업 06:00 — 모두 정상
+- 복원 시험: 파일 39,342개 md5 <span class="hl-green">불일치 0</span>
+- 9/13 기준본(tar 2,311개)은 <span class="hl-green">그대로 첫 기준점</span>으로 사용 · 변경 0
+
+### ⚠️ 새로 생긴 주의점
+
+- 오래된 tar를 지울 때 <span class="hl-red">아직 참조 중인 tar를 지우면 복원 불가</span> → 참조 계산으로 보호
+- 복원 도구는 <span class="hl-amber">소유자·권한을 살리지 않음</span> → 서버에 넣기 전 권한 지정 필요
+- 원본·2차 사본 3벌이 <span class="hl-amber">한 컴퓨터(kabkee-main)</span>에 있음
+
+</div>
+</div>
+
+---
+
+<!-- _class: agenda -->
+
+## 한 장 요약 (9/14 원안) — 「캐시가 만든 비용을 끄고, 백업은 AWS 밖에 두기로」
 
 <div class="cols">
 <div class="col">
@@ -278,7 +332,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## ✅ 왜 B를 선택했나
+## ✅ 왜 B를 선택했나 <span class="badge">복원 부분 변경 → p.34</span>
 
 <div class="cols">
 <div class="col">
@@ -313,7 +367,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🔄 구현 방식 — 매일 04:00 장소 단위 증분 갱신 <span class="badge-new">확정</span>
+## 🔄 구현 방식 — 매일 04:00 장소 단위 증분 갱신 <span class="badge">④ 변경됨 10/22 → Section 04</span>
 
 | 순서 | 동작 | 이유 |
 |---|---|---|
@@ -328,7 +382,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 📅 주기와 보관 규칙 — 실측 변경 빈도로 정했습니다
+## 📅 주기와 보관 규칙 — 실측 변경 빈도로 정했습니다 <span class="badge">유지 · 삭제 방식 보완 → p.32</span>
 
 <div class="cols">
 <div class="col">
@@ -364,7 +418,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🕓 일정과 재부팅 — 서로 겹치지 않게 배치했습니다
+## 🕓 일정과 재부팅 (9/14 원안) <span class="badge">변경됨 → p.35</span>
 
 | 시각 | 무엇이 | 어디서 | 비고 |
 |---|---|---|---|
@@ -394,7 +448,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## ⚖️ 장소 단위 vs 파일 단위
+## ⚖️ 장소 단위 vs 파일 단위 (9/14 판단) <span class="badge">10/22 번복 → p.29</span>
 
 | 항목 | 파일 단위 증분 | <span class="hl-green">장소 단위 갱신 (선택)</span> |
 |---|---|---|
@@ -409,7 +463,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## ♻️ 복원할 때 주의 — 권한까지 살리려면 «서버 폴더»에 풉니다
+## ♻️ 복원할 때 주의 — 권한까지 살리려면 «서버 폴더»에 풉니다 <span class="badge">절차 변경 → p.34</span>
 
 백업 tar에는 파일마다 <span class="hl-green">주인·권한(www-data)</span>이 함께 기록돼 있습니다. 어디에 푸느냐에 따라 이 정보가 살기도 하고 사라지기도 합니다.
 
@@ -423,7 +477,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🧰 필요한 것과 비용
+## 🧰 필요한 것과 비용 (9/14 원안) <span class="badge">대상 버킷 추가 → p.35</span>
 
 <div class="cols">
 <div class="col">
@@ -479,7 +533,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🎯 결정 현황과 후속 일정
+## 🎯 결정 현황과 후속 일정 (9/14 시점 기록)
 
 <div class="cols">
 <div class="col">
@@ -513,7 +567,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🧯 이번에 확인한 운영 함정
+## 🧯 이번에 확인한 운영 함정 (9월)
 
 | 함정 | 무슨 일이 있었나 | 앞으로의 원칙 |
 |---|---|---|
@@ -526,13 +580,254 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
+<!-- _class: sec -->
+
+<span class="sec-num">Section 04 · 10/23 개정</span>
+
+## 장소 단위 갱신 → 변경분(delta) 세대로
+
+9/14 원안의 «바뀐 장소는 통째로 다시 받기»가 10/22 XML 일괄 수정에서 57.2GiB 다운로드로 번졌습니다. 원안의 판단 근거와, 그것이 어디서 어긋났는지를 함께 남깁니다.
+
+---
+
+## 🚨 10/22 04:00 — 안전장치가 다운로드 전에 멈췄습니다
+
+<div class="stats">
+<div class="card"><div class="num">88개</div><div class="lab">실제로 바뀐 파일 (거의 전부 XML)</div></div>
+<div class="card"><div class="num">71곳</div><div class="lab">그 파일이 흩어진 장소(샤드)</div></div>
+<div class="card"><div class="num">57.2GiB</div><div class="lab">원안 방식이 받으려던 양</div></div>
+<div class="card"><div class="num">2.3MB</div><div class="lab">실제로 바뀐 내용의 합</div></div>
+</div>
+
+| 바뀐 파일 | 개수 | 성격 |
+|---|---|---|
+| `customxml/N/custom.xml` | 60 | 장소별 핫스팟·커스텀 설정 XML |
+| `panostory_N.xml` | 20 | 스토리(vrstory) XML |
+| `N.xml` | 5 | 장소 뷰어 XML |
+| `bbs/` | 3 | png 1 + 폴더 표시 객체 2 |
+
+> 안전장치(<span class="hl-amber">샤드 200곳 또는 50GiB 이상이면 멈춤</span>)는 설계대로 동작했습니다. 데이터 손실은 없었고, 멈춘 동안 바뀐 파일은 S3 버전관리가 지키고 있었습니다. 수정 작업은 10/20 22시~10/21 09시에 몰려 있었습니다(IND-8648 계열 핫스팟 복구로 추정).
+
+---
+
+## 🧭 9/14 판단은 어디서 어긋났나 — 전제와 실제
+
+| 9/14 원안의 전제 | 10/22에 드러난 실제 |
+|---|---|
+| 장소가 바뀔 때는 대개 <span class="hl-blue">재생성·신규 업로드처럼 장소 전체</span>가 바뀐다 (9/7 `1773` 사례) | <span class="hl-red">XML 일괄 수정</span>은 여러 장소에 파일 1~3개씩 흩어진다 |
+| 장소 하나를 통째로 다시 받아도 <span class="hl-blue">1원~1,500원</span>이라 싸다 | 장소 하나는 싸지만 <span class="hl-red">71곳이 한날 겹치면 57GB</span> · 2차 백업 디스크 쓰기도 2배 |
+| 바뀐 장소 × 보관 기간 = <span class="hl-blue">1년 수십 GB</span> 증가 (추정) | 이런 일괄 수정이 몇 번만 반복돼도 그 추정을 넘는다 |
+| 복원은 <span class="hl-green">최신 tar 하나</span>면 끝난다 — 가장 중요한 가치 | 이 가치는 맞았다 → 새 방식도 <span class="hl-green">목록표 하나로 복원</span>되게 설계 |
+
+<div class="cols">
+<div class="col">
+
+### 🚫 검토했다가 버린 안: «XML만 따로 백업»
+
+- 파일 종류로 규칙을 나누면 <span class="hl-red">jpg가 대량으로 바뀌는 날</span> 같은 문제가 다시 생깁니다
+- 기준은 <span class="hl-green">파일 종류가 아니라 «바뀐 파일»</span>이어야 합니다
+
+</div>
+<div class="col">
+
+### 🔑 남길 교훈
+
+- «평소 변경 빈도»(하루 4~11개)만 보고 <span class="hl-amber">변경이 흩어지는 패턴</span>을 시험하지 않았습니다
+- 안전장치를 둔 덕분에 <span class="hl-green">받기 전에 멈췄습니다</span> — 계속 유지합니다
+
+</div>
+</div>
+
+---
+
+## 📌 오너 결정 (10/22) — 57.2GiB는 옛 방식으로 승인하지 않는다
+
+| 선택지 | 내용 | 판단 |
+|---|---|---|
+| A. 그날 바로 `--approve` | 원안 방식으로 장소 71곳 전체 57.2GiB 다운로드 (전송비 약 $7 추정) | <span class="hl-red">채택 안 함</span> |
+| <span class="hl-green">B. 고친 뒤 새 방식으로 처리</span> | 변경분 방식을 만든 다음, 막힌 같은 목록(`2026-10-21T01-00Z`)을 새 방식으로 처리 | <span class="hl-green">채택</span> |
+
+<div class="cols">
+<div class="col">
+
+### 왜 B인가
+
+- 막힌 동안에도 바뀐 파일은 <span class="hl-green">S3에 그대로</span> 있고, <span class="hl-green">구버전 30일</span>이 덮어쓴 이전 내용까지 지킵니다 → 며칠 기다려도 잃는 것이 없습니다
+- A로 받으면 57GB짜리 세대 71개가 <span class="hl-amber">보관 규칙상 최대 12개월</span> 남고, 2차 디스크 2개에도 같은 양이 복사됩니다
+
+</div>
+<div class="col">
+
+### 결과 (10/22 20:39 수동 1회)
+
+- 같은 목록을 새 방식으로 처리 → <span class="hl-green">2,380,411바이트</span>만 다운로드
+- 변경분 세대 70개 + 새 장소 `bbs__2026__10` 전체 세대 1개
+- 이후 정기 실행은 다시 <span class="hl-green">매일 자동</span>입니다
+- 🔴 이번 건에서 <span class="hl-red">`--approve` 실행 기록 0건</span> (cron.log 확인)
+
+</div>
+</div>
+
+---
+
+## 🔄 새 구조 — 바뀐 파일만 담고, 목록표는 장소 전체를 적습니다 <span class="badge-new">10/22 확정</span>
+
+| 구성 | 기준(전체) 세대 | <span class="hl-green">변경분(delta) 세대</span> |
+|---|---|---|
+| 본문 tar | 장소 전체 (`.tar`) | <span class="hl-green">바뀐(추가·수정) 파일만</span> (`.delta.tar`) · 삭제만 있으면 tar 없음 |
+| 목록표 (`.csv.gz`) | 모든 파일 | <span class="hl-green">그 시점의 모든 파일</span> + 파일마다 <span class="hl-blue">«본문이 든 tar»</span> (삭제된 파일은 빠짐) |
+| 기록 (`.json`) | tar 이름·크기·sha256 | 같은 3개 항목 유지 → <span class="hl-green">2차 백업 검증 스크립트 그대로</span> |
+
+<div class="cols">
+<div class="col">
+
+### 9/13 기준본은 그대로 첫 기준점
+
+- 9/13 전체 백업 tar 2,311개를 목록표가 <span class="hl-blue">`@base/<장소>.tar`</span>로 가리킵니다
+- 기준본은 <span class="hl-green">읽기만 하고</span> 수정·이동·삭제하지 않습니다 (작업 전후 4,622개 파일 크기·시각 동일)
+- 9/14~10/21에 만든 전체 세대도 그대로 기준점으로 인정됩니다
+
+</div>
+<div class="col">
+
+### 복원은 여전히 «목록표 하나»에서 시작
+
+- 원하는 날짜의 목록표를 열면 <span class="hl-green">파일마다 꺼낼 tar가 적혀 있습니다</span>
+- 열어야 하는 tar는 <span class="hl-amber">최대 10개</span>로 제한 (다음 장 규칙)
+- 꺼낸 파일마다 <span class="hl-green">md5·크기를 목록표와 대조</span>하고, 하나라도 틀리면 실패 처리
+
+</div>
+</div>
+
+---
+
+## ♻️ 기준점 다시 만들기 · 오래된 세대 지우기 · 안전장치
+
+<div class="cols">
+<div class="col">
+
+### 기준(전체) 세대를 다시 만드는 조건 — 바뀐 장소에서만 판단
+
+| 조건 | 이유 |
+|---|---|
+| 기준점이 없음 (새 장소) | 기댈 곳이 없음 |
+| 참조할 tar가 없거나 위치 불명 | 안전 우선 |
+| 이번 변경이 장소의 <span class="hl-blue">50% 이상</span> | 전체로 받아도 비용이 같음 |
+| 열어야 할 tar가 <span class="hl-blue">10개 이상</span> | 복원 단계 수 상한 |
+| 쌓인 변경분이 장소의 <span class="hl-blue">30% 이상</span> | 변경분이 기준보다 커지는 것 방지 |
+| 기준점 나이 <span class="hl-blue">45~59일</span> (장소마다 다름) | 다시 만드는 날을 분산 |
+
+- 나이·사슬·누적 조건의 재생성은 <span class="hl-amber">하루 20GiB까지</span>만 · 넘치면 다음 날로 미룸
+- 기준본 나이는 9/13이 아니라 <span class="hl-blue">채택일 10/22부터</span> 셈 (9/13부터 세면 첫날 2,311곳이 전부 만기)
+
+</div>
+<div class="col">
+
+### 오래된 세대 지우기 — «참조 중이면 안 지운다»
+
+- 남길 목록표는 원안 규칙 그대로: <span class="hl-green">30일 전부 + 월 1개 12개월</span>
+- 남긴 목록표가 <span class="hl-red">하나라도 가리키는 tar는 절대 지우지 않음</span>
+- 목록표를 못 읽거나 tar가 없으면 <span class="hl-amber">그 장소는 아무것도 안 지움</span>
+- 1회 500개 초과·`generations/` 밖 경로는 삭제 중단 (원안 가드 유지)
+
+### 안전장치
+
+- 기준은 그대로 <span class="hl-blue">200곳 또는 50GiB</span>
+- 판정 대상이 «장소 크기 합» → <span class="hl-green">«실제로 받을 양»</span>으로 바뀜
+
+</div>
+</div>
+
+---
+
+## ✅ 검증 — 운영에 넣기 전과 후 <span class="badge-date">10/22~10/23</span>
+
+<div class="stats">
+<div class="card"><div class="num">39,342</div><div class="lab">복원 후 md5 대조 · 불일치 0</div></div>
+<div class="card"><div class="num">0</div><div class="lab">목록표가 가리키는데 없는 tar (v1 149 · l3 216)</div></div>
+<div class="card"><div class="num">46/46</div><div class="lab">자체 시험 통과 (QC 재실행)</div></div>
+<div class="card"><div class="num">19KB</div><div class="lab">10/23 04:00 첫 정기 실행 다운로드</div></div>
+</div>
+
+| 시험 | 방법 | 결과 |
+|---|---|---|
+| 변경분에 바뀐 파일만 들어가나 | 수정·추가·삭제를 흉내 낸 세대를 만들어 tar 내용 대조 | <span class="hl-green">통과</span> · 삭제만 있으면 tar 없음 |
+| 오래된 세대 삭제가 참조 tar를 지키나 | 시계를 과거로 돌려 삭제를 실제로 발동 | 목록표 4개 정리 · <span class="hl-green">참조 tar 2개 보호</span> · 미참조 1개만 삭제 |
+| 목록표가 S3와 같은가 | 장소 7곳 목록표 ↔ S3 현재 목록 | 추가 0 · 누락 0 · 크기 차이 0 |
+| 정기 실행 | 10/23 04:00 · 04:30 · 06:00 | 3건 모두 <span class="hl-green">정상</span> · 2차 디스크 2개 검증 문제 0 |
+
+> 시험은 운영 폴더가 아닌 <span class="hl-blue">별도 폴더</span>에서 했고, S3에는 쓰지 않았습니다. QC 관찰 1건: 리포트의 장소 목록이 50건에서 잘려 보이지만 합계 수치는 정확합니다(판정 영향 없음).
+
+---
+
+## ♻️ 복원 방법 (10/22 이후) — 이제 «tar 하나 풀기»가 아닙니다
+
+변경분 세대가 생긴 장소는 <span class="hl-red">tar 하나에 장소 전체가 들어 있지 않습니다</span>. 최신 `.delta.tar`만 풀면 바뀐 파일 몇 개만 나옵니다.
+
+| 단계 | 방법 | 주의 |
+|---|---|---|
+| ① 재구성 | kabkee-main에서 `incremental_backup.py [--src 버킷] --restore <장소> [--at YYYYMMDD] --out <빈 폴더>` | 목록표대로 필요한 tar에서 꺼내고 md5 대조 · 문제 있으면 종료코드 1 |
+| ② 권한 지정 | 서버로 옮긴 뒤 소유자 `33:33`(www-data) · 파일 `0664` · 폴더 `2775` | <span class="hl-red">복원 도구는 tar의 소유자·권한을 살리지 않습니다</span> (코드 확인) |
+| ③ 반영 | 서버 폴더 `/var/www/html/files/...` 에 넣기 | 약 1분 안에 S3 반영 · 기존 파일은 구버전으로 30일 남음 |
+| 🚫 금지 | 복원 결과를 `aws s3 cp/sync`로 직접 올리기 | 권한 정보가 빠져 9/3 권한 복구 사고가 재발 |
+
+> 변경분 세대가 없는 장소(대부분)는 지금도 <span class="hl-green">최신 전체 tar(9/13 기준본 또는 그 뒤 전체 세대) 하나를 `tar -xp`로 서버 폴더에 풀면</span> 권한까지 그대로 살아납니다(p.22 절차 유효). ②의 권한 지정 단계는 <span class="hl-amber">실제 서버 복원 리허설 전</span>이라 절차로만 정리했습니다.
+
+---
+
+## 🗄️ 백업 대상과 일정 — 10/23 현재
+
+| 시각 | 무엇이 | 대상 | 저장 위치 |
+|---|---|---|---|
+| 04:00 | 변경분 갱신 (S3 Inventory 목록 비교) | `look360-v1-files` (레거시 사이트 파일 1,657만 개) | kabkee-main H: `look360-v1-files-backup-20260913` |
+| 04:30 | 변경분 갱신 (<span class="hl-blue">직접 목록 조회</span> · 인벤토리 없음) | <span class="hl-green">`l3-platform-file-storage`</span> (l3 플랫폼 파일 1.6만 개 · 27.8GB, 10/08 실측) | kabkee-main H: `l3-platform-file-storage-backup-20261008` |
+| 06:00 | 2차 백업 (복사 + sha256 대조) | 위 두 폴더 | kabkee-main <span class="hl-blue">D: `/mnt/archive1` · E: `/mnt/archive2`</span> |
+
+<div class="cols">
+<div class="col">
+
+### 9/14 원안에서 바뀐 점
+
+- <span class="hl-green">버킷 단위 백업</span>으로 l3 플랫폼 버킷 추가 (10/08 · IND-8045) — 버전관리 + 구버전 30일도 함께 적용
+- 두 버킷 모두 <span class="hl-green">같은 스크립트·같은 변경분 방식</span>
+- 05:00 재부팅 검사(옛 컴퓨터 전용 T2 예방 장치)는 현재 일정에 없음
+
+</div>
+<div class="col">
+
+### ⚠️ 판단이 필요한 점
+
+- 9/14 원안은 2차 사본을 <span class="hl-blue">다른 컴퓨터</span>의 디스크 2개에 두었습니다
+- 지금은 원본 백업(H:)과 2차 사본(D:·E:)이 <span class="hl-amber">모두 kabkee-main 한 대</span>에 있습니다
+- 디스크 고장은 막지만 <span class="hl-red">컴퓨터 단위 사고(랜섬웨어·도난·전원)</span>에는 사본 3벌이 함께 노출됩니다
+
+</div>
+</div>
+
+---
+
+## 🧯 10월에 추가된 운영 함정
+
+| 함정 | 무슨 일이 있었나 | 앞으로의 원칙 |
+|---|---|---|
+| 평소 변경이 적으면 장소 단위로 충분하다? | 하루 4~11개였지만 <span class="hl-red">XML 일괄 수정 하루</span>가 장소 71곳을 건드림 | <span class="hl-green">«얼마나 자주»가 아니라 «얼마나 흩어지나»</span>까지 시험 |
+| 안전장치에 걸리면 승인하면 된다? | 승인했다면 57GB가 1년 보관 + 디스크 2개에 복사 | <span class="hl-green">먼저 실제 변경을 확인</span>하고, 방식이 틀렸으면 고친 뒤 처리 |
+| 파일 종류별로 따로 백업하면 효율적이다? | XML만 따로 하면 jpg 대량 변경 날 같은 문제 재발 | <span class="hl-green">«바뀐 파일만»</span>이 기준 |
+| 오래된 tar는 날짜만 보고 지우면 된다? | 변경분 방식에선 오래된 기준 tar를 <span class="hl-red">최신 목록표가 계속 참조</span> | <span class="hl-green">참조 계산 후 삭제</span> · 못 읽으면 안 지움 |
+| 기준본 나이는 만든 날부터 센다? | 9/13부터 세면 전환 첫날 <span class="hl-red">2,311곳이 한꺼번에 만기</span> | 채택일(10/22)부터 세고 장소마다 분산 |
+| 복원은 tar 하나 풀면 된다? | 변경분 tar엔 바뀐 파일만 있음 · 복원 도구는 권한 미보존 | <span class="hl-green">`--restore` → 권한 지정 → 서버 폴더</span> |
+
+---
+
 <!-- _class: closing -->
 <!-- _paginate: false -->
 
 ## 정리
 
-캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 설정으로 못 지우는 파일 항목 기록은 <span class="hl-green">파일시스템 교체로 없앴습니다</span>. 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했습니다. 9/14부터 dsgn이 <span class="hl-green">매일 04:00 바뀐 장소만 받고</span>, 이 컴퓨터가 <span class="hl-green">06:00 디스크 2개에 똑같이 복사</span>합니다. 첫 S3 목록이 도착하면 자동으로 동작을 시작합니다.
+<span class="hl-gray">9/14 원안</span> — 캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 설정으로 못 지우는 파일 항목 기록은 <span class="hl-green">파일시스템 교체로 없앴습니다</span>. 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했고, 매일 바뀐 장소를 받아 디스크 2개에 복사하기로 했습니다.
+
+<span class="hl-blue">10/23 개정</span> — 10/22 XML 88개 수정이 장소 71곳 57.2GiB 재다운로드로 번질 뻔해, <span class="hl-green">바뀐 파일만 받는 변경분 세대</span>로 전환했습니다. 막힌 57.2GiB는 승인하지 않고 새 방식으로 <span class="hl-green">2.3MB</span>에 처리했습니다. 남은 숙제는 <span class="hl-amber">복원 시 권한 지정</span>과 <span class="hl-amber">사본 3벌이 한 컴퓨터에 있는 점</span>입니다.
 
 <hr>
 
-Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14
+Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14 작성 &nbsp;·&nbsp; 2026-10-23 개정
