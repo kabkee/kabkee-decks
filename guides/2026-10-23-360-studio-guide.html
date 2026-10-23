@@ -85,8 +85,8 @@
 </div>
 <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:20px">
 <div style="background:#222831;border-radius:16px;padding:24px 28px;display:flex;flex-direction:column;gap:6px"><p style="font-size:40px;font-weight:800;color:#F29A4A">1</p><p style="font-size:24px;line-height:1.45;color:#D6DBE2">「폴더 고르기」 또는 끌어다 놓기. JPG·NEF·XMP 같은 이름은 한 컷</p></div>
-<div style="background:#222831;border-radius:16px;padding:24px 28px;display:flex;flex-direction:column;gap:6px"><p style="font-size:40px;font-weight:800;color:#F29A4A">2</p><p style="font-size:24px;line-height:1.45;color:#D6DBE2">촬영 시각이 30초 넘게 벌어지면 새 장면 (간격 숫자로 조정)</p></div>
-<div style="background:#222831;border-radius:16px;padding:24px 28px;display:flex;flex-direction:column;gap:6px"><p style="font-size:40px;font-weight:800;color:#F29A4A">3</p><p style="font-size:24px;line-height:1.45;color:#D6DBE2">썸네일을 보고 나누기·합치기, 장면 이름(장소) 적기</p></div>
+<div style="background:#222831;border-radius:16px;padding:24px 28px;display:flex;flex-direction:column;gap:6px"><p style="font-size:40px;font-weight:800;color:#F29A4A">2</p><p style="font-size:24px;line-height:1.45;color:#D6DBE2">촬영 시각(EXIF)이 30초 넘게 벌어지면 새 장면 · 브라케팅은 자동으로 묶음</p></div>
+<div style="background:#222831;border-radius:16px;padding:24px 28px;display:flex;flex-direction:column;gap:6px"><p style="font-size:40px;font-weight:800;color:#F29A4A">3</p><p style="font-size:24px;line-height:1.45;color:#D6DBE2">썸네일을 보고 나누기·합치기, 장소·장면 이름 적기</p></div>
 <div style="background:#222831;border-radius:16px;padding:24px 28px;display:flex;flex-direction:column;gap:6px"><p style="font-size:40px;font-weight:800;color:#F29A4A">4</p><p style="font-size:24px;line-height:1.45;color:#D6DBE2">「올리기 시작」. 끊기면 같은 파일을 다시 고르면 이어서</p></div>
 </div>
 <img src="2026-10-23-360-studio-guide_img/upload.jpg" alt="⓪ 원본 올리기 화면: 끌어다 놓는 칸, 폴더 고르기·장면 나누는 간격·촬영 폴더 이름, 올리기 시작 버튼" style="width:1664px;height:400px;object-fit:contain;background:#0E1116;border-radius:12px">
@@ -120,17 +120,17 @@
 <section class="slide" id="sdcard" data-transition="fade" style="background:#F5F3EE;color:#1C2027;font-family:'Noto Sans KR', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:44px">
 <div style="display:flex;flex-direction:column;gap:16px">
 <p style="font-size:24px;font-weight:700;color:#B85A16;letter-spacing:2px">SD 카드 통째로 · 브라케팅</p>
-<h2 style="font-size:72px;font-weight:800;line-height:1.15">지금 되는 것과 준비 중인 것</h2>
+<h2 style="font-size:72px;font-weight:800;line-height:1.15">알아서 묶어 주는 것들</h2>
 </div>
 <table style="font-size:28px;color:#1C2027;font-family:'Noto Sans KR', Arial, sans-serif">
-<tr style="background:#E9E5DC"><th style="width:34%">상황</th><th style="width:33%">지금</th><th style="width:33%">준비 중</th></tr>
-<tr><td>장면 4~6장씩 촬영</td><td>✓ 시각 간격으로 자동 분리</td><td>장수(4·5·6)도 보고 더 똑똑하게</td></tr>
-<tr><td>브라케팅 (노출 여러 장)</td><td>한 장면으로 묶이기만 함</td><td>노출 값으로 묶음 인식 → 합쳐서 스티칭</td></tr>
-<tr><td>장소 단계 폴더</td><td>촬영 폴더 / 장면 2단계</td><td>촬영 / 장소 / 장면 3단계</td></tr>
-<tr><td>NAS 에 덤프한 SD 폴더</td><td>직접 장면 폴더로 나눠 넣어야 함</td><td>NAS 에서 바로 분류·이동</td></tr>
-<tr><td>장면 수십 개 한꺼번에</td><td>장면마다 열어서 진행</td><td>밤사이 일괄 스티칭 → 아침에 검수</td></tr>
+<tr style="background:#E9E5DC"><th style="width:32%">상황</th><th style="width:68%">작업실이 하는 일</th></tr>
+<tr><td>장면 4~6장씩 촬영</td><td>사진의 촬영 시각(EXIF, 1/100초)으로 장면을 나눠</td></tr>
+<tr><td>브라케팅 (노출 여러 장)</td><td>「브라케팅 3장 × 방향 4개」로 묶고, 대표 노출만 장면에 · 나머지는 _브라케팅 폴더에 보관</td></tr>
+<tr><td>장소 단계 폴더</td><td>촬영 폴더 / 장소 / 장면 3단계 (장소는 비워도 돼)</td></tr>
+<tr><td>NAS 에 덤프한 SD 폴더</td><td>「NAS 에 이미 복사한 폴더 정리」로 NAS 안에서 바로 장면 폴더로 옮겨</td></tr>
+<tr><td>장면 수십 개 한꺼번에</td><td><span style="color:#B85A16">준비 중</span> · 밤사이 일괄 스티칭 → 아침에 검수</td></tr>
 </table>
-<p style="font-size:26px;color:#4A5260">당장은: 브라케팅 장면은 올리기 화면에서 장면을 나눌 때 대표 노출 한 세트만 남기는 게 안전해.</p>
+<p style="font-size:26px;color:#4A5260">브라케팅을 합쳐 밝은 곳·어두운 곳을 함께 살리는 기능은 촬영 샘플을 받아서 만들 예정이야.</p>
 </section>
 <section class="slide" id="align" data-transition="fade" data-section="스티칭: 정렬·검수·톤·마스크·렌더" style="background:#15191F;color:#F5F3EE;font-family:'Noto Sans KR', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:36px">
 <div style="display:flex;flex-direction:column;gap:16px">
@@ -249,8 +249,8 @@
 <p style="font-size:26px;line-height:1.45;color:#4A5260"><b style="color:#1C2027">파일 하나씩</b><br>retouched·_mosaic·vr.psd 를 표에서 바로</p>
 <p style="font-size:26px;line-height:1.45;color:#4A5260"><b style="color:#1C2027">zip 3종</b><br>결과만 / 원본만 / 전체. 바로 흘려보내서 큰 묶음도 즉시 시작</p>
 <div style="background:#1C2027;border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:6px">
-<p style="font-size:26px;font-weight:700;color:#F29A4A">타일은 아직 look360 utils</p>
-<p style="font-size:24px;color:#D6DBE2;line-height:1.45">_mosaic.jpg → retouched 이름으로 → BAT 생성 → 타일 → Pano 폴더 복사. 웹 통합 준비 중</p>
+<p style="font-size:26px;font-weight:700;color:#F29A4A">🧰 현장 도구 (메뉴 맨 아래)</p>
+<p style="font-size:24px;color:#D6DBE2;line-height:1.45">look360 utils 기능을 웹으로: 폴더 생성·gps.txt·납품 복사·XML·pano 복사, 그리고 서버에서 타일 생성</p>
 </div>
 </div>
 </div>
