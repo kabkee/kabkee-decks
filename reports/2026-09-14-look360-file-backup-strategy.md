@@ -31,6 +31,7 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14 �
 | 10/22 | 04:00 갱신이 <span class="hl-red">57.2GiB 안전장치</span>에 걸려 멈춤 → <span class="hl-amber">승인 안 함</span> | 실제 변경은 XML 88개(2.3MB)뿐 · 오너 결정 | IND-8672 |
 | 10/22 | 증분 방식을 <span class="hl-green">바뀐 파일만 담는 변경분(delta) 세대</span>로 전환 | 작은 변경이 여러 장소에 흩어지면 전송량 폭증 | IND-8673 |
 | 10/23 | 검증 7축 통과 · 첫 정기 실행 3건 정상 | — | IND-8685 |
+| 10/23 | 복원 도구가 <span class="hl-green">소유자·권한을 살리도록</span> 수정 · `--out-tar` 추가 | 새 복원 도구가 권한을 버리고 있었음 | 백업 `fd1c54e` |
 
 ---
 
@@ -64,7 +65,7 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14 �
 ### ⚠️ 새로 생긴 주의점
 
 - 오래된 tar를 지울 때 <span class="hl-red">아직 참조 중인 tar를 지우면 복원 불가</span> → 참조 계산으로 보호
-- 복원 도구는 <span class="hl-amber">소유자·권한을 살리지 않음</span> → 서버에 넣기 전 권한 지정 필요
+- 복원 도구가 권한을 버리던 문제는 <span class="hl-green">10/23 수정</span> → `--out-tar`로 만든 tar를 서버에서 `tar -xp`
 - 원본·2차 사본 3벌이 <span class="hl-amber">한 컴퓨터(kabkee-main)</span>에 있음
 
 </div>
@@ -766,12 +767,12 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 | 단계 | 방법 | 주의 |
 |---|---|---|
-| ① 재구성 | kabkee-main에서 `incremental_backup.py [--src 버킷] --restore <장소> [--at YYYYMMDD] --out <빈 폴더>` | 목록표대로 필요한 tar에서 꺼내고 md5 대조 · 문제 있으면 종료코드 1 |
-| ② 권한 지정 | 서버로 옮긴 뒤 소유자 `33:33`(www-data) · 파일 `0664` · 폴더 `2775` | <span class="hl-red">복원 도구는 tar의 소유자·권한을 살리지 않습니다</span> (코드 확인) |
-| ③ 반영 | 서버 폴더 `/var/www/html/files/...` 에 넣기 | 약 1분 안에 S3 반영 · 기존 파일은 구버전으로 30일 남음 |
+| ① 재구성 | kabkee-main에서 `incremental_backup.py [--src 버킷] --restore <장소> [--at YYYYMMDD] --out <빈 폴더> --out-tar <장소>.tar` | 목록표대로 필요한 tar에서 꺼내고 md5 대조 · <span class="hl-green">원래 소유자·권한을 담은 tar 1개</span> 생성 |
+| ② 반영 | tar를 서버로 옮겨 root로 `tar -xp --numeric-owner -f <장소>.tar -C /var/www/html/files` | <span class="hl-green">9/14 절차와 같은 명령</span> · 약 1분 안에 S3 반영 · 기존 파일은 구버전으로 30일 남음 |
+| 기록 | 리포트 `owners` 에 소유자·권한 분포가 찍힘 | `0:33 0644`(root 소유)가 있으면 <span class="hl-amber">원본 S3부터 root 소유</span>였다는 뜻 |
 | 🚫 금지 | 복원 결과를 `aws s3 cp/sync`로 직접 올리기 | 권한 정보가 빠져 9/3 권한 복구 사고가 재발 |
 
-> 변경분 세대가 없는 장소(대부분)는 지금도 <span class="hl-green">최신 전체 tar(9/13 기준본 또는 그 뒤 전체 세대) 하나를 `tar -xp`로 서버 폴더에 풀면</span> 권한까지 그대로 살아납니다(p.22 절차 유효). ②의 권한 지정 단계는 <span class="hl-amber">실제 서버 복원 리허설 전</span>이라 절차로만 정리했습니다.
+> 🔧 10/22 첫 버전의 복원 도구는 파일을 <span class="hl-red">소유자·권한 없이</span> 써서 손으로 권한을 맞춰야 했습니다 → <span class="hl-green">10/23 수정</span>. `pano__0__352`(기준본+변경분)를 root로 풀어 원본 tar 헤더와 <span class="hl-green">7,324건 모두 일치</span>를 확인했습니다(selftest 85/85). 실제 서버 복원 리허설은 아직입니다.
 
 ---
 
@@ -815,7 +816,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 | 파일 종류별로 따로 백업하면 효율적이다? | XML만 따로 하면 jpg 대량 변경 날 같은 문제 재발 | <span class="hl-green">«바뀐 파일만»</span>이 기준 |
 | 오래된 tar는 날짜만 보고 지우면 된다? | 변경분 방식에선 오래된 기준 tar를 <span class="hl-red">최신 목록표가 계속 참조</span> | <span class="hl-green">참조 계산 후 삭제</span> · 못 읽으면 안 지움 |
 | 기준본 나이는 만든 날부터 센다? | 9/13부터 세면 전환 첫날 <span class="hl-red">2,311곳이 한꺼번에 만기</span> | 채택일(10/22)부터 세고 장소마다 분산 |
-| 복원은 tar 하나 풀면 된다? | 변경분 tar엔 바뀐 파일만 있음 · 복원 도구는 권한 미보존 | <span class="hl-green">`--restore` → 권한 지정 → 서버 폴더</span> |
+| 복원은 tar 하나 풀면 된다? | 변경분 tar엔 바뀐 파일만 있음 · 첫 복원 도구는 권한까지 버림 | <span class="hl-green">`--restore --out-tar` → 서버에서 `tar -xp`</span> |
 
 ---
 
@@ -826,7 +827,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 <span class="hl-gray">9/14 원안</span> — 캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 설정으로 못 지우는 파일 항목 기록은 <span class="hl-green">파일시스템 교체로 없앴습니다</span>. 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했고, 매일 바뀐 장소를 받아 디스크 2개에 복사하기로 했습니다.
 
-<span class="hl-blue">10/23 개정</span> — 10/22 XML 88개 수정이 장소 71곳 57.2GiB 재다운로드로 번질 뻔해, <span class="hl-green">바뀐 파일만 받는 변경분 세대</span>로 전환했습니다. 막힌 57.2GiB는 승인하지 않고 새 방식으로 <span class="hl-green">2.3MB</span>에 처리했습니다. 남은 숙제는 <span class="hl-amber">복원 시 권한 지정</span>과 <span class="hl-amber">사본 3벌이 한 컴퓨터에 있는 점</span>입니다.
+<span class="hl-blue">10/23 개정</span> — 10/22 XML 88개 수정이 장소 71곳 57.2GiB 재다운로드로 번질 뻔해, <span class="hl-green">바뀐 파일만 받는 변경분 세대</span>로 전환했습니다. 막힌 57.2GiB는 승인하지 않고 새 방식으로 <span class="hl-green">2.3MB</span>에 처리했습니다. 복원 도구의 권한 보존도 <span class="hl-green">10/23에 고쳤습니다</span>. 남은 숙제는 <span class="hl-amber">사본 3벌이 한 컴퓨터에 있는 점</span>입니다.
 
 <hr>
 
