@@ -32,7 +32,7 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14 �
 | 10/22 | 증분 방식을 <span class="hl-green">바뀐 파일만 담는 변경분(delta) 세대</span>로 전환 | 작은 변경이 여러 장소에 흩어지면 전송량 폭증 | IND-8673 |
 | 10/23 | 검증 7축 통과 · 첫 정기 실행 3건 정상 | — | IND-8685 |
 | 10/23 | 복원 도구가 <span class="hl-green">소유자·권한을 살리도록</span> 수정 · `--out-tar` 추가 | 새 복원 도구가 권한을 버리고 있었음 | 백업 `fd1c54e` |
-| 10/23 | 3번째 사본을 <span class="hl-green">별도 AWS 계정 Glacier Deep Archive</span>에 두기로 결정 (구현 전) | 사본 3벌이 kabkee-main 한 대에 있음 | 오너 선택 A |
+| 10/23 | 추가 백업(다른 장소·다른 계정 사본)을 <span class="hl-amber">주간회의 안건</span>으로 올림 · 선호안 Deep Archive | 사본 3벌이 kabkee-main 한 대 → 랜섬웨어에 함께 노출 | 오너 지시 |
 
 ---
 
@@ -67,7 +67,7 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14 �
 
 - 오래된 tar를 지울 때 <span class="hl-red">아직 참조 중인 tar를 지우면 복원 불가</span> → 참조 계산으로 보호
 - 복원 도구가 권한을 버리던 문제는 <span class="hl-green">10/23 수정</span> → `--out-tar`로 만든 tar를 서버에서 `tar -xp`
-- 원본·2차 사본 3벌이 <span class="hl-amber">한 컴퓨터(kabkee-main)</span>에 있음 → <span class="hl-green">Deep Archive 사본 추가로 결정</span> (p.37)
+- 원본·2차 사본 3벌이 <span class="hl-amber">한 컴퓨터(kabkee-main)</span>에 있음 → <span class="hl-amber">주간회의에서 추가 백업 논의</span> (p.37)
 
 </div>
 </div>
@@ -801,7 +801,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 - 9/14 원안은 2차 사본을 <span class="hl-blue">다른 컴퓨터</span>의 디스크 2개에 두었습니다
 - 지금은 원본 백업(H:)과 2차 사본(D:·E:)이 <span class="hl-amber">모두 kabkee-main 한 대</span>에 있습니다
-- <span class="hl-red">컴퓨터 단위 사고(랜섬웨어·도난·전원)</span>에 3벌이 함께 노출 → <span class="hl-green">Deep Archive 사본 추가</span> (p.37)
+- <span class="hl-red">컴퓨터 단위 사고(랜섬웨어·도난·전원)</span>에 3벌이 함께 노출 → <span class="hl-amber">주간회의 논의</span> (p.37)
 
 </div>
 </div>
@@ -821,7 +821,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🧊 4번째 사본 — 별도 AWS 계정 Glacier Deep Archive <span class="badge-new">10/23 오너 선택 · 구현 전</span>
+## 🧊 추가 백업 선호안 — 별도 AWS 계정 Glacier Deep Archive <span class="badge">주간회의 논의 · 미결정</span>
 
 <div class="cols">
 <div class="col">
@@ -905,7 +905,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 <span class="hl-gray">9/14 원안</span> — 캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 설정으로 못 지우는 파일 항목 기록은 <span class="hl-green">파일시스템 교체로 없앴습니다</span>. 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했고, 매일 바뀐 장소를 받아 디스크 2개에 복사하기로 했습니다.
 
-<span class="hl-blue">10/23 개정</span> — 10/22 XML 88개 수정이 장소 71곳 57.2GiB 재다운로드로 번질 뻔해, <span class="hl-green">바뀐 파일만 받는 변경분 세대</span>로 전환했습니다. 막힌 57.2GiB는 승인하지 않고 새 방식으로 <span class="hl-green">2.3MB</span>에 처리했습니다. 복원 도구의 권한 보존도 <span class="hl-green">10/23에 고쳤습니다</span>. 사본 3벌이 한 컴퓨터에 있는 문제는 <span class="hl-green">별도 AWS 계정 Deep Archive</span>로 풀기로 했습니다(구현 전).
+<span class="hl-blue">10/23 개정</span> — 10/22 XML 88개 수정이 장소 71곳 57.2GiB 재다운로드로 번질 뻔해, <span class="hl-green">바뀐 파일만 받는 변경분 세대</span>로 전환했습니다. 막힌 57.2GiB는 승인하지 않고 새 방식으로 <span class="hl-green">2.3MB</span>에 처리했습니다. 복원 도구의 권한 보존도 <span class="hl-green">10/23에 고쳤습니다</span>. 사본 3벌이 한 컴퓨터에 있는 문제(랜섬웨어 한 번에 전부 손실 가능)는 <span class="hl-amber">주간회의에서 추가 백업 방식을 논의</span>합니다(선호안 Deep Archive).
 
 <hr>
 

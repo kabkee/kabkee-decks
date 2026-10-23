@@ -68,9 +68,9 @@
 </tr>
 <tr>
 <td>10/23</td>
-<td>3번째 사본을 <span class="hl-green">별도 AWS 계정 Glacier Deep Archive</span>에 두기로 결정 (구현 전)</td>
-<td>사본 3벌이 kabkee-main 한 대에 있음</td>
-<td>오너 선택 A</td>
+<td>추가 백업(다른 장소·다른 계정 사본)을 <span class="hl-amber">주간회의 안건</span>으로 올림 · 선호안 Deep Archive</td>
+<td>사본 3벌이 kabkee-main 한 대 → 랜섬웨어에 함께 노출</td>
+<td>오너 지시</td>
 </tr>
 </tbody>
 </table>
@@ -102,7 +102,7 @@
 <ul>
 <li>오래된 tar를 지울 때 <span class="hl-red">아직 참조 중인 tar를 지우면 복원 불가</span> → 참조 계산으로 보호</li>
 <li>복원 도구가 권한을 버리던 문제는 <span class="hl-green">10/23 수정</span> → <code>--out-tar</code>로 만든 tar를 서버에서 <code>tar -xp</code></li>
-<li>원본·2차 사본 3벌이 <span class="hl-amber">한 컴퓨터(kabkee-main)</span>에 있음 → <span class="hl-green">Deep Archive 사본 추가로 결정</span> (p.37)</li>
+<li>원본·2차 사본 3벌이 <span class="hl-amber">한 컴퓨터(kabkee-main)</span>에 있음 → <span class="hl-amber">주간회의에서 추가 백업 논의</span> (p.37)</li>
 </ul>
 </div>
 </div>
@@ -1386,7 +1386,7 @@
 <ul>
 <li>9/14 원안은 2차 사본을 <span class="hl-blue">다른 컴퓨터</span>의 디스크 2개에 두었습니다</li>
 <li>지금은 원본 백업(H:)과 2차 사본(D:·E:)이 <span class="hl-amber">모두 kabkee-main 한 대</span>에 있습니다</li>
-<li><span class="hl-red">컴퓨터 단위 사고(랜섬웨어·도난·전원)</span>에 3벌이 함께 노출 → <span class="hl-green">Deep Archive 사본 추가</span> (p.37)</li>
+<li><span class="hl-red">컴퓨터 단위 사고(랜섬웨어·도난·전원)</span>에 3벌이 함께 노출 → <span class="hl-amber">주간회의 논의</span> (p.37)</li>
 </ul>
 </div>
 </div>
@@ -1436,7 +1436,7 @@
 </table>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="37" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="37" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="39">
-<h2 id="%F0%9F%A7%8A-4%EB%B2%88%EC%A7%B8-%EC%82%AC%EB%B3%B8--%EB%B3%84%EB%8F%84-aws-%EA%B3%84%EC%A0%95-glacier-deep-archive-span-classbadge-new1023-%EC%98%A4%EB%84%88-%EC%84%A0%ED%83%9D--%EA%B5%AC%ED%98%84-%EC%A0%84span"><img class="emoji" draggable="false" alt="🧊" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f9ca.svg" data-marp-twemoji=""/> 4번째 사본 — 별도 AWS 계정 Glacier Deep Archive <span class="badge-new">10/23 오너 선택 · 구현 전</span></h2>
+<h2 id="%F0%9F%A7%8A-%EC%B6%94%EA%B0%80-%EB%B0%B1%EC%97%85-%EC%84%A0%ED%98%B8%EC%95%88--%EB%B3%84%EB%8F%84-aws-%EA%B3%84%EC%A0%95-glacier-deep-archive-span-classbadge%EC%A3%BC%EA%B0%84%ED%9A%8C%EC%9D%98-%EB%85%BC%EC%9D%98--%EB%AF%B8%EA%B2%B0%EC%A0%95span"><img class="emoji" draggable="false" alt="🧊" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f9ca.svg" data-marp-twemoji=""/> 추가 백업 선호안 — 별도 AWS 계정 Glacier Deep Archive <span class="badge">주간회의 논의 · 미결정</span></h2>
 <div class="cols">
 <div class="col">
 <h3 id="%F0%9F%92%B0-%EB%B9%84%EC%9A%A9--%EB%84%A3%EA%B3%A0-%EB%91%90%EB%8A%94-%EA%B1%B4-%EA%B1%B0%EC%9D%98-%EA%B3%B5%EC%A7%9C-%C2%AB%EA%BA%BC%EB%82%BC-%EB%95%8C%C2%BB%EB%A7%8C-%EB%B9%84%EC%9A%A9"><img class="emoji" draggable="false" alt="💰" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f4b0.svg" data-marp-twemoji=""/> 비용 — 넣고 두는 건 거의 공짜, «꺼낼 때»만 비용</h3>
@@ -1581,7 +1581,7 @@
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="39" data-class="closing" data-theme="clean" lang="C" class="closing" style="--class:closing;--theme:clean;">
 <h2 id="%EC%A0%95%EB%A6%AC">정리</h2>
 <p><span class="hl-gray">9/14 원안</span> — 캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 설정으로 못 지우는 파일 항목 기록은 <span class="hl-green">파일시스템 교체로 없앴습니다</span>. 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했고, 매일 바뀐 장소를 받아 디스크 2개에 복사하기로 했습니다.</p>
-<p><span class="hl-blue">10/23 개정</span> — 10/22 XML 88개 수정이 장소 71곳 57.2GiB 재다운로드로 번질 뻔해, <span class="hl-green">바뀐 파일만 받는 변경분 세대</span>로 전환했습니다. 막힌 57.2GiB는 승인하지 않고 새 방식으로 <span class="hl-green">2.3MB</span>에 처리했습니다. 복원 도구의 권한 보존도 <span class="hl-green">10/23에 고쳤습니다</span>. 사본 3벌이 한 컴퓨터에 있는 문제는 <span class="hl-green">별도 AWS 계정 Deep Archive</span>로 풀기로 했습니다(구현 전).</p>
+<p><span class="hl-blue">10/23 개정</span> — 10/22 XML 88개 수정이 장소 71곳 57.2GiB 재다운로드로 번질 뻔해, <span class="hl-green">바뀐 파일만 받는 변경분 세대</span>로 전환했습니다. 막힌 57.2GiB는 승인하지 않고 새 방식으로 <span class="hl-green">2.3MB</span>에 처리했습니다. 복원 도구의 권한 보존도 <span class="hl-green">10/23에 고쳤습니다</span>. 사본 3벌이 한 컴퓨터에 있는 문제(랜섬웨어 한 번에 전부 손실 가능)는 <span class="hl-amber">주간회의에서 추가 백업 방식을 논의</span>합니다(선호안 Deep Archive).</p>
 <hr />
 <p>Indyspot AI Corp  ·  Engineering Manager  ·  2026-09-14 작성  ·  2026-10-23 개정</p>
 </section>
