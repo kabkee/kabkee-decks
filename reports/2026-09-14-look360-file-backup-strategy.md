@@ -67,7 +67,7 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14 �
 
 - 오래된 tar를 지울 때 <span class="hl-red">아직 참조 중인 tar를 지우면 복원 불가</span> → 참조 계산으로 보호
 - 복원 도구가 권한을 버리던 문제는 <span class="hl-green">10/23 수정</span> → `--out-tar`로 만든 tar를 서버에서 `tar -xp`
-- 원본·2차 사본 3벌이 <span class="hl-amber">한 컴퓨터(kabkee-main)</span>에 있음 → <span class="hl-amber">주간회의에서 추가 백업 논의</span> (p.37)
+- 원본·2차 사본 3벌이 <span class="hl-amber">한 컴퓨터(kabkee-main)</span>에 있음 → <span class="hl-amber">주간회의에서 추가 백업 논의</span> (p.38)
 
 </div>
 </div>
@@ -334,7 +334,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## ✅ 왜 B를 선택했나 <span class="badge">복원 부분 변경 → p.34</span>
+## ✅ 왜 B를 선택했나 <span class="badge">복원 부분 변경 → p.35</span>
 
 <div class="cols">
 <div class="col">
@@ -384,7 +384,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 📅 주기와 보관 규칙 — 실측 변경 빈도로 정했습니다 <span class="badge">유지 · 삭제 방식 보완 → p.32</span>
+## 📅 주기와 보관 규칙 — 실측 변경 빈도로 정했습니다 <span class="badge">유지 · 삭제 방식 보완 → p.33</span>
 
 <div class="cols">
 <div class="col">
@@ -420,7 +420,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🕓 일정과 재부팅 (9/14 원안) <span class="badge">변경됨 → p.35</span>
+## 🕓 일정과 재부팅 (9/14 원안) <span class="badge">변경됨 → p.36</span>
 
 | 시각 | 무엇이 | 어디서 | 비고 |
 |---|---|---|---|
@@ -450,7 +450,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## ⚖️ 장소 단위 vs 파일 단위 (9/14 판단) <span class="badge">10/22 번복 → p.29</span>
+## ⚖️ 장소 단위 vs 파일 단위 (9/14 판단) <span class="badge">10/22 번복 → p.30</span>
 
 | 항목 | 파일 단위 증분 | <span class="hl-green">장소 단위 갱신 (선택)</span> |
 |---|---|---|
@@ -465,7 +465,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## ♻️ 복원할 때 주의 — 권한까지 살리려면 «서버 폴더»에 풉니다 <span class="badge">절차 변경 → p.34</span>
+## ♻️ 복원할 때 주의 — 권한까지 살리려면 «서버 폴더»에 풉니다 <span class="badge">절차 변경 → p.35</span>
 
 백업 tar에는 파일마다 <span class="hl-green">주인·권한(www-data)</span>이 함께 기록돼 있습니다. 어디에 푸느냐에 따라 이 정보가 살기도 하고 사라지기도 합니다.
 
@@ -479,7 +479,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🧰 필요한 것과 비용 (9/14 원안) <span class="badge">대상 버킷 추가 → p.35</span>
+## 🧰 필요한 것과 비용 (9/14 원안) <span class="badge">대상 버킷 추가 → p.36</span>
 
 <div class="cols">
 <div class="col">
@@ -535,38 +535,34 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
-## 🎯 결정 현황과 후속 일정 (9/14 시점 기록)
+## 🎯 결정 현황 — 9/14 기록과 <span class="hl-blue">10/23 현재</span> <span class="badge">변경 3건</span>
 
-<div class="cols">
-<div class="col">
+9/14에 확정했던 항목은 왼쪽 그대로 두고, 지금 상태를 오른쪽에 덧붙였습니다.
 
-### 결정 현황
+| 항목 | 9/14 상태 | 10/23 현재 |
+|---|---|---|
+| 방식 · 인증 | 확정 · 준비 완료 | 유지 |
+| 주기 · 보관 규칙 | 확정 (매일 04:00 · 기간 기준) | 유지 · <span class="hl-amber">삭제는 참조 계산 후</span> (p.33) |
+| 갱신 단위 | 장소 전체 tar | <span class="hl-red">변경</span> → <span class="hl-green">바뀐 파일만</span> (10/22 · p.32) |
+| 체크섬 재확인 · 대량 변경 확인 | 확정 | 유지 · 판정 기준을 <span class="hl-amber">실제 받을 양</span>으로 |
+| 백업 대상 | `look360-v1-files` | <span class="hl-red">변경</span> → <span class="hl-green">+ `l3-platform-file-storage`</span> (10/08) |
+| 2차 사본 | 이 컴퓨터 디스크 2개 · 매일 | <span class="hl-red">변경</span> → <span class="hl-amber">kabkee-main 한 대</span>에 모임 · 회의 안건 (p.38) |
+| 알림 | 실패·확인 필요 시에만 | 유지 |
+| 구현 | 완료 · 9/14 가동 | 유지 · 10/22 변경분 방식으로 교체 |
+| 파일시스템 교체 | 완료 · 9/14 19:31 | 유지 |
 
-| 항목 | 상태 |
-|---|---|
-| 방식 · 인증 | <span class="hl-green">확정 · 준비 완료</span> |
-| 주기 · 보관 규칙 | <span class="hl-green">확정</span> (매일 04:00 · 기간 기준) |
-| 체크섬 재확인 · 대량 변경 확인 | <span class="hl-green">확정</span> |
-| 2차 사본 | <span class="hl-green">확정</span> (이 컴퓨터 디스크 2개 · 매일) |
-| 알림 | 실패·확인 필요 시에만 (주간 요약 없음) |
-| 구현 | <span class="hl-green">완료 · 9/14 가동 시작</span> |
-| 파일시스템 교체 | <span class="hl-green">완료 · 9/14 19:31</span> |
+---
 
-</div>
-<div class="col">
+## 📋 9/14에 예정했던 후속 작업 → 결과 <span class="badge-date">10/23 조회</span>
 
-### 예정된 후속 작업
+- <span class="badge-date">9/14 저녁</span> archive2 복사·sha256 검증 → <span class="hl-green">✅ 9/14 20:06 완료</span>
+- <span class="badge-date">9/15~16</span> 첫 S3 목록 → 첫 증분 갱신 → <span class="hl-green">✅ 9/15 04:11 실행</span>
+- <span class="badge-date">9/16~17</span> 임시 1일 규칙 → <span class="hl-green">버킷 전체 30일 규칙</span> → <span class="hl-green">✅ 적용</span> (두 버킷 모두)
+- <span class="badge-date">9/16~17</span> 기존 파일시스템 삭제 → <span class="hl-green">✅ 삭제됨</span> (현재 새 FS 1개뿐)
+- <span class="badge-date">9/17 10:00</span> Slack 자동 보고 → <span class="hl-gray">스크립트는 있음 · 발송 기록은 이번에 확인 안 함</span>
+- 월 예산 알림 재조정 (당시 $200 · CloudWatch $300) → <span class="hl-amber">⏳ 아직 $200 · $300 그대로</span>
 
-- <span class="badge-date">9/14 저녁</span> 2차 백업 archive2 복사·sha256 검증 완료 확인 (archive1은 통과)
-- <span class="badge-date">9/15~16</span> 첫 S3 목록 도착 → 첫 증분 갱신 결과 확인
-- <span class="badge-date">9/16~17</span> 구버전 정리 완료 확인 → 임시 1일 규칙을 <span class="hl-green">버킷 전체 30일 규칙</span>으로 교체
-- <span class="badge-date">9/16~17</span> 기존 파일시스템 삭제 (접근 지점 → 연결 지점 → 파일시스템 순)
-- <span class="badge-date">9/17 10:00</span> Slack 자동 보고 — 새 파일시스템 용량 + 삭제·규칙 교체 알림
-- 월 예산 알림 금액 재조정 (현재 $200 · CloudWatch $300)
-
-</div>
-</div>
-
+> 9/14 원문 일정은 지우지 않고 화살표(→) 뒤에 결과를 붙였습니다. 「⏳」은 아직 처리되지 않은 항목입니다.
 ---
 
 ## 🧯 이번에 확인한 운영 함정 (9월)
@@ -801,7 +797,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 - 9/14 원안은 2차 사본을 <span class="hl-blue">다른 컴퓨터</span>의 디스크 2개에 두었습니다
 - 지금은 원본 백업(H:)과 2차 사본(D:·E:)이 <span class="hl-amber">모두 kabkee-main 한 대</span>에 있습니다
-- <span class="hl-red">컴퓨터 단위 사고(랜섬웨어·도난·전원)</span>에 3벌이 함께 노출 → <span class="hl-amber">주간회의 논의</span> (p.37)
+- <span class="hl-red">컴퓨터 단위 사고(랜섬웨어·도난·전원)</span>에 3벌이 함께 노출 → <span class="hl-amber">주간회의 논의</span> (p.38)
 
 </div>
 </div>
@@ -841,7 +837,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ### 🗑️ 삭제 규칙 — <span class="hl-red">180일 전에 지우면 6개월치는 낸다</span>
 
-- 올리자마자 지워도 <span class="hl-amber">월 비용 × 6개월</span>이 청구됩니다 (490GB 기준 약 $6) → 계산과 예시는 p.38
+- 올리자마자 지워도 <span class="hl-amber">월 비용 × 6개월</span>이 청구됩니다 (490GB 기준 약 $6) → 계산과 예시는 p.39
 
 ### 🔐 설계 원칙
 
