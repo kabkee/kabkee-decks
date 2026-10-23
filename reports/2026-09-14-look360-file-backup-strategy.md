@@ -32,6 +32,7 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14 �
 | 10/22 | 증분 방식을 <span class="hl-green">바뀐 파일만 담는 변경분(delta) 세대</span>로 전환 | 작은 변경이 여러 장소에 흩어지면 전송량 폭증 | IND-8673 |
 | 10/23 | 검증 7축 통과 · 첫 정기 실행 3건 정상 | — | IND-8685 |
 | 10/23 | 복원 도구가 <span class="hl-green">소유자·권한을 살리도록</span> 수정 · `--out-tar` 추가 | 새 복원 도구가 권한을 버리고 있었음 | 백업 `fd1c54e` |
+| 10/23 | 3번째 사본을 <span class="hl-green">별도 AWS 계정 Glacier Deep Archive</span>에 두기로 결정 (구현 전) | 사본 3벌이 kabkee-main 한 대에 있음 | 오너 선택 A |
 
 ---
 
@@ -66,7 +67,7 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14 �
 
 - 오래된 tar를 지울 때 <span class="hl-red">아직 참조 중인 tar를 지우면 복원 불가</span> → 참조 계산으로 보호
 - 복원 도구가 권한을 버리던 문제는 <span class="hl-green">10/23 수정</span> → `--out-tar`로 만든 tar를 서버에서 `tar -xp`
-- 원본·2차 사본 3벌이 <span class="hl-amber">한 컴퓨터(kabkee-main)</span>에 있음
+- 원본·2차 사본 3벌이 <span class="hl-amber">한 컴퓨터(kabkee-main)</span>에 있음 → <span class="hl-green">Deep Archive 사본 추가로 결정</span> (p.37)
 
 </div>
 </div>
@@ -796,11 +797,11 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 </div>
 <div class="col">
 
-### ⚠️ 판단이 필요한 점
+### ⚠️ 발견한 위험 → 10/23 결정
 
 - 9/14 원안은 2차 사본을 <span class="hl-blue">다른 컴퓨터</span>의 디스크 2개에 두었습니다
 - 지금은 원본 백업(H:)과 2차 사본(D:·E:)이 <span class="hl-amber">모두 kabkee-main 한 대</span>에 있습니다
-- 디스크 고장은 막지만 <span class="hl-red">컴퓨터 단위 사고(랜섬웨어·도난·전원)</span>에는 사본 3벌이 함께 노출됩니다
+- <span class="hl-red">컴퓨터 단위 사고(랜섬웨어·도난·전원)</span>에 3벌이 함께 노출 → <span class="hl-green">Deep Archive 사본 추가</span> (p.37)
 
 </div>
 </div>
@@ -820,6 +821,42 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 ---
 
+## 🧊 4번째 사본 — 별도 AWS 계정 Glacier Deep Archive <span class="badge-new">10/23 오너 선택 · 구현 전</span>
+
+<div class="cols">
+<div class="col">
+
+### 💰 비용 — 넣고 두는 건 거의 공짜, «꺼낼 때»만 비용
+
+| 항목 (서울 리전 · AWS 공식 가격표) | 단가 | 이번 규모 약 490GB |
+|---|---|---|
+| 저장 | <span class="hl-green">$0.002 / GB·월</span> | <span class="hl-green">월 약 $1 (약 1,450원)</span> |
+| 올리기 (PUT 요청) | $0.06 / 1,000건 | 첫 업로드 tar 2,311개 약 $0.2 · 매일 몇 개는 사실상 0 |
+| 올리기 (전송) | 무료 | 0 |
+| 꺼내기 준비 (대량 · 최대 48시간) | $0.005 / GB | 전체 약 $2.5 · 장소 1GB 약 7원 |
+| 내려받기 (인터넷 전송) | $0.126 / GB | <span class="hl-amber">전체 약 $50~62</span> · 장소 1GB 약 190원 |
+
+</div>
+<div class="col">
+
+### 🗑️ 삭제 규칙 — «그냥 지우면 끝»은 <span class="hl-amber">180일이 지난 뒤부터</span> 맞습니다
+
+- 최소 보관 기간 <span class="hl-red">180일</span>: 그 전에 지우면 <span class="hl-amber">남은 일수만큼 저장비를 한 번에</span> 청구 ($0.002 / GB·월 비례)
+- 오늘 올리고 바로 전부 지워도 최대 <span class="hl-amber">6개월치 저장비 약 $6 (약 8,700원)</span>로 끝나고, 그 밖의 추가 비용은 없습니다
+- 180일이 지난 뒤 지우면 <span class="hl-green">추가 비용 0</span>
+
+### 🔐 설계 원칙
+
+- <span class="hl-green">별도 AWS 계정</span> → 지금 계정에 사고가 나도 남음
+- kabkee-main에는 <span class="hl-green">«올리기만 되고 지우기는 안 되는»</span> 권한만 부여 → 이 컴퓨터가 감염돼도 못 지움
+
+</div>
+</div>
+
+> 출처: AWS 공식 가격 파일 `AmazonS3GlacierDeepArchive` · `AmazonS3` · `AWSDataTransfer` (서울 리전, 10/23 조회) · S3 문서 「Comparing the Amazon S3 storage classes」(최소 보관 180일 · 객체당 메타데이터 40KB — tar 묶음이라 무시 수준). 내려받기 금액은 월 100GB 무료 전송분 사용 여부에 따라 달라집니다.
+
+---
+
 <!-- _class: closing -->
 <!-- _paginate: false -->
 
@@ -827,7 +864,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 
 <span class="hl-gray">9/14 원안</span> — 캐시가 만든 비용은 <span class="hl-green">설정으로 끄고</span>, 설정으로 못 지우는 파일 항목 기록은 <span class="hl-green">파일시스템 교체로 없앴습니다</span>. 파일 1,657만 개는 <span class="hl-green">AWS 밖에 검증된 사본</span>으로 확보했고, 매일 바뀐 장소를 받아 디스크 2개에 복사하기로 했습니다.
 
-<span class="hl-blue">10/23 개정</span> — 10/22 XML 88개 수정이 장소 71곳 57.2GiB 재다운로드로 번질 뻔해, <span class="hl-green">바뀐 파일만 받는 변경분 세대</span>로 전환했습니다. 막힌 57.2GiB는 승인하지 않고 새 방식으로 <span class="hl-green">2.3MB</span>에 처리했습니다. 복원 도구의 권한 보존도 <span class="hl-green">10/23에 고쳤습니다</span>. 남은 숙제는 <span class="hl-amber">사본 3벌이 한 컴퓨터에 있는 점</span>입니다.
+<span class="hl-blue">10/23 개정</span> — 10/22 XML 88개 수정이 장소 71곳 57.2GiB 재다운로드로 번질 뻔해, <span class="hl-green">바뀐 파일만 받는 변경분 세대</span>로 전환했습니다. 막힌 57.2GiB는 승인하지 않고 새 방식으로 <span class="hl-green">2.3MB</span>에 처리했습니다. 복원 도구의 권한 보존도 <span class="hl-green">10/23에 고쳤습니다</span>. 사본 3벌이 한 컴퓨터에 있는 문제는 <span class="hl-green">별도 AWS 계정 Deep Archive</span>로 풀기로 했습니다(구현 전).
 
 <hr>
 
