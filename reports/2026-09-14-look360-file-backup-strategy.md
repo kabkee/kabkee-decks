@@ -770,7 +770,7 @@ AWS Backup, 로컬 백업, 버저닝만 쓰는 방법을 비용·보호 범위·
 |---|---|---|
 | ① 재구성 | kabkee-main에서 `incremental_backup.py [--src 버킷] --restore <장소> [--at YYYYMMDD] --out <빈 폴더> --out-tar <장소>.tar` | 목록표대로 필요한 tar에서 꺼내고 md5 대조 · <span class="hl-green">원래 소유자·권한을 담은 tar 1개</span> 생성 |
 | ② 반영 | tar를 서버로 옮겨 root로 `tar -xp --numeric-owner -f <장소>.tar -C /var/www/html/files` | <span class="hl-green">9/14 절차와 같은 명령</span> · 약 1분 안에 S3 반영 · 기존 파일은 구버전으로 30일 남음 |
-| 기록 | 리포트 `owners` 에 소유자·권한 분포가 찍힘 | `0:33 0644`(root 소유)가 있으면 <span class="hl-amber">원본 S3부터 root 소유</span>였다는 뜻 |
+| 기록 | 리포트 `owners` 에 소유자·권한 분포가 찍힘 | `0:33 0644`가 보이면 복원 후 그 파일만 `chown 33:33` · <span class="hl-amber">권한만 바뀐 변경은 백업이 감지 못함</span>(내용·ETag 동일 — 10/23 XML 80개) |
 | 🚫 금지 | 복원 결과를 `aws s3 cp/sync`로 직접 올리기 | 권한 정보가 빠져 9/3 권한 복구 사고가 재발 |
 
 > 🔧 10/22 첫 버전의 복원 도구는 파일을 <span class="hl-red">소유자·권한 없이</span> 써서 손으로 권한을 맞춰야 했습니다 → <span class="hl-green">10/23 수정</span>. `pano__0__352`(기준본+변경분)를 root로 풀어 원본 tar 헤더와 <span class="hl-green">7,324건 모두 일치</span>를 확인했습니다(selftest 85/85). 실제 서버 복원 리허설은 아직입니다.
