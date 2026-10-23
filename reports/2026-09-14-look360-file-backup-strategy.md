@@ -31,8 +31,8 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-09-14 �
 | 10/22 | 04:00 갱신이 <span class="hl-red">57.2GiB 안전장치</span>에 걸려 멈춤 → <span class="hl-amber">승인 안 함</span> | 실제 변경은 XML 88개(2.3MB)뿐 · 오너 결정 | IND-8672 |
 | 10/22 | 증분 방식을 <span class="hl-green">바뀐 파일만 담는 변경분(delta) 세대</span>로 전환 | 작은 변경이 여러 장소에 흩어지면 전송량 폭증 | IND-8673 |
 | 10/23 | 검증 7축 통과 · 첫 정기 실행 3건 정상 | — | IND-8685 |
-| 10/23 | 복원 도구가 <span class="hl-green">소유자·권한을 살리도록</span> 수정 · `--out-tar` 추가 | 새 복원 도구가 권한을 버리고 있었음 | 백업 `fd1c54e` |
-| 10/23 | 추가 백업(다른 장소·다른 계정 사본)을 <span class="hl-amber">주간회의 안건</span>으로 올림 · 선호안 Deep Archive | 사본 3벌이 kabkee-main 한 대 → 랜섬웨어에 함께 노출 | 오너 지시 |
+| 10/23 | 복원 도구가 <span class="hl-green">권한을 살리도록</span> 수정 | 권한을 버리고 있었음 | 백업 `fd1c54e` |
+| 10/23 | 추가 백업을 <span class="hl-amber">주간회의 안건</span>으로 (선호안 Deep Archive) | 사본 3벌이 한 컴퓨터 → 랜섬웨어에 함께 노출 | 오너 지시 |
 
 ---
 
