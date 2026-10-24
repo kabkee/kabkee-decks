@@ -1,5 +1,5 @@
+headersOrigin = "config"
 plugins = []
-headers = []
 redirects = []
 
 [functions]
@@ -23,3 +23,9 @@ publishOrigin = "config"
 [build.processing.js]
 
 [build.services]
+
+[[headers]]
+for = "/*"
+
+[headers.values]
+X-Robots-Tag = "noindex, nofollow, noarchive, nosnippet, noimageindex"
