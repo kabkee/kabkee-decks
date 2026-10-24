@@ -1,2 +1,14 @@
 [build]
   publish = "."
+
+# ===== 검색엔진 색인 전면 차단 (2026-10-24 오너 결정) =====
+# kabkee-decks 는 주간 업무 보고·보안 사고 보고·내부 감사 자료가 섞인
+# 개인 작업물 저장소다. 링크를 직접 받은 사람은 그대로 볼 수 있지만,
+# 검색 결과에는 어떤 페이지도 노출되지 않아야 한다.
+#   · X-Robots-Tag  : 이미 색인된 페이지를 "색인에서 빼라"고 적극 지시 (robots.txt 보다 강력)
+#   · robots.txt    : 신규 크롤링 자체를 차단
+# 공개용 콘텐츠는 Netlify 가 아니라 kabkee.github.io 블로그에 올린다.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive, nosnippet, noimageindex"

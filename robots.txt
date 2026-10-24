@@ -1,0 +1,5 @@
+# kabkee-decks — 검색엔진 색인 금지 (2026-10-24)
+# 업무 보고·보안 사고 보고 등 비공개성 자료가 포함된 개인 저장소입니다.
+# 공개용 콘텐츠는 https://kabkee.github.io 에 있습니다.
+User-agent: *
+Disallow: /
