@@ -119,6 +119,23 @@ const SHOTS = [
   { id: 'story-53',        site: 'fe', url: '/vr/152165ca?story=5-3',    wait: 12000, waitUntil: 'load',
     actions: [{ do: 'click', sel: 'button:has-text("시작하기")' }, { do: 'wait', ms: 9000 }],
     desc: 'VR 스토리 아침고요 5-3 — 매체 수명주기 공통 장치 (IND-8041)' },
+  // ── 10/20~10/26 추가분 (2026-10-26 추가)
+  { id: 'w1026-faq-en',     site: 'fe', url: '/faq',                      wait: 5000, lang: 'en',
+    desc: 'FAQ — 영어 사이트 언어로 제목·본문 자동번역 (IND-8526)' },
+  { id: 'w1026-licenses',   site: 'fe', url: '/licenses',                 wait: 4000,
+    desc: '「소프트웨어 라이선스」 — 고지 의무 항목만 (IND-8529)' },
+  { id: 'w1026-extvr',      site: 'fe', url: '/vr-info/nsUMZzRN',         wait: 5000,
+    desc: '외부VR 상세 — 기획 디자인 일치 · 탭 3개 · ✦ 버튼 (IND-8591)' },
+  { id: 'w1026-vrinfo-badges', site: 'fe', url: '/vr-info/hmsjc4mf?tab=panos', wait: 5000,
+    desc: '/vr-info 파노라마 그리드 — 썸네일 좌하단 형식·AI 배지 (IND-8528)' },
+  { id: 'w1026-yt360-joypad', site: 'fe', url: '/vr/ind8027fx?pano=33663', wait: 12000, waitUntil: 'load',
+    desc: 'YouTube 360 장면 — YouTube 자체 컨트롤 · 강제 clearMode · 조이패드 (IND-8535·IND-8625)' },
+  { id: 'w1026-kaypark',    site: 'fe', url: '/vr/o1vj1ty0?pano=29315',   wait: 12000, waitUntil: 'load',
+    desc: '2529 Kay Park 전시회 — 작품 핫스팟 복구(반짝임 제거) (IND-8648)' },
+  { id: 'w1026-bookmark',   site: 'fe', url: '/channel/channel-cd5q7v89?tab=bookmark', wait: 5000,
+    desc: '채널 북마크 탭 — 소속 콘텐츠 4분할 자동 썸네일 (IND-8531·IND-8621)' },
+  { id: 'w1026-vrlist-mobile', site: 'fe', url: '/vr-list',               wait: 5000, device: 'mobile',
+    desc: 'VR 목록 모바일 — 가격 ₩ 아이콘·필터 (IND-8590·IND-8595)' },
 ];
 
 const CROPS = {
