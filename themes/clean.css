@@ -124,8 +124,8 @@ section ul ul > li::before {
 
 /* ── 강조 ── */
 section strong { color: var(--ink); font-weight: 700; }
-/* 표 머리글은 배경이 --ink 라서 굵은 글씨가 배경에 묻힌다 — 머리글 글자색을 따른다 */
-section th strong { color: inherit; }
+/* 표 머리글은 배경이 --ink 라서 굵은 글씨가 배경에 묻힌다 — 밝은 배지로 띄워 강조 열을 표시한다 */
+section th strong { background: var(--accent-bg); color: var(--ink); font-weight: 800; padding: 2px 9px; border-radius: 4px; }
 section em     { color: var(--muted); font-style: italic; }
 
 /* ── 인라인 코드 ── */
