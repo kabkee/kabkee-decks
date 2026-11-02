@@ -10,8 +10,9 @@
  *
  * 출력: weekly-reports/assets/<날짜>/NN-<id>.jpg  (2배 해상도 JPEG — 슬라이드 축소 표시 기준 충분히 선명하고 PNG 대비 1/5 용량)
  *
- * 인증: 관리자(:5277)는 비밀번호 로그인 대신 nestjs .env 의 JWT_ACCESS_SECRET 으로
- *       자가서명한 accessToken 쿠키를 주입한다 (사용자 FE 와 동일한 인증 로직·계정).
+ * 인증: 관리자(:5277)는 ADMIN 권한을 가진 QC 계정(.env TEST_CLIENT_EMAIL/PASSWORD)으로
+ *       client FE(:5174)에 실제 로그인하고, 같은 도메인 쿠키로 어드민에 들어간다 (오너 지시 2026-11-03).
+ *       로그인이 실패하면 예전 방식(JWT_ACCESS_SECRET 자가서명 쿠키 주입)으로 대체한다.
  *       🔴 개발 서버 전용. 운영 도메인에는 쓰지 말 것.
  *
  * 실패는 조용히 넘기지 않는다 — 화면별 성공/실패를 표로 출력하고,
@@ -136,6 +137,23 @@ const SHOTS = [
     desc: '채널 북마크 탭 — 소속 콘텐츠 4분할 자동 썸네일 (IND-8531·IND-8621)' },
   { id: 'w1026-vrlist-mobile', site: 'fe', url: '/vr-list',               wait: 5000, device: 'mobile',
     desc: 'VR 목록 모바일 — 가격 ₩ 아이콘·필터 (IND-8590·IND-8595)' },
+  // ── 2026-11-04 덱 (어드민 정합화 · 오너 지시로 QC 계정 로그인 경유 캡처)
+  { id: 'w1104-admin-place-list', site: 'admin', url: '/place-management', wait: 6000,
+    desc: '어드민 장소 관리 — 유형/테마 2축 필터 · 유형 컬럼 · 지역 검색 (IND-8923)' },
+  { id: 'w1104-admin-place-modal', site: 'admin', url: '/place-management', wait: 6000,
+    actions: [{ do: 'click', sel: 'button:has-text("새 장소 추가")' }, { do: 'wait', ms: 3000 }],
+    desc: '어드민 장소 추가 팝업 — 취소·저장 버튼 하단 고정 (IND-9065)' },
+  { id: 'w1104-admin-theme', site: 'admin', url: '/theme-management', wait: 6000,
+    desc: '어드민 테마 관리 — 키·분류·번역 정상 표시 · 활성 여부 (IND-8924)' },
+  { id: 'w1104-admin-region-matching', site: 'admin', url: '/admin/regions/matching?tab=aliases', wait: 6000,
+    actions: [{ do: 'click', sel: 'button:has-text("지역 별칭"), .v-tab:has-text("지역 별칭")' }, { do: 'wait', ms: 2500 }],
+    desc: '어드민 지역 매칭 — 미연결 장소·지역 별칭 단일 페이지 통합 · 별칭 탭 (IND-8931)' },
+  { id: 'w1104-admin-vrstory', site: 'admin', url: '/vrstory', wait: 6000,
+    desc: '어드민 VR스토리 목록 — 90건 · 미리보기/편집 (IND-8943)' },
+  { id: 'w1104-admin-vrstory-viewer', site: 'admin', url: '/vrstory/91/viewer', wait: 12000, waitUntil: 'load',
+    // 콘텐츠 언어(일본어) ≠ 사이트 언어라 자동번역 확인 모달이 뜬다 — 「원문으로 보기」로 닫고 화면을 찍는다
+    actions: [{ do: 'clickFrameIfAny', sel: 'button:has-text("原文で視聴する"), button:has-text("원문으로 보기")' }, { do: 'wait', ms: 4000 }],
+    desc: '어드민 VR스토리 뷰어 복구 — 죽은 IP·제거된 embed 경로 수정 후 재생 · 챕터/XML 칩 표시 (IND-8943)' },
 ];
 
 const CROPS = {
@@ -202,6 +220,38 @@ function adminToken() {
   );
 }
 
+/** .env 값은 따옴표로 감싸져 있을 수 있다 */
+const unquote = (v) => v.trim().replace(/^['"]|['"]$/g, '');
+
+/**
+ * 어드민 로그인 — 오너 지시(2026-11-03): ADMIN 권한을 가진 QC 계정으로 client FE 에 «실제 로그인»한다.
+ * 어드민(:5277)은 client 와 같은 도메인(100.64.25.50)이라 로그인 쿠키를 그대로 쓴다.
+ * 어드민 라우터는 createWebHistory 라 경로에 `#` 을 붙이지 않는다.
+ * 🔴 개발 서버 전용. 운영 도메인에는 쓰지 말 것.
+ */
+async function loginAsQcAdmin(ctx) {
+  const envPath = path.join(API_REPO, '.env');
+  const env = fs.readFileSync(envPath, 'utf8');
+  const em = env.match(/^TEST_CLIENT_EMAIL=(.*)$/m);
+  const pm = env.match(/^TEST_CLIENT_PASSWORD=(.*)$/m);
+  if (!em || !pm) throw new Error(`.env 에 TEST_CLIENT_EMAIL/TEST_CLIENT_PASSWORD 없음: ${envPath}`);
+  const email = unquote(em[1]);
+  const pw = unquote(pm[1]);
+  const page = await ctx.newPage();
+  try {
+    await page.goto(`${FE}/login`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForTimeout(2500);
+    await page.fill('input[type="email"]', email);
+    await page.fill('input[type="password"]', pw);
+    await page.click('button[type="submit"], button:has-text("로그인")').catch(() => page.keyboard.press('Enter'));
+    await page.waitForTimeout(7000);
+    if (/\/login/.test(page.url())) throw new Error(`로그인 실패 — URL 이 아직 ${page.url()} (계정·비밀번호 확인)`);
+    console.log(`🔑 QC 계정 로그인 완료: ${email}`);
+  } finally {
+    await page.close();
+  }
+}
+
 async function alive(url) {
   try {
     const r = await fetch(url, { signal: AbortSignal.timeout(5000) });
@@ -251,9 +301,16 @@ const browser = await chromium.launch({
 const ctx = await browser.newContext({ viewport: VIEWPORT, locale: 'ko-KR', deviceScaleFactor: 2 });
 
 if (needAdmin) {
-  const token = adminToken();
-  await ctx.addCookies([{ name: 'accessToken', value: token, domain: '100.64.25.50', path: '/' }]);
-  console.log('🔑 관리자 accessToken 쿠키 주입 완료 (60분 유효)');
+  // 오너 지시(2026-11-03): ADMIN 권한 QC 계정으로 client FE 에 실제 로그인한다.
+  // 로그인이 실패하면 예전 방식(자가서명 JWT 쿠키 주입)으로 넘어간다 — 조용히 넘기지 않고 이유를 찍는다.
+  try {
+    await loginAsQcAdmin(ctx);
+  } catch (e) {
+    console.error(`⚠️  QC 계정 로그인 실패 → 자가서명 JWT 쿠키로 대체: ${e.message}`);
+    const token = adminToken();
+    await ctx.addCookies([{ name: 'accessToken', value: token, domain: '100.64.25.50', path: '/' }]);
+    console.log('🔑 관리자 accessToken 쿠키 주입 완료 (60분 유효)');
+  }
 }
 
 const page = await ctx.newPage();
@@ -301,6 +358,16 @@ for (const shot of targets) {
       if (a.do === 'fill')  await pg.locator(a.sel).first().fill(a.text);
       if (a.do === 'press') await pg.keyboard.press(a.key);
       if (a.do === 'click') await pg.locator(a.sel).first().click({ force: true });
+      // iframe 안의 요소 클릭 (어드민 VR스토리 뷰어의 embed 안 모달 등). frame 이 없으면 조용히 넘기지 않고 던진다.
+      if (a.do === 'clickFrame') {
+        await pg.frameLocator(a.frame ?? 'iframe').locator(a.sel).first().click({ force: true, timeout: a.timeout ?? 15000 });
+      }
+      // 있으면 클릭하고 없으면 넘어간다 (뜰 수도 안 뜰 수도 있는 모달)
+      if (a.do === 'clickFrameIfAny') {
+        const loc = pg.frameLocator(a.frame ?? 'iframe').locator(a.sel).first();
+        try { await loc.click({ force: true, timeout: a.timeout ?? 8000 }); }
+        catch { console.log(`    ↳ (건너뜀) iframe 요소 없음: ${a.sel}`); }
+      }
       if (a.do === 'wait')  await pg.waitForTimeout(a.ms);
     }
 
