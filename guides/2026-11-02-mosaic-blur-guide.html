@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>얼굴·번호판 가리기 — 자동 찾기와 블러 처리 방식</title>
-<meta name="description" content="Look360 360 작업실 — 얼굴·번호판 자동 찾기(로컬 YOLO · RTX 3060 / 지금은 CPU)와 블러 처리 방식, 설정값, 작업 순서">
+<meta name="description" content="Look360 360 작업실 — 얼굴·번호판 자동 찾기(로컬 YOLO · RTX 3060 GPU)와 블러 처리 방식, 설정값, 작업 순서">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -98,7 +98,7 @@
 <div class="g3">
 <div class="card hl"><div class="ic">🔒</div><h3>토큰 0 · 외부 호출 없음</h3><p>Claude·OpenAI 같은 외부 AI API 를 부르지 않아. 자동 찾기·블러에 쓰는 사진을 외부 서비스로 보내지 않아.</p></div>
 <div class="card"><div class="ic">💾</div><h3>로컬 모델 3개</h3><p>pano-stitcher <b>models/</b> 폴더의 YOLO 계열 파일 (약 168MB). ultralytics 로 실행해.</p></div>
-<div class="card"><div class="ic">🧮</div><h3>RTX 3060 · 지금은 CPU</h3><p>이 PC 에는 <b>NVIDIA RTX 3060</b> 이 있어. 다만 2026-11-02 확인 시점에 WSL 이 GPU 연결을 잃어서 CPU 로 돌고 있어 (4000px 1장 약 3분 27초).</p><p style="font-size:22px">연결이 돌아오면 머리 찾기 모델 2개(pose·seg)는 따로 설정 없이 CUDA(GPU)를 써. 번호판 모델은 CPU 전용 실행기(onnxruntime)라 계속 CPU 야.</p></div>
+<div class="card"><div class="ic">🧮</div><h3>RTX 3060 GPU 로 계산</h3><p>머리 찾기 모델 2개는 <b>GPU(CUDA)</b>, 번호판 모델과 시점 사진 만들기는 CPU 로 돌아. 사진 1장(12000px)에 <b>약 1분</b> — CPU 만 쓸 때(약 4분)의 약 4배 빠르기 (2026-11-02 실측).</p><p style="font-size:22px">WSL 을 다시 켠 뒤 GPU 연결이 끊기면 자동으로 CPU 로 돌아가. <b>nvidia-smi</b> 로 확인해.</p></div>
 </div>
 <div class="note">AI 모델은 <b>«어디에 사람이 있는지 찾는 단계»</b>에만 쓰여. 블러·모자이크를 실제로 입히는 계산은 AI 가 아니라 <b>OpenCV 영상 처리</b>야.</div>
 </section>
@@ -134,9 +134,9 @@
 <div class="hd"><p class="k">① 자동 찾기 · 2</p><h2>모델 3개로 머리와 번호판을 찾는다</h2></div>
 <div style="display:grid;grid-template-columns:1fr 620px;gap:56px;align-items:start">
 <div style="display:flex;flex-direction:column;gap:22px">
-<div class="row3"><span class="mk" style="background:#E8792B">pose</span><div><h3>yolo11m-pose.pt <small>42MB</small></h3><p>사람을 찾고 코·눈·귀·어깨 위치를 잡아. 귀 간격, 눈 간격, 어깨 폭 등으로 <b>머리 폭</b>을 추정해.</p></div></div>
-<div class="row3"><span class="mk" style="background:#3E9C8F">seg</span><div><h3>yolo11m-seg.pt <small>45MB</small></h3><p>사람 윤곽(실루엣)을 픽셀 단위로 오려내. 정수리와 턱을 찾아서 <b>머리 타원</b>을 맞춰.</p></div></div>
-<div class="row3"><span class="mk" style="background:#7C8DB5">plate</span><div><h3>license-plate-v1m.onnx <small>80MB</small></h3><p>번호판을 찾아. 가로로 긴 모양, 카메라 높이보다 아래, 지름 8° 이하만 남겨서 간판 오검출을 줄여.</p></div></div>
+<div class="row3"><span class="mk" style="background:#E8792B">pose</span><div><h3>yolo11m-pose.pt <small>42MB · GPU</small></h3><p>사람을 찾고 코·눈·귀·어깨 위치를 잡아. 귀 간격, 눈 간격, 어깨 폭 등으로 <b>머리 폭</b>을 추정해.</p></div></div>
+<div class="row3"><span class="mk" style="background:#3E9C8F">seg</span><div><h3>yolo11m-seg.pt <small>45MB · GPU</small></h3><p>사람 윤곽(실루엣)을 픽셀 단위로 오려내. 정수리와 턱을 찾아서 <b>머리 타원</b>을 맞춰.</p></div></div>
+<div class="row3"><span class="mk" style="background:#7C8DB5">plate</span><div><h3>license-plate-v1m.onnx <small>80MB · CPU</small></h3><p>번호판을 찾아. 가로로 긴 모양, 카메라 높이보다 아래, 지름 8° 이하만 남겨서 간판 오검출을 줄여.</p></div></div>
 </div>
 <div class="card" style="padding:24px;align-items:center">
 <svg viewBox="0 0 560 520" width="560" height="520" xmlns="http://www.w3.org/2000/svg">
@@ -252,7 +252,7 @@
 <div class="hd"><p class="k">시간 · 자원</p><h2>무거운 건 하나씩, 타일은 동시에</h2></div>
 <table class="tb">
 <tr><th>작업</th><th>어디서</th><th>동시 실행</th><th>실측</th></tr>
-<tr><td><b>자동 찾기</b></td><td>따로 프로세스 · GPU(RTX 3060) / 지금은 CPU</td><td>하나씩</td><td>4000px 1장 약 3분 27초 (CPU 기준)</td></tr>
+<tr><td><b>자동 찾기</b></td><td>따로 프로세스 · 머리 모델 GPU · 번호판 CPU</td><td>하나씩</td><td>시점 1장 1.26초 (CPU 만 5.3초) · 사진 1장 약 1분</td></tr>
 <tr><td><b>⑥ 미리보기</b></td><td>작업실 서버</td><td>화면마다</td><td>영역을 고칠 때마다 서버가 다시 계산</td></tr>
 <tr><td><b>확정</b></td><td>따로 프로세스</td><td>하나씩</td><td>블러 + 정면·수평 + 천저 → 모자이크본</td></tr>
 <tr><td><b>타일</b></td><td>krpano makepano (코어 1개)</td><td>최대 6개 동시</td><td>4개 동시 17초 (하나씩이면 약 61초)</td></tr>
