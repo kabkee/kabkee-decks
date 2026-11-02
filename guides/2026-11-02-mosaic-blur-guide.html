@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>얼굴·번호판 가리기 — 자동 찾기와 블러 처리 방식</title>
+<meta name="description" content="Look360 360 작업실 — 얼굴·번호판 자동 찾기(로컬 YOLO · CPU)와 블러 처리 방식, 설정값, 작업 순서">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { height:100%; background:#E9E6DF; overflow:hidden; }
+  #stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+  #deck { position:relative; width:1920px; height:1080px; transform-origin:center center; flex:none; }
+  .slide { position:absolute; inset:0; width:1920px; height:1080px; overflow:hidden; }
+  .slide:not(.on) { display:none !important; }      /* 각 슬라이드는 자기 inline display(flex) 를 그대로 쓴다 */
+  .slide li { margin-left:1.2em; }
+  .slide table { width:100%; border-collapse:collapse; }
+  .slide th, .slide td { text-align:left; padding:0.35em 0.6em; border-bottom:1px solid #D7D2C7; vertical-align:top; }
+  .slide th { font-weight:700; }
+  #bar { position:fixed; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; gap:14px; padding:10px;
+         font:14px/1 'Noto Sans KR', sans-serif; color:#9AA3AF; opacity:0; transition:opacity .3s; }
+  body:hover #bar { opacity:1; }
+  #bar button { background:#FFFFFF; color:#1C2027; border:1px solid #CFC9BD; border-radius:6px; padding:6px 12px; cursor:pointer; font:inherit; }
+  @media print {
+    @page { size:1920px 1080px; margin:0; }
+    html, body { height:auto; overflow:visible; background:none; }
+    #stage { position:static; display:block; }
+    #deck { transform:none !important; width:auto; height:auto; }
+    .slide, .slide:not(.on) { position:relative; display:flex !important; page-break-after:always; }
+    #bar { display:none; }
+  }
+
+  .s { background:#F5F3EE; color:#1C2027; font-family:'Noto Sans KR', Arial, sans-serif; padding:96px 128px; display:flex; flex-direction:column; justify-content:center; gap:56px; }
+  .s .hd { display:flex; flex-direction:column; gap:14px; }
+  .s .k { font-size:24px; font-weight:700; color:#B85A16; letter-spacing:2px; }
+  .s h2 { font-size:68px; font-weight:800; line-height:1.15; }
+  .s h3 { font-size:32px; font-weight:800; }
+  .s h3 small { font-size:22px; font-weight:500; color:#8A8273; margin-left:8px; }
+  .s p { font-size:26px; line-height:1.5; color:#4A5260; }
+  .s b { color:#1C2027; }
+  .cover { background:#FFFFFF; justify-content:center; gap:40px; padding-left:168px; }
+  .cover .bar { position:absolute; left:0; top:0; bottom:0; width:24px; background:#E8792B; }
+  .cover h1 { font-size:112px; font-weight:800; line-height:1.12; }
+  .cover .foot { position:absolute; left:168px; bottom:64px; font-size:24px; color:#8A93A0; }
+  .card { background:#FFFFFF; border:1px solid #DCD8CF; border-radius:18px; padding:40px; display:flex; flex-direction:column; gap:16px; }
+  .card.hl, .st.hl { border:2px solid #E8792B; }
+  .card .ic { font-size:64px; }
+  .card > svg { width:100%; height:auto; }
+  .g3 .card { min-height:520px; }
+  .g3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:32px; }
+  .g4 { display:grid; grid-template-columns:repeat(4, 1fr); gap:28px; }
+  .note { background:#FFF4EA; border-left:8px solid #E8792B; border-radius:12px; padding:28px 36px; font-size:28px; line-height:1.5; color:#4A5260; }
+  .sub { font-size:26px !important; }
+  .flow { display:flex; align-items:stretch; gap:14px; }
+  .flow .st { flex:1; background:#FFFFFF; border:1px solid #DCD8CF; border-radius:18px; padding:32px 28px; display:flex; flex-direction:column; gap:12px; position:relative; }
+  .flow .st.sm { padding:32px 26px; min-height:380px; }
+  .flow .st p { font-size:26px; }
+  .flow .st { min-height:420px; }
+  .flow .st svg { width:100%; height:auto; }
+  .flow .st .n { font-size:40px; font-weight:800; color:#E8792B; line-height:1; }
+  .flow .st code { margin-top:auto; font:20px/1.3 ui-monospace, monospace; color:#B85A16; background:#FFF4EA; border-radius:8px; padding:8px 10px; }
+  .flow .ar { align-self:center; font-size:44px; color:#C9C3B6; font-weight:800; }
+  .tag { align-self:flex-start; font-size:18px; font-weight:700; border-radius:999px; padding:4px 14px; }
+  .tag.ai { background:#FDE6D3; color:#B85A16; } .tag.hu { background:#E3EEF9; color:#2F5E8E; } .tag.cv { background:#E1F1EE; color:#2C7A6F; }
+  .lg { display:flex; align-items:center; gap:14px; font-size:24px; } .lg i { width:28px; height:20px; border-radius:5px; flex:none; }
+  .cap { font-size:20px !important; color:#8A8273 !important; margin-top:10px; }
+  .row3 { display:flex; gap:24px; align-items:flex-start; background:#FFFFFF; border:1px solid #DCD8CF; border-radius:18px; padding:26px 30px; }
+  .row3 h3 { margin-bottom:6px; }
+  .mk { flex:none; min-width:96px; text-align:center; color:#fff; font-weight:800; font-size:22px; border-radius:12px; padding:10px 12px; }
+  .mk.num { background:#E8792B; font-size:32px; min-width:72px; }
+  table.kb td { font-size:24px; border-bottom:1px solid #EEEAE2 !important; padding:10px 8px !important; color:#4A5260; }
+  table.kb td:first-child { white-space:nowrap; width:1%; }
+  kbd { display:inline-block; min-width:40px; text-align:center; font:700 20px/1 'Noto Sans KR', sans-serif; background:#F5F3EE; border:1px solid #CFC9BD; border-bottom-width:3px; border-radius:8px; padding:6px 8px; color:#1C2027; }
+  .big { background:#FFFFFF; border:1px solid #DCD8CF; border-radius:18px; padding:40px; display:flex; flex-direction:column; gap:10px; }
+  .big b { font-size:96px; font-weight:800; color:#E8792B; line-height:1; } .big span { font-size:26px; color:#4A5260; }
+  table.tb { background:#FFFFFF; border-radius:18px; overflow:hidden; border:1px solid #DCD8CF; }
+  table.tb th { background:#FFF4EA; color:#B85A16; font-size:24px; padding:20px 28px !important; }
+  table.tb td { font-size:26px; padding:22px 28px !important; color:#4A5260; border-bottom:1px solid #EEEAE2 !important; }
+</style>
+</head>
+<body>
+<div id="stage"><div id="deck">
+<section class="slide s cover" id="cover">
+<div class="bar"></div>
+<p class="k" style="font-size:30px;letter-spacing:4px">LOOK360 · 360 작업실</p>
+<h1>얼굴·번호판 가리기<br>자동 찾기와 블러 처리 방식</h1>
+<p style="font-size:42px;color:#4A5260;line-height:1.4">무엇으로, 어디서 계산하고<br>어떤 순서로 처리하는지</p>
+<p class="foot">2026-11-02 기준 · pano-stitcher <b>e927c35</b> · 그림은 설명용 도형 (실제 사진 아님)</p>
+</section>
+
+<section class="slide s" id="summary">
+<div class="hd"><p class="k">한눈에</p><h2>외부 AI·토큰 없이, 이 PC 안에서 CPU 로</h2></div>
+<div class="g3">
+<div class="card hl"><div class="ic">🔒</div><h3>토큰 0 · 외부 호출 없음</h3><p>Claude·OpenAI 같은 외부 AI API 를 부르지 않아. 자동 찾기·블러에 쓰는 사진을 외부 서비스로 보내지 않아.</p></div>
+<div class="card"><div class="ic">💾</div><h3>로컬 모델 3개</h3><p>pano-stitcher <b>models/</b> 폴더의 YOLO 계열 파일 (약 168MB). ultralytics 로 실행해.</p></div>
+<div class="card"><div class="ic">🧮</div><h3>CPU 로 계산</h3><p>이 PC 에는 NVIDIA GPU 가 없어서 CUDA 를 안 써. 자동 찾기는 4000px 1장에 약 3분 27초 (실측).</p></div>
+</div>
+<div class="note">AI 모델은 <b>«어디에 사람이 있는지 찾는 단계»</b>에만 쓰여. 블러·모자이크를 실제로 입히는 계산은 AI 가 아니라 <b>OpenCV 영상 처리</b>야.</div>
+</section>
+
+<section class="slide s" id="flow">
+<div class="hd"><p class="k">전체 흐름</p><h2>찾고 → 사람이 보고 → 입히고 → 타일로</h2></div>
+<div class="flow">
+<div class="st"><span class="tag ai">AI · CPU</span><p class="n">①</p><h3>자동 찾기</h3><p>사람 머리·번호판 위치를 찾아 영역으로 저장</p><code>retouched.jpg.mosaic.json</code></div>
+<div class="ar">→</div>
+<div class="st"><span class="tag hu">사람</span><p class="n">②</p><h3>검수</h3><p>⑥ 작업실에서 지우기·더 그리기·크기와 방식 고치기</p><code>같은 파일을 수정</code></div>
+<div class="ar">→</div>
+<div class="st"><span class="tag cv">영상 처리</span><p class="n">③</p><h3>확정</h3><p>블러 입히기 + 정면·수평 + 천저 패치</p><code>retouched_mosaic.jpg</code></div>
+<div class="ar">→</div>
+<div class="st"><span class="tag cv">krpano</span><p class="n">④</p><h3>타일</h3><p>뷰어용 타일 만들기 · 메모리가 되는 만큼 동시에</p><code>pano/</code></div>
+</div>
+<p class="sub">②에서 고친 영역은 ③을 다시 눌러야 결과 그림에 들어가. 현황표에 «다시 확정 필요»로 표시돼.</p>
+</section>
+
+<section class="slide s" id="views">
+<div class="hd"><p class="k">① 자동 찾기 · 1</p><h2>360 사진을 일반 사진 47장으로 나눠서 본다</h2></div>
+<div style="display:flex;gap:48px;align-items:flex-start">
+<div style="flex:none"><svg viewBox="0 0 1100 550" width="1100" height="550" xmlns="http://www.w3.org/2000/svg" style="display:block"><defs><clipPath id="eq"><rect x="0" y="0" width="1100" height="550" rx="14"/></clipPath></defs><rect x="0" y="0" width="1100" height="550" rx="14" fill="#FFFFFF" stroke="#C9C3B6" stroke-width="2"/><g clip-path="url(#eq)"><line x1="91.7" y1="0" x2="91.7" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="183.3" y1="0" x2="183.3" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="275.0" y1="0" x2="275.0" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="366.7" y1="0" x2="366.7" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="458.3" y1="0" x2="458.3" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="550.0" y1="0" x2="550.0" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="641.7" y1="0" x2="641.7" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="733.3" y1="0" x2="733.3" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="825.0" y1="0" x2="825.0" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="916.7" y1="0" x2="916.7" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="1008.3" y1="0" x2="1008.3" y2="550" stroke="#ECE8E0" stroke-width="1.5"/><line x1="0" y1="91.7" x2="1100" y2="91.7" stroke="#ECE8E0" stroke-width="1.5"/><line x1="0" y1="183.3" x2="1100" y2="183.3" stroke="#ECE8E0" stroke-width="1.5"/><line x1="0" y1="275.0" x2="1100" y2="275.0" stroke="#ECE8E0" stroke-width="1.5"/><line x1="0" y1="366.7" x2="1100" y2="366.7" stroke="#ECE8E0" stroke-width="1.5"/><line x1="0" y1="458.3" x2="1100" y2="458.3" stroke="#ECE8E0" stroke-width="1.5"/><line x1="0" y1="275.0" x2="1100" y2="275.0" stroke="#B9B2A4" stroke-width="2" stroke-dasharray="8 6"/><rect x="0.0" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-1100.0" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="1100.0" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="183.3" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-916.7" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="1283.3" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="366.7" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-733.3" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="1466.7" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="550.0" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-550.0" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="1650.0" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="733.3" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-366.7" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="1833.3" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="916.7" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-183.3" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="2016.7" y="76.4" width="183.3" height="183.3" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="3.1" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-1096.9" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="1103.1" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="223.1" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-876.9" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="1323.1" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="443.1" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-656.9" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="1543.1" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="663.1" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-436.9" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="1763.1" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="883.1" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-216.9" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="1983.1" y="375.8" width="213.9" height="213.9" rx="6" fill="#7C8DB5" fill-opacity="0.14" stroke="#7C8DB5" stroke-width="2"/><rect x="-22.9" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="-1122.9" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="1077.1" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="114.6" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="-985.4" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="1214.6" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="252.1" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="-847.9" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="1352.1" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="389.6" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="-710.4" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="1489.6" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="527.1" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="-572.9" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="1627.1" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="664.6" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="-435.4" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="1764.6" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="802.1" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="-297.9" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="1902.1" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="939.6" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="-160.4" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="2039.6" y="290.3" width="183.3" height="183.3" rx="6" fill="#3E9C8F" fill-opacity="0.14" stroke="#3E9C8F" stroke-width="2"/><rect x="-22.9" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="-1122.9" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="1077.1" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="114.6" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="-985.4" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="1214.6" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="252.1" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="-847.9" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="1352.1" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="389.6" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="-710.4" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="1489.6" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="527.1" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="-572.9" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="1627.1" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="664.6" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="-435.4" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="1764.6" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="802.1" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="-297.9" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="1902.1" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="939.6" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="-160.4" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="2039.6" y="183.3" width="183.3" height="183.3" rx="6" fill="#E8792B" fill-opacity="0.14" stroke="#E8792B" stroke-width="2"/><rect x="-48.9" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-1148.9" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1051.1" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="29.7" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-1070.3" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1129.7" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="108.3" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-991.7" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1208.3" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="186.8" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-913.2" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1286.8" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="265.4" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-834.6" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1365.4" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="344.0" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-756.0" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1444.0" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="422.5" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-677.5" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1522.5" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="501.1" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-598.9" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1601.1" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="579.7" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-520.3" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1679.7" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="658.3" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-441.7" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1758.3" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="736.8" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-363.2" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1836.8" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="815.4" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-284.6" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1915.4" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="894.0" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-206.0" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="1994.0" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="972.5" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="-127.5" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/><rect x="2072.5" y="250.6" width="97.8" height="97.8" rx="6" fill="#C2410C" fill-opacity="0.1" stroke="#C2410C" stroke-width="2.5"/></g></svg><p class="cap">360 원본(가로 360° × 세로 180°) 위에 시점을 겹쳐 그린 배치도 · 점선 = 수평선(카메라 높이)</p></div>
+<div style="display:flex;flex-direction:column;gap:18px;font-size:26px;line-height:1.4;color:#4A5260">
+<p style="color:#1C2027;font-weight:700;font-size:28px">왜 나누나?</p>
+<p>360 원본은 위아래로 늘어나 있어서 모델이 사람을 잘 못 찾아. 그래서 방향마다 <b>평범한 사진(2048px)</b>으로 다시 그려서 보여줘.</p>
+<div class="lg"><i style="background:#E8792B"></i>수평 8장 (화각 60°)</div>
+<div class="lg"><i style="background:#3E9C8F"></i>아래 35° 8장</div>
+<div class="lg"><i style="background:#7C8DB5"></i>위 35° 6장 · 바닥 쪽 5장</div>
+<div class="lg"><i style="background:#C2410C"></i>먼 사람용 확대 14장 (32°)</div>
+<div class="lg"><i style="background:#D7D2C7"></i>가까운 사람용 넓은 화각 6장 (그림 생략)</div>
+<p style="font-size:24px">«정밀»을 켜면 수평선 근처를 약 3배 확대한 40장이 더해져서 시간이 약 2배 걸려.</p>
+</div>
+</div>
+</section>
+
+<section class="slide s" id="models">
+<div class="hd"><p class="k">① 자동 찾기 · 2</p><h2>모델 3개로 머리와 번호판을 찾는다</h2></div>
+<div style="display:grid;grid-template-columns:1fr 620px;gap:56px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:22px">
+<div class="row3"><span class="mk" style="background:#E8792B">pose</span><div><h3>yolo11m-pose.pt <small>42MB</small></h3><p>사람을 찾고 코·눈·귀·어깨 위치를 잡아. 귀 간격, 눈 간격, 어깨 폭 등으로 <b>머리 폭</b>을 추정해.</p></div></div>
+<div class="row3"><span class="mk" style="background:#3E9C8F">seg</span><div><h3>yolo11m-seg.pt <small>45MB</small></h3><p>사람 윤곽(실루엣)을 픽셀 단위로 오려내. 정수리와 턱을 찾아서 <b>머리 타원</b>을 맞춰.</p></div></div>
+<div class="row3"><span class="mk" style="background:#7C8DB5">plate</span><div><h3>license-plate-v1m.onnx <small>80MB</small></h3><p>번호판을 찾아. 가로로 긴 모양, 카메라 높이보다 아래, 지름 8° 이하만 남겨서 간판 오검출을 줄여.</p></div></div>
+</div>
+<div class="card" style="padding:24px;align-items:center">
+<svg viewBox="0 0 560 520" width="560" height="520" xmlns="http://www.w3.org/2000/svg">
+<path d="M150 520 C150 430 190 380 280 372 C370 380 410 430 410 520 Z" fill="#E7EEF0" stroke="#3E9C8F" stroke-width="3" stroke-dasharray="10 7"/>
+<path d="M232 372 C228 350 232 336 240 330 L320 330 C328 336 332 350 328 372 Z" fill="#E7EEF0" stroke="#3E9C8F" stroke-width="3" stroke-dasharray="10 7"/>
+<ellipse cx="280" cy="250" rx="78" ry="96" fill="#E7EEF0" stroke="#3E9C8F" stroke-width="3" stroke-dasharray="10 7"/>
+<ellipse cx="280" cy="252" rx="83" ry="102" fill="none" stroke="#9AA3AF" stroke-width="3"/>
+<ellipse cx="280" cy="252" rx="104" ry="127" fill="none" stroke="#E8792B" stroke-width="5"/>
+<g fill="#E8792B" stroke="#fff" stroke-width="3">
+<circle cx="252" cy="244" r="9"/><circle cx="308" cy="244" r="9"/><circle cx="280" cy="276" r="9"/>
+<circle cx="204" cy="258" r="9"/><circle cx="356" cy="258" r="9"/>
+<circle cx="200" cy="404" r="11"/><circle cx="360" cy="404" r="11"/>
+</g>
+<line x1="204" y1="300" x2="356" y2="300" stroke="#B85A16" stroke-width="3" marker-start="url(#a)" marker-end="url(#a)"/>
+<defs><marker id="a" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#B85A16"/></marker></defs>
+<text x="280" y="326" text-anchor="middle" font-size="20" fill="#B85A16" font-family="Noto Sans KR" font-weight="700">머리 폭</text>
+<text x="280" y="108" text-anchor="middle" font-size="22" fill="#B85A16" font-family="Noto Sans KR" font-weight="700">최종 영역 ×1.25</text>
+<text x="404" y="200" font-size="20" fill="#6B7280" font-family="Noto Sans KR">맞춘 타원</text>
+<text x="420" y="470" font-size="20" fill="#3E9C8F" font-family="Noto Sans KR">윤곽(seg)</text>
+<text x="40" y="420" font-size="20" fill="#E8792B" font-family="Noto Sans KR">● 키포인트(pose)</text>
+</svg>
+</div>
+</div>
+</section>
+
+<section class="slide s" id="tidy">
+<div class="hd"><p class="k">① 자동 찾기 · 3</p><h2>합치고, 표시하고, 키워서 저장한다</h2></div>
+<div class="flow">
+<div class="st sm"><p class="n">1</p><h3>360 좌표로</h3><p>시점 사진 위 타원을 경도·위도 외곽선으로 되돌려</p></div>
+<div class="ar">→</div>
+<div class="st sm"><p class="n">2</p><h3>중복 합치기</h3><p>여러 시점에서 잡힌 같은 사람을 점수 높은 1개로</p></div>
+<div class="ar">→</div>
+<div class="st sm"><p class="n">3</p><h3>의심 표시</h3><p>«약함»·«광고?» 표시만 붙여. 지우지 않아 (놓친 얼굴이 더 비싸니까)</p></div>
+<div class="ar">→</div>
+<div class="st sm hl"><p class="n">4</p><h3>머리 ×1.25</h3><p>머리카락·귀·턱까지 덮이게 마지막에 키워</p></div>
+<div class="ar">→</div>
+<div class="st sm"><p class="n">5</p><h3>저장</h3><p>블러 · 세기 4 · <b>검수 전</b> 상태로</p></div>
+</div>
+<div class="note">다시 찾아도 <b>사람이 그린 영역 · 검수한 영역 · 지운 후보</b>는 그대로 두고, 새로 보이는 후보만 더해.</div>
+</section>
+
+<section class="slide s" id="apply">
+<div class="hd"><p class="k">③ 블러 입히기</p><h2>AI 없이, 영역마다 평평하게 펴서 흐린다</h2></div>
+<div class="flow">
+<div class="st"><svg viewBox="0 0 240 150" width="240" height="150"><path d="M20 30 Q120 -5 220 30 L220 120 Q120 155 20 120 Z" fill="#FFF4EA" stroke="#E8792B" stroke-width="3"/><path d="M60 40 Q120 25 180 40 M60 75 L180 75 M60 110 Q120 125 180 110" stroke="#E8C9A8" stroke-width="2" fill="none"/><text x="120" y="82" text-anchor="middle" font-size="18" fill="#B85A16" font-family="Noto Sans KR">늘어난 360 영역</text></svg><h3>평평한 조각으로</h3><p>영역 중심 방향을 기준으로 왜곡 없는 사진 조각을 원본 해상도로 다시 그려</p></div>
+<div class="ar">→</div>
+<div class="st"><svg viewBox="0 0 240 150" width="240" height="150"><defs><filter id="b1"><feGaussianBlur stdDeviation="9"/></filter></defs><rect x="30" y="10" width="180" height="130" rx="10" fill="#EEF2F6" stroke="#9AA3AF" stroke-width="2"/><g filter="url(#b1)"><circle cx="120" cy="70" r="38" fill="#4A5260"/><rect x="80" y="100" width="80" height="40" fill="#7C8DB5"/></g></svg><h3>가우시안 블러</h3><p>세기 = 영역 짧은 변 × 세기 ÷ 72<br>→ 크든 작든 비슷하게 흐려져</p></div>
+<div class="ar">→</div>
+<div class="st"><svg viewBox="0 0 240 150" width="240" height="150"><defs><radialGradient id="fd"><stop offset="0.62" stop-color="#E8792B" stop-opacity="0.85"/><stop offset="1" stop-color="#E8792B" stop-opacity="0"/></radialGradient></defs><rect x="30" y="10" width="180" height="130" rx="10" fill="#fff" stroke="#9AA3AF" stroke-width="2"/><ellipse cx="120" cy="75" rx="70" ry="60" fill="url(#fd)"/></svg><h3>경계 페이드</h3><p>경계 안팎으로 원본과 서서히 섞어 (짧은 변의 5%)</p></div>
+<div class="ar">→</div>
+<div class="st"><svg viewBox="0 0 240 150" width="240" height="150"><rect x="10" y="20" width="220" height="110" rx="10" fill="#fff" stroke="#9AA3AF" stroke-width="2"/><line x1="10" y1="75" x2="230" y2="75" stroke="#D7D2C7" stroke-dasharray="6 5"/><ellipse cx="90" cy="70" rx="18" ry="22" fill="#E8792B" fill-opacity=".75"/><ellipse cx="160" cy="78" rx="12" ry="15" fill="#E8792B" fill-opacity=".75"/></svg><h3>360 으로 되돌리기</h3><p>결과를 원래 좌표로 돌려 영역 안만 덮어써</p></div>
+</div>
+<p class="sub">⑥ 화면 미리보기(서버)와 확정(따로 프로세스)이 <b>같은 계산</b>을 써서, 미리 본 그대로 결과가 나와. OpenCV·numpy 만 사용.</p>
+</section>
+
+<section class="slide s" id="params">
+<div class="hd"><p class="k">설정값</p><h2>머리 ×1.25 · 블러 세기 4 · 경계 페이드</h2></div>
+<div class="g3">
+<div class="card"><h3>머리 크기</h3>
+<svg viewBox="0 0 480 200" width="480" height="200"><g font-family="Noto Sans KR" font-size="18" text-anchor="middle">
+<g transform="translate(80,100)"><path d="M-34 -10 C-36 -46 36 -46 34 -10 L30 30 C20 44 -20 44 -30 30 Z" fill="#E9DCCB"/><path d="M-38 -6 C-40 -54 40 -54 38 -6 C30 -26 -30 -26 -38 -6 Z" fill="#4A5260"/><ellipse cx="0" cy="0" rx="34" ry="42" fill="none" stroke="#9AA3AF" stroke-width="3"/><text y="80" fill="#6B7280">×1.0</text></g>
+<g transform="translate(240,100)"><path d="M-34 -10 C-36 -46 36 -46 34 -10 L30 30 C20 44 -20 44 -30 30 Z" fill="#E9DCCB"/><path d="M-38 -6 C-40 -54 40 -54 38 -6 C30 -26 -30 -26 -38 -6 Z" fill="#4A5260"/><ellipse cx="0" cy="0" rx="43" ry="53" fill="none" stroke="#E8792B" stroke-width="4"/><text y="80" fill="#B85A16" font-weight="700">×1.25 기본</text></g>
+<g transform="translate(400,100)"><path d="M-34 -10 C-36 -46 36 -46 34 -10 L30 30 C20 44 -20 44 -30 30 Z" fill="#E9DCCB"/><path d="M-38 -6 C-40 -54 40 -54 38 -6 C30 -26 -30 -26 -38 -6 Z" fill="#4A5260"/><ellipse cx="0" cy="0" rx="46" ry="57" fill="none" stroke="#9AA3AF" stroke-width="3"/><text y="80" fill="#6B7280">×1.35</text></g>
+</g></svg>
+<p>×1.0 은 머리카락 윗부분·귀가 영역 밖으로 나와. ×1.25 부터 머리 전체와 턱이 덮여. 자동으로 찾은 머리에만 적용해.</p></div>
+<div class="card"><h3>블러 세기</h3>
+<div style="display:flex;align-items:baseline;gap:18px;margin:10px 0 6px"><span style="font-size:96px;font-weight:800;color:#E8792B;line-height:1">4</span><span style="font-size:26px;color:#6B7280">기본 (6 → 4, 2026-11-02)</span></div>
+<p>숫자가 클수록 진하게 흐려져. 영역 크기에 맞춰 세기가 정해져서 가까운 큰 머리와 먼 작은 머리가 비슷한 정도로 가려져.</p>
+<p>⑥ 에서 <b>[ ]</b> 키로 선택한 영역의 세기를 바꿀 수 있어.</p></div>
+<div class="card"><h3>경계 페이드</h3>
+<svg viewBox="0 0 480 200" width="480" height="200"><defs><filter id="sf" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9"/></filter></defs>
+<rect x="10" y="20" width="210" height="150" rx="10" fill="#F2EEE6"/><ellipse cx="115" cy="95" rx="58" ry="62" fill="#8E97A6"/>
+<rect x="260" y="20" width="210" height="150" rx="10" fill="#F2EEE6"/><ellipse cx="365" cy="95" rx="58" ry="62" fill="#8E97A6" filter="url(#sf)"/>
+<text x="115" y="196" text-anchor="middle" font-size="18" fill="#6B7280" font-family="Noto Sans KR">예전: 또렷한 경계</text>
+<text x="365" y="196" text-anchor="middle" font-size="18" fill="#B85A16" font-weight="700" font-family="Noto Sans KR">지금: 서서히 번짐</text></svg>
+<p>블러에만 적용해. 0.08 로 더 부드럽게 하면 가장자리 머리카락 윤곽이 비치기 시작해서 0.05 로 정했어.</p></div>
+</div>
+</section>
+
+<section class="slide s" id="howto">
+<div class="hd"><p class="k">작업실에서 쓰는 법</p><h2>프로젝트 홈 → 🎭 모자이크 일괄</h2></div>
+<div style="display:grid;grid-template-columns:1.25fr 1fr;gap:40px">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div class="row3"><span class="mk num">①</span><div><h3>자동 찾기</h3><p>포인트를 고르고 «🔍 선택한 포인트 자동 찾기». 작업 큐에서 하나씩 돌고, 진행은 표에 포인트별로 보여.</p></div></div>
+<div class="row3"><span class="mk num">②</span><div><h3>방식 · 강도 · 머리 크기</h3><p>블러 · 4 · ×1.25 로 «🎨 선택한 포인트에 적용». 머리 크기는 «찾은 크기 대비 배수»라서 여러 번 눌러도 계속 커지지 않아.</p></div></div>
+<div class="row3"><span class="mk num">③</span><div><h3>확정 → 타일</h3><p>«✅ 선택한 포인트 확정 → 타일». 확정은 하나씩, 타일은 메모리가 되는 만큼 동시에 만들어져.</p></div></div>
+</div>
+<div class="card"><h3>⑥ 영역 검수 단축키</h3>
+<table class="kb">
+<tr><td><kbd>↓</kbd> <kbd>↑</kbd></td><td>왼쪽 → 오른쪽 순서로 영역 이동 (맨 끝에서는 멈춤)</td></tr>
+<tr><td><kbd>Del</kbd></td><td>선택 영역 지우기 · 지운 자리에서 이어서</td></tr>
+<tr><td><kbd>R</kbd> <kbd>E</kbd> <kbd>L</kbd> <kbd>P</kbd></td><td>사각 · 타원 · 자유 · 다각형으로 직접 그리기</td></tr>
+<tr><td><kbd>B</kbd> <kbd>M</kbd> <kbd>F</kbd></td><td>블러 · 모자이크 · 단색</td></tr>
+<tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>세기 내리기 · 올리기</td></tr>
+<tr><td><kbd>V</kbd> <kbd>Esc</kbd></td><td>보기 도구 · 선택 해제</td></tr>
+</table>
+<p style="font-size:22px">오른쪽 아래 미니맵의 십자선 = 지금 보는 화면 가운데</p></div>
+</div>
+</section>
+
+<section class="slide s" id="result">
+<div class="hd"><p class="k">적용 사례 · 2026-11-02 시점</p><h2>제40회 궁디팡팡 캣페스타 (1774)</h2></div>
+<div class="g4">
+<div class="big"><b>23</b><span>포인트 전체</span></div>
+<div class="big"><b>3,268</b><span>영역 → 블러 4</span></div>
+<div class="big"><b>2,940</b><span>자동 머리 영역 → ×1.25</span></div>
+<div class="big"><b>0</b><span>건너뛴 포인트</span></div>
+</div>
+<div class="note">직접 그린 영역과 번호판은 크기를 그대로 두고 방식·세기만 블러 4 로 바꿨어. 다음 순서는 <b>포인트별 검수 → 일괄 확정 → 타일</b>이야.</div>
+</section>
+
+<section class="slide s" id="resources">
+<div class="hd"><p class="k">시간 · 자원</p><h2>무거운 건 하나씩, 타일은 동시에</h2></div>
+<table class="tb">
+<tr><th>작업</th><th>어디서</th><th>동시 실행</th><th>실측</th></tr>
+<tr><td><b>자동 찾기</b></td><td>따로 프로세스 · CPU</td><td>하나씩</td><td>4000px 1장 약 3분 27초</td></tr>
+<tr><td><b>⑥ 미리보기</b></td><td>작업실 서버</td><td>화면마다</td><td>영역을 고칠 때마다 서버가 다시 계산</td></tr>
+<tr><td><b>확정</b></td><td>따로 프로세스</td><td>하나씩</td><td>블러 + 정면·수평 + 천저 → 모자이크본</td></tr>
+<tr><td><b>타일</b></td><td>krpano makepano (코어 1개)</td><td>최대 6개 동시</td><td>4개 동시 17초 (하나씩이면 약 61초)</td></tr>
+</table>
+<p class="sub">새 작업은 서비스 메모리 상한(26GB)까지 남은 양이 그 작업 몫보다 클 때만 시작해. 확정이 메모리를 기다리면 타일을 새로 띄우지 않아서 확정이 밀리지 않아.</p>
+</section>
+</div></div>
+<div id="bar"><button id="prev">◀</button><span id="num"></span><button id="next">▶</button><button id="fs">전체 화면 (F)</button><span>← → 키 · 클릭 · 인쇄하면 PDF</span></div>
+<script>
+const S=[...document.querySelectorAll('.slide')]; let i=0;
+function fit(){ const s=Math.min(innerWidth/1920, innerHeight/1080); document.getElementById('deck').style.transform='scale('+s+')'; }
+function go(n){ i=Math.max(0,Math.min(S.length-1,n)); S.forEach((x,k)=>x.classList.toggle('on',k===i));
+  document.getElementById('num').textContent=(i+1)+' / '+S.length; history.replaceState(null,'','#'+(i+1)); }
+addEventListener('resize',fit);
+addEventListener('keydown',e=>{ if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)) go(i+1);
+  else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)) go(i-1);
+  else if(e.key==='Home') go(0); else if(e.key==='End') go(S.length-1);
+  else if(e.key==='f'||e.key==='F') document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); });
+document.getElementById('stage').addEventListener('click',e=>{ if(e.target.closest('a')) return; go(e.clientX<innerWidth/3?i-1:i+1); });
+let tx=null; addEventListener('touchstart',e=>tx=e.touches[0].clientX); addEventListener('touchend',e=>{ if(tx==null) return; const d=e.changedTouches[0].clientX-tx; if(Math.abs(d)>50) go(d<0?i+1:i-1); tx=null; });
+document.getElementById('prev').onclick=e=>{e.stopPropagation();go(i-1);}; document.getElementById('next').onclick=e=>{e.stopPropagation();go(i+1);};
+document.getElementById('fs').onclick=e=>{e.stopPropagation();document.documentElement.requestFullscreen();};
+fit(); go((parseInt(location.hash.slice(1))||1)-1);
+</script>
+</body>
+</html>
