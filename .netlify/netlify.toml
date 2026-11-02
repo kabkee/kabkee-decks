@@ -7,7 +7,7 @@ redirects = []
 [functions."*"]
 
 [build]
-publish = "/home/kabkee/side-projects/kabkee-decks"
+publish = "/home/kabkee/side-projects/kabkee-decks/dist"
 publishOrigin = "config"
 
 [build.environment]
