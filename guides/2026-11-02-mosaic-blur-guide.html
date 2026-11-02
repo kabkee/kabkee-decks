@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>얼굴·번호판 가리기 — 자동 찾기와 블러 처리 방식</title>
-<meta name="description" content="Look360 360 작업실 — 얼굴·번호판 자동 찾기(로컬 YOLO · CPU)와 블러 처리 방식, 설정값, 작업 순서">
+<meta name="description" content="Look360 360 작업실 — 얼굴·번호판 자동 찾기(로컬 YOLO · RTX 3060 / 지금은 CPU)와 블러 처리 방식, 설정값, 작업 순서">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -89,11 +89,11 @@
 </section>
 
 <section class="slide s" id="summary">
-<div class="hd"><p class="k">한눈에</p><h2>외부 AI·토큰 없이, 이 PC 안에서 CPU 로</h2></div>
+<div class="hd"><p class="k">한눈에</p><h2>외부 AI·토큰 없이, 이 PC 안에서 계산</h2></div>
 <div class="g3">
 <div class="card hl"><div class="ic">🔒</div><h3>토큰 0 · 외부 호출 없음</h3><p>Claude·OpenAI 같은 외부 AI API 를 부르지 않아. 자동 찾기·블러에 쓰는 사진을 외부 서비스로 보내지 않아.</p></div>
 <div class="card"><div class="ic">💾</div><h3>로컬 모델 3개</h3><p>pano-stitcher <b>models/</b> 폴더의 YOLO 계열 파일 (약 168MB). ultralytics 로 실행해.</p></div>
-<div class="card"><div class="ic">🧮</div><h3>CPU 로 계산</h3><p>이 PC 에는 NVIDIA GPU 가 없어서 CUDA 를 안 써. 자동 찾기는 4000px 1장에 약 3분 27초 (실측).</p></div>
+<div class="card"><div class="ic">🧮</div><h3>RTX 3060 · 지금은 CPU</h3><p>이 PC 에는 <b>NVIDIA RTX 3060</b> 이 있어. 다만 2026-11-02 확인 시점에 WSL 이 GPU 연결을 잃어서 CPU 로 돌고 있어 (4000px 1장 약 3분 27초).</p><p style="font-size:22px">연결이 돌아오면 머리 찾기 모델 2개(pose·seg)는 따로 설정 없이 CUDA(GPU)를 써. 번호판 모델은 CPU 전용 실행기(onnxruntime)라 계속 CPU 야.</p></div>
 </div>
 <div class="note">AI 모델은 <b>«어디에 사람이 있는지 찾는 단계»</b>에만 쓰여. 블러·모자이크를 실제로 입히는 계산은 AI 가 아니라 <b>OpenCV 영상 처리</b>야.</div>
 </section>
@@ -101,7 +101,7 @@
 <section class="slide s" id="flow">
 <div class="hd"><p class="k">전체 흐름</p><h2>찾고 → 사람이 보고 → 입히고 → 타일로</h2></div>
 <div class="flow">
-<div class="st"><span class="tag ai">AI · CPU</span><p class="n">①</p><h3>자동 찾기</h3><p>사람 머리·번호판 위치를 찾아 영역으로 저장</p><code>retouched.jpg.mosaic.json</code></div>
+<div class="st"><span class="tag ai">로컬 AI</span><p class="n">①</p><h3>자동 찾기</h3><p>사람 머리·번호판 위치를 찾아 영역으로 저장</p><code>retouched.jpg.mosaic.json</code></div>
 <div class="ar">→</div>
 <div class="st"><span class="tag hu">사람</span><p class="n">②</p><h3>검수</h3><p>⑥ 작업실에서 지우기·더 그리기·크기와 방식 고치기</p><code>같은 파일을 수정</code></div>
 <div class="ar">→</div>
@@ -251,7 +251,7 @@
 <div class="hd"><p class="k">시간 · 자원</p><h2>무거운 건 하나씩, 타일은 동시에</h2></div>
 <table class="tb">
 <tr><th>작업</th><th>어디서</th><th>동시 실행</th><th>실측</th></tr>
-<tr><td><b>자동 찾기</b></td><td>따로 프로세스 · CPU</td><td>하나씩</td><td>4000px 1장 약 3분 27초</td></tr>
+<tr><td><b>자동 찾기</b></td><td>따로 프로세스 · GPU(RTX 3060) / 지금은 CPU</td><td>하나씩</td><td>4000px 1장 약 3분 27초 (CPU 기준)</td></tr>
 <tr><td><b>⑥ 미리보기</b></td><td>작업실 서버</td><td>화면마다</td><td>영역을 고칠 때마다 서버가 다시 계산</td></tr>
 <tr><td><b>확정</b></td><td>따로 프로세스</td><td>하나씩</td><td>블러 + 정면·수평 + 천저 → 모자이크본</td></tr>
 <tr><td><b>타일</b></td><td>krpano makepano (코어 1개)</td><td>최대 6개 동시</td><td>4개 동시 17초 (하나씩이면 약 61초)</td></tr>
