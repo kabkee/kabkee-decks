@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회사 비밀번호 금고 사용 안내</title>
+<meta name="description" content="채팅방에 아이디·비밀번호를 적지 않고 공유하는 방법 — vault.look360.co.kr (Bitwarden 앱·확장·웹) 설치와 사용법">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { height:100%; background:#E9EEF6; overflow:hidden; }
+  #stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+  #deck { position:relative; width:1920px; height:1080px; transform-origin:center center; flex:none; box-shadow:0 10px 40px rgba(30,60,120,.12); }
+  .slide { position:absolute; inset:0; width:1920px; height:1080px; overflow:hidden; display:flex; flex-direction:column; gap:40px;
+           padding:88px 120px 80px; background:#F7F9FC; color:#1E2A3B; font-family:'Noto Sans KR', Arial, sans-serif; }
+  .slide:not(.on) { display:none !important; }
+
+  /* 머리 */
+  .eyebrow { font-size:24px; font-weight:700; color:#2563EB; letter-spacing:1px; display:flex; align-items:center; gap:12px; }
+  .eyebrow .step { background:#2563EB; color:#fff; border-radius:999px; padding:4px 16px; font-size:20px; }
+  h1 { font-size:88px; font-weight:800; line-height:1.15; letter-spacing:-1px; }
+  h2 { font-size:60px; font-weight:800; line-height:1.2; letter-spacing:-0.5px; }
+  h3 { font-size:34px; font-weight:700; line-height:1.3; }
+  .lead { font-size:30px; color:#4B5A70; line-height:1.55; }
+  .muted { color:#6B7A90; }
+  b.blue { color:#2563EB; } b.green { color:#059669; } b.red { color:#DC2626; } b.amber { color:#B45309; }
+  code { font-family:'Noto Sans KR', monospace; background:#E8F0FE; color:#1D4ED8; border-radius:8px; padding:2px 12px; font-weight:700; }
+
+  /* 레이아웃 */
+  .row { display:flex; gap:40px; flex:1; min-height:0; }
+  .col { display:flex; flex-direction:column; gap:24px; flex:1; min-width:0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+  .grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:28px; }
+  .card { background:#fff; border:1px solid #E1E7F0; border-radius:28px; padding:40px; display:flex; flex-direction:column; gap:16px;
+          box-shadow:0 4px 18px rgba(30,60,120,.05); }
+  .card p, .card li { font-size:27px; line-height:1.55; color:#3A4A60; }
+  .card.blue { background:#EEF4FF; border-color:#C9DAFD; }
+  .card.green { background:#ECFDF5; border-color:#B7EBD3; }
+  .card.amber { background:#FFF8EB; border-color:#F8DDA8; }
+  .card.red { background:#FEF2F2; border-color:#F9CACA; }
+  .icon { font-size:56px; line-height:1; }
+  ol.steps { list-style:none; counter-reset:s; display:flex; flex-direction:column; gap:22px; }
+  ol.steps li { counter-increment:s; position:relative; padding-left:72px; font-size:29px; line-height:1.5; color:#2B3A50; }
+  ol.steps li::before { content:counter(s); position:absolute; left:0; top:-2px; width:50px; height:50px; border-radius:50%;
+                        background:#2563EB; color:#fff; font-weight:800; font-size:26px; display:flex; align-items:center; justify-content:center; }
+  ul.dots { display:flex; flex-direction:column; gap:14px; padding-left:1.1em; }
+  ul.dots li { font-size:27px; line-height:1.5; color:#3A4A60; }
+
+  /* 스크린샷 */
+  .shot { border-radius:20px; overflow:hidden; border:1px solid #D6DEEA; box-shadow:0 12px 32px rgba(30,60,120,.12); background:#fff; position:relative; }
+  .shot img { display:block; width:100%; height:auto; }
+  .shot.phone { border-radius:28px; border:8px solid #fff; outline:1px solid #D6DEEA; }
+  .cap { font-size:22px; color:#6B7A90; text-align:center; margin-top:12px; }
+  .tag { position:absolute; top:14px; right:14px; background:rgba(255,255,255,.92); border:1px solid #D6DEEA; color:#6B7A90;
+         font-size:18px; border-radius:999px; padding:4px 14px; }
+  .pin { position:absolute; width:56px; height:56px; border-radius:50%; background:#F43F5E; color:#fff; font-weight:800; font-size:28px;
+         display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(244,63,94,.4); border:4px solid #fff; }
+  .ring { position:absolute; border:5px solid #F43F5E; border-radius:16px; box-shadow:0 0 0 6px rgba(244,63,94,.18); }
+
+  /* 말풍선 */
+  .chat { display:flex; flex-direction:column; gap:18px; }
+  .bubble { max-width:92%; font-size:27px; line-height:1.5; padding:20px 28px; border-radius:26px; background:#fff; border:1px solid #E1E7F0; }
+  .bubble.me { align-self:flex-end; background:#FEE500; border-color:#F0D800; }
+  .bubble .who { display:block; font-size:20px; color:#6B7A90; margin-bottom:4px; }
+  .strike { text-decoration:line-through; text-decoration-color:#DC2626; text-decoration-thickness:4px; }
+
+  .badge { display:inline-block; font-size:22px; font-weight:700; border-radius:999px; padding:6px 18px; }
+  .badge.blue { background:#DBE7FF; color:#1D4ED8; } .badge.green { background:#D1FAE5; color:#047857; } .badge.amber { background:#FDECC8; color:#92400E; }
+  .big .card p { font-size:30px; } .big .card h3 { font-size:38px; }
+  #why .card li, #flow .card p, #choose .card p { font-size:30px; }
+  #end .lead { font-size:40px !important; }
+  .footer-note { font-size:22px; color:#8292A8; margin-top:auto; }
+
+  #bar { position:fixed; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; gap:14px; padding:10px;
+         font:14px/1 'Noto Sans KR', sans-serif; color:#5B6B82; opacity:0; transition:opacity .3s; }
+  body:hover #bar { opacity:1; }
+  #bar button { background:#fff; color:#1E2A3B; border:1px solid #CBD5E1; border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; }
+  @media print {
+    @page { size:1920px 1080px; margin:0; }
+    html, body { height:auto; overflow:visible; background:none; }
+    #stage { position:static; display:block; }
+    #deck { transform:none !important; width:auto; height:auto; box-shadow:none; }
+    .slide, .slide:not(.on) { position:relative; display:flex !important; page-break-after:always; }
+    #bar { display:none; }
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="deck">
+
+<!-- 1. 표지 -->
+<section class="slide" id="cover" style="background:linear-gradient(135deg,#EEF4FF 0%,#F7F9FC 55%,#ECFDF5 100%);justify-content:center;gap:44px">
+  <div class="eyebrow">LOOK360 사내 안내 · 2026-11</div>
+  <h1>채팅방에 비밀번호,<br>이제 그만 적어요 🔐</h1>
+  <p class="lead" style="font-size:36px">회사 비밀번호 금고 <b class="blue">vault.look360.co.kr</b> 설치하고 쓰는 법<br>— 5분이면 끝나요</p>
+  <div style="display:flex;gap:16px;flex-wrap:wrap">
+    <span class="badge blue">🧩 크롬 · 파이어폭스 확장</span>
+    <span class="badge green">📱 PC · 모바일 앱</span>
+    <span class="badge amber">🌐 웹사이트 바로 접속</span>
+  </div>
+  <p class="footer-note">← → 방향키 또는 화면 좌우 클릭으로 넘겨요 · F = 전체 화면</p>
+</section>
+
+<!-- 2. 왜 -->
+<section class="slide" id="why">
+  <div class="eyebrow">왜 바꾸나요?</div>
+  <h2>채팅방에 적은 비밀번호는 생각보다 오래, 넓게 남아요</h2>
+  <div class="grid2" style="flex:1">
+    <div class="card red">
+      <div class="icon">💬</div>
+      <h3>지금: 채팅방에 직접 적기</h3>
+      <ul class="dots">
+        <li>대화 기록에 <b class="red">영원히</b> 남고, 검색 한 번이면 다 보여요</li>
+        <li>폰 분실 · 캡처 · 대화 내보내기로 <b class="red">밖으로 새기 쉬워요</b></li>
+        <li>비밀번호를 바꾸면 다시 공유해야 하고, 옛 값과 헷갈려요</li>
+        <li>퇴사자 · 외부 인원이 방에 남아 있으면 그대로 보여요</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <div class="icon">🔐</div>
+      <h3>앞으로: 회사 금고에 넣고 「위치」만 알려주기</h3>
+      <ul class="dots">
+        <li>모든 값이 <b class="green">암호화</b>되어 저장돼요 (서버 관리자도 내용을 못 봐요)</li>
+        <li>필요한 사람에게만 <b class="green">폴더(컬렉션) 단위로</b> 보여요</li>
+        <li>누가 바꾸면 <b class="green">모두에게 바로 최신값</b>이 보여요</li>
+        <li>로그인 화면에서 <b class="green">자동으로 채워져서</b> 복사 · 붙여넣기도 필요 없어요</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 전체 흐름 -->
+<section class="slide" id="flow">
+  <div class="eyebrow">한눈에 보기</div>
+  <h2>딱 4단계만 하면 돼요</h2>
+  <div class="grid4" style="flex:1;align-items:stretch">
+    <div class="card blue"><div class="icon">📶</div><h3>① 연결</h3><p>사무실 인터넷이면 그대로,<br>밖에서는 <b class="blue">WireGuard</b> 켜기</p></div>
+    <div class="card"><div class="icon">🧩</div><h3>② 설치</h3><p>브라우저 확장 · 앱 중 편한 것<br>(설치 없이 웹사이트도 OK)</p></div>
+    <div class="card"><div class="icon">✍️</div><h3>③ 가입 · 승인</h3><p>초대받은 이메일로 가입하고<br>대표 승인을 기다리기</p></div>
+    <div class="card green"><div class="icon">✨</div><h3>④ 사용</h3><p>회사 계정 꺼내 쓰기 ·<br>새 계정은 금고에 저장</p></div>
+  </div>
+  <div class="card amber" style="flex-direction:row;align-items:center;gap:24px;padding:28px 40px">
+    <div class="icon" style="font-size:44px">🔑</div>
+    <p style="font-size:28px"><b class="amber">가장 중요한 한 가지</b> — 앱 · 확장 로그인 화면에서 서버를 <b>「자체 호스팅」 → <code>https://vault.look360.co.kr</code></b> 로 꼭 바꿔 주세요.</p>
+  </div>
+</section>
+
+<!-- 4. 어디서 접속 -->
+<section class="slide" id="network">
+  <div class="eyebrow"><span class="step">STEP 1</span> 연결</div>
+  <h2>금고는 회사 안에만 있어요 — 밖에서는 WireGuard 로 들어와요</h2>
+  <div class="grid2" style="flex:1">
+    <div class="card green">
+      <div class="icon">🏢</div>
+      <h3>사무실 인터넷 (Wi-Fi · 유선)</h3>
+      <p>아무것도 켤 필요 없어요.<br>바로 <code>vault.look360.co.kr</code> 이 열려요.</p>
+      <div style="margin-top:auto;font-size:30px;font-weight:700;color:#047857">PC · 폰 ─────▶ 🔐 금고</div>
+    </div>
+    <div class="card blue">
+      <div class="icon">🏠☕📱</div>
+      <h3>집 · 카페 · 모바일 데이터</h3>
+      <p><b class="blue">WireGuard 를 켜면</b> 회사 안에 있는 것처럼 연결돼요.<br>끄면 금고가 열리지 않아요 — 정상이에요.</p>
+      <div style="margin-top:auto;font-size:30px;font-weight:700;color:#1D4ED8">PC · 폰 ─ 🛡️ WireGuard ─▶ 🔐 금고</div>
+    </div>
+  </div>
+  <div class="card" style="padding:28px 40px;flex-direction:row;gap:20px;align-items:center">
+    <div class="icon" style="font-size:40px">💡</div>
+    <p style="font-size:27px">금고 주소는 <b>인터넷에 공개되어 있지 않아요.</b> 그래서 밖에서 바로 안 열리는 게 정상이고, 그만큼 안전해요. 앱에 한 번 로그인해 두면 연결이 없을 때도 <b>저장된 항목은 열람</b>할 수 있어요(수정 · 동기화는 연결 후).</p>
+  </div>
+</section>
+
+<!-- 5. WireGuard -->
+<section class="slide" id="wireguard">
+  <div class="eyebrow"><span class="step">STEP 1</span> 연결 · 밖에서 쓸 때만</div>
+  <h2>WireGuard 설치 · 켜기</h2>
+  <div class="row">
+    <div class="col" style="flex:0 0 760px">
+      <ol class="steps">
+        <li><b>WireGuard 앱 설치</b><br><span class="muted">PC: <code>wireguard.com/install</code> · 폰: 앱스토어/플레이스토어에서 「WireGuard」</span></li>
+        <li><b>터널 추가</b><br><span class="muted">대표에게 받은 <b>설정 파일(.conf)</b> 을 가져오거나, 폰은 <b>QR 코드</b>를 스캔해요</span></li>
+        <li><b>활성화(Activate) 스위치 ON</b><br><span class="muted">금고를 쓸 때만 켜도 돼요</span></li>
+        <li>브라우저에서 <code>vault.look360.co.kr</code> 이 열리면 성공 🎉</li>
+      </ol>
+      <div class="card amber" style="padding:26px 32px;margin-top:auto">
+        <p style="font-size:24px">⚠️ 이미 지난번 안내로 설치했다면 <b>켜기만</b> 하면 돼요. 설정 파일은 <b>사람마다 따로</b> 발급되니 다른 사람에게 넘기지 마세요.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="shot"><img src="2026-11-02-vault-guide_img/wg-install.jpg" alt="WireGuard 공식 설치 페이지"></div>
+      <p class="cap">WireGuard 공식 설치 페이지 — 내 기기에 맞는 버튼을 눌러요</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6. 방법 선택 -->
+<section class="slide" id="choose">
+  <div class="eyebrow"><span class="step">STEP 2</span> 설치</div>
+  <h2>편한 방법을 고르세요 — 섞어 써도 돼요</h2>
+  <div class="grid3" style="flex:1">
+    <div class="card blue">
+      <span class="badge blue" style="align-self:flex-start">⭐ 추천</span>
+      <div class="icon">🧩</div>
+      <h3>브라우저 확장</h3>
+      <p>크롬 · 엣지 · 파이어폭스.<br>사이트 로그인 화면에서 <b class="blue">자동으로 채워 줘요.</b> 업무 PC 에 가장 편해요.</p>
+    </div>
+    <div class="card">
+      <div class="icon">📱</div>
+      <h3>PC · 모바일 앱</h3>
+      <p>Windows · Mac · iPhone · Android.<br>폰에서 앱 로그인할 때 <b>자동 완성</b>으로 쓸 수 있어요.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🌐</div>
+      <h3>웹사이트</h3>
+      <p><code>vault.look360.co.kr</code><br><b>설치 없이</b> 바로 열기. 가입 · 2단계 인증 설정 · 정리 작업에 좋아요.</p>
+    </div>
+  </div>
+  <p class="lead" style="font-size:26px">모두 공식 <b>Bitwarden</b> 프로그램이에요. 회사 금고(Vaultwarden)는 Bitwarden 과 호환되는 서버라서 그대로 연결돼요.</p>
+</section>
+
+<!-- 7. 크롬 -->
+<section class="slide" id="chrome">
+  <div class="eyebrow"><span class="step">STEP 2</span> 설치 · 크롬 / 엣지</div>
+  <h2>크롬 웹 스토어에서 「Bitwarden」 추가</h2>
+  <div class="shot"><img src="2026-11-02-vault-guide_img/store-chrome.jpg" alt="크롬 웹 스토어 Bitwarden">
+    <div class="ring" style="left:76.3%;top:54%;width:11%;height:11%"></div><span class="tag" style="top:auto;bottom:14px">실제 크롬에서는 [Chrome에 추가] 버튼이 파란색이에요</span></div>
+  <div class="grid3">
+    <div class="card" style="padding:28px 32px"><p><b>① 「Bitwarden 비밀번호 관리자」 검색</b><br><span class="muted">제작자 <b>Bitwarden Inc.</b> ✔ 확인</span></p></div>
+    <div class="card" style="padding:28px 32px"><p><b>② [Chrome에 추가]</b><br><span class="muted">→ [확장 프로그램 추가]</span></p></div>
+    <div class="card" style="padding:28px 32px"><p><b>③ 🧩 퍼즐 아이콘 → 📌 고정</b><br><span class="muted">엣지도 같은 확장을 설치할 수 있어요</span></p></div>
+  </div>
+</section>
+
+<!-- 8. 파이어폭스 -->
+<section class="slide" id="firefox">
+  <div class="eyebrow"><span class="step">STEP 2</span> 설치 · 파이어폭스</div>
+  <h2>Firefox 부가 기능에서 「Bitwarden」 추가</h2>
+  <div class="shot"><img src="2026-11-02-vault-guide_img/store-firefox.jpg" alt="Firefox 부가 기능 Bitwarden">
+    <div class="ring" style="left:61.8%;top:38.5%;width:33%;height:11%"></div></div>
+  <div class="grid3">
+    <div class="card" style="padding:28px 32px"><p><b>① <code>addons.mozilla.org</code></b><br><span class="muted">에서 「Bitwarden」 검색 · 「추천」 표시 확인</span></p></div>
+    <div class="card" style="padding:28px 32px"><p><b>② [Firefox에 추가]</b><br><span class="muted">→ 권한 안내에서 [추가]</span></p></div>
+    <div class="card" style="padding:28px 32px"><p><b>③ 툴바 🧩 → 툴바에 고정</b><br><span class="muted">아이콘을 눌러 바로 열 수 있어요</span></p></div>
+  </div>
+</section>
+
+<!-- 9. 앱 -->
+<section class="slide" id="apps">
+  <div class="eyebrow"><span class="step">STEP 2</span> 설치 · PC / 모바일 앱</div>
+  <h2>앱은 공식 다운로드 페이지 · 앱스토어에서</h2>
+  <div class="row">
+    <div class="col" style="flex:0 0 640px">
+      <div class="card">
+        <h3>💻 PC (Windows · Mac)</h3>
+        <p><code>bitwarden.com/download</code> → <b>Desktop</b> 에서 내 OS 선택해 설치</p>
+      </div>
+      <div class="card">
+        <h3>📱 iPhone · Android</h3>
+        <p>앱스토어 / 플레이스토어에서 <b>「Bitwarden Password Manager」</b><br><span class="muted">제작자 Bitwarden Inc. 확인</span></p>
+        <p>설치 후 <b>설정 → 자동 완성</b>에서 Bitwarden 을 켜면 다른 앱 로그인 칸에 바로 채워져요.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="shot"><img src="2026-11-02-vault-guide_img/download-desktop.jpg" alt="Bitwarden 다운로드 페이지 데스크톱"></div>
+      <p class="cap">bitwarden.com/download — Desktop Applications 에서 Windows / MacOS 선택</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10. 서버 지정 -->
+<section class="slide" id="server">
+  <div class="eyebrow"><span class="step">⭐ 꼭!</span> 확장 · 앱 공통 — 서버 바꾸기</div>
+  <h2>로그인 전에 「자체 호스팅」 으로 바꿔 주세요</h2>
+  <div class="row" style="gap:48px">
+    <div class="col" style="flex:0 0 380px;align-items:center">
+      <div class="shot phone" style="width:340px"><img src="2026-11-02-vault-guide_img/ext-3-envmenu.jpg" alt="서버 선택 메뉴">
+        <div class="ring" style="left:40%;top:84%;width:43%;height:9%"></div><div class="pin" style="left:-18px;top:-18px">1</div></div>
+      <p class="cap">맨 아래 「접근 중: bitwarden.com」 →<br><b>자체 호스팅</b> 선택</p>
+    </div>
+    <div class="col" style="flex:0 0 380px;align-items:center">
+      <div class="shot phone" style="width:340px"><img src="2026-11-02-vault-guide_img/ext-4-selfhost.jpg" alt="서버 URL 입력">
+        <div class="ring" style="left:4%;top:63%;width:92%;height:10%"></div><div class="pin" style="left:-18px;top:-18px">2</div></div>
+      <p class="cap">서버 URL 에 주소 입력 →<br><b>[저장]</b></p>
+    </div>
+    <div class="col" style="flex:0 0 380px;align-items:center">
+      <div class="shot phone" style="width:340px"><img src="2026-11-02-vault-guide_img/ext-5-login-vault.jpg" alt="저장 완료">
+        <div class="ring" style="left:27%;top:91%;width:46%;height:8%"></div><div class="pin" style="left:-18px;top:-18px">3</div></div>
+      <p class="cap">아래에 「접근 중: <b>자체 호스팅</b>」<br>이 보이면 완료</p>
+    </div>
+    <div class="col" style="justify-content:center">
+      <div class="card blue" style="padding:32px">
+        <p style="font-size:24px" class="muted">입력할 주소</p>
+        <p style="font-size:30px;font-weight:800;color:#1D4ED8;word-break:break-all">https://vault.look360.co.kr</p>
+      </div>
+      <div class="card" style="padding:28px">
+        <p style="font-size:23px">PC 앱 · 모바일 앱도 로그인 화면의 <b>「접근 중」 / 「로그인 위치」</b> 메뉴에서 똑같이 바꿔요. 한 번만 하면 돼요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. 웹사이트 -->
+<section class="slide" id="web">
+  <div class="eyebrow"><span class="step">STEP 2</span> 설치 없이 · 웹사이트</div>
+  <h2>브라우저 주소창에 <span style="color:#2563EB">vault.look360.co.kr</span></h2>
+  <div class="row">
+    <div class="col" style="flex:0 0 600px">
+      <ul class="dots">
+        <li>웹사이트는 <b>서버를 바꿀 필요가 없어요</b> — 주소 자체가 회사 금고예요</li>
+        <li>처음 <b>가입</b>, <b>2단계 인증 설정</b>, 항목 정리는 웹이 화면이 넓어서 편해요</li>
+        <li>사무실 밖이면 WireGuard 를 먼저 켜 주세요</li>
+      </ul>
+      <div class="card red" style="padding:28px 32px;margin-top:auto">
+        <p style="font-size:25px">🚫 <b class="red">「연결이 비공개로 설정되어 있지 않습니다」 같은 인증서 경고가 뜨면 절대 진행하지 마세요.</b> 엉뚱한 기기에 연결된 상태예요. 창을 닫고 대표에게 알려 주세요.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="shot"><img src="2026-11-02-vault-guide_img/web-login.jpg" alt="vault.look360.co.kr 로그인 화면"></div>
+      <p class="cap">실제 회사 금고 로그인 화면</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12. 가입 -->
+<section class="slide" id="signup">
+  <div class="eyebrow"><span class="step">STEP 3</span> 가입 · 승인</div>
+  <h2>초대받은 이메일로 가입 → 승인되면 회사 항목이 보여요</h2>
+  <div class="row">
+    <div class="col" style="flex:0 0 560px">
+      <ol class="steps">
+        <li>대표가 내 이메일로 <b>조직 초대</b><br><span class="muted">초대 메일은 따로 오지 않아요</span></li>
+        <li>로그인 화면의 <b>[계정 만들기]</b> 에서 <b>초대받은 그 이메일</b>로 가입</li>
+        <li><b>마스터 비밀번호</b> 정하기 (12자 이상)</li>
+        <li>대표가 <b>승인</b>하면 회사 컬렉션이 나타나요</li>
+      </ol>
+      <div class="card amber" style="padding:24px 30px;margin-top:auto">
+        <p style="font-size:23px">🔑 마스터 비밀번호는 <b class="amber">잊으면 아무도 복구할 수 없어요.</b> 대표도 못 찾아요. 다른 곳에서 쓰지 않는 긴 문장형을 추천해요.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="shot"><img src="2026-11-02-vault-guide_img/web-signup.jpg" alt="계정 만들기"></div>
+      <p class="cap">① 이메일 · 이름 입력</p>
+    </div>
+    <div class="col">
+      <div class="shot"><img src="2026-11-02-vault-guide_img/web-setpw.jpg" alt="마스터 비밀번호 설정"><span class="tag">예시 화면</span></div>
+      <p class="cap">② 마스터 비밀번호 두 번 입력 → [계정 만들기]</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13. 2단계 -->
+<section class="slide" id="twofactor">
+  <div class="eyebrow"><span class="step">STEP 3</span> 가입 직후 꼭</div>
+  <h2>2단계 인증(인증 앱)을 켜 주세요</h2>
+  <div class="row">
+    <div class="col" style="flex:0 0 560px">
+      <ol class="steps">
+        <li>웹에서 <b>설정 → Security → 2단계 로그인</b></li>
+        <li><b>인증 앱</b> 옆 <b>[관리]</b> → 마스터 비밀번호 확인</li>
+        <li>폰의 인증 앱(Google Authenticator 등)으로 <b>QR 스캔</b></li>
+        <li>앱에 뜬 6자리 입력 → <b>[활성화]</b></li>
+        <li><b>복구 코드</b>도 확인해서 안전한 곳에 적어 두기</li>
+      </ol>
+    </div>
+    <div class="col">
+      <div class="shot"><img src="2026-11-02-vault-guide_img/web-2fa.jpg" alt="2단계 로그인 설정"><span class="tag">예시 화면</span>
+        <div class="ring" style="left:78%;top:56.5%;width:8%;height:7%"></div></div>
+      <p class="cap">「인증 앱」 → [관리]</p>
+    </div>
+    <div class="col">
+      <div class="shot"><img src="2026-11-02-vault-guide_img/web-2fa-app.jpg" alt="인증 앱 QR"><span class="tag">예시 화면 · QR 가림</span></div>
+      <p class="cap">QR 스캔 → 6자리 입력 → [활성화]</p>
+    </div>
+  </div>
+</section>
+
+<!-- 14. 로그인 · 둘러보기 -->
+<section class="slide" id="login">
+  <div class="eyebrow"><span class="step">STEP 4</span> 사용 · 로그인</div>
+  <h2>확장 아이콘을 눌러 로그인하면 끝</h2>
+  <div class="row" style="gap:48px">
+    <div class="col" style="flex:0 0 380px;align-items:center">
+      <div class="shot phone" style="width:340px"><img src="2026-11-02-vault-guide_img/ext-7-password.jpg" alt="마스터 비밀번호 입력"></div>
+      <p class="cap">이메일 → 마스터 비밀번호 → 2단계 6자리</p>
+    </div>
+    <div class="col" style="flex:0 0 380px;align-items:center">
+      <div class="shot phone" style="width:340px"><img src="2026-11-02-vault-guide_img/ext-9-vault.jpg" alt="보관함 목록"><span class="tag">예시</span></div>
+      <p class="cap">보관함 목록 · 🏢 아이콘 = 회사 항목</p>
+    </div>
+    <div class="col" style="justify-content:center">
+      <div class="card">
+        <h3>잠금 vs 로그아웃</h3>
+        <p>일정 시간이 지나면 <b>잠금</b>돼요. 마스터 비밀번호만 다시 넣으면 열려요.</p>
+        <p>공용 PC · 남의 기기에서는 다 쓰고 꼭 <b>로그아웃</b> 해 주세요.</p>
+      </div>
+      <div class="card green">
+        <h3>자동 완성</h3>
+        <p>사이트 로그인 화면에서 확장 아이콘을 누르면 그 사이트 계정이 맨 위 <b>「자동 완성 제안」</b> 에 떠요. 누르면 아이디 · 비밀번호가 채워져요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 15. 회사 계정 꺼내 쓰기 -->
+<section class="slide" id="use">
+  <div class="eyebrow"><span class="step">STEP 4</span> 사용 · 회사 계정 꺼내 쓰기</div>
+  <h2>「룩360」 에서 찾고, 복사 버튼으로 붙여넣기</h2>
+  <div class="row">
+    <div class="col" style="flex:0 0 1100px">
+      <div class="shot"><img src="2026-11-02-vault-guide_img/web-vault-org.jpg" alt="룩360 조직 보관함"><span class="tag">예시 화면 · 가짜 데이터</span>
+        <div class="ring" style="left:23.5%;top:35.5%;width:12%;height:4.5%"></div><div class="ring" style="left:23.5%;top:73%;width:16%;height:10%"></div></div>
+      <p class="cap">웹 — 왼쪽 필터의 <b>룩360</b> 또는 <b>컬렉션</b>을 누르면 회사 항목만 보여요</p>
+    </div>
+    <div class="col" style="flex:0 0 380px;align-items:center">
+      <div class="shot phone" style="width:340px"><img src="2026-11-02-vault-guide_img/ext-10-item.jpg" alt="항목 보기"><span class="tag">예시</span>
+        <div class="ring" style="left:81%;top:62%;width:14%;height:18%"></div></div>
+      <p class="cap">⧉ 복사 버튼 · 👁 보기<br>[자동 완성] 으로 바로 입력</p>
+    </div>
+  </div>
+</section>
+
+<!-- 16. 새 계정 저장 · 공유 -->
+<section class="slide" id="share">
+  <div class="eyebrow"><span class="step">STEP 4</span> 사용 · 새 계정을 공유할 때</div>
+  <h2>소유자를 「룩360」, 컬렉션을 골라 저장하면 공유 끝</h2>
+  <div class="row">
+    <div class="col" style="flex:0 0 560px">
+      <ol class="steps">
+        <li><b>[+ 추가] → 로그인</b></li>
+        <li>항목 이름 · 사용자 이름 · 비밀번호 · 웹사이트 입력</li>
+        <li><b>소유자</b>를 <b class="blue">룩360</b> 으로 변경<br><span class="muted">그대로 두면 나만 보는 개인 항목이에요</span></li>
+        <li><b>컬렉션</b>에서 공유할 폴더 선택 → <b>[저장]</b></li>
+      </ol>
+      <div class="card" style="padding:24px 30px;margin-top:auto">
+        <p style="font-size:23px">💡 이미 개인 보관함에 넣은 항목은 항목 메뉴 <b>⋮ → 컬렉션 지정 / 조직으로 이동</b>으로 옮길 수 있어요.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="shot"><img src="2026-11-02-vault-guide_img/web-newitem.jpg" alt="로그인 추가 화면"><span class="tag">예시 화면</span>
+        <div class="ring" style="left:27%;top:34%;width:46%;height:16%"></div></div>
+      <p class="cap">소유자 = 룩360 · 컬렉션 = 마케팅·SNS</p>
+    </div>
+  </div>
+</section>
+
+<!-- 17. 개인 vs 회사 -->
+<section class="slide" id="personal">
+  <div class="eyebrow">알아 두면 좋아요</div>
+  <h2>내 개인 항목은 다른 사람에게 보이지 않아요</h2>
+  <div class="row">
+    <div class="col">
+      <div class="shot"><img src="2026-11-02-vault-guide_img/web-vault-all.jpg" alt="모든 보관함"><span class="tag">예시 화면 · 가짜 데이터</span>
+        <div class="ring" style="left:72%;top:55%;width:8%;height:40%"></div></div>
+      <p class="cap">「소유자」 칸 — <b>나</b> = 개인 보관함 · <b>룩360</b> = 회사 공유</p>
+    </div>
+    <div class="col" style="flex:0 0 560px">
+      <div class="card blue">
+        <h3>🏢 회사 계정 → 룩360</h3>
+        <p>SNS · 쇼핑몰 · 관리자 페이지 · 공용 Wi-Fi 처럼 <b>여럿이 쓰는 계정</b></p>
+      </div>
+      <div class="card">
+        <h3>🙋 개인 계정 → 내 보관함</h3>
+        <p>개인 메일 · 내 업무 계정 등. 대표를 포함해 <b>아무도 볼 수 없어요.</b></p>
+      </div>
+      <div class="card amber">
+        <h3>👋 퇴사 · 권한 변경</h3>
+        <p>조직에서 빠지면 회사 항목은 즉시 안 보이게 돼요. 개인 항목은 그대로 본인 것이에요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 18. 채팅방에서는 이렇게 -->
+<section class="slide" id="chat">
+  <div class="eyebrow">이제 채팅방에서는</div>
+  <h2>비밀번호 대신 「어디에 있는지」 만 알려 주세요</h2>
+  <div class="grid2" style="flex:1">
+    <div class="card red">
+      <h3>🙅 이렇게 하지 말기</h3>
+      <div class="chat">
+        <div class="bubble"><span class="who">김매니저</span>인스타 계정 비번 뭐였죠?</div>
+        <div class="bubble me"><span class="strike">look360_official / Ig2026!pass</span></div>
+        <div class="bubble"><span class="who">김매니저</span>캡처해 둘게요~ 📸</div>
+      </div>
+    </div>
+    <div class="card green">
+      <h3>🙆 이렇게 하기</h3>
+      <div class="chat">
+        <div class="bubble"><span class="who">김매니저</span>인스타 계정 비번 뭐였죠?</div>
+        <div class="bubble me">금고 <b>룩360 › 마케팅·SNS › 인스타그램 (회사 공식)</b> 에 있어요 🔐</div>
+        <div class="bubble"><span class="who">김매니저</span>확장에서 자동 완성됐어요 👍</div>
+      </div>
+    </div>
+  </div>
+  <p class="lead" style="font-size:26px">💡 예전에 채팅방에 올린 비밀번호가 있다면 <b>금고에 옮기고 → 비밀번호를 한 번 바꾸고 → 옛 메시지는 삭제</b>해 주세요.</p>
+</section>
+
+<!-- 19. 보안 수칙 -->
+<section class="slide" id="rules">
+  <div class="eyebrow">꼭 지켜 주세요</div>
+  <h2>보안 수칙 6가지</h2>
+  <div class="grid3 big" style="flex:1;grid-auto-rows:1fr">
+    <div class="card"><div class="icon">🔑</div><h3>마스터 비밀번호는 나만</h3><p>누구에게도 알려 주지 말고, 다른 사이트와 같은 비밀번호를 쓰지 마세요.</p></div>
+    <div class="card"><div class="icon">📲</div><h3>2단계 인증 필수</h3><p>인증 앱 방식으로 꼭 켜 두세요. 복구 코드는 따로 보관해요.</p></div>
+    <div class="card red"><div class="icon">🚫</div><h3>인증서 경고 = 즉시 중단</h3><p>「안전하지 않음」 경고가 뜨면 진행하지 말고 대표에게 알려 주세요.</p></div>
+    <div class="card"><div class="icon">💻</div><h3>공용 기기는 로그아웃</h3><p>다른 사람 PC · 회의실 PC 에서는 쓰고 나서 꼭 로그아웃해요.</p></div>
+    <div class="card"><div class="icon">💬</div><h3>채팅방 · 메일에 원문 금지</h3><p>비밀번호 · 인증 코드 대신 금고 위치만 알려 주세요.</p></div>
+    <div class="card green"><div class="icon">🔄</div><h3>바꿨으면 금고도 바로</h3><p>사이트 비밀번호를 바꾸면 금고 항목도 그 자리에서 고쳐 주세요.</p></div>
+  </div>
+</section>
+
+<!-- 20. 문제 해결 -->
+<section class="slide" id="faq">
+  <div class="eyebrow">이럴 땐 이렇게</div>
+  <h2>자주 막히는 곳</h2>
+  <div class="grid2 big" style="flex:1;grid-auto-rows:1fr">
+    <div class="card"><h3>😵 주소가 안 열려요</h3><p>사무실 밖이면 <b>WireGuard 가 켜져 있는지</b> 확인해요. 집 공유기가 <code>192.168.0.x</code> 대역(ipTIME 기본값)이면 켜도 안 될 수 있어요 → 대표에게 문의.</p></div>
+    <div class="card"><h3>🤔 회사 항목이 안 보여요</h3><p>아직 <b>승인 대기</b> 중일 수 있어요. 대표에게 승인 요청 → 확장에서 <b>설정 → 지금 동기화</b>.</p></div>
+    <div class="card"><h3>🔌 「bitwarden.com」 으로 로그인돼요</h3><p>서버가 기본값이에요. 로그아웃하고 <b>자체 호스팅 → vault.look360.co.kr</b> 로 바꿔서 다시 로그인해요.</p></div>
+    <div class="card"><h3>😱 마스터 비밀번호를 잊었어요</h3><p>복구가 불가능해요. 대표에게 알리고 <b>새로 가입</b>해야 해요(개인 항목은 사라져요).</p></div>
+  </div>
+</section>
+
+<!-- 21. 정리 -->
+<section class="slide" id="end" style="background:linear-gradient(135deg,#ECFDF5 0%,#F7F9FC 50%,#EEF4FF 100%);justify-content:center;gap:40px">
+  <div class="eyebrow">정리</div>
+  <h1 style="font-size:76px">오늘 할 일 체크리스트 ✅</h1>
+  <div class="grid2" style="gap:24px 48px">
+    <p class="lead" style="font-size:32px">☐ (밖이라면) WireGuard 켜기</p>
+    <p class="lead" style="font-size:32px">☐ 확장 · 앱 설치 (또는 웹 접속)</p>
+    <p class="lead" style="font-size:32px">☐ 서버를 <b class="blue">자체 호스팅 → vault.look360.co.kr</b></p>
+    <p class="lead" style="font-size:32px">☐ 초대받은 이메일로 가입</p>
+    <p class="lead" style="font-size:32px">☐ 2단계 인증 켜기</p>
+    <p class="lead" style="font-size:32px">☐ 채팅방의 옛 비밀번호 → 금고로 이사</p>
+  </div>
+  <p class="footer-note">문의: 대표 · 스크린샷의 「예시 화면」은 테스트 서버의 가짜 데이터로 찍은 거예요.</p>
+</section>
+
+</div></div>
+<div id="bar"><button id="prev">◀</button><span id="num"></span><button id="next">▶</button><button id="fs">전체 화면</button></div>
+<script>
+const S=[...document.querySelectorAll('.slide')]; let i=0;
+function fit(){ const s=Math.min(innerWidth/1920, innerHeight/1080); document.getElementById('deck').style.transform='scale('+s+')'; }
+function go(n){ i=Math.max(0,Math.min(S.length-1,n)); S.forEach((x,k)=>x.classList.toggle('on',k===i));
+  document.getElementById('num').textContent=(i+1)+' / '+S.length; history.replaceState(null,'','#'+(i+1)); }
+addEventListener('resize',fit);
+addEventListener('keydown',e=>{ if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)) go(i+1);
+  else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)) go(i-1);
+  else if(e.key==='Home') go(0); else if(e.key==='End') go(S.length-1);
+  else if(e.key==='f'||e.key==='F') document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); });
+document.getElementById('stage').addEventListener('click',e=>{ if(e.target.closest('a')) return; go(e.clientX<innerWidth/3?i-1:i+1); });
+let tx=null; addEventListener('touchstart',e=>tx=e.touches[0].clientX); addEventListener('touchend',e=>{ if(tx==null) return; const d=e.changedTouches[0].clientX-tx; if(Math.abs(d)>50) go(d<0?i+1:i-1); tx=null; });
+document.getElementById('prev').onclick=e=>{e.stopPropagation();go(i-1);}; document.getElementById('next').onclick=e=>{e.stopPropagation();go(i+1);};
+document.getElementById('fs').onclick=e=>{e.stopPropagation();document.documentElement.requestFullscreen();};
+fit(); go((parseInt(location.hash.slice(1))||1)-1);
+</script>
+</body>
+</html>
