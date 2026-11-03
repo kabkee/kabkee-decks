@@ -64,6 +64,12 @@ const r = await page.evaluate(() => {
     shots: imgs.map((i) => ({ f: decodeURIComponent((i.getAttribute('src') || '').split('/').pop()),
                               shown: i.clientWidth, real: i.naturalWidth })),
     emojiPolluted: emoji ? getComputedStyle(emoji).borderTopWidth !== '0px' : false,
+    // 스크린샷은 클릭해서 원본 크기로 볼 수 있어야 한다 (오너 상시 요구 · 2026-10-06 도입, 2026-11-04 재확인)
+    // 덱 .md 끝의 lightbox 스크립트가 실행되면 body 바로 아래 z-index 99999 오버레이가 생기고 img 에 zoom-in 커서가 붙는다.
+    lightbox: {
+      overlay: [...document.body.children].some((e) => e.tagName === 'DIV' && e.style.zIndex === '99999'),
+      zoomCursor: imgs.length ? imgs.every((i) => getComputedStyle(i).cursor === 'zoom-in') : true,
+    },
     // 스크린샷을 실은 슬라이드는 「직접 확인」 링크를 반드시 함께 실어야 한다 (오너 상시 요구)
     missingLink: secs.map((s, i) => ({
       p: i + 1,
@@ -92,6 +98,14 @@ if (r.broken.length) {
 
 if (r.emojiPolluted) { fail = true; console.log('❌ 이모지에 테두리가 붙었습니다 — 테마의 section img 규칙에 :not(.emoji) 확인'); }
 else console.log('✅ 이모지 스타일 정상');
+
+if (r.shots.length && !(r.lightbox.overlay && r.lightbox.zoomCursor)) {
+  fail = true;
+  console.log('❌ 스크린샷 클릭 확대(lightbox)가 동작하지 않습니다' +
+    `  (오버레이 ${r.lightbox.overlay ? '있음' : '없음'} · zoom-in 커서 ${r.lightbox.zoomCursor ? '정상' : '없음'})`);
+  console.log('   ↳ 덱 .md 맨 끝에 lightbox <script> 블록을 넣으세요 — 직전 덱에서 그대로 복사하면 됩니다:');
+  console.log("     sed -n '/^<script>$/,/^<\/script>$/p' weekly-reports/<직전덱>.md >> weekly-reports/<이번덱>.md");
+} else if (r.shots.length) console.log('✅ 스크린샷 클릭 확대 정상');
 
 if (r.missingLink.length) {
   fail = true;
