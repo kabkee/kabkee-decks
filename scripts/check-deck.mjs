@@ -69,6 +69,9 @@ const r = await page.evaluate(() => {
     lightbox: {
       overlay: [...document.body.children].some((e) => e.tagName === 'DIV' && e.style.zIndex === '99999'),
       zoomCursor: imgs.length ? imgs.every((i) => getComputedStyle(i).cursor === 'zoom-in') : true,
+      // window.__lb 는 스크립트 버전이다. 1 = 화면 맞춤만 하던 옛 판(원본 크기로 못 키움),
+      // 2 = 원본 100% 확대·드래그·줌 판. 오너 요구는 「원본 크기」이므로 2 이상이어야 한다.
+      version: window.__lb || 0,
     },
     // 스크린샷을 실은 슬라이드는 「직접 확인」 링크를 반드시 함께 실어야 한다 (오너 상시 요구)
     missingLink: secs.map((s, i) => ({
@@ -103,9 +106,14 @@ if (r.shots.length && !(r.lightbox.overlay && r.lightbox.zoomCursor)) {
   fail = true;
   console.log('❌ 스크린샷 클릭 확대(lightbox)가 동작하지 않습니다' +
     `  (오버레이 ${r.lightbox.overlay ? '있음' : '없음'} · zoom-in 커서 ${r.lightbox.zoomCursor ? '정상' : '없음'})`);
-  console.log('   ↳ 덱 .md 맨 끝에 lightbox <script> 블록을 넣으세요 — 직전 덱에서 그대로 복사하면 됩니다:');
-  console.log("     sed -n '/^<script>$/,/^<\/script>$/p' weekly-reports/<직전덱>.md >> weekly-reports/<이번덱>.md");
-} else if (r.shots.length) console.log('✅ 스크린샷 클릭 확대 정상');
+  console.log('   ↳ 빌드가 자동으로 넣습니다 — 다시 빌드하세요:  ./build-marp.sh weekly-reports/<이번덱>.md');
+  console.log('      (이미 만든 html 에만 넣으려면: node scripts/inject-lightbox.mjs weekly-reports/<이번덱>.html)');
+} else if (r.shots.length && r.lightbox.version < 2) {
+  fail = true;
+  console.log(`❌ 클릭 확대가 옛 판입니다(window.__lb=${r.lightbox.version}) — 화면에 맞추기만 하고 원본 크기로 못 키웁니다.`);
+  console.log('   ↳ 오너 상시 요구는 「원본 크기로 볼 수 있어야 한다」입니다. 다시 빌드해 최신판을 넣으세요:');
+  console.log('      node scripts/inject-lightbox.mjs weekly-reports/<이번덱>.html');
+} else if (r.shots.length) console.log(`✅ 스크린샷 클릭 확대 정상 (원본 크기 확대판 v${r.lightbox.version})`);
 
 if (r.missingLink.length) {
   fail = true;
