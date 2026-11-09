@@ -231,10 +231,29 @@ Node.js 도 더 이상 필요하지 않습니다.
 3. 표에서 종류가 flat 인지, 크기가 맞는지 확인
 4. **신규 모두 등록**
 
-<p class="note">표의 등록구분이 NEW 인 행이 새로 등록됩니다. 화면은 이전 버전이라 이름에 [flat] 이 남아 있고, beta.6 부터는 자동으로 빠집니다.</p>
+<p class="note">NEW 는 새 파노라마로 추가됩니다. 같은 번호가 이미 있으면 EDIT 로 표시되고, 그때는 <b>기존 모두 수정</b>으로 덮어씁니다.</p>
 
 </div>
 <div><img class="shot" src="2026-11-09-flat-pano-upload-guide_img/legacy-batch-parsed.jpg"></div>
+</div>
+
+---
+
+## 이름 끝의 [flat] 표시는 등록할 때 자동으로 빠집니다
+
+<div class="split">
+<div>
+
+| 폴더명 | 등록 이름 |
+|---|---|
+| `9811 … 한번표기 [flat]` | `flat 한번표기` |
+| `9812 … 표기없음` | `flat 표기없음` |
+| `9814 … 두번표기 [flat] [flat]` | `flat 두번표기 [flat]` |
+
+<p class="note">이름에 [flat] 을 남기고 싶을 때만 두 번 씁니다. 화면은 등록 후 같은 XML 을 다시 분석한 것이라 EDIT 로 보입니다. 회색 칸이 실제로 저장된 이름입니다.</p>
+
+</div>
+<div><img class="shot" src="2026-11-09-flat-pano-upload-guide_img/legacy-batch-names.jpg"></div>
 </div>
 
 ---
