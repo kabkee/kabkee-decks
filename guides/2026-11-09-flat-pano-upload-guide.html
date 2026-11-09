@@ -20,7 +20,7 @@
 <br />
 <ul>
 <li>flat 은 2:1 이 아닌 일반 평면 사진을 확대·드래그로 보여주는 파노라마입니다.</li>
-<li>필요한 버전: <strong>Look360 Utils v0.1.4-beta.5 이상</strong>. 이전 버전에는 zip 생성 기능이 없습니다.</li>
+<li>필요한 버전: <strong>Look360 Utils v0.1.4-beta.6 이상</strong>. 이전 버전에는 zip 생성 기능이 없습니다.</li>
 <li>이 자료의 화면은 개발 서버에 샘플 이미지 3장(flat 2장, sphere 1장)을 실제로 올린 기록입니다.</li>
 </ul>
 </section>
@@ -90,6 +90,7 @@
 <ul>
 <li>Apple 개발자 서명이 없는 앱이라 macOS 가 처음 실행을 막습니다.</li>
 <li>앱에 문제가 있다는 뜻이 아니며, 설치본을 새로 받을 때마다 같은 승인이 필요합니다.</li>
+<li>mac 은 자동 업데이트가 없습니다. 새 버전은 dmg 를 다시 받아 설치합니다.</li>
 </ul>
 <h3 id="%EC%A1%B0%EA%B1%B4">조건</h3>
 <ul>
@@ -112,7 +113,7 @@
 <ul>
 <li>flat 표시는 둘 중 하나면 됩니다: 폴더명 <code>[flat]</code> 또는 <code>panorama_size.txt</code> 의 <code>flat,가로,세로</code>.</li>
 <li>둘 다 있으면 <code>panorama_size.txt</code> 가 우선합니다. 폴더명만 쓰면 크기 파일은 앱이 만듭니다.</li>
-<li>폴더명의 <code>[flat]</code> 은 파노 이름에 그대로 들어가므로, 등록 화면의 이름 칸에서 지워 주세요.</li>
+<li>이름 끝에 띄어 쓴 <code>[flat]</code> 은 등록할 때 자동으로 지워집니다. 이름에 남기려면 <code>[flat] [flat]</code> 처럼 두 번 씁니다.</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
@@ -194,10 +195,9 @@
 <li><strong>파노라마 &gt; 파노라마 XML Batch 입력</strong></li>
 <li>XML 선택 후 <strong>파일 분석</strong></li>
 <li>표에서 종류가 flat 인지, 크기가 맞는지 확인</li>
-<li>이름의 <code>[flat]</code> 정리</li>
 <li><strong>신규 모두 등록</strong></li>
 </ol>
-<p class="note">표의 등록구분이 NEW 인 행이 새로 등록됩니다.</p>
+<p class="note">표의 등록구분이 NEW 인 행이 새로 등록됩니다. 화면은 이전 버전이라 이름에 [flat] 이 남아 있고, beta.6 부터는 자동으로 빠집니다.</p>
 </div>
 <div><img class="shot" src="2026-11-09-flat-pano-upload-guide_img/legacy-batch-parsed.jpg" /></div>
 </div>
