@@ -215,7 +215,7 @@
 <li>조작 의도는 없었더라도 <strong>겉으로는 같은 모양</strong>입니다. 8월에 이 작업 후에도 반려되었습니다</li>
 <li>실측: 화면 높이 900px, 글 시작 위치 920px, 마우스 휠을 굴려도 이동 0px, 오른쪽 위 메뉴를 열어도 설명 없음(표본 확인)</li>
 </ul>
-<p><span class="hl-blue">조치</span> 숨은 글을 「장소 소개」 패널에서 펼쳐 볼 수 있게 하고, 고유 글이 없는 VR은 검색 제외로 돌립니다. (뒤의 「추가 논의」 참고)</p>
+<p><span class="hl-blue">조치</span> 숨은 글을 「장소 소개」 패널에서 펼쳐 볼 수 있게 합니다. VR 페이지는 검색 제외하지 않고 장면 한 줄 설명으로 고유 글을 채웁니다. (뒤의 「추가 논의」 참고)</p>
 <div class="links"><span class="lbl">출처</span>
 <a class="lnk" href="https://developers.google.com/search/docs/essentials/spam-policies?hl=ko" target="_blank">구글 검색 스팸 정책</a></div>
 </section>
@@ -498,7 +498,7 @@
 <ul>
 <li>사이트맵 밖 주소(<code>/vr/{장소}</code>, 장면 번호가 붙은 VR 주소 등)도 클릭 7,747건을 받습니다. 구글은 <code>/vr/{장소}/{투어}</code>보다 <code>/vr/{장소}</code>를 대표 주소로 고르고 있습니다</li>
 <li><span class="hl-red">2026년 7월 말부터 노출이 90% 넘게 줄었습니다.</span> 주간 노출이 약 5.3만 → 8월 10일 주 1.1만 → 10월 3천. 장소 페이지(특히 대학)가 가장 크게 줄었고, URL 검사 결과 색인은 유지돼 «순위 하락»입니다. 8월 13일 SEO 작업과 시점이 겹치지만 감소는 3주 앞서 시작됐고, 원인은 특정하지 못했습니다(판단)</li>
-<li><strong>결론:</strong> 검색에 나오는 VR·장소 페이지는 noindex로 빼지 않습니다. 빼는 것은 16개월간 노출이 0인 빈 페이지뿐입니다</li>
+<li><strong>결론:</strong> VR·VR스토리 페이지는 어떤 경우에도 검색 제외하지 않습니다. 장소·회원·게시판에서도 빼는 것은 16개월간 노출이 0인 빈 페이지뿐입니다</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-theme="clean" data-style=".stats .card .lab { font-size: 0.55em; }
@@ -521,8 +521,8 @@
 </tr>
 <tr>
 <td>① 정리</td>
-<td><span class="hl-red">최대 약 1,180 제외</span></td>
-<td>16개월간 검색 노출이 0이면서 고유 글이 없는 페이지만 검색·광고에서 제외</td>
+<td><span class="hl-red">최대 715 제외</span></td>
+<td>장소·회원·게시판 중 16개월간 검색 노출이 0이면서 고유 글이 없는 페이지만 검색·광고에서 제외. VR·VR스토리는 항상 검색 허용</td>
 </tr>
 <tr>
 <td>② 유지·보강</td>
@@ -667,8 +667,8 @@
 <td>검색 노출이 0이고 자체 설명이 없을 때만 제외. 노출이 있으면 얇아도 유지하고 글을 보강</td>
 </tr>
 <tr>
-<td>VR 페이지</td>
-<td>검색 노출이 있으면 유지(1,591개). 노출 0이면서 고유 글이 없을 때만 제외. 중복 주소는 noindex 대신 대표 주소(canonical) 정리</td>
+<td>VR·VR스토리 페이지</td>
+<td><span class="hl-green">항상 검색 허용</span>(품질 기준으로 제외하지 않음). 고유 글은 장면 한 줄 설명으로 채움. 중복 주소는 대표 주소(canonical) <code>/vr/{장소}</code>로 정리</td>
 </tr>
 <tr>
 <td>위키백과·뉴스 전재</td>
@@ -1011,7 +1011,7 @@
 <tbody>
 <tr>
 <td><strong>검색 제외(noindex)</strong></td>
-<td>검색 노출이 0이면서 고유 글이 없는 VR·장소, 빈 회원 페이지, 빈 게시글만 색인에서 뺌</td>
+<td>검색 노출이 0이면서 고유 글이 없는 장소, 빈 회원 페이지, 빈 게시글만 색인에서 뺌. VR·VR스토리는 항상 검색 허용</td>
 </tr>
 <tr>
 <td><strong>광고 코드 위치</strong></td>
@@ -1039,7 +1039,7 @@
 </tr>
 <tr>
 <td>VR 페이지</td>
-<td>설명 패널 공개, 검색 노출 있으면 색인 유지</td>
+<td>설명 패널 공개, 항상 검색 허용</td>
 <td><span class="hl-red">뺌</span></td>
 </tr>
 <tr>
@@ -1337,23 +1337,19 @@
 <tbody>
 <tr>
 <td><span class="hl-green">운영 반영</span></td>
-<td>보안 점검 후속 조치 완료 · 서치 콘솔 API 연결 · 360동영상·개발자노트·뉴스 게시판 비공개 · 사이트 검색 기간 「전체」</td>
-</tr>
-<tr>
-<td><span class="hl-blue">처리 완료, 운영 반영 대기</span></td>
-<td>VR 숨은 설명글 패널 공개(IND-9304)</td>
+<td>보안 점검 후속 조치 완료 · 서치 콘솔 API 연결 · 360동영상·개발자노트·뉴스 게시판 비공개 · 사이트 검색 기간 「전체」 · VR 숨은 설명글 패널 공개·장면 목록 · 중복 VR 주소 대표 주소 통일</td>
 </tr>
 <tr>
 <td><span class="hl-green">확인 완료, 조치 불필요</span></td>
 <td>휴대폰 번호 98쪽: 모두 주인 동의·직접 전달받은 번호</td>
 </tr>
 <tr>
-<td><span class="hl-amber">수정 필요</span></td>
-<td>VR 검색 제외 규칙(IND-9305): 검색 노출 있는 페이지 예외 반영 전까지 운영 반영 금지</td>
+<td><span class="hl-amber">결정 반영 중</span></td>
+<td>VR·VR스토리는 어떤 경우에도 검색 제외하지 않음(IND-9303). 지금 운영은 VR 2,001개 전부 검색 허용 상태</td>
 </tr>
 <tr>
 <td>진행 중</td>
-<td>콘텐츠 작성 도구(IND-9307): 작성·검수·반영 완료, AI 초안은 <code>claude -p</code> 로 전환 중 · VR 검색 제외 기준 재작업(IND-9303)</td>
+<td>콘텐츠 작성 도구(IND-9307): 작성·검수·반영 완료, AI 초안은 <code>claude -p</code> · VR·VR스토리 항상 검색 허용 반영(IND-9303)</td>
 </tr>
 <tr>
 <td>남은 일</td>
@@ -1377,12 +1373,12 @@
 <tbody>
 <tr>
 <td><strong>1. VR 페이지 처리</strong></td>
-<td>「장소 소개」 패널에서 설명·장면 목록 공개 + VR 페이지 광고 제외. 검색 노출이 있는 VR은 색인 유지</td>
+<td>「장소 소개」 패널에서 설명·장면 목록 공개 + VR 페이지 광고 제외. VR·VR스토리는 항상 검색 허용(결정)</td>
 <td>VR 회사의 핵심 검색 유입(62%)을 지키면서 숨은 글은 없앰</td>
 </tr>
 <tr>
 <td><strong>2. 검색 제외 범위</strong></td>
-<td>16개월간 노출 0 + 고유 글 없음만 제외(최대 약 1,180)</td>
+<td>장소·회원·게시판 중 16개월간 노출 0 + 고유 글 없음만 제외(최대 715)</td>
 <td>아무 역할을 안 하던 페이지만 빼서 잃는 것이 없음</td>
 </tr>
 <tr>
