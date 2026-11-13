@@ -27,12 +27,12 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 
 ### ① krpano 호환
 - 뷰어 <span class="hl-green">가능</span> · 브라우저가 디코딩 (client·레거시 1.23.3, admin 1.22.4)
-- 타일 도구 <span class="hl-amber">불가</span> · krpanotools 는 JPEG·TIFF 만 출력 → 변환 단계 추가
+- 타일 도구 <span class="hl-green">1.24 부터 가능</span> · `format=webp` 로 타일을 바로 출력 (지금 utils 번들 1.20.9 는 불가)
 
 ### ② 신규 타일 WebP
 - <span class="hl-green">권장</span> · 현재 JPG q60 과 같은 화질 = WebP <span class="hl-blue">q45 (−31%)</span>
 - 여유를 두면 WebP q50 (−25%, 화질 약간 ↑)
-- 단, krpanotools 는 <span class="hl-blue">JPG q100 · 4:4:4</span> 로 출력한 뒤 변환
+- krpanotools 1.24 로 올리고 <span class="hl-blue">`webpmethod=6`</span> 을 꼭 지정 (기본값 0 이면 용량이 거의 안 줄어듦)
 
 </div>
 <div class="col">
@@ -55,13 +55,14 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 
 | # | 결정할 것 | 제안 |
 |---|---|---|
+| 0 | krpanotools 1.20.9 → 1.24 교체 | <span class="hl-blue">교체</span> · 변환 단계 없이 WebP 직접 출력 · 1.24 라이선스 등록 필요 |
 | 1 | 신규 타일 품질 | <span class="hl-blue">WebP q50</span> (−25%, 화질 약간 ↑) · 용량 우선이면 q45 (−31%, 지금과 같은 화질) |
 | 2 | 기존 1,322만 개 전수 변환 | <span class="hl-amber">보류</span> · 대신 조회 상위 장면만 원본에서 다시 생성 (선택) |
 | 3 | 모바일·VR 큐브 (`512_` · `1024_`) | <span class="hl-blue">WebP 로 통일</span> · JPG 대체본을 따로 두지 않음 |
 | 4 | 지원 하한 | iOS 14 · macOS 11 Safari 미만 제외 · 실제 사용자 약 0.002% (GA4 90일 실측) |
 | 5 | 진행 방식 | 에픽 발주 또는 직접 구현 (오빠 지시 필요) |
 
-전환 작업 순서는 «읽는 쪽 먼저(확장자 값 지원) → 만드는 쪽(utils) → 신규 1~2건 시범» 입니다. 읽는 쪽을 먼저 배포하면 모든 값이 `jpg` 인 상태라 서비스 동작은 바뀌지 않습니다.
+전환 작업 순서는 «읽는 쪽 먼저(확장자 값 지원) → 만드는 쪽(utils · krpanotools 1.24) → 신규 1~2건 시범» 입니다. 읽는 쪽을 먼저 배포하면 모든 값이 `jpg` 인 상태라 서비스 동작은 바뀌지 않습니다.
 
 ---
 
@@ -83,7 +84,7 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 
 ## 같은 화질 기준 — 지금 JPG q60 에 만족한다면 WebP q45 면 됩니다
 
-궁디팡팡 보정 원본 6장(12000×6000)을 8192 폭으로 줄여 512 타일 384장을 비교했습니다. JPG 는 지금 krpanotools 설정(q60 · 4:2:0 · optimize)과 같고, WebP 는 JPG q100 · 4:4:4 중간 출력에서 변환했습니다.
+궁디팡팡 보정 원본 6장(12000×6000)을 8192 폭으로 줄여 512 타일 384장을 비교했습니다. JPG 는 지금 krpanotools 설정(q60 · 4:2:0 · optimize)과 같고, WebP 는 libwebp `method 6` 입니다.
 
 | 형식 | 타일 평균 | 현재 대비 | SSIM | JPG 보다 나은 타일 |
 |---|---|---|---|---|
@@ -125,9 +126,35 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 
 ---
 
-## 중간 출력 품질 — krpanotools 를 q100 · 4:4:4 로 바꿔야 효과가 납니다
+## krpanotools 1.24 — 변환 단계 없이 WebP 타일을 바로 만듭니다
 
-krpanotools 는 WebP 를 못 만들어서 «JPG 출력 → WebP 변환» 두 단계가 됩니다. 같은 타일 135장을 중간 형식만 바꿔 최종 WebP q55 로 만들었습니다.
+krpano 1.24(2026-06-25)에 WebP 출력과 `format` 설정 · `%EXT%` 경로 자리표시자가 추가됐습니다. 1.24 로 원본 2장을 직접 돌려 보니 큐브 타일 1,212장이 전부 `.webp` 로 나왔습니다. 설정은 `format=webp webpquality=50 webpmethod=6` 과 타일 경로의 `.jpg` → `.%EXT%` 입니다.
+
+| `webpmethod` (libwebp 실측, 타일 384장) | WebP q45 | WebP q50 |
+|---|---|---|
+| 0 (krpanotools 기본값 · 가장 빠름) | <span class="hl-amber">−8.5%</span> | <span class="hl-amber">−0.4%</span> |
+| 4 | −23.0% | −16.1% |
+| ⭐ 6 (가장 느림 · 가장 작음) | <span class="hl-green">−31.7%</span> | <span class="hl-green">−25.3%</span> |
+
+<span class="hl-amber">주의</span> 이 덱의 q45·q50 용량 수치는 전부 `method 6` 기준입니다. krpanotools 는 기본값이 `0` 이라서, 지정하지 않으면 q50 으로 만들어도 지금 JPG 와 용량이 거의 같습니다.
+
+---
+
+## krpanotools 1.24 — 도입 전에 확인할 것
+
+| 항목 | 내용 |
+|---|---|
+| 라이선스 | 지금 1.23.3 에 등록된 라이선스 파일을 1.24 폴더에 복사하면 «Not registered» 로 나오고, 결과 타일에 krpano.com 워터마크가 찍힙니다(실측). 1.24 에서 라이선스 코드로 다시 등록해야 합니다 |
+| 업그레이드 비용 | krpano 공지: «1.24 는 대체로 1.20 이상 라이선스로 동작». 2023-10 이후 구매·업그레이드분은 무료, 그 이전은 39€ (현재 라이선스 주문일은 2025-01 → 무료 대상으로 추정) |
+| 화질 재측정 | 워터마크 때문에 krpanotools 자체 WebP 인코더의 화질은 이번에 재지 못했습니다. 등록 후 q45·q50 을 한 번 더 재서 libwebp 실측과 같은지 확인합니다 |
+| 이미지 크기 한계 | WebP 한 장 최대 16383×16383 → 512 타일·`1024_`·`512_` 는 문제없음. 큰 미리보기(`sphere_*` 등)를 WebP 로 만들 때만 확인 |
+| 웹 기본 품질 | `quality` 기본값 85 · `jpegsubsamp` 기본값 422 → 지금처럼 config 에 값을 명시해야 함 |
+
+---
+
+## 1.24 로 못 올릴 때의 대안 — 중간 출력을 q100 · 4:4:4 로 바꿔야 효과가 납니다
+
+1.20.9 를 그대로 쓰면 WebP 를 못 만들어서 «JPG 출력 → WebP 변환» 두 단계가 됩니다. 같은 타일 135장을 중간 형식만 바꿔 최종 WebP q55 로 만들었습니다.
 
 | 중간 출력 | 중간 파일 | 최종 WebP | SSIM |
 |---|---|---|---|
@@ -197,7 +224,7 @@ utils · BE · client · admin · 레거시에서 확장자를 고정한 지점�
 |---|---|---|
 | 0 준비 | `tile_info` 에 확장자 값(예: `tile_ext`, 기본 `jpg`) 추가 | 없음 |
 | 1 읽는 쪽 | BE XML 빌더 · 레거시 PHP XML 생성기 · client · admin 이 이 값을 읽도록 변경 | 없음 (전부 jpg) |
-| 2 만드는 쪽 | utils: krpanotools 를 JPG q100 · 4:4:4 로 출력 → `cwebp`/libvips 로 WebP q50 변환 · `tile_ext=webp` 기록 · S3 ContentType 지정 | 신규만 |
+| 2 만드는 쪽 | utils: krpanotools 1.24 로 교체 · `format=webp webpquality=50 webpmethod=6` · `tile_ext=webp` 기록 · S3 ContentType 지정 | 신규만 |
 | 3 시범 | 신규 1~2건을 WebP 로 올려 기기별 확인 (iOS Safari · 안드로이드 · 카톡 인앱 · VR 모드) | 시범 장면만 |
 | 4 선택 | 조회 상위 장면을 원본에서 다시 생성 | 해당 장면만 |
 
@@ -205,19 +232,19 @@ utils · BE · client · admin · 레거시에서 확장자를 고정한 지점�
 
 ---
 
-## utils — 타일 생성 도구가 WebP 를 만들지 못합니다
+## utils — 지금 번들된 1.20.9 는 WebP 를 못 만들고, 1.24 로 바꾸면 됩니다
 
-`look360_utils_v3` 에 번들된 krpanotools 는 **1.20.9 (2020-11-19)** 입니다. krpano 1.23.3 문서에서도 출력 형식은 JPEG·TIFF 뿐입니다.
+`look360_utils_v3` 에 번들된 krpanotools 는 **1.20.9 (2020-11-19)** 이고, 1.23.3 까지는 출력 형식이 JPEG·TIFF 뿐입니다. **1.24 부터** WebP·PNG·JpegXL 출력이 추가됐습니다.
 
 | 출력물 | 현재 | 바꿀 것 |
 |---|---|---|
-| 큐브 타일 · `pv` · `1024_` · `512_` | `multires_*.config` 25개, `jpegquality=60` | `jpegquality=100 jpegsubsamp=444` → WebP q50 변환 · 파일명 `.webp` |
+| 큐브 타일 · `pv` · `1024_` · `512_` | `multires_*.config` 25개, `jpegquality=60` | `format=webp webpquality=50 webpmethod=6` · 경로 `.jpg` → `.%EXT%` (`customimage[…].imagesettings` 도 같이) |
 | `sphere_*` · `view_800` 등 미리보기 | `kmakepreview` q80 | 카드용은 WebP, **og 용 JPG 1장은 유지** |
 | flat 타일 · 미리보기 | `flatTiles.mjs`, magick q85 | 같은 방식 |
 | `imglink_*_src2.jpg` | 레거시 og:image 원본 | <span class="hl-amber">JPG 유지</span> |
 | `imglink_*.gif` | 애니메이션 GIF 76GB | 이번 범위 밖 (별도 검토) |
 
-수정 지점: 약 22건 + 설정 파일 25개. 업로드는 utils 가 아니라 BE `uploadPanoramaZip` 이 합니다.
+수정 지점: 약 22건 + 설정 파일 25개 + krpanotools 바이너리 교체(Windows·macOS·Linux). 업로드는 utils 가 아니라 BE `uploadPanoramaZip` 이 합니다.
 
 ---
 
@@ -323,7 +350,8 @@ SSIM(Structural Similarity, 구조적 유사도)은 1 이면 원본과 같고, �
 | 기존 품질값 | ImageMagick `identify %Q` → 타일 300장 전부 q60 · 4:2:0 |
 | 신규 비교 | 궁디팡팡 `retouched.jpg` 6장 사본 → 512 타일 384장 · JPG q60 4:2:0 optimize vs JPG q100 4:4:4 → WebP (libwebp 1.6.0, method 6) · 중간 출력 비교는 3장 · 135장 |
 | 화질 지표 | 밝기 채널 SSIM (가우시안 11×11, σ 1.5) · PSNR |
-| krpano | krpano 1.23.3 문서 (`image` url · krpanotools 지원 형식) · 저장소별 `vr.js` 헤더 |
+| krpano | krpano 1.24 릴리스 노트(2026-06-25) · Tools 설정 문서(`format` · `webpquality` · `webpmethod` · `%EXT%`) · krpanotools 1.24 Linux 를 받아 원본 2장 직접 실행 · 저장소별 `vr.js` 헤더 |
+| `webpmethod` | 위 타일 384장을 libwebp q45·q50 × method 0·4·6 으로 인코딩 |
 | 코드 | 5개 저장소 읽기 전용 조사 (수정 없음) |
 
 <span class="hl-amber">추정 값</span> 저장·요청 단가는 AWS 서울 공시가 기준이며 실제 청구액과 다를 수 있습니다. 신규 비교는 실제 큐브 면이 아니라 정방형 사진의 가운데 띠를 잘라 쓴 근사입니다.
@@ -335,6 +363,6 @@ SSIM(Structural Similarity, 구조적 유사도)은 1 이면 원본과 같고, �
 
 ## 감사합니다
 
-신규는 krpanotools q100 출력 → WebP q50 으로 −25%, 기존 352GB 는 화질·비용을 따져 보류를 권합니다.
+신규는 krpanotools 1.24 로 WebP q50(`webpmethod=6`)을 바로 만들어 −25%, 기존 352GB 는 화질·비용을 따져 보류를 권합니다.
 
 Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
