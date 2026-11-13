@@ -53,7 +53,7 @@
       <button id="bCeil">천장 표시</button>
       <button id="bLight">거실 조명: 기본</button>
     </div>
-    <div id="hint">드래그=회전 · 휠=확대 · 방 이름(또는 평면도에서 방) 더블클릭=안으로 들어가기</div>
+    <div id="hint">드래그=회전 · 휠=확대 · 방(또는 이름표·평면도·목록) 더블클릭=안으로 들어가기 · Esc=돌하우스로</div>
   </div>
   <aside>
     <h1>미노네집 돌하우스 · 반자동 PoC</h1>
@@ -173,7 +173,7 @@ function buildRoom(r) {
     wpos.push(...A0, ...A1, ...B0,  ...B0, ...A1, ...B1);
   }
   const wg = new THREE.BufferGeometry(); wg.setAttribute('position', new THREE.Float32BufferAttribute(wpos, 3));
-  g.add(new THREE.Mesh(wg, mat));
+  const wall = new THREE.Mesh(wg, mat); wall.userData.room = r.id; g.add(wall);
 
   // 바닥/천장: earcut 삼각분할
   const tris = THREE.ShapeUtils.triangulateShape(pts.map(p => new THREE.Vector2(p[0], p[1])), []);
@@ -188,7 +188,7 @@ function buildRoom(r) {
     for (const n of [t[0], t[2], t[1]]) cpos.push(P(n)[0], ceilH, -P(n)[1]);
   }
   const fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(fpos, 3));
-  g.add(new THREE.Mesh(fg, mat));
+  const flo = new THREE.Mesh(fg, mat); flo.userData.room = r.id; g.add(flo);
   const cg = new THREE.BufferGeometry(); cg.setAttribute('position', new THREE.Float32BufferAttribute(cpos, 3));
   const ceil = new THREE.Mesh(cg, mat); ceil.visible = showCeil; g.add(ceil);
 
@@ -239,20 +239,32 @@ function enter(id) {
 
 // ---------- 라벨 ----------
 const labelsEl = document.getElementById('labels');
+const labelEls = {};
+// 같은 대상을 짧은 간격으로 두 번 누르면 «더블클릭» 으로 본다.
+// (클릭할 때마다 화면을 다시 그려서 브라우저 기본 dblclick 이 성립하지 않는 곳에서도 동작)
+let lastTap = { id: null, t: 0 };
+function tap(id) {
+  const now = performance.now(), dbl = lastTap.id === id && now - lastTap.t < 400;
+  lastTap = dbl ? { id: null, t: 0 } : { id, t: now };
+  if (dbl) { enter(id); return true; }
+  selected = id; refreshUI(); return false;
+}
 function drawLabels() {
-  labelsEl.innerHTML = '';
-  if (inside) return;
   const w = canvas.clientWidth, h = canvas.clientHeight;
   for (const r of rooms) {
+    let el = labelEls[r.id];
+    if (!el) {
+      el = labelEls[r.id] = document.createElement('div'); el.className = 'lbl';
+      el.addEventListener('pointerdown', e => { e.stopPropagation(); tap(r.id); });
+      labelsEl.appendChild(el);
+    }
     const pts = r.floor.map(p => toWorld(r, p));
     const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length, cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
     const v = new THREE.Vector3(cx, r.ceilH * scale + 0.3, -cy).project(camera);
-    if (v.z > 1) continue;
-    const el = document.createElement('div'); el.className = 'lbl';
+    el.style.display = (inside || v.z > 1) ? 'none' : '';
     el.style.left = ((v.x + 1) / 2 * w) + 'px'; el.style.top = ((1 - v.y) / 2 * h) + 'px';
-    el.innerHTML = `<b>${r.title}</b>${area(pts).toFixed(1)}㎡`;
-    el.ondblclick = () => enter(r.id); el.onclick = () => { selected = r.id; refreshUI(); };
-    labelsEl.appendChild(el);
+    const html = `<b>${r.title}</b>${area(pts).toFixed(1)}㎡`;
+    if (el.innerHTML !== html) el.innerHTML = html;
   }
 }
 
@@ -296,9 +308,10 @@ function drawPlan() {
 let drag = null;
 svg.addEventListener('pointerdown', e => {
   const id = e.target.dataset?.id; if (!id) return;
-  selected = id; const r = rooms.find(r => r.id === id);
+  if (tap(id)) return;
+  const r = rooms.find(r => r.id === id);
   drag = { r, x0: e.clientX, y0: e.clientY, rx: r.x, ry: r.y };
-  svg.setPointerCapture(e.pointerId); refreshUI();
+  svg.setPointerCapture(e.pointerId);
 });
 svg.addEventListener('pointermove', e => {
   if (!drag) return;
@@ -307,7 +320,6 @@ svg.addEventListener('pointermove', e => {
   drag.r.via = 'manual'; buildRoom(drag.r); drawPlan();
 });
 svg.addEventListener('pointerup', () => { if (drag) { drag = null; refreshUI(); } });
-svg.addEventListener('dblclick', e => { const id = e.target.dataset?.id; if (id) enter(id); });
 
 document.querySelectorAll('[data-rot]').forEach(b => b.onclick = () => {
   const r = rooms.find(r => r.id === selected), d = +b.dataset.rot;
@@ -340,7 +352,7 @@ function refreshUI() {
     const via = r.via === 'root' ? '기준 방' : r.via === 'manual' ? '수동 보정' : '핫스팟 자동';
     return `<tr data-id="${r.id}" class="${r.id === selected ? 'sel' : ''}"><td>${r.title}${variants[r.id] ? ' <span class="muted">(+조명 변형)</span>' : ''}</td><td>${area(pts).toFixed(1)}㎡</td><td>${(r.ceilH * scale).toFixed(2)}m</td><td>${via}</td></tr>`;
   }).join('');
-  tb.querySelectorAll('tr').forEach(tr => { tr.onclick = () => { selected = tr.dataset.id; refreshUI(); }; tr.ondblclick = () => enter(tr.dataset.id); });
+  tb.querySelectorAll('tr').forEach(tr => { tr.onpointerdown = () => tap(tr.dataset.id); });
   document.getElementById('json').value = JSON.stringify({ camH: +camH.value, rooms: rooms.map(r => ({ id: r.id, title: r.title, x: +r.x.toFixed(3), y: +r.y.toFixed(3), theta: +r.theta.toFixed(2) })) });
   drawPlan();
 }
@@ -357,6 +369,16 @@ function toggleCeil(v) { showCeil = v; bCeil.classList.toggle('on', v); for (con
 bCeil.onclick = () => toggleCeil(!showCeil);
 bLight.onclick = () => { lightVariant = !lightVariant; bLight.textContent = '거실 조명: ' + (lightVariant ? '무드등' : '기본'); bLight.classList.toggle('on', lightVariant); rebuildAll(); };
 
+const ray = new THREE.Raycaster();
+canvas.addEventListener('dblclick', e => {
+  if (inside) return;
+  const b = canvas.getBoundingClientRect();
+  ray.setFromCamera(new THREE.Vector2((e.clientX - b.left) / b.width * 2 - 1, -(e.clientY - b.top) / b.height * 2 + 1), camera);
+  // 바깥에서 보이는 면(=안쪽 면이 카메라를 향한 면)만 맞도록 FrontSide 그대로 판정
+  const hit = ray.intersectObjects(Object.values(roomGroups).map(g => g.group), true).find(h => h.object.userData.room);
+  if (hit) enter(hit.object.userData.room);
+});
+addEventListener('keydown', e => { if (e.key === 'Escape' && inside) setMode(false); });
 function resize() {
   const w = canvas.clientWidth, h = canvas.clientHeight;
   renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
