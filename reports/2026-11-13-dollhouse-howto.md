@@ -152,6 +152,17 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 
 ---
 
+## 플랫폼 krpano 에 얹기 — 돌하우스에서 방으로 날아 들어가기
+
+![w:1000](assets/2026-11-13-dollhouse/krpano-moves.jpg)
+
+l3 플랫폼의 VR 엔진(krpano)으로 띄운 같은 결과입니다. 빨간 점을 누르면 카메라가 3D 공간을 날아 원본 360 사진으로 이어지고, 방 사이도 걸어서 이동합니다.
+
+<div class="links"><span class="lbl">직접 보기</span>
+<a class="lnk" href="http://100.64.25.50:5174/dollhouse-sample/index.html" target="_blank">krpano 접목 샘플 (개발 서버 · 내부망 전용)</a></div>
+
+---
+
 <!-- _class: sec -->
 
 <span class="sec-num">Part 2</span>
@@ -258,6 +269,17 @@ AI 의 바탕 모델 구조는 공개된 **HorizonNet**(MIT 라이선스, 상업
 
 <div class="links"><span class="lbl">직접 보기</span>
 <a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-13-dollhouse-places/nulbom-manual/" target="_blank">가벽 공간 5곳 비교 뷰어</a></div>
+
+---
+
+## 실제 공간 비교 — 재활치료실 (처음 보는 사진)
+
+![w:470](assets/2026-11-13-dollhouse/nulbom-rehab-4versions.jpg)
+
+학습·평가에 한 번도 안 쓴 요양병원 재활치료실 5개 방을 4개 모델로 세운 결과입니다(방 위치는 같고 방 모양만 모델마다 다름). 외부 모델(왼쪽 위)은 «재활치료실_1»을 건물 밖까지 길게 봤고, 우리 모델(1·2차)은 건물 안에 담았습니다.
+
+<div class="links"><span class="lbl">직접 보기</span>
+<a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-13-dollhouse-places/nulbom-rehab/" target="_blank">재활치료실 — 모델 버튼으로 4개 버전 전환</a></div>
 
 ---
 
