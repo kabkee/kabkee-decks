@@ -319,8 +319,8 @@ function drawPlan() {
     for (const vr of v.rooms) {
       if (vr.variantOf) continue;
       const cur = rooms.find(r => r.id === vr.id); if (!cur) continue;
-      // 위치는 지금 화면의 방 위치를 따르고, 모양·회전만 그 버전 것으로 그린다
-      const g = { ...vr, x: cur.x, y: cur.y };
+      // 위치·회전은 지금 화면의 방을 따르고(카메라 위치·방향은 버전과 무관), 모양만 그 버전 것으로 그린다
+      const g = { ...vr, x: cur.x, y: cur.y, theta: cur.theta };
       const pts = vr.floor.map(p => toWorld(g, p));
       s += `<polygon points="${pts.map(p => X(p[0]) + ',' + Y(p[1])).join(' ')}" fill="none" stroke="${VCOLORS[vi % VCOLORS.length]}" stroke-width="3" stroke-dasharray="10 7" opacity=".8" pointer-events="none"/>`;
     }
