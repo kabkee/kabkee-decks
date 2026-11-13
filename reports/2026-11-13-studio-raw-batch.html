@@ -127,7 +127,7 @@
 <p><code>4 고공전경</code>은 40분 늦게 찍어 폴더 순서로는 떨어져 있지만 같은 D 묶음입니다. → <strong>촬영 노출(EV100)로 자동 묶음 제안</strong>이 가능합니다. B·C 는 EXIF 가 같아 사람이 나눠야 합니다.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="22">
-<h2 id="%EC%9E%AC%ED%98%84-%EC%A0%95%ED%99%95%EB%8F%84--%EC%8B%A4%EB%82%B4-l-2-%EC%95%88%ED%8C%8E-%EC%8B%A4%EC%99%B8%EB%8A%94-%EA%B0%9C%EC%84%A0-%ED%95%84%EC%9A%94">재현 정확도 — 실내 L 2 안팎, 실외는 개선 필요</h2>
+<h2 id="%EC%9E%AC%ED%98%84-%EC%A0%95%ED%99%95%EB%8F%84--%EC%8B%A4%EB%82%B4-l-2-%EC%95%88%ED%8C%8E-%EC%8B%A4%EC%99%B8%EB%8A%94-%EB%82%A8%EC%9D%80-%EA%B3%BC%EC%A0%9C">재현 정확도 — 실내 L 2 안팎, 실외는 남은 과제</h2>
 <p>기본 톤 곡선은 «14 카페테리아» 1곳으로만 맞추고, 설정값이 다른 3곳으로 검증했습니다 (Lab 평균 절대 오차, 장소별 전 사진 평균).</p>
 <table>
 <thead>
@@ -164,13 +164,13 @@
 <tr>
 <td>1 전시관 입구 (실외)</td>
 <td>검증</td>
-<td><span class="hl-red">6.72</span> / 3.14 / 3.21</td>
+<td><span class="hl-amber">6.72</span> / 3.14 / 3.21</td>
 <td>3.01</td>
 <td>16.24</td>
 </tr>
 </tbody>
 </table>
-<p>«다른 묶음 값» 오차가 6~16 으로 크다는 것은, <strong>묶음을 잘못 고르면 장소 이동 시 이질감이 바로 생긴다</strong>는 뜻입니다. 실외 하늘 장면은 밝은 영역 계수를 실내로만 맞춘 탓으로 추정합니다.</p>
+<p>«다른 묶음 값» 오차가 6~16 으로 크다는 것은, <strong>묶음을 잘못 고르면 장소 이동 시 이질감이 바로 생긴다</strong>는 뜻입니다. <span class="hl-amber">남은 과제</span> 실외 하늘 장면은 아직 Camera Raw 보다 밝게 나옵니다. 밝은 영역 계수를 실내로만 맞춘 탓으로 추정합니다(안건 3).</p>
 <div class="links"><span class="lbl">근거</span>
 <a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-12-studio-raw-batch-edit.html" target="_blank">가능성 확인 보고서 (11-12, 비교 이미지 포함)</a></div>
 </section>
@@ -183,7 +183,7 @@
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="8" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="22">
 <h2 id="%EC%83%89%EC%88%98%EC%B0%A8--%EB%A0%8C%EC%A6%88%EB%A7%88%EB%8B%A4-%ED%95%9C-%EB%B2%88-%EC%9E%AC%EC%84%9C-%EB%AA%A8%EB%93%A0-%EC%82%AC%EC%A7%84%EC%97%90-%EC%A0%81%EC%9A%A9%ED%95%A9%EB%8B%88%EB%8B%A4">색수차 — 렌즈마다 한 번 재서 모든 사진에 적용합니다</h2>
-<p>가로 색수차는 사진이 아니라 <strong>렌즈의 성질</strong>입니다. 입구·로비를 따로 재도 같은 값이 나왔고, ISO 800 사진은 단독 측정이 실패했습니다.</p>
+<p>가로 색수차는 사진이 아니라 <strong>렌즈의 성질</strong>입니다. 입구·로비를 따로 재도 같은 값이 나왔습니다. 사진 한 장씩 재는 방식은 ISO 800 노이즈 사진에서 값이 틀려서, <strong>렌즈 공통값 방식으로 바꿔 해결했습니다.</strong></p>
 <table>
 <thead>
 <tr>
@@ -205,8 +205,8 @@
 <td>35,905 → <span class="hl-green">2,210</span></td>
 </tr>
 <tr>
-<td>카페테리아 단독 측정</td>
-<td>실패(배율 1.0) → 렌즈 공통값으로 정상 보정</td>
+<td>카페테리아 (ISO 800)</td>
+<td><span class="hl-green">해결</span> 한 장 단독 측정은 «보정 불필요»로 틀림 → 렌즈 공통값으로 정상 보정</td>
 </tr>
 </tbody>
 </table>
@@ -368,7 +368,7 @@
 </tr>
 </tbody>
 </table>
-<p>2배 확대 육안 비교에서 WebP 90·95 는 원본과 구분되지 않았고, <span class="hl-red">85 부터 어두운 곳 노이즈가 뭉개집니다.</span> 화면에서 85 미만은 경고합니다.</p>
+<p>2배 확대 육안 비교에서 WebP 90·95 는 원본과 구분되지 않았습니다. <span class="hl-amber">설정 안내</span> 품질 85 부터는 압축 때문에 어두운 곳 노이즈가 뭉개지므로 85 미만은 권하지 않으며, 화면에서도 85 미만을 고르면 경고합니다.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="17" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="22">
 <h2 id="webp-90-vs-jpg--%EC%9A%A9%EB%9F%89-%EC%B0%A8%EC%9D%B4">WebP 90 vs JPG — 용량 차이</h2>
