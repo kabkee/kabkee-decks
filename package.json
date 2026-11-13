@@ -1,0 +1,9 @@
+{
+  "name": "kabkee-decks",
+  "private": true,
+  "description": "Netlify 함수(netlify/functions) 의존성 — 덱 검토 코멘트 API",
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "11.1.7"
+  }
+}

@@ -14,7 +14,7 @@ cd "$(dirname "$0")/.."
 
 DIST=dist
 CONTENT_DIRS=(weekly-reports guides ideas reports)
-EXT_RE='\.(html|css|js|jpg|jpeg|png|gif|svg|webp|ico|mp4|webm|woff|woff2|ttf)$'
+EXT_RE='\.(html|css|js|jpg|jpeg|png|gif|svg|webp|ico|mp4|webm|woff|woff2|ttf|pptx)$'  # pptx: 덱 원본 다운로드(2026-11-13)
 BACKUP_RE='(\.bak|\.pre-|\.orig$|~$)'
 
 rm -rf "$DIST"

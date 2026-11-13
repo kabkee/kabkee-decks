@@ -13,5 +13,9 @@ SID=$(jq -r .siteId .netlify/state.json)
 
 ./scripts/build-dist.sh
 
-OUT=$(CI=1 timeout 1800 netlify deploy --prod --dir=dist --site "$SID" --json --message "$MSG" < /dev/null)
+# 코멘트 API(netlify/functions/comments.mjs) 의존성. 함수는 --functions 로 dist 와 함께 올린다.
+# 이 옵션이 빠지면 배포할 때마다 함수가 사라져 덱 검토 코멘트가 멈춘다(저장된 코멘트는 Blobs 에 남음).
+[[ -d node_modules/@netlify/blobs ]] || npm ci --no-audit --no-fund
+
+OUT=$(CI=1 timeout 1800 netlify deploy --prod --dir=dist --functions=netlify/functions --site "$SID" --json --message "$MSG" < /dev/null)
 echo "$OUT" | jq '{deploy_id, url, deploy_url}'
