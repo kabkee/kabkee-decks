@@ -5,7 +5,7 @@
 <hr />
 <p>Indyspot AI Corp  ·  Engineering Manager  ·  2026-11-13</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="agenda" data-theme="clean" lang="C" class="agenda" data-marpit-pagination="2" style="--paginate:true;--class:agenda;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="agenda" data-theme="clean" lang="C" class="agenda" data-marpit-pagination="2" style="--paginate:true;--class:agenda;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%ED%95%9C-%EC%A4%84-%EC%9A%94%EC%95%BD--%EA%B9%8A%EC%9D%B4-%EC%B9%B4%EB%A9%94%EB%9D%BC-%EC%97%86%EC%9D%B4-studio-%EA%B0%99%EC%9D%80-%EB%8F%8C%ED%95%98%EC%9A%B0%EC%8A%A4%EA%B0%80-%EB%82%98%EC%98%B5%EB%8B%88%EB%8B%A4">한 줄 요약 — 깊이 카메라 없이 Studio 같은 돌하우스가 나옵니다</h2>
 <div class="cols">
 <div class="col">
@@ -30,12 +30,48 @@
 <div class="links"><span class="lbl">직접 확인</span>
 <a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-13-dollhouse-poc/" target="_blank">미노네집 돌하우스 3D 뷰어 (보정 배치 반영)</a></div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-class="sec" data-theme="clean" lang="C" class="sec" data-marpit-pagination="3" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="3" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
+<h2 id="%F0%9F%93%8C-%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8-11-13-%EB%B0%A4--%EC%9D%B4-%EB%8D%B1-%EC%9D%B4%ED%9B%84-%EB%8B%AC%EB%9D%BC%EC%A7%84-%EA%B2%83"><img class="emoji" draggable="false" alt="📌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f4cc.svg" data-marp-twemoji=""/> 업데이트 (11-13 밤) — 이 덱 이후 달라진 것</h2>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>이 덱 작성 시점</th>
+<th>지금</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI 모델</td>
+<td>ZInD 학습 공개 모델</td>
+<td><strong>상업 불가로 확인</strong> → 우리 사진으로 직접 학습 (2차 일반 방: 후처리 기준 76.2% vs ZInD 74.0% · 경계선 자체는 78.9% vs 82.3%)</td>
+</tr>
+<tr>
+<td>학습 데이터</td>
+<td>없음</td>
+<td>레거시 실내 360 995장 라벨링 → 사용 가능 349장, 3차 학습 중</td>
+</tr>
+<tr>
+<td>비교 장소</td>
+<td>미노네집 1곳</td>
+<td>미노네집 + 가벽 공간 5곳, 모델 버전별 비교 뷰어</td>
+</tr>
+<tr>
+<td>플랫폼 연동</td>
+<td>three.js 단독 뷰어</td>
+<td><strong>krpano 네이티브 3D</strong> 샘플 (돌하우스 ↔ 360 이동, 자체 모델 방 모양)</td>
+</tr>
+</tbody>
+</table>
+<div class="links"><span class="lbl">최신 설명</span>
+<a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-13-dollhouse-howto.html" target="_blank">입문 덱 — 원리·학습·ZInD·krpano 접목</a></div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-class="sec" data-theme="clean" lang="C" class="sec" data-marpit-pagination="4" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="26">
 <p><span class="sec-num">Section 01</span></p>
 <h2 id="%EC%96%B4%EB%96%A4-%EB%B0%A9%EC%8B%9D%EC%9C%BC%EB%A1%9C-%EB%A7%8C%EB%93%A4%EC%97%88%EB%82%98">어떤 방식으로 만들었나</h2>
 <p>네이버식 «깊이 메시» 대신 «방 구조 추정» 을 썼습니다</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="4" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="5" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EB%91%90-%EA%B0%80%EC%A7%80-%EB%B0%A9%EC%8B%9D--%EC%99%9C-%C2%AB%EB%B0%A9-%EA%B5%AC%EC%A1%B0-%EC%B6%94%EC%A0%95%C2%BB-%EC%9D%84-%EA%B3%A8%EB%9E%90%EB%82%98">두 가지 방식 — 왜 «방 구조 추정» 을 골랐나</h2>
 <table>
 <thead>
@@ -75,7 +111,7 @@
 </table>
 <p><span class="hl-amber">참고</span> 네이버 쪽 방식은 결과 화면의 특징을 보고 추정한 것이며, 직접 확인한 것은 아닙니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="5" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EC%A0%84%EC%B2%B4-%ED%9D%90%EB%A6%84--5%EB%8B%A8%EA%B3%84">전체 흐름 — 5단계</h2>
 <table>
 <thead>
@@ -93,7 +129,7 @@
 </tr>
 <tr>
 <td>② 방 구조 추정</td>
-<td>HorizonNet(실제 주택 데이터 ZInD 학습)이 경계선·모서리 추정</td>
+<td>HorizonNet 이 경계선·모서리 추정 (PoC 는 ZInD 학습본 → 지금은 <strong>자체 학습본</strong>)</td>
 <td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/> 자동 · 5장 약 2초 (RTX 3060)</td>
 </tr>
 <tr>
@@ -115,21 +151,21 @@
 </table>
 <p>사람이 하는 일은 <strong>④ 에서 어긋난 방을 끌어서 맞추는 것뿐</strong>입니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="7" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%E2%91%A0-%EC%9B%90%EB%B3%B8--%EA%B8%B0%EC%A1%B4-%ED%88%AC%EC%96%B4-%ED%83%80%EC%9D%BC%EC%97%90%EC%84%9C-360-%EC%82%AC%EC%A7%84-%EB%B3%B5%EC%9B%90">① 원본 — 기존 투어 타일에서 360 사진 복원</h2>
 <p><img src="assets/2026-11-13-dollhouse/equi-s3.jpg" alt="" style="width:820px;" /></p>
 <p>신발장 씬. 운영 서버 마운트는 훑지 않고, 필요한 타일만 S3 에서 받았습니다(5씬 × 96장, 수 MB).</p>
 <div class="links"><span class="lbl">직접 확인</span>
 <a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-13-dollhouse-poc/" target="_blank">돌하우스 뷰어 → 신발장 더블클릭 (이 사진이 그대로 벽에 입혀집니다)</a></div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="7" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="8" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%E2%91%A1-%EB%B0%A9-%EA%B5%AC%EC%A1%B0-%EC%B6%94%EC%A0%95--%EC%B4%88%EB%A1%9D-%EC%84%A0%EC%9D%B4-ai-%EA%B0%80-%EC%B0%BE%EC%9D%80-%EA%B2%BD%EA%B3%84">② 방 구조 추정 — 초록 선이 AI 가 찾은 경계</h2>
 <p><img src="assets/2026-11-13-dollhouse/layout-pair.jpg" alt="" style="width:1080px;" /></p>
 <p>왼쪽 거실, 오른쪽 신발장. 초록 선 = 벽-천장·벽-바닥 경계, 노란 선 = 방 모서리. 침대·쓰레기통이 벽 아래를 가려도 이어서 추정하며, 학습 없이 공개 가중치만 썼습니다.</p>
 <div class="links"><span class="lbl">직접 확인</span>
 <a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-13-dollhouse-poc/" target="_blank">돌하우스 뷰어 → 위에서 보기 (이 경계선으로 만든 방 모양)</a></div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="8" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="9" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%E2%91%A2-%EC%B9%98%EC%88%98--%EC%B9%B4%EB%A9%94%EB%9D%BC-%EB%86%92%EC%9D%B4-%ED%95%98%EB%82%98%EB%A1%9C-%EB%AF%B8%ED%84%B0-%EB%8B%A8%EC%9C%84%EA%B0%80-%EB%90%A9%EB%8B%88%EB%8B%A4">③ 치수 — 카메라 높이 하나로 미터 단위가 됩니다</h2>
 <table>
 <thead>
@@ -159,7 +195,7 @@
 </table>
 <p>카메라 높이는 <strong>1.5m 로 가정</strong>했습니다. 천장고가 아파트 일반 범위(2.3~2.5m)로 나와서 가정이 크게 틀리지 않은 것으로 봅니다. 실제 삼각대 높이를 알면 뷰어의 슬라이더로 바로 맞출 수 있습니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="9" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="10" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%E2%91%A3-%EB%B0%A9-%EC%9E%90%EB%8F%99-%EB%B0%B0%EC%B9%98--%EA%B8%B0%EC%A1%B4-%EC%9D%B4%EB%8F%99-%ED%95%AB%EC%8A%A4%ED%8C%9F%EC%9D%84-%EA%B7%B8%EB%8C%80%EB%A1%9C-%EC%94%81%EB%8B%88%EB%8B%A4">④ 방 자동 배치 — 기존 이동 핫스팟을 그대로 씁니다</h2>
 <table>
 <thead>
@@ -186,14 +222,14 @@
 <p>거실 «기본 / 무드등» 두 장은 같은 자리 변형으로 자동 인식되어, 뷰어에서 조명 전환 버튼이 됐습니다.</p>
 <p><span class="hl-amber">한계</span> 핫스팟이 문 앞이 아니라 방 안쪽 바닥에 찍혀 있으면 그만큼 위치가 어긋납니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="10" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="11" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%E2%91%A3-%EB%B0%98%EC%9E%90%EB%8F%99-%EB%B3%B4%EC%A0%95--%EC%98%A4%EB%84%88%EA%B0%80-%ED%8F%89%EB%A9%B4%EB%8F%84%EC%97%90%EC%84%9C-%ED%95%9C-%EB%B2%88-%EB%A7%9E%EC%B6%98-%EA%B2%B0%EA%B3%BC">④ 반자동 보정 — 오너가 평면도에서 한 번 맞춘 결과</h2>
 <p><img src="assets/2026-11-13-dollhouse/plan-compare.jpg" alt="" style="width:560px;" /></p>
 <p>보정 이동량: 거실 0.98m · 신발장 0.68m · <span class="hl-amber">컴퓨터방 2.09m</span> · 옷방 0 (자동 그대로). 두 그림은 축척이 서로 다르고(각각 화면에 맞춤), 숫자는 씬 번호 끝 두 자리입니다.</p>
 <div class="links"><span class="lbl">직접 확인</span>
 <a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-13-dollhouse-poc/" target="_blank">평면도 패널 «자동 배치 보기» ↔ «저장된 보정 배치» 전환</a></div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="11" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="12" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%E2%91%A4-3d-%EC%83%9D%EC%84%B1--%EC%9B%90%EB%B3%B8-%EC%82%AC%EC%A7%84%EC%9D%84-%EB%B2%BD%EC%97%90-%C2%AB%EC%97%AD%ED%88%AC%EC%98%81%C2%BB">⑤ 3D 생성 — 원본 사진을 벽에 «역투영»</h2>
 <ul>
 <li>각 면의 픽셀마다 «그 방 카메라 → 픽셀» 방향을 계산해 360 사진에서 색을 가져옵니다.</li>
@@ -202,25 +238,25 @@
 <li>별도 3D 모델 파일 없이 웹(three.js)에서 바로 그립니다. krpano depthmap 으로 옮기는 것도 가능합니다.</li>
 </ul>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="12" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="13" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EA%B2%B0%EA%B3%BC-%ED%99%94%EB%A9%B4--%EB%8F%8C%ED%95%98%EC%9A%B0%EC%8A%A4-%EB%B3%B4%EC%A0%95-%EB%B0%B0%EC%B9%98">결과 화면 — 돌하우스 (보정 배치)</h2>
 <p><img src="assets/2026-11-13-dollhouse/dh-doll-manual-3d.jpg" alt="" style="width:540px;" /></p>
 <div class="links"><span class="lbl">직접 확인</span>
 <a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-13-dollhouse-poc/" target="_blank">드래그=회전 · 휠=확대 · 방 이름 더블클릭=안으로</a></div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="13" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="14" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EA%B2%B0%EA%B3%BC-%ED%99%94%EB%A9%B4--%EC%9C%84%EC%97%90%EC%84%9C-%EB%B3%B4%EA%B8%B0--%EB%B0%A9-%EC%95%88%EC%9C%BC%EB%A1%9C-%EB%93%A4%EC%96%B4%EA%B0%80%EA%B8%B0">결과 화면 — 위에서 보기 · 방 안으로 들어가기</h2>
 <p><img src="assets/2026-11-13-dollhouse/result-pair.jpg" alt="" style="width:980px;" /></p>
 <p>왼쪽은 위에서 내려다본 평면(보정 전 자동 배치). 오른쪽은 신발장 안 시점으로, 원본 파노라마와 같은 화면입니다.</p>
 <div class="links"><span class="lbl">직접 확인</span>
 <a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-13-dollhouse-poc/" target="_blank">상단 «위에서 보기» · 방 더블클릭</a></div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-class="sec" data-theme="clean" lang="C" class="sec" data-marpit-pagination="14" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-class="sec" data-theme="clean" lang="C" class="sec" data-marpit-pagination="15" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="26">
 <p><span class="sec-num">Section 02</span></p>
 <h2 id="%EC%82%AC%EC%A7%84-%EC%B4%AC%EC%98%81%ED%95%A0-%EB%95%8C-%EC%A3%BC%EC%9D%98%ED%95%A0-%EC%A0%90">사진 촬영할 때 주의할 점</h2>
 <p>AI 가 경계선을 잘 찾고, 방이 자동으로 맞게 놓이도록</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="15" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="16" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EC%B4%AC%EC%98%81-%EC%A3%BC%EC%9D%98%EC%A0%90-%E2%91%A0--%EC%B6%95%EC%B2%99%EA%B3%BC-%EC%88%98%ED%8F%89">촬영 주의점 ① — 축척과 수평</h2>
 <table>
 <thead>
@@ -254,7 +290,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="16" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="17" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EC%B4%AC%EC%98%81-%EC%A3%BC%EC%9D%98%EC%A0%90-%E2%91%A1--%EB%B0%A9%EB%A7%88%EB%8B%A4-%EA%B2%BD%EA%B3%84%EA%B0%80-%EB%B3%B4%EC%9D%B4%EA%B2%8C">촬영 주의점 ② — 방마다, 경계가 보이게</h2>
 <table>
 <thead>
@@ -293,7 +329,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="17" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="18" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EC%B4%AC%EC%98%81-%EC%A3%BC%EC%9D%98%EC%A0%90-%E2%91%A2--%EB%B0%A9-%EC%97%B0%EA%B2%B0%EC%9D%84-%EC%9C%84%ED%95%9C-%EB%AC%B8--%ED%95%AB%EC%8A%A4%ED%8C%9F">촬영 주의점 ③ — 방 연결을 위한 문 · 핫스팟</h2>
 <table>
 <thead>
@@ -328,12 +364,12 @@
 </table>
 <p><span class="hl-amber">추정</span> 컴퓨터방이 2.09m 어긋난 것은 핫스팟이 문에서 떨어진 위치에 찍힌 탓으로 보입니다(측정으로 확인하지는 않았습니다).</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-class="sec" data-theme="clean" lang="C" class="sec" data-marpit-pagination="18" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-class="sec" data-theme="clean" lang="C" class="sec" data-marpit-pagination="19" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="26">
 <p><span class="sec-num">Section 03</span></p>
 <h2 id="%EB%8B%A4%EB%A5%B8-%EC%8B%A4%EB%82%B4-%EC%9E%A5%EC%86%8C%EC%97%90-%EC%A0%81%EC%9A%A9%ED%95%98%EB%A0%A4%EB%A9%B4">다른 실내 장소에 적용하려면</h2>
 <p>무엇이 준비되어야 하나</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="19" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="20" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EC%A4%80%EB%B9%84%EB%AC%BC--%EC%9E%A5%EC%86%8C%EB%B3%84-%EB%8D%B0%EC%9D%B4%ED%84%B0">준비물 — 장소별 데이터</h2>
 <table>
 <thead>
@@ -372,7 +408,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="20" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="21" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EC%96%B4%EB%96%A4-%EC%9E%A5%EC%86%8C%EC%97%90-%EB%A7%9E%EB%82%98--%EC%A0%81%ED%95%A9%EB%8F%84">어떤 장소에 맞나 — 적합도</h2>
 <table>
 <thead>
@@ -412,7 +448,7 @@
 </table>
 <p><span class="hl-amber">현황</span> NAS <code>VR/BACKUP</code> 에 남은 장소는 대부분 행사장·캠퍼스라 이 기능에 맞는 곳이 적었습니다. 삼가동 아파트 촬영본은 이번에 찾지 못했습니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="21" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="22" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EC%A4%80%EB%B9%84%EB%AC%BC--%EC%9D%B8%ED%94%84%EB%9D%BC--%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4">준비물 — 인프라 · 소프트웨어</h2>
 <table>
 <thead>
@@ -436,11 +472,11 @@
 </tr>
 <tr>
 <td>모델 가중치</td>
-<td>ZInD 학습본 — <span class="hl-amber">상업 사용 가능 여부 확인 필요</span></td>
+<td><s>ZInD 학습본</s> → <span class="hl-red">상업 불가 확인</span> · <strong>자체 학습본(라벨 189장, 일반 방 76.2%)</strong> 으로 교체</td>
 </tr>
 <tr>
 <td>파이프라인</td>
-<td><code>scripts/dollhouse-poc/</code> (Look360 저장소) — 씬 매핑이 미노네집용으로 고정</td>
+<td><code>scripts/dollhouse-poc/</code> — <code>place_pipeline.py</code> 로 투어·씬 목록만 넣으면 범용 실행</td>
 </tr>
 <tr>
 <td>뷰어</td>
@@ -448,9 +484,9 @@
 </tr>
 </tbody>
 </table>
-<p><span class="hl-amber">주의</span> ZInD 데이터셋은 연구용 라이선스로 알고 있어서, 서비스에 넣기 전에 라이선스를 확인하거나 자체 데이터로 다시 학습해야 할 수 있습니다(아직 확인하지 않은 추정입니다).</p>
+<p><span class="hl-green">업데이트 11-13 밤</span> ZInD 약관 확인 결과 <strong>비상업 전용</strong>(제품 개선 사용 금지)이라, 우리 사진 995장을 라벨링해 <strong>직접 학습</strong>했습니다. 2차 모델이 우리 돌하우스 방식(후처리) 기준으로 ZInD 모델(74.0%)보다 높은 <strong>76.2%</strong> — 경계선 자체 정확도는 아직 ZInD 가 앞섬.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="22" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="23" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%EB%82%A8%EC%9D%80-%EA%B3%BC%EC%A0%9C">남은 과제</h2>
 <table>
 <thead>
@@ -487,7 +523,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="23" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="24" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%F0%9F%8E%AF-%EC%95%88%EA%B1%B4--%EC%98%A4%EB%84%88-%EA%B2%B0%EC%A0%95-%EB%8C%80%EA%B8%B0"><img class="emoji" draggable="false" alt="🎯" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f3af.svg" data-marp-twemoji=""/> 안건 — 오너 결정 대기</h2>
 <table>
 <thead>
@@ -511,7 +547,7 @@
 <tr>
 <td>3</td>
 <td>모델 가중치 라이선스</td>
-<td>ZInD 상업 사용 가능 여부 확인 → 불가 시 자체 학습 데이터 검토</td>
+<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/> <strong>해결</strong> — ZInD 상업 불가 확인 → 자체 학습으로 전환 완료 (2차 76.2%)</td>
 </tr>
 <tr>
 <td>4</td>
@@ -521,7 +557,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="24" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="25">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="25" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="26">
 <h2 id="%F0%9F%94%97-%EB%A7%81%ED%81%AC"><img class="emoji" draggable="false" alt="🔗" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f517.svg" data-marp-twemoji=""/> 링크</h2>
 <div class="links">
 <span class="lbl">뷰어</span>
@@ -556,7 +592,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-class="closing" data-theme="clean" lang="C" class="closing" style="--class:closing;--theme:clean;">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-class="closing" data-theme="clean" lang="C" class="closing" style="--class:closing;--theme:clean;">
 <h2 id="%EA%B0%90%EC%82%AC%ED%95%A9%EB%8B%88%EB%8B%A4">감사합니다</h2>
 <p>360 사진 5장 → 방 구조 자동 추정 → 반자동 배치 → 돌하우스 · 평면도</p>
 <p>Indyspot AI Corp  ·  Engineering Manager  ·  2026-11-13</p>
