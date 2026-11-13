@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미노네집 돌하우스 PoC</title>
+<style>
+  :root { --bg:#f6f5f2; --panel:#fff; --ink:#222; --muted:#777; --line:#e3e1dc; --accent:#e4572e; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; color:var(--ink); background:var(--bg); }
+  #app { display:grid; grid-template-columns: 1fr 380px; height:100%; }
+  #stage { position:relative; overflow:hidden; }
+  #c3d { width:100%; height:100%; display:block; }
+  #labels { position:absolute; inset:0; pointer-events:none; }
+  .lbl { position:absolute; transform:translate(-50%,-50%); background:rgba(255,255,255,.88); border-radius:6px; padding:3px 8px; font-size:12px; white-space:nowrap; box-shadow:0 1px 3px rgba(0,0,0,.15); pointer-events:auto; cursor:pointer; }
+  .lbl b { display:block; font-size:13px; }
+  #topbar { position:absolute; left:12px; top:12px; display:flex; gap:6px; flex-wrap:wrap; }
+  #hint { position:absolute; left:12px; bottom:12px; font-size:12px; color:#fff; background:rgba(0,0,0,.45); padding:6px 10px; border-radius:6px; }
+  button { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; border-radius:6px; padding:6px 10px; cursor:pointer; }
+  button:hover { border-color:#bbb; }
+  button.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  aside { background:var(--panel); border-left:1px solid var(--line); overflow:auto; padding:14px; }
+  h1 { font-size:16px; margin:0 0 4px; }
+  .sub { font-size:12px; color:var(--muted); margin-bottom:12px; line-height:1.5; }
+  h2 { font-size:13px; margin:16px 0 6px; }
+  #plan { width:100%; aspect-ratio:1/1; border:1px solid var(--line); border-radius:8px; background:#fcfcfa; touch-action:none; }
+  .row { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:6px 0; }
+  .row label { font-size:12px; color:var(--muted); }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  td,th { padding:4px 3px; border-bottom:1px solid var(--line); text-align:left; }
+  tr.sel td { background:#fff1ec; }
+  tr { cursor:pointer; }
+  #json { width:100%; height:90px; font:11px ui-monospace,monospace; }
+  .muted { color:var(--muted); font-size:12px; }
+  @media (max-width: 900px) { #app { grid-template-columns:1fr; grid-template-rows: 60vh auto; } aside { border-left:0; border-top:1px solid var(--line);} }
+</style>
+<script>window.__SCENE__ = {"camH": 1.5, "rooms": [{"id": "pano28740", "title": "거실", "tex": "s2", "floor": [[-2.575, -3.517], [-2.575, -1.543], [-1.763, -1.539], [-1.775, 2.166], [1.609, 2.176], [1.63, -3.501]], "ceilH": 2.386, "dom": 89.82, "theta": 0.0, "x": 0.0, "y": 0.0, "via": "root"}, {"id": "pano28739", "title": "거실", "tex": "s1", "floor": [[-2.097, -3.499], [-2.098, -1.534], [-1.755, -1.532], [-1.756, -1.009], [-1.814, -1.009], [-1.825, 2.196], [1.716, 2.207], [1.736, -3.486]], "ceilH": 2.417, "dom": 89.82, "variantOf": "pano28740", "theta": 0.0, "x": 0.0, "y": 0.0, "via": "variant-of pano28740"}, {"id": "pano28741", "title": "신발장", "tex": "s3", "floor": [[-0.517, -0.468], [-0.865, -0.469], [-0.868, 0.457], [-0.961, 0.457], [-0.964, 1.423], [0.649, 1.428], [0.663, -2.926], [0.072, -2.928], [0.067, -1.26], [-0.513, -1.261]], "ceilH": 2.289, "dom": 89.82, "theta": 179.997, "x": -2.425, "y": -4.215, "via": "pano28740"}, {"id": "pano28742", "title": "컴퓨터방", "tex": "s4", "floor": [[-1.623, -1.762], [-1.633, 1.674], [1.255, 1.683], [1.265, -1.753]], "ceilH": 2.46, "dom": 89.82, "theta": 89.993, "x": 1.814, "y": -5.514, "via": "pano28741"}, {"id": "pano28743", "title": "옷방", "tex": "s5", "floor": [[-1.547, -1.442], [-1.556, 1.481], [-0.356, 1.484], [-0.355, 1.052], [1.552, 1.058], [1.56, -1.433]], "ceilH": 2.304, "dom": 89.83, "theta": 179.991, "x": -3.563, "y": 0.838, "via": "pano28741"}]};</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <canvas id="c3d"></canvas>
+    <div id="labels"></div>
+    <div id="topbar">
+      <button id="bDoll" class="on">돌하우스</button>
+      <button id="bTop">위에서 보기</button>
+      <button id="bCeil">천장 표시</button>
+      <button id="bLight">거실 조명: 기본</button>
+    </div>
+    <div id="hint">드래그=회전 · 휠=확대 · 방 이름(또는 평면도에서 방) 더블클릭=안으로 들어가기</div>
+  </div>
+  <aside>
+    <h1>미노네집 돌하우스 · 반자동 PoC</h1>
+    <div class="sub">360 사진 5장만으로 만든 결과야. 방 모양은 AI(HorizonNet)가 자동으로 추정했고, 방 배치는 기존 투어의 이동 핫스팟으로 자동 계산했어. 어긋난 곳은 아래 평면도에서 방을 끌어서 맞추면 돼.</div>
+
+    <h2>평면도 (방 선택 → 드래그로 이동)</h2>
+    <svg id="plan"></svg>
+    <div class="row">
+      <button data-rot="-90">⟲ 90°</button><button data-rot="-1">⟲ 1°</button>
+      <button data-rot="1">⟳ 1°</button><button data-rot="90">⟳ 90°</button>
+      <button id="bReset">자동 배치로 되돌리기</button>
+    </div>
+    <div class="row">
+      <label for="camH">카메라 높이(축척)</label>
+      <input id="camH" type="range" min="1.2" max="1.8" step="0.01" value="1.5">
+      <span id="camHv">1.50m</span>
+    </div>
+    <div class="muted">카메라 높이를 실제 삼각대 높이로 맞추면 모든 치수가 실측 기준으로 바뀌어.</div>
+
+    <h2>방 목록</h2>
+    <table id="tbl"><thead><tr><th>방</th><th>면적</th><th>천장고</th><th>배치 근거</th></tr></thead><tbody></tbody></table>
+
+    <h2>보정 결과 (JSON)</h2>
+    <textarea id="json" readonly></textarea>
+    <div class="row"><button id="bCopy">JSON 복사</button><span id="copyMsg" class="muted"></span></div>
+  </aside>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// 배포용 사본은 scene.json 을 window.__SCENE__ 로 인라인한다(정적 호스팅에서 .json 이 빠지는 경우 대비)
+const scene0 = window.__SCENE__ ?? await (await fetch('scene.json')).json();
+const BASE_H = scene0.camH;
+const S = JSON.parse(JSON.stringify(scene0));          // 편집 중 상태 (camH=BASE_H 기준 값)
+let scale = 1;                                          // camH / BASE_H
+const rooms = S.rooms.filter(r => !r.variantOf);
+const variants = Object.fromEntries(S.rooms.filter(r => r.variantOf).map(r => [r.variantOf, r]));
+let selected = rooms[0].id;
+
+// ---------- 기하 유틸 (평면 좌표: x=동, y=북, ath=시계방향) ----------
+const rad = d => d * Math.PI / 180;
+function toWorld(r, p) {
+  const a = rad(r.theta), [x, y] = p;
+  return [(r.x + x*Math.cos(a) + y*Math.sin(a)) * scale, (r.y - x*Math.sin(a) + y*Math.cos(a)) * scale];
+}
+const area = poly => Math.abs(poly.reduce((s, p, i) => { const q = poly[(i+1)%poly.length]; return s + p[0]*q[1] - q[0]*p[1]; }, 0)) / 2;
+
+// ---------- three.js ----------
+const canvas = document.getElementById('c3d');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xeeece7);
+const camera = new THREE.PerspectiveCamera(50, 1, 0.05, 200);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+
+const grid = new THREE.GridHelper(30, 30, 0xd6d3cc, 0xe2dfd8);
+grid.position.y = -0.01;
+scene.add(grid);
+
+const loader = new THREE.TextureLoader();
+const texCache = {};
+function tex(name) {
+  if (!texCache[name]) {
+    const t = loader.load(`tex/${name}.jpg`);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.generateMipmaps = false;               // equirect 이음매(u=0/1)에서 밉맵 경계선 방지
+    t.minFilter = THREE.LinearFilter;
+    texCache[name] = t;
+  }
+  return texCache[name];
+}
+
+// 핵심: 각 면의 픽셀마다 "그 방 카메라 → 픽셀" 방향을 구해 equirect 에서 색을 가져온다.
+// 그래서 방 카메라 위치에서 보면 원본 파노라마와 정확히 같아 보인다.
+const vert = `varying vec3 vW; void main(){ vec4 w = modelMatrix*vec4(position,1.0); vW=w.xyz; gl_Position=projectionMatrix*viewMatrix*w; }`;
+const frag = `
+uniform sampler2D map; uniform vec3 camPos; uniform float theta; uniform float dim;
+varying vec3 vW;
+const float PI = 3.141592653589793;
+void main(){
+  vec3 d = vW - camPos;
+  float px = d.x, py = -d.z;                 // three(-z) = 평면 북쪽
+  float ath = atan(px, py) - theta;
+  float lat = atan(d.y, length(vec2(px,py)));
+  vec2 uv = vec2(fract(ath/(2.0*PI) + 0.5), 0.5 + lat/PI);
+  vec4 c = texture2D(map, uv);
+  gl_FragColor = vec4(c.rgb * dim, 1.0);
+  #include <colorspace_fragment>
+}`;
+
+const roomGroups = {};
+let showCeil = false, lightVariant = false;
+
+function buildRoom(r) {
+  if (roomGroups[r.id]) { scene.remove(roomGroups[r.id].group); roomGroups[r.id].group.traverse(o => o.geometry?.dispose()); }
+  const g = new THREE.Group();
+  const texName = (lightVariant && variants[r.id]) ? variants[r.id].tex : r.tex;
+  const camH = BASE_H * scale, ceilH = r.ceilH * scale;
+  const [cx, cy] = toWorld(r, [0, 0]);
+  const uniforms = { map: { value: tex(texName) }, camPos: { value: new THREE.Vector3(cx, camH, -cy) }, theta: { value: rad(r.theta) }, dim: { value: 1 } };
+  const mat = new THREE.ShaderMaterial({ uniforms, vertexShader: vert, fragmentShader: frag, side: THREE.FrontSide });
+  const pts = r.floor.map(p => toWorld(r, p));
+  // 다각형 방향(CCW 여부)으로 안쪽 법선 결정
+  const signed = pts.reduce((s, p, i) => { const q = pts[(i+1)%pts.length]; return s + p[0]*q[1] - q[0]*p[1]; }, 0);
+  const ccw = signed > 0;
+
+  // 벽: 안쪽에서 보이는 면만 그린다 → 바깥(돌하우스 시점)에서는 앞쪽 벽이 자동으로 사라진다
+  const wpos = [];
+  for (let i = 0; i < pts.length; i++) {
+    let a = pts[i], b = pts[(i+1)%pts.length];
+    if (!ccw) [a, b] = [b, a];
+    const A0 = [a[0], 0, -a[1]], B0 = [b[0], 0, -b[1]], A1 = [a[0], ceilH, -a[1]], B1 = [b[0], ceilH, -b[1]];
+    wpos.push(...A0, ...A1, ...B0,  ...B0, ...A1, ...B1);
+  }
+  const wg = new THREE.BufferGeometry(); wg.setAttribute('position', new THREE.Float32BufferAttribute(wpos, 3));
+  g.add(new THREE.Mesh(wg, mat));
+
+  // 바닥/천장: earcut 삼각분할
+  const tris = THREE.ShapeUtils.triangulateShape(pts.map(p => new THREE.Vector2(p[0], p[1])), []);
+  const fpos = [], cpos = [];
+  for (const [i, j, k] of tris) {
+    const P = idx => pts[idx];
+    // 삼각형마다 평면 기준 CCW 로 맞춘다(위에서 볼 때 앞면)
+    const cr = (P(j)[0]-P(i)[0])*(P(k)[1]-P(i)[1]) - (P(j)[1]-P(i)[1])*(P(k)[0]-P(i)[0]);
+    const t = cr > 0 ? [i, j, k] : [i, k, j];
+    // 평면 CCW 를 three 의 (x, -y) 로 옮기면 위에서 볼 때 CCW → 법선 +y
+    for (const n of t) fpos.push(P(n)[0], 0, -P(n)[1]);
+    for (const n of [t[0], t[2], t[1]]) cpos.push(P(n)[0], ceilH, -P(n)[1]);
+  }
+  const fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(fpos, 3));
+  g.add(new THREE.Mesh(fg, mat));
+  const cg = new THREE.BufferGeometry(); cg.setAttribute('position', new THREE.Float32BufferAttribute(cpos, 3));
+  const ceil = new THREE.Mesh(cg, mat); ceil.visible = showCeil; g.add(ceil);
+
+  // 선택 테두리
+  const edge = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(p[0], 0.02, -p[1]))),
+    new THREE.LineBasicMaterial({ color: r.id === selected ? 0xe4572e : 0x999999 }));
+  g.add(edge);
+  if (inside && inside !== r.id) g.visible = false;
+  scene.add(g);
+  roomGroups[r.id] = { group: g, ceil, uniforms, center: [cx, cy], camH };
+}
+const rebuildAll = () => rooms.forEach(buildRoom);
+
+function frameAll(top) {
+  const all = rooms.flatMap(r => r.floor.map(p => toWorld(r, p)));
+  const xs = all.map(p => p[0]), ys = all.map(p => p[1]);
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+  controls.target.set(cx, 0.8, -cy);
+  if (top) camera.position.set(cx, span * 1.9, -cy + 0.01);
+  else camera.position.set(cx + span * 0.55, span * 1.15, -cy + span * 1.05);
+  camera.fov = 50; camera.updateProjectionMatrix();
+  controls.minDistance = 0; controls.maxDistance = 100;
+  inside = null;
+  for (const id in roomGroups) roomGroups[id].group.visible = true;
+}
+
+// 방 안으로 들어가기: 카메라를 그 방 촬영 위치로 옮기면 원본 파노라마와 똑같이 보인다
+let inside = null;
+function enter(id) {
+  const rg = roomGroups[id]; if (!rg) return;
+  inside = id; selected = id;
+  if (!showCeil) toggleCeil(true);
+  // 안에서는 그 방만 보여준다(다른 방 벽이 겹쳐 들어오는 것 방지)
+  for (const k in roomGroups) roomGroups[k].group.visible = (k === id);
+  const [cx, cy] = rg.center;
+  const from = camera.position.clone(), to = new THREE.Vector3(cx, rg.camH, -cy);
+  const tFrom = controls.target.clone(), tTo = new THREE.Vector3(cx, rg.camH, -cy - 0.01);
+  const t0 = performance.now();
+  (function step() {
+    const k = Math.min(1, (performance.now() - t0) / 900), e = k < .5 ? 2*k*k : 1 - Math.pow(-2*k+2, 2)/2;
+    camera.position.lerpVectors(from, to, e); controls.target.lerpVectors(tFrom, tTo, e);
+    camera.fov = 50 + 25 * e; camera.updateProjectionMatrix();
+    if (k < 1) requestAnimationFrame(step);
+  })();
+  refreshUI();
+}
+
+// ---------- 라벨 ----------
+const labelsEl = document.getElementById('labels');
+function drawLabels() {
+  labelsEl.innerHTML = '';
+  if (inside) return;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  for (const r of rooms) {
+    const pts = r.floor.map(p => toWorld(r, p));
+    const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length, cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+    const v = new THREE.Vector3(cx, r.ceilH * scale + 0.3, -cy).project(camera);
+    if (v.z > 1) continue;
+    const el = document.createElement('div'); el.className = 'lbl';
+    el.style.left = ((v.x + 1) / 2 * w) + 'px'; el.style.top = ((1 - v.y) / 2 * h) + 'px';
+    el.innerHTML = `<b>${r.title}</b>${area(pts).toFixed(1)}㎡`;
+    el.ondblclick = () => enter(r.id); el.onclick = () => { selected = r.id; refreshUI(); };
+    labelsEl.appendChild(el);
+  }
+}
+
+// ---------- 평면도 SVG 에디터 ----------
+const svg = document.getElementById('plan');
+let view = null;
+function planView() {
+  const all = rooms.flatMap(r => r.floor.map(p => toWorld(r, p)));
+  const xs = all.map(p => p[0]), ys = all.map(p => p[1]);
+  const pad = 1.2, minx = Math.min(...xs) - pad, maxx = Math.max(...xs) + pad, miny = Math.min(...ys) - pad, maxy = Math.max(...ys) + pad;
+  const span = Math.max(maxx - minx, maxy - miny);
+  return { minx, maxy, span, cx: (minx + maxx) / 2, cy: (miny + maxy) / 2 };
+}
+function drawPlan() {
+  if (!view || !drag) view = planView();
+  const W = 1000, k = W / view.span;
+  const X = x => (x - view.cx) * k + W / 2, Y = y => (view.cy - y) * k + W / 2;
+  let s = '';
+  for (let gx = Math.floor(view.cx - view.span); gx <= view.cx + view.span; gx++) s += `<line x1="${X(gx)}" y1="0" x2="${X(gx)}" y2="${W}" stroke="#eee"/>`;
+  for (let gy = Math.floor(view.cy - view.span); gy <= view.cy + view.span; gy++) s += `<line x1="0" y1="${Y(gy)}" x2="${W}" y2="${Y(gy)}" stroke="#eee"/>`;
+  for (const r of rooms) {
+    const pts = r.floor.map(p => toWorld(r, p)), sel = r.id === selected;
+    s += `<polygon data-id="${r.id}" points="${pts.map(p => X(p[0]) + ',' + Y(p[1])).join(' ')}" fill="${sel ? 'rgba(228,87,46,.12)' : 'rgba(0,0,0,.03)'}" stroke="${sel ? '#e4572e' : '#555'}" stroke-width="${sel ? 5 : 3}" style="cursor:move"/>`;
+    // 벽 길이 치수
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i], b = pts[(i+1)%pts.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]);
+      if (L < 0.6) continue;
+      s += `<text x="${X((a[0]+b[0])/2)}" y="${Y((a[1]+b[1])/2)}" font-size="20" fill="#999" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${L.toFixed(2)}</text>`;
+    }
+    const [cx, cy] = toWorld(r, [0, 0]);
+    s += `<circle cx="${X(cx)}" cy="${Y(cy)}" r="7" fill="${sel ? '#e4572e' : '#555'}" pointer-events="none"/>`;
+    const mx = pts.reduce((t, p) => t + p[0], 0) / pts.length, my = pts.reduce((t, p) => t + p[1], 0) / pts.length;
+    s += `<text x="${X(mx)}" y="${Y(my) - 22}" font-size="28" font-weight="700" text-anchor="middle" pointer-events="none">${r.title}</text>`;
+    s += `<text x="${X(mx)}" y="${Y(my) + 10}" font-size="22" fill="#666" text-anchor="middle" pointer-events="none">${area(pts).toFixed(1)}㎡</text>`;
+  }
+  s += `<text x="20" y="${W - 20}" font-size="20" fill="#aaa">격자 1m · 숫자=벽 길이(m)</text>`;
+  svg.setAttribute('viewBox', `0 0 ${W} ${W}`);
+  svg.innerHTML = s;
+  svg._k = k;
+}
+let drag = null;
+svg.addEventListener('pointerdown', e => {
+  const id = e.target.dataset?.id; if (!id) return;
+  selected = id; const r = rooms.find(r => r.id === id);
+  drag = { r, x0: e.clientX, y0: e.clientY, rx: r.x, ry: r.y };
+  svg.setPointerCapture(e.pointerId); refreshUI();
+});
+svg.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const px = 1000 / svg.clientWidth / svg._k / scale;
+  drag.r.x = drag.rx + (e.clientX - drag.x0) * px; drag.r.y = drag.ry - (e.clientY - drag.y0) * px;
+  drag.r.via = 'manual'; buildRoom(drag.r); drawPlan();
+});
+svg.addEventListener('pointerup', () => { if (drag) { drag = null; refreshUI(); } });
+svg.addEventListener('dblclick', e => { const id = e.target.dataset?.id; if (id) enter(id); });
+
+document.querySelectorAll('[data-rot]').forEach(b => b.onclick = () => {
+  const r = rooms.find(r => r.id === selected), d = +b.dataset.rot;
+  // 방 카메라가 아니라 방 중심을 기준으로 회전
+  const pts = r.floor.map(p => toWorld(r, p).map(v => v / scale));
+  const mx = pts.reduce((t, p) => t + p[0], 0) / pts.length, my = pts.reduce((t, p) => t + p[1], 0) / pts.length;
+  const a = rad(d), dx = r.x - mx, dy = r.y - my;
+  r.x = mx + dx*Math.cos(a) + dy*Math.sin(a); r.y = my - dx*Math.sin(a) + dy*Math.cos(a);
+  r.theta = ((r.theta + d + 540) % 360) - 180; r.via = 'manual';
+  buildRoom(r); refreshUI();
+});
+document.getElementById('bReset').onclick = () => {
+  for (const r of rooms) Object.assign(r, JSON.parse(JSON.stringify(scene0.rooms.find(o => o.id === r.id))));
+  rebuildAll(); view = null; refreshUI();
+};
+const camH = document.getElementById('camH');
+camH.oninput = () => { scale = camH.value / BASE_H; document.getElementById('camHv').textContent = (+camH.value).toFixed(2) + 'm'; rebuildAll(); view = null; refreshUI(); };
+
+// ---------- 표 / JSON ----------
+function refreshUI() {
+  for (const r of rooms) roomGroups[r.id]?.group.children.at(-1).material.color.set(r.id === selected ? 0xe4572e : 0x999999);
+  const tb = document.querySelector('#tbl tbody');
+  tb.innerHTML = rooms.map(r => {
+    const pts = r.floor.map(p => toWorld(r, p));
+    const via = r.via === 'root' ? '기준 방' : r.via === 'manual' ? '수동 보정' : '핫스팟 자동';
+    return `<tr data-id="${r.id}" class="${r.id === selected ? 'sel' : ''}"><td>${r.title}${variants[r.id] ? ' <span class="muted">(+조명 변형)</span>' : ''}</td><td>${area(pts).toFixed(1)}㎡</td><td>${(r.ceilH * scale).toFixed(2)}m</td><td>${via}</td></tr>`;
+  }).join('');
+  tb.querySelectorAll('tr').forEach(tr => { tr.onclick = () => { selected = tr.dataset.id; refreshUI(); }; tr.ondblclick = () => enter(tr.dataset.id); });
+  document.getElementById('json').value = JSON.stringify({ camH: +camH.value, rooms: rooms.map(r => ({ id: r.id, title: r.title, x: +r.x.toFixed(3), y: +r.y.toFixed(3), theta: +r.theta.toFixed(2) })) });
+  drawPlan();
+}
+document.getElementById('bCopy').onclick = async () => {
+  try { await navigator.clipboard.writeText(document.getElementById('json').value); document.getElementById('copyMsg').textContent = '복사했어!'; }
+  catch { document.getElementById('json').select(); document.getElementById('copyMsg').textContent = '자동 복사가 막혀서 텍스트를 선택해뒀어. Ctrl+C 로 복사해줘.'; }
+};
+
+// ---------- 상단 버튼 ----------
+const bDoll = document.getElementById('bDoll'), bTop = document.getElementById('bTop'), bCeil = document.getElementById('bCeil'), bLight = document.getElementById('bLight');
+function setMode(top) { bDoll.classList.toggle('on', !top); bTop.classList.toggle('on', top); if (showCeil) toggleCeil(false); frameAll(top); }
+bDoll.onclick = () => setMode(false); bTop.onclick = () => setMode(true);
+function toggleCeil(v) { showCeil = v; bCeil.classList.toggle('on', v); for (const id in roomGroups) roomGroups[id].ceil.visible = v; }
+bCeil.onclick = () => toggleCeil(!showCeil);
+bLight.onclick = () => { lightVariant = !lightVariant; bLight.textContent = '거실 조명: ' + (lightVariant ? '무드등' : '기본'); bLight.classList.toggle('on', lightVariant); rebuildAll(); };
+
+function resize() {
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+resize(); rebuildAll(); frameAll(false); refreshUI();
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); drawLabels(); });
+window.__dh = { rooms, enter, frameAll, camera, controls };
+</script>
+</body>
+</html>
