@@ -20,19 +20,19 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 
 <!-- _class: agenda -->
 
-## 결론 — 신규는 WebP로 전환하고, 기존 전수 변환은 지금 하지 않는 것을 권합니다
+## 결론 — 같은 화질이면 신규 타일 절감은 −16% 안팎입니다, 진행 여부부터 다시 판단이 필요합니다
 
 <div class="cols">
 <div class="col">
 
 ### ① krpano 호환
-- 뷰어 <span class="hl-green">가능</span> · 브라우저가 디코딩 (client·레거시 1.23.3, admin 1.22.4)
-- 타일 도구 <span class="hl-green">1.24 부터 가능</span> · `format=webp` 로 타일을 바로 출력 (지금 utils 번들 1.20.9 는 불가)
+- 뷰어 <span class="hl-green">가능</span> · 브라우저가 디코딩 · client·admin·레거시·utils 모두 <span class="hl-blue">1.24 로 교체 완료</span>
+- 타일 도구 <span class="hl-green">가능</span> · krpanotools 1.24 가 `format=webp` 로 타일을 바로 출력
 
-### ② 신규 타일 WebP
-- <span class="hl-green">권장</span> · 현재 JPG q60 과 같은 화질 = WebP <span class="hl-blue">q45 (−31%)</span>
-- 여유를 두면 WebP q50 (−25%, 화질 약간 ↑)
-- krpanotools 1.24 로 올리고 <span class="hl-blue">`webpmethod=6`</span> 을 꼭 지정 (기본값 0 이면 용량이 거의 안 줄어듦)
+### ② 신규 타일 WebP (krpano 1.24 실측)
+- 지금 JPG q60 과 같은 화질 = WebP <span class="hl-blue">q60 (−15.6%)</span>
+- 조금 나은 화질 = WebP q65 (−8.4%)
+- <span class="hl-amber">`webpmethod=6` 필수</span> · 기본값 0 이면 q60 도 JPG 보다 3.9% 커짐
 
 </div>
 <div class="col">
@@ -40,7 +40,7 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 ### ③ 기존 데이터 전수 변환
 - <span class="hl-amber">보류 권장</span> · 대상 JPG 352GB · 1,322만 개
 - 이미 JPG q60 이라 재인코딩하면 화질이 한 번 더 떨어짐
-- 타일 −26%(q60) 줄여도 월 저장비 절감은 약 $2 수준 (추정)
+- 월 저장비 절감은 약 $2 수준 (추정)
 
 ### ④ 전제 조건
 - JPG·WebP 가 장면마다 섞이므로 <span class="hl-blue">파노마다 확장자 값</span>을 두고 읽어야 함
@@ -55,14 +55,14 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 
 | # | 결정할 것 | 제안 |
 |---|---|---|
-| 0 | krpanotools 1.20.9 → 1.24 교체 | <span class="hl-blue">교체</span> · 변환 단계 없이 WebP 직접 출력 · 1.24 라이선스 등록 필요 |
-| 1 | 신규 타일 품질 | <span class="hl-blue">WebP q50</span> (−25%, 화질 약간 ↑) · 용량 우선이면 q45 (−31%, 지금과 같은 화질) |
-| 2 | 기존 1,322만 개 전수 변환 | <span class="hl-amber">보류</span> · 대신 조회 상위 장면만 원본에서 다시 생성 (선택) |
-| 3 | 모바일·VR 큐브 (`512_` · `1024_`) | <span class="hl-blue">WebP 로 통일</span> · JPG 대체본을 따로 두지 않음 |
-| 4 | 지원 하한 | iOS 14 · macOS 11 Safari 미만 제외 · 실제 사용자 약 0.002% (GA4 90일 실측) |
-| 5 | 진행 방식 | 에픽 발주 또는 직접 구현 (오빠 지시 필요) |
+| 1 | 신규 타일 WebP 전환 여부 | 같은 화질 기준 <span class="hl-amber">−16% 안팎</span> · 코드 수정 범위(5개 저장소) 대비 효과를 보고 결정 |
+| 2 | 전환한다면 품질 | <span class="hl-blue">WebP q60</span> (−15.6%, 지금과 같은 화질) · 여유를 두면 q65 (−8.4%) |
+| 3 | 기존 1,322만 개 전수 변환 | <span class="hl-amber">보류</span> · 대신 조회 상위 장면만 원본에서 다시 생성 (선택) |
+| 4 | 모바일·VR 큐브 (`512_` · `1024_`) | 전환한다면 <span class="hl-blue">WebP 로 통일</span> · JPG 대체본을 따로 두지 않음 |
+| 5 | 지원 하한 | iOS 14 · macOS 11 Safari 미만 제외 · 실제 사용자 약 0.002% (GA4 90일 실측) |
+| 6 | 진행 방식 | 에픽 발주 또는 직접 구현 (오빠 지시 필요) |
 
-전환 작업 순서는 «읽는 쪽 먼저(확장자 값 지원) → 만드는 쪽(utils · krpanotools 1.24) → 신규 1~2건 시범» 입니다. 읽는 쪽을 먼저 배포하면 모든 값이 `jpg` 인 상태라 서비스 동작은 바뀌지 않습니다.
+krpano 1.24 교체는 이미 끝났습니다(utils·client·admin·레거시, 커밋만 · 배포 전). 전환 작업 순서는 «읽는 쪽 먼저(확장자 값 지원) → 만드는 쪽(utils config) → 신규 1~2건 시범» 입니다.
 
 ---
 
@@ -82,89 +82,70 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 
 ---
 
-## 같은 화질 기준 — 지금 JPG q60 에 만족한다면 WebP q45 면 됩니다
+## 같은 화질 기준 — 지금 JPG q60 과 같은 화질은 WebP q60 입니다 (−15.6%)
 
-궁디팡팡 보정 원본 6장(12000×6000)을 8192 폭으로 줄여 512 타일 384장을 비교했습니다. JPG 는 지금 krpanotools 설정(q60 · 4:2:0 · optimize)과 같고, WebP 는 libwebp `method 6` 입니다.
+보정 원본 2장(12000×6000)을 krpanotools 1.24 · 운영 config(`multires_12000`)로 타일링해, 무손실 타일 대비 512 타일 828장을 비교했습니다.
 
-| 형식 | 타일 평균 | 현재 대비 | SSIM | JPG 보다 나은 타일 |
+| 형식 (`webpmethod=6`) | 타일 평균 | 현재 대비 | SSIM | JPG 보다 나은 타일 |
 |---|---|---|---|---|
-| JPG q60 (현재) | 30.8KB | 기준 | 0.8515 | — |
-| WebP q40 | 19.0KB | −38.2% | 0.8403 | 22% |
-| ⭐ WebP q45 | 21.2KB | <span class="hl-green">−31.4%</span> | <span class="hl-blue">0.8517</span> (같음) | 45% |
-| ⭐ WebP q50 | 23.2KB | <span class="hl-green">−24.8%</span> | 0.8621 | 59% |
-| WebP q55 | 25.3KB | −17.9% | 0.8721 | 71% |
-| WebP q60 | 27.6KB | −10.5% | 0.8819 | 80% |
-| WebP q70 | 32.5KB | <span class="hl-amber">+5.5%</span> | 0.9003 | 90% |
+| JPG q60 (현재) | 33.9KB | 기준 | 0.9146 | — |
+| WebP q45 | 23.3KB | −31.3% | <span class="hl-amber">0.8918</span> | 14% |
+| WebP q50 | 25.1KB | −26.1% | <span class="hl-amber">0.8996</span> | 22% |
+| ⭐ WebP q60 | 28.6KB | <span class="hl-green">−15.6%</span> | <span class="hl-blue">0.9135</span> (같음) | 39% |
+| ⭐ WebP q65 | 31.1KB | <span class="hl-green">−8.4%</span> | 0.9209 | 53% |
+| WebP q75 | 35.1KB | <span class="hl-amber">+3.4%</span> | 0.9321 | 71% |
 
-평균 SSIM 이 같아지는 지점은 <span class="hl-blue">q45</span> 이고, 이때 타일 절반 정도는 JPG 보다 조금 나쁩니다. 그래서 여유를 둔 <span class="hl-blue">q50</span> 을 기본값으로 제안합니다. SSIM 읽는 법은 뒤쪽 «SSIM 이란» 슬라이드에 있습니다.
+<span class="hl-amber">정정</span> 이전 판의 «q45 = 같은 화질(−31%)»은 축소 사진을 잘라 쓴 근사값이라 틀렸습니다. 실제 큐브 타일은 질감이 더 살아 있어 더 높은 품질값이 필요합니다.
 
 ---
 
-## 화질 비교 — 원본 · JPG q60 · WebP q45 · WebP q50 (2배 확대)
+## 화질 비교 — 원본 · JPG q60 · WebP q60 · WebP q65 (krpano 실제 타일, 확대)
 
-![w:900](assets/2026-11-13-webp-transition/cmp_new.jpg)
+![w:700](assets/2026-11-13-webp-transition/cmp_krpano.jpg)
 
-전시장 천장 타일입니다. JPG q60(33KB)은 벽면에 블록 무늬가 생기고, WebP 는 블록 대신 질감이 조금 부드러워지는 방식으로 손실이 생깁니다. q45 는 24KB, q50 은 26KB 입니다.
+위: 용량 비율이 중앙값(−19%)에 가까운 보통 타일 · 아래: 가장 큰 자갈 질감 타일(WebP 가 오히려 6% 커짐).
 
 <div class="links"><span class="lbl">직접 확인</span>
-<a class="lnk" href="https://kabkee-decks.netlify.app/reports/assets/2026-11-13-webp-transition/cmp_new.jpg" target="_blank">원본 크기 비교 이미지 (cmp_new.jpg)</a></div>
+<a class="lnk" href="https://kabkee-decks.netlify.app/reports/assets/2026-11-13-webp-transition/cmp_krpano.jpg" target="_blank">원본 크기 비교 이미지 (cmp_krpano.jpg)</a></div>
 
 ---
 
-## 용량 차이 — 장면 1개 8.7MB → 6.5MB, 같은 규모면 약 70~86GB 절감
+## 용량 차이 — 장면 1개 약 15MB → 13MB, 지금 규모면 약 23~43GB 절감
 
-장면 1개 평균은 목록표 기준 타일 384장 · 8.65MB 입니다 (275.0GB ÷ 31,790 장면). 여기에 위 실측 비율을 곱했습니다.
+| 기준 | JPG q60 (현재) | WebP q60 (같은 화질) | WebP q65 | WebP q50 (화질 ↓) | WebP q20 (화질 크게 ↓) |
+|---|---|---|---|---|---|
+| 장면 1개 타일 전체 (실측 2장) | 14.7 / 16.3MB | <span class="hl-green">12.8 / 13.1MB</span> | 13.8 / 14.3MB | 11.5 / 11.2MB | 7.0 / 5.5MB |
+| 목록표 평균 장면(8.65MB) 환산 | 8.65MB | 7.3MB | 7.9MB | 6.4MB | — |
+| 지금 타일 275GB 를 처음부터 만들었다면 | 275GB | 약 232GB (−43GB) | 약 252GB (−23GB) | 약 203GB | — |
 
-| 기준 | JPG q60 (현재) | WebP q50 (제안) | WebP q45 (같은 화질) |
-|---|---|---|---|
-| 타일 1장 평균 | 30.8KB | 23.2KB | 21.2KB |
-| 장면 1개 타일 전체 | 8.65MB | <span class="hl-green">6.5MB (−2.1MB)</span> | <span class="hl-green">5.9MB (−2.7MB)</span> |
-| 관람자가 장면 1개를 다 받을 때 전송량 | 기준 | −25% | −31% |
-| 지금 타일 275GB 를 같은 방식으로 만들었다면 | 275GB | 약 207GB (−68GB) | 약 189GB (−86GB) |
-
-마지막 줄은 «원본에서 처음부터 WebP 로 만들었다면»이라는 가정입니다. 기존 JPG 를 다시 저장하는 경우가 아닙니다. 기존 타일을 다시 저장하면 화질이 한 번 더 떨어지는데, 이 내용은 다음 장에 있습니다. 실제 관람 시에는 보이는 타일만 받으므로, 전송량 절감은 비율(−25~−31%)로 보는 것이 정확합니다.
+- 타일 용량의 <span class="hl-blue">70~73%</span> 가 최고 해상도 레벨(3820, `l1`) 하나에서 나옵니다. 타일 91% 는 WebP q60 이 더 작고, 절감의 61% 는 15~40KB 의 보통 타일에서 나옵니다. 40KB 넘는 질감 타일은 −7% 뿐입니다.
+- <span class="hl-amber">«장면 15~20MB → 5MB 이하»는 품질값만으로는 불가능</span>합니다. q20 까지 낮춰도 5.5~7MB 이고, 그보다 줄이려면 최고 레벨을 빼서 해상도를 낮춰야 합니다.
+- 마지막 행은 «원본에서 처음부터 WebP 로 만들었다면»이라는 가정입니다. 실제 관람 시에는 보이는 타일만 받으므로, 전송량 절감은 비율로 보는 것이 정확합니다.
 
 ---
 
-## krpanotools 1.24 — 변환 단계 없이 WebP 타일을 바로 만듭니다
+## krpanotools 1.24 — `webpmethod` 를 꼭 6 으로 지정해야 합니다
 
-krpano 1.24(2026-06-25)에 WebP 출력과 `format` 설정 · `%EXT%` 경로 자리표시자가 추가됐습니다. 1.24 로 원본 2장을 직접 돌려 보니 큐브 타일 1,212장이 전부 `.webp` 로 나왔습니다. 설정은 `format=webp webpquality=50 webpmethod=6` 과 타일 경로의 `.jpg` → `.%EXT%` 입니다.
+krpano 1.24(2026-06-25)에 WebP 출력과 `format` 설정 · `%EXT%` 경로 자리표시자가 추가됐습니다. 설정은 `format=webp webpquality=60 webpmethod=6` 과 타일 경로의 `.jpg` → `.%EXT%` 입니다.
 
-| `webpmethod` (libwebp 실측, 타일 384장) | WebP q45 | WebP q50 |
+| 운영 config 실측 (타일 828장) | WebP q60 | WebP q65 |
 |---|---|---|
-| 0 (krpanotools 기본값 · 가장 빠름) | <span class="hl-amber">−8.5%</span> | <span class="hl-amber">−0.4%</span> |
-| 4 | −23.0% | −16.1% |
-| ⭐ 6 (가장 느림 · 가장 작음) | <span class="hl-green">−31.7%</span> | <span class="hl-green">−25.3%</span> |
+| `webpmethod=0` (krpanotools 기본값 · 가장 빠름) | <span class="hl-amber">+3.9%</span> · SSIM 0.9163 | <span class="hl-amber">+13.6%</span> · SSIM 0.9240 |
+| ⭐ `webpmethod=6` (가장 느림 · 가장 작음) | <span class="hl-green">−15.6%</span> · SSIM 0.9135 | <span class="hl-green">−8.4%</span> · SSIM 0.9209 |
 
-<span class="hl-amber">주의</span> 이 덱의 q45·q50 용량 수치는 전부 `method 6` 기준입니다. krpanotools 는 기본값이 `0` 이라서, 지정하지 않으면 q50 으로 만들어도 지금 JPG 와 용량이 거의 같습니다.
+<span class="hl-amber">주의</span> 이 덱의 WebP 용량은 전부 `method 6` 기준입니다. 지정하지 않으면 WebP 로 바꿔도 지금 JPG 보다 커집니다.
 
 ---
 
-## krpanotools 1.24 — 도입 전에 확인할 것
+## krpano 1.24 교체 — 끝난 것과 배포 전에 알아야 할 것
 
 | 항목 | 내용 |
 |---|---|
-| 라이선스 | 지금 1.23.3 에 등록된 라이선스 파일을 1.24 폴더에 복사하면 «Not registered» 로 나오고, 결과 타일에 krpano.com 워터마크가 찍힙니다(실측). 1.24 에서 라이선스 코드로 다시 등록해야 합니다 |
-| 업그레이드 비용 | krpano 공지: «1.24 는 대체로 1.20 이상 라이선스로 동작». 2023-10 이후 구매·업그레이드분은 무료, 그 이전은 39€ (현재 라이선스 주문일은 2025-01 → 무료 대상으로 추정) |
-| 화질 재측정 | 워터마크 때문에 krpanotools 자체 WebP 인코더의 화질은 이번에 재지 못했습니다. 등록 후 q45·q50 을 한 번 더 재서 libwebp 실측과 같은지 확인합니다 |
-| 이미지 크기 한계 | WebP 한 장 최대 16383×16383 → 512 타일·`1024_`·`512_` 는 문제없음. 큰 미리보기(`sphere_*` 등)를 WebP 로 만들 때만 확인 |
-| 웹 기본 품질 | `quality` 기본값 85 · `jpegsubsamp` 기본값 422 → 지금처럼 config 에 값을 명시해야 함 |
-
----
-
-## 1.24 로 못 올릴 때의 대안 — 중간 출력을 q100 · 4:4:4 로 바꿔야 효과가 납니다
-
-1.20.9 를 그대로 쓰면 WebP 를 못 만들어서 «JPG 출력 → WebP 변환» 두 단계가 됩니다. 같은 타일 135장을 중간 형식만 바꿔 최종 WebP q55 로 만들었습니다.
-
-| 중간 출력 | 중간 파일 | 최종 WebP | SSIM |
-|---|---|---|---|
-| 무손실 (TIFF) | — | 24.2KB | 0.8962 (기준) |
-| ⭐ JPG q100 · 4:4:4 | 400KB | 24.3KB | <span class="hl-green">0.8967</span> |
-| JPG q95 · 4:4:4 | 146KB | 24.9KB | 0.8968 |
-| JPG q90 · 4:2:0 | 80KB | 25.3KB | 0.8926 |
-| JPG q60 · 4:2:0 (지금 설정 그대로) | 32KB | 22.1KB | <span class="hl-amber">0.8517</span> |
-
-<span class="hl-amber">주의</span> 설정을 q60 그대로 두고 변환하면 지금 JPG 보다도 화질이 나빠집니다. q95 이상이면 무손실과 차이가 없고, q100 은 중간 파일이 크지만 변환 후 지우는 임시 파일입니다.
+| 교체 완료 (커밋만) | utils krpanotools(mac·win)·미리보기 · client·admin 뷰어 · 레거시 뷰어·서버 krpanotools·파노라마 관리 뷰어. 개발 서버에서 콘텐츠 26건을 이전 버전과 비교해 차이 없음 |
+| 라이선스 | 등록 파일은 «설치 경로»에 묶여, 폴더째 복사한 사본은 미등록이 되고 타일에 워터마크가 찍힘. 같은 경로에 덮어쓰면 등록 유지 |
+| 🔴 레벨 번호 | 1.24 는 `levelsizes` 에 적힌 순서대로 `l1` 을 붙임(1.19 는 큰 레벨이 `l1`). 레거시 서버 config 21개를 내림차순으로 바꿔 기존 XML 과 맞춤 (뷰어로 확인) |
+| 레거시 서버 배포 | 라이선스 코드를 소스에서 빼고 `/etc/look360/secrets/krpano-license` 에서 읽음 → 운영 서버에 파일 저장 + 쓰기 권한 있는 계정으로 `register` 1회 필요 |
+| 이미지 크기 한계 | WebP 한 장 최대 16383×16383 → 512 타일·`1024_`·`512_` 는 문제없음 |
 
 ---
 
@@ -204,7 +185,7 @@ krpano 1.24(2026-06-25)에 WebP 출력과 `format` 설정 · `%EXT%` 경로 자�
 | 인코딩 시간 | 약 44 CPU시간 (20코어 약 2.5시간) | 실측 13ms/타일, 업로드 시간 별도 |
 | 이전 버전 | 버전 관리가 켜져 있으면 지운 JPG 가 남아 오히려 늘어남 | 목록표에 version_id 존재 (설정 조회 권한 없음) |
 
-효과는 저장비보다 <span class="hl-blue">관람자 전송량 −26%</span> 쪽이 큽니다. 다만 그 효과는 조회가 많은 장면에서만 의미가 있으므로, 필요하면 **조회 상위 장면만 원본에서 다시 생성**하는 쪽이 화질·비용 모두 낫습니다.
+효과는 저장비보다 관람자 전송량 쪽이 큽니다. 다만 그 효과는 조회가 많은 장면에서만 의미가 있으므로, 필요하면 **조회 상위 장면만 원본에서 다시 생성**하는 쪽이 화질·비용 모두 낫습니다.
 
 ---
 
@@ -224,7 +205,7 @@ utils · BE · client · admin · 레거시에서 확장자를 고정한 지점�
 |---|---|---|
 | 0 준비 | `tile_info` 에 확장자 값(예: `tile_ext`, 기본 `jpg`) 추가 | 없음 |
 | 1 읽는 쪽 | BE XML 빌더 · 레거시 PHP XML 생성기 · client · admin 이 이 값을 읽도록 변경 | 없음 (전부 jpg) |
-| 2 만드는 쪽 | utils: krpanotools 1.24 로 교체 · `format=webp webpquality=50 webpmethod=6` · `tile_ext=webp` 기록 · S3 ContentType 지정 | 신규만 |
+| 2 만드는 쪽 | utils config: `format=webp webpquality=60 webpmethod=6` · `tile_ext=webp` 기록 · S3 ContentType 지정 | 신규만 |
 | 3 시범 | 신규 1~2건을 WebP 로 올려 기기별 확인 (iOS Safari · 안드로이드 · 카톡 인앱 · VR 모드) | 시범 장면만 |
 | 4 선택 | 조회 상위 장면을 원본에서 다시 생성 | 해당 장면만 |
 
@@ -232,19 +213,19 @@ utils · BE · client · admin · 레거시에서 확장자를 고정한 지점�
 
 ---
 
-## utils — 지금 번들된 1.20.9 는 WebP 를 못 만들고, 1.24 로 바꾸면 됩니다
+## utils — krpanotools 는 1.24 로 교체됐고, config 만 바꾸면 됩니다
 
-`look360_utils_v3` 에 번들된 krpanotools 는 **1.20.9 (2020-11-19)** 이고, 1.23.3 까지는 출력 형식이 JPEG·TIFF 뿐입니다. **1.24 부터** WebP·PNG·JpegXL 출력이 추가됐습니다.
+`look360_utils_v3` 의 krpanotools 를 1.20.9 → **1.24** 로 바꿨습니다(출력은 아직 JPG). WebP 로 전환할 때는 config 만 바꾸면 됩니다.
 
 | 출력물 | 현재 | 바꿀 것 |
 |---|---|---|
-| 큐브 타일 · `pv` · `1024_` · `512_` | `multires_*.config` 25개, `jpegquality=60` | `format=webp webpquality=50 webpmethod=6` · 경로 `.jpg` → `.%EXT%` (`customimage[…].imagesettings` 도 같이) |
+| 큐브 타일 · `pv` · `1024_` · `512_` | `multires_*.config` 25개, `jpegquality=60` | `format=webp webpquality=60 webpmethod=6` · 경로 `.jpg` → `.%EXT%` (`customimage[…].imagesettings` 도 같이) |
 | `sphere_*` · `view_800` 등 미리보기 | `kmakepreview` q80 | 카드용은 WebP, **og 용 JPG 1장은 유지** |
 | flat 타일 · 미리보기 | `flatTiles.mjs`, magick q85 | 같은 방식 |
 | `imglink_*_src2.jpg` | 레거시 og:image 원본 | <span class="hl-amber">JPG 유지</span> |
 | `imglink_*.gif` | 애니메이션 GIF 76GB | 이번 범위 밖 (별도 검토) |
 
-수정 지점: 약 22건 + 설정 파일 25개 + krpanotools 바이너리 교체(Windows·macOS·Linux). 업로드는 utils 가 아니라 BE `uploadPanoramaZip` 이 합니다.
+수정 지점: 약 22건 + 설정 파일 25개. 업로드는 utils 가 아니라 BE `uploadPanoramaZip` 이 합니다.
 
 ---
 
@@ -263,7 +244,7 @@ utils · BE · client · admin · 레거시에서 확장자를 고정한 지점�
 
 ---
 
-## client · admin — 수정은 적고, krpano 버전은 둘 다 WebP 가능
+## client · admin — 수정은 적고, 뷰어는 이미 krpano 1.24
 
 | 저장소 | 위치 | 현재 | 바꿀 것 |
 |---|---|---|---|
@@ -272,7 +253,7 @@ utils · BE · client · admin · 레거시에서 확장자를 고정한 지점�
 | admin | `src/utils/sphereUrl.js:28` · `:33` | `sphere_1200.jpg` · `sphere_2000.jpg` 기본값 | 확장자 값 반영 |
 | admin | `View360/…/List.vue:342` · `Panorama/…/List.vue:409` | `retouched_2000.jpg` | 같음 |
 
-krpano 뷰어: client `1.23.3` · admin `1.22.4` · 레거시 `1.23.3`. 셋 다 이미지를 브라우저가 디코딩하므로 WebP 를 지원하는 브라우저면 그대로 열립니다. og:image 는 client 가 아니라 BE 가 만듭니다.
+krpano 뷰어: client · admin · 레거시 모두 `1.24` 로 교체했습니다(커밋만). 이미지를 브라우저가 디코딩하므로 WebP 를 지원하는 브라우저면 그대로 열립니다. og:image 는 client 가 아니라 BE 가 만듭니다.
 
 ---
 
@@ -333,11 +314,11 @@ SSIM(Structural Similarity, 구조적 유사도)은 1 이면 원본과 같고, �
 | 대비 | 밝고 어두운 차이의 폭이 같은가 | 질감이 뭉개져 밋밋해짐 |
 | 구조 | 무늬·경계의 모양이 같은가 | 블록 무늬, 선이 흐려짐 |
 
-- 이 덱의 값은 모두 **보정 원본(retouched.jpg) 대비**입니다. WebP q45 = 0.8517 은 «원본에서 벗어난 정도가 지금 JPG q60(0.8515)과 같다»는 뜻입니다.
-- 0.85 는 512 타일의 미세 질감까지 따진 값이라 낮아 보일 뿐입니다. **절대값이 아니라 같은 원본끼리 비교**하는 용도입니다.
+- 신규 타일 값은 **krpano 가 같은 원본으로 만든 무손실 타일 대비**입니다. WebP q60 = 0.9135 는 «원본에서 벗어난 정도가 지금 JPG q60(0.9146)과 거의 같다»는 뜻입니다.
+- 기존 데이터 재인코딩 슬라이드의 값은 «지금 저장된 JPG 타일» 대비라서 신규 값과 직접 비교하지 않습니다.
 - 밝기 채널만 계산했으므로 색 번짐은 거의 반영되지 않습니다.
 
-<span class="hl-amber">한계</span> SSIM 이 같아도 손실 모양은 다릅니다. JPG 는 8×8 블록 무늬, WebP 는 질감이 부드럽게 뭉개집니다. 그래서 q45 를 «같은 화질»로 보되 기본값은 q50 으로 제안하고, 결정 전에는 신규 장면 1개를 뷰어에서 직접 비교하는 것을 권합니다.
+<span class="hl-amber">한계</span> SSIM 이 같아도 손실 모양은 다릅니다. JPG 는 8×8 블록 무늬, WebP 는 질감이 부드럽게 뭉개집니다. 결정 전에는 신규 장면 1개를 뷰어에서 직접 비교하는 것을 권합니다.
 
 ---
 
@@ -348,13 +329,12 @@ SSIM(Structural Similarity, 구조적 유사도)은 1 이면 원본과 같고, �
 | 용량 | `look360-v1-files` 백업 목록표 `state/pano__*.csv.gz` 1,764개 집계 (2026-11-12) |
 | 기존 타일 표본 | 목록표에서 무작위 장소 120곳 · 타일 500장 · 장면 파일 200개를 S3 에서 받음 (약 42MB) |
 | 기존 품질값 | ImageMagick `identify %Q` → 타일 300장 전부 q60 · 4:2:0 |
-| 신규 비교 | 궁디팡팡 `retouched.jpg` 6장 사본 → 512 타일 384장 · JPG q60 4:2:0 optimize vs JPG q100 4:4:4 → WebP (libwebp 1.6.0, method 6) · 중간 출력 비교는 3장 · 135장 |
-| 화질 지표 | 밝기 채널 SSIM (가우시안 11×11, σ 1.5) · PSNR |
-| krpano | krpano 1.24 릴리스 노트(2026-06-25) · Tools 설정 문서(`format` · `webpquality` · `webpmethod` · `%EXT%`) · krpanotools 1.24 Linux 를 받아 원본 2장 직접 실행 · 저장소별 `vr.js` 헤더 |
-| `webpmethod` | 위 타일 384장을 libwebp q45·q50 × method 0·4·6 으로 인코딩 |
-| 코드 | 5개 저장소 읽기 전용 조사 (수정 없음) |
+| 신규 비교 | 궁디팡팡 `retouched.jpg` 2장(12000×6000) → krpanotools 1.24(라이선스 등록) · 운영 config `multires_12000` · 무손실 PNG 기준 512 타일 828장 · WebP q20~75 × `webpmethod` 0·6 |
+| 화질 지표 | 밝기 채널 SSIM (가우시안 11×11, σ 1.5) |
+| krpano | krpano 1.24 릴리스 노트(2026-06-25) · Tools 설정 문서(`format` · `webpquality` · `webpmethod` · `%EXT%`) · krpanotools 1.24 Linux 직접 실행 |
+| 코드 | 5개 저장소 조사 (WebP 전환 코드는 수정 없음, krpano 1.24 교체만 커밋) |
 
-<span class="hl-amber">추정 값</span> 저장·요청 단가는 AWS 서울 공시가 기준이며 실제 청구액과 다를 수 있습니다. 신규 비교는 실제 큐브 면이 아니라 정방형 사진의 가운데 띠를 잘라 쓴 근사입니다.
+<span class="hl-amber">추정 값</span> 저장·요청 단가는 AWS 서울 공시가 기준이며 실제 청구액과 다를 수 있습니다. 신규 비교 원본은 2장뿐이라 장면 종류(실내·야외·항공)에 따라 비율이 달라질 수 있습니다.
 
 ---
 
@@ -363,6 +343,6 @@ SSIM(Structural Similarity, 구조적 유사도)은 1 이면 원본과 같고, �
 
 ## 감사합니다
 
-신규는 krpanotools 1.24 로 WebP q50(`webpmethod=6`)을 바로 만들어 −25%, 기존 352GB 는 화질·비용을 따져 보류를 권합니다.
+같은 화질이면 신규 타일은 WebP q60(`webpmethod=6`)으로 −16% 안팎입니다. 효과가 크지 않으니 진행 여부부터 정하고, 기존 352GB 는 보류를 권합니다.
 
 Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
