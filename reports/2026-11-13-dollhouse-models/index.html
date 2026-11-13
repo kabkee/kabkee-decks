@@ -30,6 +30,9 @@
   td,th { padding:4px 3px; border-bottom:1px solid var(--line); text-align:left; }
   tr.sel td { background:#fff1ec; }
   tr { cursor:pointer; }
+  #placeBox { margin:0 0 8px; font-size:12px; line-height:1.9; }
+  #placeBox a { color:#555; text-decoration:none; border:1px solid var(--line); border-radius:12px; padding:2px 8px; margin:0 3px 3px 0; display:inline-block; }
+  #placeBox a.on { background:var(--ink); color:#fff; border-color:var(--ink); }
   #verBox { margin:6px 0 10px; }
   #verBox .vbtn { margin:0 4px 4px 0; }
   #verBox .vbtn .sw { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle; }
@@ -38,7 +41,8 @@
   .muted { color:var(--muted); font-size:12px; }
   @media (max-width: 900px) { #app { grid-template-columns:1fr; grid-template-rows: 60vh auto; } aside { border-left:0; border-top:1px solid var(--line);} }
 </style>
-<script>window.__SCENES__ = {"camH": 1.5, "versions": [{"key": "ref", "name": "ZInD 기준점 (비상업·비교용)", "score": {"all": "67.3", "room": "70.6"}, "rooms": [{"id": "pano28740", "title": "거실", "tex": "s2", "floor": [[-2.575, -3.517], [-2.575, -1.543], [-1.763, -1.539], [-1.775, 2.166], [1.609, 2.176], [1.63, -3.501]], "ceilH": 2.386, "x": -0.41, "y": 0.887, "theta": 0.0, "via": "root"}, {"id": "pano28739", "title": "거실", "tex": "s1", "floor": [[-2.097, -3.499], [-2.098, -1.534], [-1.755, -1.532], [-1.756, -1.009], [-1.814, -1.009], [-1.825, 2.196], [1.716, 2.207], [1.736, -3.486]], "ceilH": 2.417, "x": -0.41, "y": 0.887, "theta": -0.004, "via": "manual", "variantOf": "pano28740"}, {"id": "pano28741", "title": "신발장", "tex": "s3", "floor": [[-0.517, -0.468], [-0.865, -0.469], [-0.868, 0.457], [-0.961, 0.457], [-0.964, 1.423], [0.649, 1.428], [0.663, -2.926], [0.072, -2.928], [0.067, -1.26], [-0.513, -1.261]], "ceilH": 2.289, "x": -2.933, "y": -3.923, "theta": 179.997, "via": "manual"}, {"id": "pano28742", "title": "컴퓨터방", "tex": "s4", "floor": [[-1.623, -1.762], [-1.633, 1.674], [1.255, 1.683], [1.265, -1.753]], "ceilH": 2.46, "x": -0.183, "y": -5.064, "theta": 89.993, "via": "manual"}, {"id": "pano28743", "title": "옷방", "tex": "s5", "floor": [[-1.547, -1.442], [-1.556, 1.481], [-0.356, 1.484], [-0.355, 1.052], [1.552, 1.058], [1.56, -1.433]], "ceilH": 2.304, "x": -3.729, "y": 0.821, "theta": 179.991, "via": "manual"}]}, {"key": "v1", "name": "1차 자체 학습 (라벨 103장)", "score": {"all": "60.6", "room": "69.3"}, "rooms": [{"id": "pano28740", "title": "거실", "tex": "s2", "floor": [[-0.407, -3.048], [-0.407, -3.298], [-2.313, -3.308], [-2.313, -2.071], [-1.584, -2.067], [-1.596, 1.969], [1.486, 1.978], [1.49, 0.504], [1.495, 0.504], [1.509, -3.043]], "ceilH": 2.499, "x": 0.181, "y": 0.261, "theta": 0.0, "via": "root"}, {"id": "pano28739", "title": "거실", "tex": "s1", "floor": [[-0.118, -3.303], [-0.118, -3.165], [-2.06, -3.174], [-2.061, -1.868], [-1.778, -1.866], [-1.792, 2.211], [1.668, 2.221], [1.672, 0.572], [1.697, 0.572], [1.713, -3.299]], "ceilH": 2.506, "x": 0.181, "y": 0.261, "theta": -0.002, "via": "manual", "variantOf": "pano28740"}, {"id": "pano28741", "title": "신발장", "tex": "s3", "floor": [[-0.498, -2.835], [-0.505, -0.512], [-1.004, -0.513], [-1.007, 0.474], [-0.519, 0.476], [-0.521, 1.329], [0.724, 1.333], [0.738, -2.831]], "ceilH": 2.309, "x": -2.647, "y": -3.94, "theta": 179.994, "via": "manual"}, {"id": "pano28742", "title": "컴퓨터방", "tex": "s4", "floor": [[0.0, -1.901], [-0.0, -1.744], [-1.52, -1.749], [-1.531, 1.697], [1.291, 1.705], [1.302, -1.898]], "ceilH": 2.548, "x": 0.117, "y": -4.953, "theta": 89.994, "via": "manual"}, {"id": "pano28743", "title": "옷방", "tex": "s5", "floor": [[-0.0, -1.415], [0.0, -1.442], [-1.851, -1.449], [-1.858, 1.038], [-2.034, 1.037], [-2.038, 1.916], [-0.374, 1.92], [-0.372, 1.125], [1.776, 1.132], [1.784, -1.41]], "ceilH": 2.456, "x": -3.729, "y": 0.821, "theta": 179.992, "via": "manual"}]}, {"key": "v2A", "name": "2차 자체 · 가벽 포함 (라벨 189장)", "score": {"all": "72.1", "room": "76.2"}, "rooms": [{"id": "pano28740", "title": "거실", "tex": "s2", "floor": [[-0.435, -3.211], [-0.434, -3.351], [-2.493, -3.362], [-2.494, -1.427], [-1.59, -1.423], [-1.602, 2.27], [-0.569, 2.272], [-0.569, 2.256], [1.701, 2.265], [1.704, 0.539], [1.598, 0.539], [1.614, -3.206]], "ceilH": 2.448, "x": -0.41, "y": 0.887, "theta": 0.0, "via": "root"}, {"id": "pano28739", "title": "거실", "tex": "s1", "floor": [[-2.559, -3.45], [-2.559, -1.555], [-1.711, -1.551], [-1.724, 2.208], [-0.51, 2.21], [-0.51, 2.093], [1.558, 2.1], [1.561, 0.449], [1.663, 0.449], [1.679, -3.336], [0.021, -3.339], [0.021, -3.437]], "ceilH": 2.433, "x": -0.41, "y": 0.887, "theta": 0.001, "via": "manual", "variantOf": "pano28740"}, {"id": "pano28741", "title": "신발장", "tex": "s3", "floor": [[-0.492, -2.649], [-0.499, -0.495], [-1.012, -0.496], [-1.015, 0.455], [-0.496, 0.457], [-0.498, 1.398], [0.74, 1.402], [0.753, -2.645]], "ceilH": 2.32, "x": -2.933, "y": -3.923, "theta": 179.994, "via": "manual"}, {"id": "pano28742", "title": "컴퓨터방", "tex": "s4", "floor": [[-0.0, -1.809], [-0.0, -1.885], [-0.768, -1.888], [-0.769, -1.801], [-1.656, -1.804], [-1.666, 1.649], [1.212, 1.658], [1.223, -1.806]], "ceilH": 2.479, "x": -0.183, "y": -5.064, "theta": 89.994, "via": "manual"}, {"id": "pano28743", "title": "옷방", "tex": "s5", "floor": [[-1.995, -1.658], [-2.002, 0.952], [-2.045, 0.952], [-2.049, 1.88], [-0.393, 1.884], [-0.391, 1.182], [1.6, 1.189], [1.609, -1.646]], "ceilH": 2.484, "x": -3.729, "y": 0.821, "theta": 179.993, "via": "manual"}]}, {"key": "v2B", "name": "2차 자체 · 가벽 제외 (라벨 177장)", "score": {"all": "69.6", "room": "76.2"}, "rooms": [{"id": "pano28740", "title": "거실", "tex": "s2", "floor": [[-0.0, -3.117], [0.001, -3.571], [-2.659, -3.585], [-2.659, -1.506], [-1.677, -1.501], [-1.689, 2.195], [1.657, 2.205], [1.66, 0.565], [1.676, 0.565], [1.691, -3.114]], "ceilH": 2.443, "x": -0.41, "y": 0.887, "theta": 0.0, "via": "root"}, {"id": "pano28739", "title": "거실", "tex": "s1", "floor": [[-2.661, -1.547], [-1.702, -1.542], [-1.714, 2.118], [1.598, 2.128], [1.602, 0.54], [1.744, 0.541], [1.761, -3.395], [0.021, -3.398], [0.022, -3.621], [-2.661, -3.634]], "ceilH": 2.432, "x": -0.41, "y": 0.887, "theta": 0.001, "via": "manual", "variantOf": "pano28740"}, {"id": "pano28741", "title": "신발장", "tex": "s3", "floor": [[-0.522, -2.628], [-0.529, -0.51], [-1.02, -0.511], [-1.023, 0.462], [-0.538, 0.465], [-0.54, 1.458], [0.782, 1.462], [0.795, -2.624]], "ceilH": 2.367, "x": -2.933, "y": -3.923, "theta": 179.995, "via": "manual"}, {"id": "pano28742", "title": "컴퓨터방", "tex": "s4", "floor": [[-0.0, -1.914], [-0.0, -1.797], [-1.675, -1.803], [-1.685, 1.683], [1.214, 1.691], [1.225, -1.911]], "ceilH": 2.452, "x": -0.183, "y": -5.064, "theta": 89.995, "via": "manual"}, {"id": "pano28743", "title": "옷방", "tex": "s5", "floor": [[-1.834, -1.642], [-1.841, 0.989], [-1.995, 0.989], [-1.998, 1.834], [-0.374, 1.837], [-0.372, 1.125], [1.765, 1.132], [1.774, -1.631]], "ceilH": 2.438, "x": -3.729, "y": 0.821, "theta": 179.993, "via": "manual"}]}]};</script>
+<script>window.__SCENES__ = {"camH": 1.5, "versions": [{"key": "ref", "name": "ZInD 기준점 (비상업·비교용)", "score": {"all": "67.3", "room": "70.6"}, "rooms": [{"id": "pano28740", "title": "거실", "tex": "s2", "floor": [[-2.575, -3.517], [-2.575, -1.543], [-1.763, -1.539], [-1.775, 2.166], [1.609, 2.176], [1.63, -3.501]], "ceilH": 2.386, "x": -0.41, "y": 0.887, "theta": 0.0, "via": "root"}, {"id": "pano28739", "title": "거실", "tex": "s1", "floor": [[-2.097, -3.499], [-2.098, -1.534], [-1.755, -1.532], [-1.756, -1.009], [-1.814, -1.009], [-1.825, 2.196], [1.716, 2.207], [1.736, -3.486]], "ceilH": 2.417, "x": -0.41, "y": 0.887, "theta": -0.004, "via": "manual", "variantOf": "pano28740"}, {"id": "pano28741", "title": "신발장", "tex": "s3", "floor": [[-0.517, -0.468], [-0.865, -0.469], [-0.868, 0.457], [-0.961, 0.457], [-0.964, 1.423], [0.649, 1.428], [0.663, -2.926], [0.072, -2.928], [0.067, -1.26], [-0.513, -1.261]], "ceilH": 2.289, "x": -2.933, "y": -3.923, "theta": 179.997, "via": "manual"}, {"id": "pano28742", "title": "컴퓨터방", "tex": "s4", "floor": [[-1.623, -1.762], [-1.633, 1.674], [1.255, 1.683], [1.265, -1.753]], "ceilH": 2.46, "x": -0.183, "y": -5.064, "theta": 89.993, "via": "manual"}, {"id": "pano28743", "title": "옷방", "tex": "s5", "floor": [[-1.547, -1.442], [-1.556, 1.481], [-0.356, 1.484], [-0.355, 1.052], [1.552, 1.058], [1.56, -1.433]], "ceilH": 2.304, "x": -3.729, "y": 0.821, "theta": 179.991, "via": "manual"}]}, {"key": "v1", "name": "1차 자체 학습 (라벨 103장)", "score": {"all": "60.6", "room": "69.3"}, "rooms": [{"id": "pano28740", "title": "거실", "tex": "s2", "floor": [[-0.407, -3.048], [-0.407, -3.298], [-2.313, -3.308], [-2.313, -2.071], [-1.584, -2.067], [-1.596, 1.969], [1.486, 1.978], [1.49, 0.504], [1.495, 0.504], [1.509, -3.043]], "ceilH": 2.499, "x": 0.181, "y": 0.261, "theta": 0.0, "via": "root"}, {"id": "pano28739", "title": "거실", "tex": "s1", "floor": [[-0.118, -3.303], [-0.118, -3.165], [-2.06, -3.174], [-2.061, -1.868], [-1.778, -1.866], [-1.792, 2.211], [1.668, 2.221], [1.672, 0.572], [1.697, 0.572], [1.713, -3.299]], "ceilH": 2.506, "x": 0.181, "y": 0.261, "theta": -0.002, "via": "manual", "variantOf": "pano28740"}, {"id": "pano28741", "title": "신발장", "tex": "s3", "floor": [[-0.498, -2.835], [-0.505, -0.512], [-1.004, -0.513], [-1.007, 0.474], [-0.519, 0.476], [-0.521, 1.329], [0.724, 1.333], [0.738, -2.831]], "ceilH": 2.309, "x": -2.647, "y": -3.94, "theta": 179.994, "via": "manual"}, {"id": "pano28742", "title": "컴퓨터방", "tex": "s4", "floor": [[0.0, -1.901], [-0.0, -1.744], [-1.52, -1.749], [-1.531, 1.697], [1.291, 1.705], [1.302, -1.898]], "ceilH": 2.548, "x": 0.117, "y": -4.953, "theta": 89.994, "via": "manual"}, {"id": "pano28743", "title": "옷방", "tex": "s5", "floor": [[-0.0, -1.415], [0.0, -1.442], [-1.851, -1.449], [-1.858, 1.038], [-2.034, 1.037], [-2.038, 1.916], [-0.374, 1.92], [-0.372, 1.125], [1.776, 1.132], [1.784, -1.41]], "ceilH": 2.456, "x": -3.729, "y": 0.821, "theta": 179.992, "via": "manual"}]}, {"key": "v2A", "name": "2차 자체 · 가벽 포함 (라벨 189장)", "score": {"all": "72.1", "room": "76.2"}, "rooms": [{"id": "pano28740", "title": "거실", "tex": "s2", "floor": [[-0.435, -3.211], [-0.434, -3.351], [-2.493, -3.362], [-2.494, -1.427], [-1.59, -1.423], [-1.602, 2.27], [-0.569, 2.272], [-0.569, 2.256], [1.701, 2.265], [1.704, 0.539], [1.598, 0.539], [1.614, -3.206]], "ceilH": 2.448, "x": -0.41, "y": 0.887, "theta": 0.0, "via": "root"}, {"id": "pano28739", "title": "거실", "tex": "s1", "floor": [[-2.559, -3.45], [-2.559, -1.555], [-1.711, -1.551], [-1.724, 2.208], [-0.51, 2.21], [-0.51, 2.093], [1.558, 2.1], [1.561, 0.449], [1.663, 0.449], [1.679, -3.336], [0.021, -3.339], [0.021, -3.437]], "ceilH": 2.433, "x": -0.41, "y": 0.887, "theta": 0.001, "via": "manual", "variantOf": "pano28740"}, {"id": "pano28741", "title": "신발장", "tex": "s3", "floor": [[-0.492, -2.649], [-0.499, -0.495], [-1.012, -0.496], [-1.015, 0.455], [-0.496, 0.457], [-0.498, 1.398], [0.74, 1.402], [0.753, -2.645]], "ceilH": 2.32, "x": -2.933, "y": -3.923, "theta": 179.994, "via": "manual"}, {"id": "pano28742", "title": "컴퓨터방", "tex": "s4", "floor": [[-0.0, -1.809], [-0.0, -1.885], [-0.768, -1.888], [-0.769, -1.801], [-1.656, -1.804], [-1.666, 1.649], [1.212, 1.658], [1.223, -1.806]], "ceilH": 2.479, "x": -0.183, "y": -5.064, "theta": 89.994, "via": "manual"}, {"id": "pano28743", "title": "옷방", "tex": "s5", "floor": [[-1.995, -1.658], [-2.002, 0.952], [-2.045, 0.952], [-2.049, 1.88], [-0.393, 1.884], [-0.391, 1.182], [1.6, 1.189], [1.609, -1.646]], "ceilH": 2.484, "x": -3.729, "y": 0.821, "theta": 179.993, "via": "manual"}]}, {"key": "v2B", "name": "2차 자체 · 가벽 제외 (라벨 177장)", "score": {"all": "69.6", "room": "76.2"}, "rooms": [{"id": "pano28740", "title": "거실", "tex": "s2", "floor": [[-0.0, -3.117], [0.001, -3.571], [-2.659, -3.585], [-2.659, -1.506], [-1.677, -1.501], [-1.689, 2.195], [1.657, 2.205], [1.66, 0.565], [1.676, 0.565], [1.691, -3.114]], "ceilH": 2.443, "x": -0.41, "y": 0.887, "theta": 0.0, "via": "root"}, {"id": "pano28739", "title": "거실", "tex": "s1", "floor": [[-2.661, -1.547], [-1.702, -1.542], [-1.714, 2.118], [1.598, 2.128], [1.602, 0.54], [1.744, 0.541], [1.761, -3.395], [0.021, -3.398], [0.022, -3.621], [-2.661, -3.634]], "ceilH": 2.432, "x": -0.41, "y": 0.887, "theta": 0.001, "via": "manual", "variantOf": "pano28740"}, {"id": "pano28741", "title": "신발장", "tex": "s3", "floor": [[-0.522, -2.628], [-0.529, -0.51], [-1.02, -0.511], [-1.023, 0.462], [-0.538, 0.465], [-0.54, 1.458], [0.782, 1.462], [0.795, -2.624]], "ceilH": 2.367, "x": -2.933, "y": -3.923, "theta": 179.995, "via": "manual"}, {"id": "pano28742", "title": "컴퓨터방", "tex": "s4", "floor": [[-0.0, -1.914], [-0.0, -1.797], [-1.675, -1.803], [-1.685, 1.683], [1.214, 1.691], [1.225, -1.911]], "ceilH": 2.452, "x": -0.183, "y": -5.064, "theta": 89.995, "via": "manual"}, {"id": "pano28743", "title": "옷방", "tex": "s5", "floor": [[-1.834, -1.642], [-1.841, 0.989], [-1.995, 0.989], [-1.998, 1.834], [-0.374, 1.837], [-0.372, 1.125], [1.765, 1.132], [1.774, -1.631]], "ceilH": 2.438, "x": -3.729, "y": 0.821, "theta": 179.993, "via": "manual"}]}]};window.__PLACE__ = "mino";</script>
+<script src="/reports/2026-11-13-dollhouse-places/places.js"></script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
@@ -61,6 +65,7 @@
   </div>
   <aside>
     <h1>미노네집 돌하우스 · 반자동 PoC</h1>
+    <div id="placeBox" style="display:none"></div>
     <div id="verBox" style="display:none"></div>
     <div class="sub">360 사진 5장만으로 만든 결과야. 방 모양은 AI(HorizonNet)가 자동으로 추정했고, 방 배치는 기존 투어의 이동 핫스팟으로 자동 계산했어. 어긋난 곳은 아래 평면도에서 방을 끌어서 맞추면 돼.</div>
 
@@ -128,6 +133,14 @@ scene.background = new THREE.Color(0xeeece7);
 const camera = new THREE.PerspectiveCamera(50, 1, 0.05, 200);
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
+// 매직패드·트랙패드용 부드러운 확대: 기본 휠 확대를 끄고, 스크롤 양에 비례한 목표 거리로 매 프레임 조금씩 다가간다
+controls.enableZoom = false;
+let zoomGoal = null, fovGoal = null;
+function wheelFactor(e) {
+  // 핀치(ctrlKey) 는 delta 가 작고 촘촘해서 더 민감하게, 마우스 휠은 한 칸이 크므로 덜 민감하게
+  const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+  return Math.exp(dy * (e.ctrlKey ? 0.01 : 0.0012));
+}
 
 const grid = new THREE.GridHelper(30, 30, 0xd6d3cc, 0xe2dfd8);
 grid.position.y = -0.01;
@@ -228,7 +241,7 @@ function frameAll(top) {
   else camera.position.set(cx + span * 0.55, span * 1.15, -cy + span * 1.05);
   camera.fov = 50; camera.updateProjectionMatrix();
   controls.minDistance = 0; controls.maxDistance = 100;
-  inside = null;
+  inside = null; zoomGoal = fovGoal = null;
   for (const id in roomGroups) roomGroups[id].group.visible = true;
 }
 
@@ -236,7 +249,7 @@ function frameAll(top) {
 let inside = null;
 function enter(id) {
   const rg = roomGroups[id]; if (!rg) return;
-  inside = id; selected = id;
+  inside = id; selected = id; zoomGoal = fovGoal = null;
   if (!showCeil) toggleCeil(true);
   // 안에서는 그 방만 보여준다(다른 방 벽이 겹쳐 들어오는 것 방지)
   for (const k in roomGroups) roomGroups[k].group.visible = (k === id);
@@ -418,7 +431,9 @@ function renderVersions() {
   const sc = v => v.score?.room ? `일반 방 ${v.score.room}% · 전체 ${v.score.all}%` : '평가 점수 없음';
   box.innerHTML = '<b style="font-size:13px">모델 버전</b><br>' + PACK.versions.map((v, i) =>
     `<button class="vbtn ${v.key === curKey ? 'on' : ''}" data-k="${v.key}"><span class="sw" style="background:${VCOLORS[i % VCOLORS.length]}"></span>${v.name}</button>`).join('') +
-    `<div class="score">지금 보는 버전: <b>${cur.name}</b> — 평가(3D IoU) ${sc(cur)}<br>평면도의 점선 = 다른 버전의 방 모양 (같은 위치에 겹쳐 그림)</div>`;
+    `<div class="score">지금 보는 버전: <b>${cur.name}</b> — 평가(3D IoU) ${sc(cur)}<br>평면도의 점선 = 다른 버전의 방 모양 (같은 위치에 겹쳐 그림)` +
+    (PACK.versions.some(v => String(v.score?.all || '').includes('*')) ? '<br>* 1차는 평가 사진(11장)이 달라 다른 버전과 직접 비교 불가' : '') +
+    (PACK.note ? `<br><b style="color:#b23b17">⚠️ ${PACK.note}</b>` : '') + `</div>`;
   box.querySelectorAll('.vbtn').forEach(b => b.onclick = () => switchVersion(b.dataset.k));
 }
 function switchVersion(key) {
@@ -430,10 +445,36 @@ function switchVersion(key) {
   variants = Object.fromEntries(S.rooms.filter(r => r.variantOf).map(r => [r.variantOf, r]));
   rebuildAll(); view = null; renderVersions(); refreshUI();
 }
-if (PACK) document.querySelector('h1').textContent = '미노네집 돌하우스 · 모델 버전 비교';
+if (PACK) document.querySelector('h1').textContent = (PACK.title || '미노네집') + ' 돌하우스 · 모델 버전 비교';
+if (window.__PLACES__) {
+  const pb = document.getElementById('placeBox'); pb.style.display = 'block';
+  const here = window.__PLACE__ || 'mino';
+  pb.innerHTML = '<b style="font-size:13px">장소</b><br>' + window.__PLACES__.map(p => `<a class="${p.slug === here ? 'on' : ''}" href="${p.href}">${p.title}</a>`).join('');
+}
 renderVersions();
+// 조명 변형 사진이 없는 장소에서는 조명 버튼을 숨긴다
+if (!Object.keys(variants).length) bLight.style.display = 'none';
 resize(); rebuildAll(); frameAll(false); refreshUI();
-renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); drawLabels(); });
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const f = wheelFactor(e);
+  if (inside) { fovGoal = Math.max(30, Math.min(110, (fovGoal ?? camera.fov) * f)); return; }
+  const d = camera.position.distanceTo(controls.target);
+  zoomGoal = Math.max(1.5, Math.min(60, (zoomGoal ?? d) * f));
+}, { passive: false });
+function smoothZoom() {
+  if (zoomGoal !== null && !inside) {
+    const dir = camera.position.clone().sub(controls.target), d = dir.length();
+    const nd = d + (zoomGoal - d) * 0.18;
+    camera.position.copy(controls.target).add(dir.multiplyScalar(nd / d));
+    if (Math.abs(zoomGoal - nd) < 0.002) zoomGoal = null;
+  }
+  if (fovGoal !== null) {
+    camera.fov += (fovGoal - camera.fov) * 0.18; camera.updateProjectionMatrix();
+    if (Math.abs(fovGoal - camera.fov) < 0.05) fovGoal = null;
+  }
+}
+renderer.setAnimationLoop(() => { smoothZoom(); controls.update(); renderer.render(scene, camera); drawLabels(); });
 window.__dh = { get rooms() { return rooms; }, enter, frameAll, camera, controls, switchVersion, get curKey() { return curKey; } };
 </script>
 </body>

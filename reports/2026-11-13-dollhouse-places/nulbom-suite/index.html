@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미노네집 돌하우스 PoC</title>
+<style>
+  :root { --bg:#f6f5f2; --panel:#fff; --ink:#222; --muted:#777; --line:#e3e1dc; --accent:#e4572e; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; color:var(--ink); background:var(--bg); }
+  #app { display:grid; grid-template-columns: 1fr 380px; height:100%; }
+  #stage { position:relative; overflow:hidden; }
+  #c3d { width:100%; height:100%; display:block; }
+  #labels { position:absolute; inset:0; pointer-events:none; }
+  .lbl { position:absolute; transform:translate(-50%,-50%); background:rgba(255,255,255,.88); border-radius:6px; padding:3px 8px; font-size:12px; white-space:nowrap; box-shadow:0 1px 3px rgba(0,0,0,.15); pointer-events:auto; cursor:pointer; }
+  .lbl b { display:block; font-size:13px; }
+  #topbar { position:absolute; left:12px; top:12px; display:flex; gap:6px; flex-wrap:wrap; }
+  #hint { position:absolute; left:12px; bottom:12px; font-size:12px; color:#fff; background:rgba(0,0,0,.45); padding:6px 10px; border-radius:6px; }
+  button { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; border-radius:6px; padding:6px 10px; cursor:pointer; }
+  button:hover { border-color:#bbb; }
+  button.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  aside { background:var(--panel); border-left:1px solid var(--line); overflow:auto; padding:14px; }
+  h1 { font-size:16px; margin:0 0 4px; }
+  .sub { font-size:12px; color:var(--muted); margin-bottom:12px; line-height:1.5; }
+  h2 { font-size:13px; margin:16px 0 6px; }
+  #plan { width:100%; aspect-ratio:1/1; border:1px solid var(--line); border-radius:8px; background:#fcfcfa; touch-action:none; }
+  .row { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:6px 0; }
+  .row label { font-size:12px; color:var(--muted); }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  td,th { padding:4px 3px; border-bottom:1px solid var(--line); text-align:left; }
+  tr.sel td { background:#fff1ec; }
+  tr { cursor:pointer; }
+  #placeBox { margin:0 0 8px; font-size:12px; line-height:1.9; }
+  #placeBox a { color:#555; text-decoration:none; border:1px solid var(--line); border-radius:12px; padding:2px 8px; margin:0 3px 3px 0; display:inline-block; }
+  #placeBox a.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  #verBox { margin:6px 0 10px; }
+  #verBox .vbtn { margin:0 4px 4px 0; }
+  #verBox .vbtn .sw { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle; }
+  #verBox .score { font-size:12px; color:#555; line-height:1.6; }
+  #json { width:100%; height:90px; font:11px ui-monospace,monospace; }
+  .muted { color:var(--muted); font-size:12px; }
+  @media (max-width: 900px) { #app { grid-template-columns:1fr; grid-template-rows: 60vh auto; } aside { border-left:0; border-top:1px solid var(--line);} }
+</style>
+<script>window.__SCENES__ = {"camH": 1.5, "title": "늘봄요양병원 · 암병동 특실", "note": "침실·주방 은 2차 학습에 쓰여 2차가 유리할 수 있음", "versions": [{"key": "ref", "name": "ZInD 기준점 (비상업·비교용)", "score": {"all": "71.6", "room": "74.0"}, "rooms": [{"id": "pano28896", "title": "암병동 특실_거실", "tex": "p28896", "floor": [[-0.024, -3.483], [-0.03, -1.608], [-1.715, -1.614], [-1.731, 2.915], [1.641, 2.925], [1.644, 1.095], [1.841, 1.096], [1.86, -3.48]], "ceilH": 2.535, "theta": 0.0, "x": 0.0, "y": 0.0, "via": "root"}, {"id": "pano28897", "title": "암병동 특실_침실", "tex": "p28897", "floor": [[-1.92, -2.124], [-1.937, 2.712], [1.839, 2.723], [1.853, -2.112]], "ceilH": 2.534, "theta": -90.008, "x": -6.239, "y": -5.21, "via": "pano28896"}, {"id": "pano28898", "title": "암병동 특실_주방", "tex": "p28898", "floor": [[-0.567, -1.357], [-0.575, 1.327], [1.044, 1.332], [1.052, -1.352]], "ceilH": 2.537, "theta": -0.008, "x": -0.843, "y": -8.876, "via": "pano28896"}, {"id": "pano28899", "title": "암병동 특실_화장실", "tex": "p28899", "floor": [[-1.11, -0.759], [-1.115, 0.886], [1.177, 0.893], [1.182, -0.752]], "ceilH": 2.27, "theta": 89.992, "x": -0.253, "y": -6.67, "via": "pano28897"}]}, {"key": "v1", "name": "1차 자체 (라벨 103장)", "score": {"all": "60.6*", "room": "69.3*"}, "rooms": [{"id": "pano28896", "title": "암병동 특실_거실", "tex": "p28896", "floor": [[-0.022, -3.485], [-0.028, -1.531], [-1.52, -1.536], [-1.535, 2.671], [1.36, 2.679], [1.363, 1.009], [1.71, 1.011], [1.718, -1.384], [1.796, -1.384], [1.807, -3.482]], "ceilH": 2.465, "theta": 0.0, "x": 0.0, "y": 0.0, "via": "root"}, {"id": "pano28897", "title": "암병동 특실_침실", "tex": "p28897", "floor": [[-0.0, -2.022], [-0.0, -1.92], [-1.662, -1.926], [-1.669, 0.799], [-1.682, 0.799], [-1.689, 2.434], [1.669, 2.445], [1.681, -2.018]], "ceilH": 2.433, "theta": -90.007, "x": -6.239, "y": -5.21, "via": "pano28896"}, {"id": "pano28898", "title": "암병동 특실_주방", "tex": "p28898", "floor": [[-0.538, 2.266], [0.66, 2.27], [0.663, 1.091], [1.152, 1.093], [1.16, -1.435], [0.009, -1.439], [0.007, -0.801], [-0.529, -0.802]], "ceilH": 2.443, "theta": -0.012, "x": -0.843, "y": -8.876, "via": "pano28896"}, {"id": "pano28899", "title": "암병동 특실_화장실", "tex": "p28899", "floor": [[-0.193, -0.869], [-0.193, -0.884], [-1.22, -0.886], [-1.226, 1.06], [1.37, 1.068], [1.376, -0.863]], "ceilH": 2.412, "theta": 89.993, "x": -0.253, "y": -6.67, "via": "pano28897"}]}, {"key": "v2A", "name": "2차 자체 · 가벽 포함 (189장)", "score": {"all": "72.1", "room": "76.2"}, "rooms": [{"id": "pano28896", "title": "암병동 특실_거실", "tex": "p28896", "floor": [[-0.034, -3.41], [-0.039, -1.6], [-1.579, -1.606], [-1.595, 2.896], [1.519, 2.905], [1.522, 1.087], [1.709, 1.088], [1.717, -1.391], [1.811, -1.391], [1.821, -3.407]], "ceilH": 2.473, "theta": 0.0, "x": 0.0, "y": 0.0, "via": "root"}, {"id": "pano28897", "title": "암병동 특실_침실", "tex": "p28897", "floor": [[-0.0, -2.085], [-0.0, -2.012], [-1.72, -2.018], [-1.727, 0.798], [-1.768, 0.798], [-1.776, 2.533], [1.722, 2.544], [1.735, -2.081]], "ceilH": 2.453, "theta": -90.007, "x": -6.239, "y": -5.21, "via": "pano28896"}, {"id": "pano28898", "title": "암병동 특실_주방", "tex": "p28898", "floor": [[-0.545, -1.282], [-0.557, 2.345], [0.674, 2.349], [0.678, 1.1], [0.966, 1.101], [0.975, -1.696], [0.009, -1.699], [0.008, -1.28]], "ceilH": 2.453, "theta": -0.008, "x": -0.843, "y": -8.876, "via": "pano28896"}, {"id": "pano28899", "title": "암병동 특실_화장실", "tex": "p28899", "floor": [[-1.177, -0.821], [-1.182, 0.999], [1.318, 1.007], [1.324, -0.813]], "ceilH": 2.367, "theta": 89.993, "x": -0.253, "y": -6.67, "via": "pano28897"}]}, {"key": "v2B", "name": "2차 자체 · 가벽 제외 (177장)", "score": {"all": "69.6", "room": "76.2"}, "rooms": [{"id": "pano28896", "title": "암병동 특실_거실", "tex": "p28896", "floor": [[-0.033, -3.292], [-0.038, -1.54], [-1.592, -1.546], [-1.609, 3.018], [1.434, 3.027], [1.437, 1.028], [1.715, 1.029], [1.732, -3.289]], "ceilH": 2.462, "theta": 0.0, "x": 0.0, "y": 0.0, "via": "root"}, {"id": "pano28897", "title": "암병동 특실_침실", "tex": "p28897", "floor": [[-0.0, -2.025], [-0.0, -2.097], [-1.734, -2.104], [-1.741, 0.768], [-1.737, 0.768], [-1.746, 2.681], [1.752, 2.691], [1.765, -2.021]], "ceilH": 2.457, "theta": -90.007, "x": -6.239, "y": -5.21, "via": "pano28896"}, {"id": "pano28898", "title": "암병동 특실_주방", "tex": "p28898", "floor": [[-0.0, -1.444], [-0.002, -0.811], [-0.536, -0.812], [-0.542, 1.25], [0.773, 1.254], [0.775, 0.731], [0.962, 0.732], [0.968, -1.441]], "ceilH": 2.461, "theta": -0.013, "x": -0.843, "y": -8.876, "via": "pano28896"}, {"id": "pano28899", "title": "암병동 특실_화장실", "tex": "p28899", "floor": [[-1.222, -0.831], [-1.227, 1.033], [1.346, 1.041], [1.352, -0.823]], "ceilH": 2.402, "theta": 89.993, "x": -0.253, "y": -6.67, "via": "pano28897"}]}]};window.__PLACE__ = "nulbom-suite";</script>
+<script src="/reports/2026-11-13-dollhouse-places/places.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <canvas id="c3d"></canvas>
+    <div id="labels"></div>
+    <div id="topbar">
+      <button id="bDoll" class="on">돌하우스</button>
+      <button id="bTop">위에서 보기</button>
+      <button id="bCeil">천장 표시</button>
+      <button id="bLight">거실 조명: 기본</button>
+    </div>
+    <div id="hint">드래그=회전 · 휠=확대 · 방(또는 이름표·평면도·목록) 더블클릭=안으로 들어가기 · Esc=돌하우스로</div>
+  </div>
+  <aside>
+    <h1>미노네집 돌하우스 · 반자동 PoC</h1>
+    <div id="placeBox" style="display:none"></div>
+    <div id="verBox" style="display:none"></div>
+    <div class="sub">360 사진 5장만으로 만든 결과야. 방 모양은 AI(HorizonNet)가 자동으로 추정했고, 방 배치는 기존 투어의 이동 핫스팟으로 자동 계산했어. 어긋난 곳은 아래 평면도에서 방을 끌어서 맞추면 돼.</div>
+
+    <h2>평면도 (방 선택 → 드래그로 이동)</h2>
+    <svg id="plan"></svg>
+    <div class="row">
+      <button data-rot="-90">⟲ 90°</button><button data-rot="-1">⟲ 1°</button>
+      <button data-rot="1">⟳ 1°</button><button data-rot="90">⟳ 90°</button>
+      <button id="bReset">자동 배치 보기</button><button id="bSaved">저장된 보정 배치</button>
+    </div>
+    <div class="row">
+      <label for="camH">카메라 높이(축척)</label>
+      <input id="camH" type="range" min="1.2" max="1.8" step="0.01" value="1.5">
+      <span id="camHv">1.50m</span>
+    </div>
+    <div class="muted">카메라 높이를 실제 삼각대 높이로 맞추면 모든 치수가 실측 기준으로 바뀌어.</div>
+
+    <h2>방 목록</h2>
+    <table id="tbl"><thead><tr><th>방</th><th>면적</th><th>천장고</th><th>배치 근거</th></tr></thead><tbody></tbody></table>
+
+    <h2>보정 결과 (JSON)</h2>
+    <textarea id="json" readonly></textarea>
+    <div class="row"><button id="bCopy">JSON 복사</button><span id="copyMsg" class="muted"></span></div>
+  </aside>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// 배포용 사본은 scene.json 을 window.__SCENE__ 로 인라인한다(정적 호스팅에서 .json 이 빠지는 경우 대비)
+// 모델 버전 비교용 사본은 window.__SCENES__ = {camH, versions:[{key,name,score,rooms}]} 를 인라인한다
+const PACK = window.__SCENES__ ?? null;
+let curKey = null;
+let scene0;
+if (PACK) {
+  const want = location.hash.slice(1);
+  curKey = (PACK.versions.find(v => v.key === want) || PACK.versions[PACK.versions.length - 1]).key;
+  scene0 = { camH: PACK.camH, rooms: PACK.versions.find(v => v.key === curKey).rooms };
+} else {
+  scene0 = window.__SCENE__ ?? await (await fetch('scene.json')).json();
+}
+const BASE_H = scene0.camH;
+let S = JSON.parse(JSON.stringify(scene0));            // 편집 중 상태 (camH=BASE_H 기준 값)
+let scale = 1;                                          // camH / BASE_H
+let rooms = S.rooms.filter(r => !r.variantOf);
+let variants = Object.fromEntries(S.rooms.filter(r => r.variantOf).map(r => [r.variantOf, r]));
+let selected = rooms[0].id;
+const VCOLORS = ['#3c8cff', '#e0a33a', '#2e9e5b', '#9b59b6', '#e4572e', '#16a5a5'];
+
+// ---------- 기하 유틸 (평면 좌표: x=동, y=북, ath=시계방향) ----------
+const rad = d => d * Math.PI / 180;
+function toWorld(r, p) {
+  const a = rad(r.theta), [x, y] = p;
+  return [(r.x + x*Math.cos(a) + y*Math.sin(a)) * scale, (r.y - x*Math.sin(a) + y*Math.cos(a)) * scale];
+}
+const area = poly => Math.abs(poly.reduce((s, p, i) => { const q = poly[(i+1)%poly.length]; return s + p[0]*q[1] - q[0]*p[1]; }, 0)) / 2;
+
+// ---------- three.js ----------
+const canvas = document.getElementById('c3d');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xeeece7);
+const camera = new THREE.PerspectiveCamera(50, 1, 0.05, 200);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+// 매직패드·트랙패드용 부드러운 확대: 기본 휠 확대를 끄고, 스크롤 양에 비례한 목표 거리로 매 프레임 조금씩 다가간다
+controls.enableZoom = false;
+let zoomGoal = null, fovGoal = null;
+function wheelFactor(e) {
+  // 핀치(ctrlKey) 는 delta 가 작고 촘촘해서 더 민감하게, 마우스 휠은 한 칸이 크므로 덜 민감하게
+  const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+  return Math.exp(dy * (e.ctrlKey ? 0.01 : 0.0012));
+}
+
+const grid = new THREE.GridHelper(30, 30, 0xd6d3cc, 0xe2dfd8);
+grid.position.y = -0.01;
+scene.add(grid);
+
+const loader = new THREE.TextureLoader();
+const texCache = {};
+function tex(name) {
+  if (!texCache[name]) {
+    const t = loader.load(`tex/${name}.jpg`);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.generateMipmaps = false;               // equirect 이음매(u=0/1)에서 밉맵 경계선 방지
+    t.minFilter = THREE.LinearFilter;
+    texCache[name] = t;
+  }
+  return texCache[name];
+}
+
+// 핵심: 각 면의 픽셀마다 "그 방 카메라 → 픽셀" 방향을 구해 equirect 에서 색을 가져온다.
+// 그래서 방 카메라 위치에서 보면 원본 파노라마와 정확히 같아 보인다.
+const vert = `varying vec3 vW; void main(){ vec4 w = modelMatrix*vec4(position,1.0); vW=w.xyz; gl_Position=projectionMatrix*viewMatrix*w; }`;
+const frag = `
+uniform sampler2D map; uniform vec3 camPos; uniform float theta; uniform float dim;
+varying vec3 vW;
+const float PI = 3.141592653589793;
+void main(){
+  vec3 d = vW - camPos;
+  float px = d.x, py = -d.z;                 // three(-z) = 평면 북쪽
+  float ath = atan(px, py) - theta;
+  float lat = atan(d.y, length(vec2(px,py)));
+  vec2 uv = vec2(fract(ath/(2.0*PI) + 0.5), 0.5 + lat/PI);
+  vec4 c = texture2D(map, uv);
+  gl_FragColor = vec4(c.rgb * dim, 1.0);
+  #include <colorspace_fragment>
+}`;
+
+const roomGroups = {};
+let showCeil = false, lightVariant = false;
+
+function buildRoom(r) {
+  if (roomGroups[r.id]) { scene.remove(roomGroups[r.id].group); roomGroups[r.id].group.traverse(o => o.geometry?.dispose()); }
+  const g = new THREE.Group();
+  const texName = (lightVariant && variants[r.id]) ? variants[r.id].tex : r.tex;
+  const camH = BASE_H * scale, ceilH = r.ceilH * scale;
+  const [cx, cy] = toWorld(r, [0, 0]);
+  const uniforms = { map: { value: tex(texName) }, camPos: { value: new THREE.Vector3(cx, camH, -cy) }, theta: { value: rad(r.theta) }, dim: { value: 1 } };
+  const mat = new THREE.ShaderMaterial({ uniforms, vertexShader: vert, fragmentShader: frag, side: THREE.FrontSide });
+  const pts = r.floor.map(p => toWorld(r, p));
+  // 다각형 방향(CCW 여부)으로 안쪽 법선 결정
+  const signed = pts.reduce((s, p, i) => { const q = pts[(i+1)%pts.length]; return s + p[0]*q[1] - q[0]*p[1]; }, 0);
+  const ccw = signed > 0;
+
+  // 벽: 안쪽에서 보이는 면만 그린다 → 바깥(돌하우스 시점)에서는 앞쪽 벽이 자동으로 사라진다
+  const wpos = [];
+  for (let i = 0; i < pts.length; i++) {
+    let a = pts[i], b = pts[(i+1)%pts.length];
+    if (!ccw) [a, b] = [b, a];
+    const A0 = [a[0], 0, -a[1]], B0 = [b[0], 0, -b[1]], A1 = [a[0], ceilH, -a[1]], B1 = [b[0], ceilH, -b[1]];
+    wpos.push(...A0, ...A1, ...B0,  ...B0, ...A1, ...B1);
+  }
+  const wg = new THREE.BufferGeometry(); wg.setAttribute('position', new THREE.Float32BufferAttribute(wpos, 3));
+  const wall = new THREE.Mesh(wg, mat); wall.userData.room = r.id; g.add(wall);
+
+  // 바닥/천장: earcut 삼각분할
+  const tris = THREE.ShapeUtils.triangulateShape(pts.map(p => new THREE.Vector2(p[0], p[1])), []);
+  const fpos = [], cpos = [];
+  for (const [i, j, k] of tris) {
+    const P = idx => pts[idx];
+    // 삼각형마다 평면 기준 CCW 로 맞춘다(위에서 볼 때 앞면)
+    const cr = (P(j)[0]-P(i)[0])*(P(k)[1]-P(i)[1]) - (P(j)[1]-P(i)[1])*(P(k)[0]-P(i)[0]);
+    const t = cr > 0 ? [i, j, k] : [i, k, j];
+    // 평면 CCW 를 three 의 (x, -y) 로 옮기면 위에서 볼 때 CCW → 법선 +y
+    for (const n of t) fpos.push(P(n)[0], 0, -P(n)[1]);
+    for (const n of [t[0], t[2], t[1]]) cpos.push(P(n)[0], ceilH, -P(n)[1]);
+  }
+  const fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(fpos, 3));
+  const flo = new THREE.Mesh(fg, mat); flo.userData.room = r.id; g.add(flo);
+  const cg = new THREE.BufferGeometry(); cg.setAttribute('position', new THREE.Float32BufferAttribute(cpos, 3));
+  const ceil = new THREE.Mesh(cg, mat); ceil.visible = showCeil; g.add(ceil);
+
+  // 선택 테두리
+  const edge = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(p[0], 0.02, -p[1]))),
+    new THREE.LineBasicMaterial({ color: r.id === selected ? 0xe4572e : 0x999999 }));
+  g.add(edge);
+  if (inside && inside !== r.id) g.visible = false;
+  scene.add(g);
+  roomGroups[r.id] = { group: g, ceil, uniforms, center: [cx, cy], camH };
+}
+const rebuildAll = () => rooms.forEach(buildRoom);
+
+function frameAll(top) {
+  const all = rooms.flatMap(r => r.floor.map(p => toWorld(r, p)));
+  const xs = all.map(p => p[0]), ys = all.map(p => p[1]);
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+  controls.target.set(cx, 0.8, -cy);
+  if (top) camera.position.set(cx, span * 1.9, -cy + 0.01);
+  else camera.position.set(cx + span * 0.55, span * 1.15, -cy + span * 1.05);
+  camera.fov = 50; camera.updateProjectionMatrix();
+  controls.minDistance = 0; controls.maxDistance = 100;
+  inside = null; zoomGoal = fovGoal = null;
+  for (const id in roomGroups) roomGroups[id].group.visible = true;
+}
+
+// 방 안으로 들어가기: 카메라를 그 방 촬영 위치로 옮기면 원본 파노라마와 똑같이 보인다
+let inside = null;
+function enter(id) {
+  const rg = roomGroups[id]; if (!rg) return;
+  inside = id; selected = id; zoomGoal = fovGoal = null;
+  if (!showCeil) toggleCeil(true);
+  // 안에서는 그 방만 보여준다(다른 방 벽이 겹쳐 들어오는 것 방지)
+  for (const k in roomGroups) roomGroups[k].group.visible = (k === id);
+  const [cx, cy] = rg.center;
+  const from = camera.position.clone(), to = new THREE.Vector3(cx, rg.camH, -cy);
+  const tFrom = controls.target.clone(), tTo = new THREE.Vector3(cx, rg.camH, -cy - 0.01);
+  const t0 = performance.now();
+  (function step() {
+    const k = Math.min(1, (performance.now() - t0) / 900), e = k < .5 ? 2*k*k : 1 - Math.pow(-2*k+2, 2)/2;
+    camera.position.lerpVectors(from, to, e); controls.target.lerpVectors(tFrom, tTo, e);
+    camera.fov = 50 + 25 * e; camera.updateProjectionMatrix();
+    if (k < 1) requestAnimationFrame(step);
+  })();
+  refreshUI();
+}
+
+// ---------- 라벨 ----------
+const labelsEl = document.getElementById('labels');
+const labelEls = {};
+// 같은 대상을 짧은 간격으로 두 번 누르면 «더블클릭» 으로 본다.
+// (클릭할 때마다 화면을 다시 그려서 브라우저 기본 dblclick 이 성립하지 않는 곳에서도 동작)
+let lastTap = { id: null, t: 0 };
+function tap(id) {
+  const now = performance.now(), dbl = lastTap.id === id && now - lastTap.t < 400;
+  lastTap = dbl ? { id: null, t: 0 } : { id, t: now };
+  if (dbl) { enter(id); return true; }
+  selected = id; refreshUI(); return false;
+}
+function drawLabels() {
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  for (const r of rooms) {
+    let el = labelEls[r.id];
+    if (!el) {
+      el = labelEls[r.id] = document.createElement('div'); el.className = 'lbl';
+      el.addEventListener('pointerdown', e => { e.stopPropagation(); tap(r.id); });
+      labelsEl.appendChild(el);
+    }
+    const pts = r.floor.map(p => toWorld(r, p));
+    const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length, cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+    const v = new THREE.Vector3(cx, r.ceilH * scale + 0.3, -cy).project(camera);
+    el.style.display = (inside || v.z > 1) ? 'none' : '';
+    el.style.left = ((v.x + 1) / 2 * w) + 'px'; el.style.top = ((1 - v.y) / 2 * h) + 'px';
+    const html = `<b>${r.title}</b>${area(pts).toFixed(1)}㎡`;
+    if (el.innerHTML !== html) el.innerHTML = html;
+  }
+}
+
+// ---------- 평면도 SVG 에디터 ----------
+const svg = document.getElementById('plan');
+let view = null;
+function planView() {
+  const all = rooms.flatMap(r => r.floor.map(p => toWorld(r, p)));
+  const xs = all.map(p => p[0]), ys = all.map(p => p[1]);
+  const pad = 1.2, minx = Math.min(...xs) - pad, maxx = Math.max(...xs) + pad, miny = Math.min(...ys) - pad, maxy = Math.max(...ys) + pad;
+  const span = Math.max(maxx - minx, maxy - miny);
+  return { minx, maxy, span, cx: (minx + maxx) / 2, cy: (miny + maxy) / 2 };
+}
+function drawPlan() {
+  if (!view || !drag) view = planView();
+  const W = 1000, k = W / view.span;
+  const X = x => (x - view.cx) * k + W / 2, Y = y => (view.cy - y) * k + W / 2;
+  let s = '';
+  for (let gx = Math.floor(view.cx - view.span); gx <= view.cx + view.span; gx++) s += `<line x1="${X(gx)}" y1="0" x2="${X(gx)}" y2="${W}" stroke="#eee"/>`;
+  for (let gy = Math.floor(view.cy - view.span); gy <= view.cy + view.span; gy++) s += `<line x1="0" y1="${Y(gy)}" x2="${W}" y2="${Y(gy)}" stroke="#eee"/>`;
+  if (PACK) PACK.versions.forEach((v, vi) => {
+    if (v.key === curKey) return;
+    for (const vr of v.rooms) {
+      if (vr.variantOf) continue;
+      const cur = rooms.find(r => r.id === vr.id); if (!cur) continue;
+      // 위치는 지금 화면의 방 위치를 따르고, 모양·회전만 그 버전 것으로 그린다
+      const g = { ...vr, x: cur.x, y: cur.y };
+      const pts = vr.floor.map(p => toWorld(g, p));
+      s += `<polygon points="${pts.map(p => X(p[0]) + ',' + Y(p[1])).join(' ')}" fill="none" stroke="${VCOLORS[vi % VCOLORS.length]}" stroke-width="3" stroke-dasharray="10 7" opacity=".8" pointer-events="none"/>`;
+    }
+  });
+  for (const r of rooms) {
+    const pts = r.floor.map(p => toWorld(r, p)), sel = r.id === selected;
+    s += `<polygon data-id="${r.id}" points="${pts.map(p => X(p[0]) + ',' + Y(p[1])).join(' ')}" fill="${sel ? 'rgba(228,87,46,.12)' : 'rgba(0,0,0,.03)'}" stroke="${sel ? '#e4572e' : '#555'}" stroke-width="${sel ? 5 : 3}" style="cursor:move"/>`;
+    // 벽 길이 치수
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i], b = pts[(i+1)%pts.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]);
+      if (L < 0.6) continue;
+      s += `<text x="${X((a[0]+b[0])/2)}" y="${Y((a[1]+b[1])/2)}" font-size="20" fill="#999" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${L.toFixed(2)}</text>`;
+    }
+    const [cx, cy] = toWorld(r, [0, 0]);
+    s += `<circle cx="${X(cx)}" cy="${Y(cy)}" r="7" fill="${sel ? '#e4572e' : '#555'}" pointer-events="none"/>`;
+    const mx = pts.reduce((t, p) => t + p[0], 0) / pts.length, my = pts.reduce((t, p) => t + p[1], 0) / pts.length;
+    s += `<text x="${X(mx)}" y="${Y(my) - 22}" font-size="28" font-weight="700" text-anchor="middle" pointer-events="none">${r.title}</text>`;
+    s += `<text x="${X(mx)}" y="${Y(my) + 10}" font-size="22" fill="#666" text-anchor="middle" pointer-events="none">${area(pts).toFixed(1)}㎡</text>`;
+  }
+  s += `<text x="20" y="${W - 20}" font-size="20" fill="#aaa">격자 1m · 숫자=벽 길이(m)</text>`;
+  svg.setAttribute('viewBox', `0 0 ${W} ${W}`);
+  svg.innerHTML = s;
+  svg._k = k;
+}
+let drag = null;
+svg.addEventListener('pointerdown', e => {
+  const id = e.target.dataset?.id; if (!id) return;
+  if (tap(id)) return;
+  const r = rooms.find(r => r.id === id);
+  drag = { r, x0: e.clientX, y0: e.clientY, rx: r.x, ry: r.y };
+  svg.setPointerCapture(e.pointerId);
+});
+svg.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const px = 1000 / svg.clientWidth / svg._k / scale;
+  drag.r.x = drag.rx + (e.clientX - drag.x0) * px; drag.r.y = drag.ry - (e.clientY - drag.y0) * px;
+  drag.r.via = 'manual'; buildRoom(drag.r); drawPlan();
+});
+svg.addEventListener('pointerup', () => { if (drag) { drag = null; refreshUI(); } });
+
+document.querySelectorAll('[data-rot]').forEach(b => b.onclick = () => {
+  const r = rooms.find(r => r.id === selected), d = +b.dataset.rot;
+  // 방 카메라가 아니라 방 중심을 기준으로 회전
+  const pts = r.floor.map(p => toWorld(r, p).map(v => v / scale));
+  const mx = pts.reduce((t, p) => t + p[0], 0) / pts.length, my = pts.reduce((t, p) => t + p[1], 0) / pts.length;
+  const a = rad(d), dx = r.x - mx, dy = r.y - my;
+  r.x = mx + dx*Math.cos(a) + dy*Math.sin(a); r.y = my - dx*Math.sin(a) + dy*Math.cos(a);
+  r.theta = ((r.theta + d + 540) % 360) - 180; r.via = 'manual';
+  buildRoom(r); refreshUI();
+});
+document.getElementById('bReset').onclick = () => {
+  // auto 필드가 있으면(보정본이 기본값인 경우) 순수 자동 배치로 되돌린다
+  for (const r of rooms) { const o = JSON.parse(JSON.stringify(scene0.rooms.find(o => o.id === r.id))); Object.assign(r, o, o.auto ? { ...o.auto, via: r.via === 'root' ? 'root' : 'auto' } : {}); }
+  rebuildAll(); view = null; refreshUI();
+};
+document.getElementById('bSaved').onclick = () => {
+  for (const r of rooms) Object.assign(r, JSON.parse(JSON.stringify(scene0.rooms.find(o => o.id === r.id))));
+  rebuildAll(); view = null; refreshUI();
+};
+const camH = document.getElementById('camH');
+camH.oninput = () => { scale = camH.value / BASE_H; document.getElementById('camHv').textContent = (+camH.value).toFixed(2) + 'm'; rebuildAll(); view = null; refreshUI(); };
+
+// ---------- 표 / JSON ----------
+function refreshUI() {
+  for (const r of rooms) roomGroups[r.id]?.group.children.at(-1).material.color.set(r.id === selected ? 0xe4572e : 0x999999);
+  const tb = document.querySelector('#tbl tbody');
+  tb.innerHTML = rooms.map(r => {
+    const pts = r.floor.map(p => toWorld(r, p));
+    const via = r.via === 'root' ? '기준 방' : r.via === 'manual' ? '수동 보정' : '핫스팟 자동';
+    return `<tr data-id="${r.id}" class="${r.id === selected ? 'sel' : ''}"><td>${r.title}${variants[r.id] ? ' <span class="muted">(+조명 변형)</span>' : ''}</td><td>${area(pts).toFixed(1)}㎡</td><td>${(r.ceilH * scale).toFixed(2)}m</td><td>${via}</td></tr>`;
+  }).join('');
+  tb.querySelectorAll('tr').forEach(tr => { tr.onpointerdown = () => tap(tr.dataset.id); });
+  document.getElementById('json').value = JSON.stringify({ camH: +camH.value, rooms: rooms.map(r => ({ id: r.id, title: r.title, x: +r.x.toFixed(3), y: +r.y.toFixed(3), theta: +r.theta.toFixed(2) })) });
+  drawPlan();
+}
+document.getElementById('bCopy').onclick = async () => {
+  try { await navigator.clipboard.writeText(document.getElementById('json').value); document.getElementById('copyMsg').textContent = '복사했어!'; }
+  catch { document.getElementById('json').select(); document.getElementById('copyMsg').textContent = '자동 복사가 막혀서 텍스트를 선택해뒀어. Ctrl+C 로 복사해줘.'; }
+};
+
+// ---------- 상단 버튼 ----------
+const bDoll = document.getElementById('bDoll'), bTop = document.getElementById('bTop'), bCeil = document.getElementById('bCeil'), bLight = document.getElementById('bLight');
+function setMode(top) { bDoll.classList.toggle('on', !top); bTop.classList.toggle('on', top); if (showCeil) toggleCeil(false); frameAll(top); }
+bDoll.onclick = () => setMode(false); bTop.onclick = () => setMode(true);
+function toggleCeil(v) { showCeil = v; bCeil.classList.toggle('on', v); for (const id in roomGroups) roomGroups[id].ceil.visible = v; }
+bCeil.onclick = () => toggleCeil(!showCeil);
+bLight.onclick = () => { lightVariant = !lightVariant; bLight.textContent = '거실 조명: ' + (lightVariant ? '무드등' : '기본'); bLight.classList.toggle('on', lightVariant); rebuildAll(); };
+
+const ray = new THREE.Raycaster();
+canvas.addEventListener('dblclick', e => {
+  if (inside) return;
+  const b = canvas.getBoundingClientRect();
+  ray.setFromCamera(new THREE.Vector2((e.clientX - b.left) / b.width * 2 - 1, -(e.clientY - b.top) / b.height * 2 + 1), camera);
+  // 바깥에서 보이는 면(=안쪽 면이 카메라를 향한 면)만 맞도록 FrontSide 그대로 판정
+  const hit = ray.intersectObjects(Object.values(roomGroups).map(g => g.group), true).find(h => h.object.userData.room);
+  if (hit) enter(hit.object.userData.room);
+});
+addEventListener('keydown', e => { if (e.key === 'Escape' && inside) setMode(false); });
+function resize() {
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+function renderVersions() {
+  if (!PACK) return;
+  const box = document.getElementById('verBox'); box.style.display = 'block';
+  const cur = PACK.versions.find(v => v.key === curKey);
+  const sc = v => v.score?.room ? `일반 방 ${v.score.room}% · 전체 ${v.score.all}%` : '평가 점수 없음';
+  box.innerHTML = '<b style="font-size:13px">모델 버전</b><br>' + PACK.versions.map((v, i) =>
+    `<button class="vbtn ${v.key === curKey ? 'on' : ''}" data-k="${v.key}"><span class="sw" style="background:${VCOLORS[i % VCOLORS.length]}"></span>${v.name}</button>`).join('') +
+    `<div class="score">지금 보는 버전: <b>${cur.name}</b> — 평가(3D IoU) ${sc(cur)}<br>평면도의 점선 = 다른 버전의 방 모양 (같은 위치에 겹쳐 그림)` +
+    (PACK.versions.some(v => String(v.score?.all || '').includes('*')) ? '<br>* 1차는 평가 사진(11장)이 달라 다른 버전과 직접 비교 불가' : '') +
+    (PACK.note ? `<br><b style="color:#b23b17">⚠️ ${PACK.note}</b>` : '') + `</div>`;
+  box.querySelectorAll('.vbtn').forEach(b => b.onclick = () => switchVersion(b.dataset.k));
+}
+function switchVersion(key) {
+  const v = PACK.versions.find(v => v.key === key); if (!v) return;
+  curKey = key; try { history.replaceState(null, '', '#' + key); } catch {}
+  scene0 = { camH: PACK.camH, rooms: v.rooms };
+  S = JSON.parse(JSON.stringify(scene0));
+  rooms = S.rooms.filter(r => !r.variantOf);
+  variants = Object.fromEntries(S.rooms.filter(r => r.variantOf).map(r => [r.variantOf, r]));
+  rebuildAll(); view = null; renderVersions(); refreshUI();
+}
+if (PACK) document.querySelector('h1').textContent = (PACK.title || '미노네집') + ' 돌하우스 · 모델 버전 비교';
+if (window.__PLACES__) {
+  const pb = document.getElementById('placeBox'); pb.style.display = 'block';
+  const here = window.__PLACE__ || 'mino';
+  pb.innerHTML = '<b style="font-size:13px">장소</b><br>' + window.__PLACES__.map(p => `<a class="${p.slug === here ? 'on' : ''}" href="${p.href}">${p.title}</a>`).join('');
+}
+renderVersions();
+// 조명 변형 사진이 없는 장소에서는 조명 버튼을 숨긴다
+if (!Object.keys(variants).length) bLight.style.display = 'none';
+resize(); rebuildAll(); frameAll(false); refreshUI();
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const f = wheelFactor(e);
+  if (inside) { fovGoal = Math.max(30, Math.min(110, (fovGoal ?? camera.fov) * f)); return; }
+  const d = camera.position.distanceTo(controls.target);
+  zoomGoal = Math.max(1.5, Math.min(60, (zoomGoal ?? d) * f));
+}, { passive: false });
+function smoothZoom() {
+  if (zoomGoal !== null && !inside) {
+    const dir = camera.position.clone().sub(controls.target), d = dir.length();
+    const nd = d + (zoomGoal - d) * 0.18;
+    camera.position.copy(controls.target).add(dir.multiplyScalar(nd / d));
+    if (Math.abs(zoomGoal - nd) < 0.002) zoomGoal = null;
+  }
+  if (fovGoal !== null) {
+    camera.fov += (fovGoal - camera.fov) * 0.18; camera.updateProjectionMatrix();
+    if (Math.abs(fovGoal - camera.fov) < 0.05) fovGoal = null;
+  }
+}
+renderer.setAnimationLoop(() => { smoothZoom(); controls.update(); renderer.render(scene, camera); drawLabels(); });
+window.__dh = { get rooms() { return rooms; }, enter, frameAll, camera, controls, switchVersion, get curKey() { return curKey; } };
+</script>
+</body>
+</html>
