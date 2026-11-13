@@ -1,0 +1,719 @@
+<!DOCTYPE html><html lang="C"><head><title>files/pano WebP 전환 검토 — krpano 호환 · 기존 데이터 전수 변환 · 신규 타일 · 코드 전환 계획</title><meta property="og:title" content="files/pano WebP 전환 검토 — krpano 호환 · 기존 데이터 전수 변환 · 신규 타일 · 코드 전환 계획"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0"><meta name="apple-mobile-web-app-capable" content="yes"><meta http-equiv="X-UA-Compatible" content="ie=edge"><meta property="og:type" content="website"><meta name="twitter:card" content="summary"><style>@media screen{body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button,body[data-bespoke-view=overview] button.bespoke-marp-overview-close,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button{appearance:none;background-color:initial;border:0;color:inherit;cursor:pointer;font-size:inherit;opacity:.8;outline:none;padding:0;transition:opacity .2s linear;-webkit-tap-highlight-color:transparent}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:disabled,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:disabled,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:disabled{cursor:not-allowed;opacity:.15!important}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover{opacity:1}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:active,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:active,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover:active{opacity:.6}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:not(:disabled),body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:not(:disabled),body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover:not(:disabled){transition:none}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button.bespoke-marp-presenter-info-page-prev{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNNjggOTAgMjggNTBsNDAtNDAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button.bespoke-marp-presenter-info-page-next{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJtMzIgOTAgNDAtNDAtNDAtNDAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4fTwvc3R5bGU+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MCIgaGVpZ2h0PSI2MCIgeD0iMTAiIHk9IjIwIiBjbGFzcz0iYSIgcng9IjUuNjciLz48cGF0aCBkPSJNNDAgNzBIMjBWNTBtMjAgMEwyMCA3MG00MC00MGgyMHYyMG0tMjAgMCAyMC0yMCIgY2xhc3M9ImEiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button.exit[data-bespoke-marp-osc=fullscreen]{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4fTwvc3R5bGU+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MCIgaGVpZ2h0PSI2MCIgeD0iMTAiIHk9IjIwIiBjbGFzcz0iYSIgcng9IjUuNjciLz48cGF0aCBkPSJNMjAgNTBoMjB2MjBtLTIwIDAgMjAtMjBtNDAgMEg2MFYzMG0yMCAwTDYwIDUwIiBjbGFzcz0iYSIvPjwvc3ZnPg==")}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNODcuOCA0Ny41Qzg5IDUwIDg3LjcgNTIgODUgNTJIMzVhOC43IDguNyAwIDAgMS03LjItNC41bC0xNS42LTMxQzExIDE0IDEyLjIgMTIgMTUgMTJoNTBhOC44IDguOCAwIDAgMSA3LjIgNC41ek02MCA1MnYzNm0tMTAgMGgyME00NSA0MmgyMCIvPjwvc3ZnPg==") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=overview] button.bespoke-marp-overview-close,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button.bespoke-marp-presenter-note-bigger{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNMTIgNTBoODBNNTIgOTBWMTAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button.bespoke-marp-presenter-note-smaller{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNMTIgNTBoODAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=overview]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4O3J4OjVweDtyeTo1cHg7d2lkdGg6MjVweDtoZWlnaHQ6MjVweH08L3N0eWxlPjwvZGVmcz48cmVjdCB4PSIyMCIgeT0iMjAiIGNsYXNzPSJhIi8+PHJlY3QgeD0iNTUiIHk9IjIwIiBjbGFzcz0iYSIvPjxyZWN0IHg9IjIwIiB5PSI1NSIgY2xhc3M9ImEiLz48cmVjdCB4PSI1NSIgeT0iNTUiIGNsYXNzPSJhIi8+PC9zdmc+") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}}@keyframes __bespoke_marp_transition_reduced_outgoing__{0%{opacity:1}to{opacity:0}}@keyframes __bespoke_marp_transition_reduced_incoming__{0%{mix-blend-mode:plus-lighter;opacity:0}to{mix-blend-mode:plus-lighter;opacity:1}}.bespoke-marp-note,.bespoke-marp-osc,.bespoke-progress-parent{display:none;transition:none}@media screen{::view-transition-group(*){animation-duration:var(--marp-bespoke-transition-animation-duration,.5s);animation-timing-function:ease}::view-transition-new(*),::view-transition-old(*){animation-delay:0s;animation-direction:var(--marp-bespoke-transition-animation-direction,normal);animation-duration:var(--marp-bespoke-transition-animation-duration,.5s);animation-fill-mode:both;animation-name:var(--marp-bespoke-transition-animation-name,var(--marp-bespoke-transition-animation-name-fallback,__bespoke_marp_transition_no_animation__));mix-blend-mode:normal}::view-transition-old(*){--marp-bespoke-transition-animation-name-fallback:__bespoke_marp_transition_reduced_outgoing__;animation-timing-function:ease}::view-transition-new(*){--marp-bespoke-transition-animation-name-fallback:__bespoke_marp_transition_reduced_incoming__;animation-timing-function:ease}::view-transition-new(root),::view-transition-old(root){animation-timing-function:linear}::view-transition-new(__bespoke_marp_transition_osc__),::view-transition-old(__bespoke_marp_transition_osc__){animation-duration:0s!important;animation-name:__bespoke_marp_transition_osc__!important}::view-transition-new(__bespoke_marp_transition_osc__){opacity:0!important}.bespoke-marp-transition-warming-up::view-transition-group(*),.bespoke-marp-transition-warming-up::view-transition-new(*),.bespoke-marp-transition-warming-up::view-transition-old(*){animation-play-state:paused!important}body,html{height:100%;margin:0}body{background:#000;overflow:hidden}svg.bespoke-marp-slide{content-visibility:hidden;interactivity:inert;opacity:0;pointer-events:none;z-index:-1}svg.bespoke-marp-slide:not(.bespoke-marp-active) *{view-transition-name:none!important}svg.bespoke-marp-slide.bespoke-marp-active{content-visibility:visible;interactivity:auto;opacity:1;pointer-events:auto;z-index:0}svg.bespoke-marp-slide.bespoke-marp-active.bespoke-marp-active-ready *{animation-name:__bespoke_marp__!important}@supports not (content-visibility:hidden){svg.bespoke-marp-slide[data-bespoke-marp-load=hideable]{display:none}svg.bespoke-marp-slide[data-bespoke-marp-load=hideable].bespoke-marp-active{display:block}}}@media screen and (prefers-reduced-motion:reduce){svg.bespoke-marp-slide *{view-transition-name:none!important}}@media screen{[data-bespoke-marp-fragment=inactive]{visibility:hidden}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent{inset:0;position:absolute}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc{background:#000000a6;border-radius:7px;bottom:50px;color:#fff;contain:paint;display:block;font-family:Helvetica,Arial,sans-serif;font-size:16px;left:50%;line-height:0;opacity:1;padding:12px;position:absolute;touch-action:manipulation;transform:translateX(-50%);transition:opacity .2s linear;-webkit-user-select:none;user-select:none;view-transition-name:__bespoke_marp_transition_osc__;white-space:nowrap;will-change:transform;z-index:1}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>:where(*){margin-left:6px}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>:where(*):where(:first-child){margin-left:0}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>span{opacity:.8}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>span[data-bespoke-marp-osc=page]{display:inline-block;min-width:140px;text-align:center}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=overview],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev]{height:32px;line-height:32px;width:32px}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent.bespoke-marp-inactive{cursor:none}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent.bespoke-marp-inactive>.bespoke-marp-osc{opacity:0;pointer-events:none}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) svg.bespoke-marp-slide{height:100%;left:0;position:absolute;top:0;width:100%}body[data-bespoke-view=""] .bespoke-progress-parent{background:#222;display:flex;height:5px;width:100%}body[data-bespoke-view=""] .bespoke-progress-parent+:where(.bespoke-marp-parent){top:5px}body[data-bespoke-view=""] .bespoke-progress-parent .bespoke-progress-bar{background:#0288d1;flex:0 0 0;transition:flex-basis .2s cubic-bezier(0,1,1,1)}body[data-bespoke-view=next]{background:#0000}body[data-bespoke-view=presenter]{background:#161616}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container{display:grid;font-family:Helvetica,Arial,sans-serif;grid-template:"current dragbar next" minmax(140px,1fr) "current dragbar note" 2fr "info    dragbar note" 3em;grid-template-columns:minmax(3px,var(--bespoke-marp-presenter-split-ratio,66%)) 0 minmax(3px,1fr);height:100%;left:0;position:absolute;top:0;width:100%}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent){grid-area:current;overflow:hidden;position:relative}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent) :where(svg.bespoke-marp-slide){height:calc(100% - 40px);left:20px;pointer-events:none;position:absolute;top:20px;-webkit-user-select:none;user-select:none;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent) :where(svg.bespoke-marp-slide).bespoke-marp-active{filter:drop-shadow(0 3px 10px rgba(0,0,0,.5))}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container{background:#0288d1;cursor:col-resize;grid-area:dragbar;margin-left:-3px;opacity:0;position:relative;transition:opacity .4s linear .1s;width:6px;z-index:10}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container:hover{opacity:1}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container.active{opacity:1;transition-delay:0s}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container{background:#222;cursor:pointer;display:none;grid-area:next;overflow:hidden;position:relative}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container.active{display:block}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container iframe.bespoke-marp-presenter-next{background:#0000;border:0;display:block;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5));height:calc(100% - 40px);left:20px;pointer-events:none;position:absolute;interactivity:inert;top:20px;-webkit-user-select:none;user-select:none;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container{background:#222;color:#eee;grid-area:note;position:relative;z-index:1}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button{height:1.5em;line-height:1.5em;width:1.5em}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-wrapper{display:block;inset:0;position:absolute}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-buttons{background:#000000a6;border-radius:4px;bottom:0;display:flex;gap:4px;margin:12px;opacity:0;padding:6px;pointer-events:none;position:absolute;right:0;transition:opacity .2s linear}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-buttons:focus-within,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-wrapper:focus-within+.bespoke-marp-presenter-note-buttons,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container:hover .bespoke-marp-presenter-note-buttons{opacity:1;pointer-events:auto}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note{box-sizing:border-box;font-size:calc(1.1em*var(--bespoke-marp-note-font-scale, 1));height:calc(100% - 40px);margin:20px;overflow:auto;padding-right:3px;white-space:pre-wrap;width:calc(100% - 40px);word-wrap:break-word;scrollbar-color:#eeeeee80 #0000;scrollbar-width:thin}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar{width:6px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar-track{background:#0000}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar-thumb{background:#eeeeee80;border-radius:6px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note:empty{pointer-events:none}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note.active{display:block}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note p:first-child{margin-top:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note p:last-child{margin-bottom:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container{align-items:center;box-sizing:border-box;color:#eee;display:flex;flex-wrap:nowrap;grid-area:info;justify-content:center;overflow:hidden;padding:0 10px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container :is(.bespoke-marp-presenter-info-page-area,.bespoke-marp-presenter-info-time,.bespoke-marp-presenter-info-timer){box-sizing:border-box;display:block;padding:0 10px;white-space:nowrap;width:100%}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button{height:1.5em;line-height:1.5em;width:1.5em}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area{order:2;text-align:center}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page{display:inline-block;min-width:120px;text-align:center}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-time{color:#999;order:1;text-align:left}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer{color:#999;order:3;text-align:right}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer:hover{cursor:pointer}body[data-bespoke-view=overview]{background:#161616;overflow:auto}body[data-bespoke-view=overview] [data-bespoke-marp-fragment=inactive]{visibility:visible}body[data-bespoke-view=overview] .bespoke-marp-overview-header{backdrop-filter:blur(4px);background:#222222d9;box-shadow:0 3px 10px #00000080;box-sizing:border-box;display:flex;height:48px;inset:0 0 auto;justify-content:flex-end;padding:10px;position:fixed;z-index:1}body[data-bespoke-view=overview] button.bespoke-marp-overview-close{height:28px;line-height:28px;transform:rotate(45deg);width:28px}body[data-bespoke-view=overview] .bespoke-marp-parent{display:grid;gap:40px;grid-template-columns:repeat(auto-fit,minmax(0,240px));justify-content:space-around;padding:30px}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide{--bov-selected:#0000;--bov-focus:#161616;--bov-focus-outline:#0000;background-image:conic-gradient(#161616 0 0),conic-gradient(var(--bov-focus) 0 0),conic-gradient(var(--bov-focus-outline) 0 0),conic-gradient(var(--bov-selected) 0 0);background-position:5px 5px,3px 3px,2px 2px,0 0;background-repeat:no-repeat;background-size:calc(100% - 10px) calc(100% - 10px),calc(100% - 6px) calc(100% - 6px),calc(100% - 4px) calc(100% - 4px),100% 100%;content-visibility:visible;cursor:pointer;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5));margin:-6px;padding:6px;interactivity:auto;opacity:1;outline:0;pointer-events:auto;scroll-margin-block:30px;width:100%;z-index:0}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide *,body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide.bespoke-marp-active *{pointer-events:none;interactivity:inert}body[data-bespoke-view=overview] .bespoke-marp-parent :is(svg.bespoke-marp-slide:active,svg.bespoke-marp-slide:focus-visible,svg.bespoke-marp-slide:hover){--bov-focus-outline:#161616}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:focus-visible,body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:hover{--bov-focus:#999}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:active{--bov-focus:#eee}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide.bespoke-marp-active{--bov-selected:#0288d1}body[data-bespoke-view=overview]:has(.bespoke-marp-overview-header) .bespoke-marp-parent{padding-top:78px}body[data-bespoke-view=overview]:has(.bespoke-marp-overview-header) .bespoke-marp-parent svg.bespoke-marp-slide{scroll-margin-top:78px}.bespoke-marp-overview{background:#000000a6;inset:0;opacity:0;pointer-events:none;position:fixed;transition:opacity .1s ease;z-index:10}.bespoke-marp-overview iframe{background:#222;border:0;display:block;height:100%;left:0;position:absolute;top:0;width:100%}.bespoke-marp-overview[data-open="1"]{opacity:1;pointer-events:auto}}@media print{.bespoke-marp-overview,.bespoke-marp-presenter-info-container,.bespoke-marp-presenter-next-container,.bespoke-marp-presenter-note-container{display:none}}</style><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');div#\:\$p > svg > foreignObject > section{width:1280px;height:720px;box-sizing:border-box;overflow:hidden;position:relative;scroll-snap-align:center center;-webkit-text-size-adjust:100%;text-size-adjust:100%}div#\:\$p > svg > foreignObject > section::after{bottom:0;content:attr(data-marpit-pagination);padding:inherit;pointer-events:none;position:absolute;right:0}div#\:\$p > svg > foreignObject > section:not([data-marpit-pagination])::after{display:none}div#\:\$p > svg > foreignObject > section :where(:is(h1, marp-h1)){font-size:2em;margin-block:0.67em}div#\:\$p > svg > foreignObject > section section:where(:is(h1, marp-h1)){--marpit-root-font-size: 2em}div#\:\$p > svg > foreignObject > section video::-webkit-media-controls{will-change:transform}@page {size:1280px 720px;margin:0}@media print{html, body{background-color:#fff;margin:0;page-break-inside:avoid;break-inside:avoid-page}div#\:\$p > svg > foreignObject > section{page-break-before:always;break-before:page}div#\:\$p > svg > foreignObject > section, div#\:\$p > svg > foreignObject > section *{-webkit-print-color-adjust:exact!important;animation-delay:0s!important;animation-duration:0s!important;color-adjust:exact!important;print-color-adjust:exact!important;transition:none!important}div#\:\$p > svg[data-marpit-svg]{display:block;height:100vh;width:100vw}}div#\:\$p > svg > foreignObject > :where(section){container-type:size}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"]{direction:ltr}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] > svg{overflow:visible;min-height:1px;min-width:1px}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] > svg a{fill:blue;stroke:blue}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][display="true"]{display:block;text-align:center;margin:1em 0}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][display="true"][width="full"]{display:flex}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][justify="left"]{text-align:left}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][justify="right"]{text-align:right}div#\:\$p > svg > foreignObject > section g[data-mml-node="merror"] > g{fill:red;stroke:red}div#\:\$p > svg > foreignObject > section g[data-mml-node="merror"] > rect[data-background]{fill:yellow;stroke:none}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > line[data-line], div#\:\$p > svg > foreignObject > section svg[data-table] > g > line[data-line]{stroke-width:70px;fill:none}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > rect[data-frame], div#\:\$p > svg > foreignObject > section svg[data-table] > g > rect[data-frame]{stroke-width:70px;fill:none}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > .mjx-dashed, div#\:\$p > svg > foreignObject > section svg[data-table] > g > .mjx-dashed{stroke-dasharray:140}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > .mjx-dotted, div#\:\$p > svg > foreignObject > section svg[data-table] > g > .mjx-dotted{stroke-linecap:round;stroke-dasharray:0,140}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > g > svg{overflow:visible}div#\:\$p > svg > foreignObject > section [jax="SVG"] mjx-tool{display:inline-block;position:relative;width:0;height:0}div#\:\$p > svg > foreignObject > section [jax="SVG"] mjx-tool > mjx-tip{position:absolute;top:0;left:0}div#\:\$p > svg > foreignObject > section mjx-tool > mjx-tip{display:inline-block;padding:.2em;border:1px solid #888;font-size:70%;background-color:#F8F8F8;color:black;box-shadow:2px 2px 5px #AAAAAA}div#\:\$p > svg > foreignObject > section g[data-mml-node="maction"][data-toggle]{cursor:pointer}div#\:\$p > svg > foreignObject > section mjx-status{display:block;position:fixed;left:1em;bottom:1em;min-width:25%;padding:.2em .4em;border:1px solid #888;font-size:90%;background-color:#F8F8F8;color:black}div#\:\$p > svg > foreignObject > section foreignObject[data-mjx-xml]{font-family:initial;line-height:normal;overflow:visible}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] path[data-c], div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] use[data-c]{stroke-width:3}@media print{div#\:\$p > svg > foreignObject > section mjx-container[jax=SVG] path[data-c],div#\:\$p > svg > foreignObject > section mjx-container[jax=SVG] use[data-c]{stroke-width:0}}div#\:\$p > svg > foreignObject > section img[data-marp-twemoji]{background:transparent;height:1em;margin:0 .05em 0 .1em;vertical-align:-.1em;width:1em}div#\:\$p > svg > foreignObject > :where(section):not([\20 root]){--ink:       #1E1B4B;--ink-2:     #3730A3;--body:      #374151;--muted:     #6B7280;--accent:    #6366F1;--accent-l:  #A5B4FC;--accent-bg: #EEF2FF;--line:      #E5E7EB;--surface:   #F9FAFB;--white:     #FFFFFF;}div#\:\$p > svg > foreignObject > section{font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:24px;line-height:1.55;color:var(--body);background:var(--white);padding:52px 60px 48px;justify-content:flex-start;position:relative}div#\:\$p > svg > foreignObject > section{--marpit-root-font-size: 24px}div#\:\$p > svg > foreignObject > section::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, var(--accent) 0%, #818CF8 60%, transparent 100%)}div#\:\$p > svg > foreignObject > section::after{color:var(--muted);font-family:'JetBrains Mono', monospace;font-size:13px}div#\:\$p > svg > foreignObject > section::after{--marpit-root-font-size: 13px}div#\:\$p > svg > foreignObject > section :is(h1, marp-h1){font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:1.7em;font-weight:700;color:var(--ink);margin:0 0 28px;line-height:1.2}div#\:\$p > svg > foreignObject > section :is(h2, marp-h2){font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:1.05em;font-weight:700;color:var(--ink);margin:0 0 20px;padding:0 0 12px 16px;border-left:4px solid var(--accent);border-bottom:1px solid var(--line)}div#\:\$p > svg > foreignObject > section :is(h3, marp-h3){font-size:0.78em;font-weight:600;color:var(--accent);margin:20px 0 6px;text-transform:uppercase;letter-spacing:0.06em}div#\:\$p > svg > foreignObject > section ul{list-style:none;padding:0;margin:0}div#\:\$p > svg > foreignObject > section ul > li{position:relative;padding:7px 0 7px 22px;font-size:0.71em;line-height:1.55;color:var(--body);border-bottom:1px solid var(--surface)}div#\:\$p > svg > foreignObject > section ul > li:last-child{border-bottom:none}div#\:\$p > svg > foreignObject > section ul > li::before{content:'';position:absolute;left:4px;top:16px;width:6px;height:6px;border-radius:50%;background:var(--accent)}div#\:\$p > svg > foreignObject > section ul ul{margin-top:2px}div#\:\$p > svg > foreignObject > section ul ul > li{font-size:0.92em;color:var(--muted);border-bottom:none;padding:2px 0 2px 20px}div#\:\$p > svg > foreignObject > section ul ul > li::before{width:4px;height:4px;top:11px;background:var(--accent-l)}div#\:\$p > svg > foreignObject > section strong{color:var(--ink);font-weight:700}div#\:\$p > svg > foreignObject > section th strong{background:var(--accent-bg);color:var(--ink);font-weight:800;padding:2px 9px;border-radius:4px}div#\:\$p > svg > foreignObject > section em{color:var(--muted);font-style:italic}div#\:\$p > svg > foreignObject > section code{font-family:'JetBrains Mono', monospace;font-size:0.8em;background:var(--surface);color:var(--ink-2);padding:2px 7px;border-radius:5px;border:1px solid var(--line)}div#\:\$p > svg > foreignObject > section a{color:var(--accent);text-decoration:none}div#\:\$p > svg > foreignObject > section table{font-size:0.6em;border-collapse:collapse;margin:8px 0;width:100%}div#\:\$p > svg > foreignObject > section th{background:var(--ink);color:#F9FAFB;font-weight:600;text-align:left;padding:9px 14px;font-size:0.95em}div#\:\$p > svg > foreignObject > section td{border-bottom:1px solid var(--line);padding:8px 14px;color:var(--body)}div#\:\$p > svg > foreignObject > section tr:nth-child(even) td{background:var(--surface)}div#\:\$p > svg > foreignObject > section blockquote{border:none;font-size:0.55em;color:var(--muted);font-style:normal;margin:12px 0 0;padding:10px 14px;background:var(--surface);border-radius:6px;border-left:3px solid var(--accent-l)}div#\:\$p > svg > foreignObject > section blockquote::before{content:''}div#\:\$p > svg > foreignObject > section .badge{display:inline-block;font-size:0.4em;font-family:'JetBrains Mono', monospace;background:var(--accent-bg);color:var(--ink-2);padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:6px;font-weight:500}div#\:\$p > svg > foreignObject > section section.badge{--marpit-root-font-size: 0.4em}div#\:\$p > svg > foreignObject > section .badge-date{display:inline-block;font-size:0.38em;background:var(--surface);color:var(--muted);padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:5px;border:1px solid var(--line)}div#\:\$p > svg > foreignObject > section section.badge-date{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section .badge-new{display:inline-block;font-size:0.38em;font-family:'JetBrains Mono', monospace;background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:6px;font-weight:600}div#\:\$p > svg > foreignObject > section section.badge-new{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section .hl{padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-blue{background:#EEF2FF;color:var(--ink-2);padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-green{background:#ECFDF5;color:#065F46;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-red{background:#FEF2F2;color:#991B1B;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-amber{background:#FFFBEB;color:#92400E;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-teal{background:#F0FDFA;color:#0F766E;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-gray{background:var(--surface);color:#374151;padding:1px 7px;border-radius:4px}div#\:\$p > svg > foreignObject > section .links{margin-top:14px}div#\:\$p > svg > foreignObject > section .links .lbl{font-size:0.48em;color:var(--muted);margin-right:8px;font-weight:600}div#\:\$p > svg > foreignObject > section .links div#\:\$p > svg > foreignObject > section section.lbl{--marpit-root-font-size: 0.48em}div#\:\$p > svg > foreignObject > section a.lnk{display:inline-block;font-size:0.48em;font-family:'JetBrains Mono', monospace;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-l);padding:4px 12px;border-radius:20px;margin:3px 4px 3px 0;text-decoration:none}div#\:\$p > svg > foreignObject > section .stats{display:flex;gap:14px;justify-content:center;margin-top:20px}div#\:\$p > svg > foreignObject > section .stats .card{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 10px;text-align:center}div#\:\$p > svg > foreignObject > section .stats .card .num{font-size:1.8em;font-weight:700;color:var(--accent);line-height:1}div#\:\$p > svg > foreignObject > section .stats .card div#\:\$p > svg > foreignObject > section section.num{--marpit-root-font-size: 1.8em}div#\:\$p > svg > foreignObject > section .stats .card .lab{font-size:0.4em;color:var(--muted);margin-top:8px;line-height:1.4}div#\:\$p > svg > foreignObject > section .stats .card div#\:\$p > svg > foreignObject > section section.lab{--marpit-root-font-size: 0.4em}div#\:\$p > svg > foreignObject > section .cols{display:flex;gap:32px}div#\:\$p > svg > foreignObject > section .cols .col{flex:1}div#\:\$p > svg > foreignObject > section.cover{background:var(--ink);color:#F9FAFB;justify-content:center;text-align:left;padding:72px 72px}div#\:\$p > svg > foreignObject > section.cover::before{background:linear-gradient(90deg, var(--accent) 0%, #818CF8 100%);height:4px}div#\:\$p > svg > foreignObject > section.cover :is(h1, marp-h1){color:#F9FAFB;font-size:2.1em;font-weight:700;margin:0 0 12px;line-height:1.15}div#\:\$p > svg > foreignObject > section.cover :is(h2, marp-h2){border:none;color:var(--accent-l);font-size:0.68em;font-weight:400;margin:0 0 40px;padding:0;letter-spacing:0}div#\:\$p > svg > foreignObject > section.cover p{color:#6B7280;font-size:0.48em;margin-top:0}div#\:\$p > svg > foreignObject > section.cover hr{border:none;border-top:1px solid #374151;margin:28px 0;width:60px}div#\:\$p > svg > foreignObject > section.cover::after{color:#4B5563}div#\:\$p > svg > foreignObject > section.sec{background:var(--surface);justify-content:center;text-align:left;padding:72px}div#\:\$p > svg > foreignObject > section.sec::before{height:4px}div#\:\$p > svg > foreignObject > section.sec .sec-num{display:block;font-size:0.38em;font-family:'JetBrains Mono', monospace;color:var(--accent);font-weight:600;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:16px}div#\:\$p > svg > foreignObject > section.sec div#\:\$p > svg > foreignObject > section section.sec-num{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section.sec :is(h2, marp-h2){border:none;border-bottom:none;font-size:1.8em;color:var(--ink);padding:0;margin:0 0 10px}div#\:\$p > svg > foreignObject > section.sec p{font-size:0.58em;color:var(--muted);margin:0}div#\:\$p > svg > foreignObject > section.sec::after{color:var(--muted)}div#\:\$p > svg > foreignObject > section.agenda :is(h3, marp-h3){font-size:0.6em;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 6px}div#\:\$p > svg > foreignObject > section.agenda ul > li{font-size:0.62em;border-bottom:none;padding:4px 0 4px 18px}div#\:\$p > svg > foreignObject > section.closing{background:var(--ink);color:#F9FAFB;justify-content:center;text-align:center;padding:72px}div#\:\$p > svg > foreignObject > section.closing::before{background:linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);height:3px}div#\:\$p > svg > foreignObject > section.closing :is(h2, marp-h2){border:none;color:#F9FAFB;font-size:1.7em;padding:0;margin:0 0 16px}div#\:\$p > svg > foreignObject > section.closing p{font-size:0.5em;color:#6B7280}div#\:\$p > svg > foreignObject > section.closing::after{color:#4B5563}div#\:\$p > svg > foreignObject > section img:not(.emoji){display:block;margin:4px auto;border-radius:8px;border:1px solid var(--line);box-shadow:0 3px 14px rgba(15, 23, 42, 0.10)}div#\:\$p > svg > foreignObject > section figure{margin:0}div#\:\$p > svg > foreignObject > section figcaption{font-size:0.52em;color:var(--muted);text-align:center;margin-top:5px;line-height:1.4}div#\:\$p > svg > foreignObject > section .shot-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}div#\:\$p > svg > foreignObject > section .shot-row img:not(.emoji){margin:0;width:100%}div#\:\$p > svg > foreignObject > section .shot-pair{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;justify-items:center}div#\:\$p > svg > foreignObject > section .shot-pair figure{margin:0}div#\:\$p > svg > foreignObject > section .shot-pair img:not(.emoji){margin:0}div#\:\$p > svg > foreignObject > section .shot-pair figcaption{width:100%;word-break:keep-all}div#\:\$p > svg > foreignObject > section img:not(.emoji){cursor:zoom-in}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]{columns:initial!important;display:block!important;padding:0!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]::before, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]::after, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"]::before, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"]::after{display:none!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container]{all:initial;display:flex;flex-direction:row;height:100%;overflow:hidden;width:100%}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container][data-marpit-advanced-background-direction="vertical"]{flex-direction:column}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"][data-marpit-advanced-background-split] > div[data-marpit-advanced-background-container]{width:var(--marpit-advanced-background-split, 50%)}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"][data-marpit-advanced-background-split="right"] > div[data-marpit-advanced-background-container]{margin-left:calc(100% - var(--marpit-advanced-background-split, 50%))}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container] > figure{all:initial;background-position:center;background-repeat:no-repeat;background-size:cover;flex:auto;margin:0}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container] > figure > figcaption{position:absolute;border:0;clip:rect(0, 0, 0, 0);height:1px;margin:-1px;overflow:hidden;padding:0;white-space:nowrap;width:1px}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"], div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="pseudo"]{background:transparent!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="pseudo"], div#\:\$p > svg[data-marpit-svg] > foreignObject[data-marpit-advanced-background="pseudo"]{pointer-events:none!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background-split]{width:100%;height:100%}
+</style></head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="overview" tabindex="-1" title="Toggle overview view (o)">Toggle overview view</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-class="cover" data-theme="clean" lang="C" class="cover" style="--class:cover;--theme:clean;">
+<h1 id="filespano-webp-%EC%A0%84%ED%99%98-%EA%B2%80%ED%86%A0">files/pano WebP 전환 검토</h1>
+<h2 id="krpano-%ED%98%B8%ED%99%98--%EA%B8%B0%EC%A1%B4-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%84%EC%88%98-%EB%B3%80%ED%99%98--%EC%8B%A0%EA%B7%9C-%ED%83%80%EC%9D%BC-%EC%83%9D%EC%84%B1--%EC%BD%94%EB%93%9C-%EC%A0%84%ED%99%98-%EA%B3%84%ED%9A%8D">krpano 호환 · 기존 데이터 전수 변환 · 신규 타일 생성 · 코드 전환 계획</h2>
+<hr />
+<p>Indyspot AI Corp  ·  Engineering Manager  ·  2026-11-13</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="agenda" data-theme="clean" lang="C" class="agenda" data-marpit-pagination="2" style="--paginate:true;--class:agenda;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EA%B2%B0%EB%A1%A0--%EC%8B%A0%EA%B7%9C%EB%8A%94-webp%EB%A1%9C-%EC%A0%84%ED%99%98%ED%95%98%EA%B3%A0-%EA%B8%B0%EC%A1%B4-%EC%A0%84%EC%88%98-%EB%B3%80%ED%99%98%EC%9D%80-%EC%A7%80%EA%B8%88-%ED%95%98%EC%A7%80-%EC%95%8A%EB%8A%94-%EA%B2%83%EC%9D%84-%EA%B6%8C%ED%95%A9%EB%8B%88%EB%8B%A4">결론 — 신규는 WebP로 전환하고, 기존 전수 변환은 지금 하지 않는 것을 권합니다</h2>
+<div class="cols">
+<div class="col">
+<h3 id="%E2%91%A0-krpano-%ED%98%B8%ED%99%98">① krpano 호환</h3>
+<ul>
+<li>뷰어 <span class="hl-green">가능</span> · 브라우저가 디코딩 (client·레거시 1.23.3, admin 1.22.4)</li>
+<li>타일 도구 <span class="hl-amber">불가</span> · krpanotools 는 JPEG·TIFF 만 출력 → 변환 단계 추가</li>
+</ul>
+<h3 id="%E2%91%A1-%EC%8B%A0%EA%B7%9C-%ED%83%80%EC%9D%BC-webp">② 신규 타일 WebP</h3>
+<ul>
+<li><span class="hl-green">권장</span> · WebP q55 = 현재 JPG q60 대비 <span class="hl-blue">−23%</span>, 화질은 오히려 높음</li>
+<li>같은 용량이면 JPG q80 수준 화질 (WebP q70)</li>
+</ul>
+</div>
+<div class="col">
+<h3 id="%E2%91%A2-%EA%B8%B0%EC%A1%B4-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%84%EC%88%98-%EB%B3%80%ED%99%98">③ 기존 데이터 전수 변환</h3>
+<ul>
+<li><span class="hl-amber">보류 권장</span> · 대상 JPG 352GB · 1,322만 개</li>
+<li>이미 JPG q60 이라 재인코딩하면 화질이 한 번 더 떨어짐</li>
+<li>타일 −26%(q60) 줄여도 월 저장비 절감은 약 $2 수준 (추정)</li>
+</ul>
+<h3 id="%E2%91%A3-%EC%A0%84%EC%A0%9C-%EC%A1%B0%EA%B1%B4">④ 전제 조건</h3>
+<ul>
+<li>JPG·WebP 가 장면마다 섞이므로 <span class="hl-blue">파노마다 확장자 값</span>을 두고 읽어야 함</li>
+<li>og:image·메일 이미지는 JPG 유지</li>
+</ul>
+</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="3" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%F0%9F%8E%AF-%EA%B2%B0%EC%A0%95-%ED%95%84%EC%9A%94--%EC%98%A4%EB%84%88-%ED%99%95%EC%9D%B8-%EC%82%AC%ED%95%AD"><img class="emoji" draggable="false" alt="🎯" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f3af.svg" data-marp-twemoji=""/> 결정 필요 — 오너 확인 사항</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>결정할 것</th>
+<th>제안</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>신규 타일 형식</td>
+<td><span class="hl-blue">WebP q55</span> (−23%, 화질 ↑) · 화질 우선이면 q70 (−4%, JPG q80 수준)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>기존 1,322만 개 전수 변환</td>
+<td><span class="hl-amber">보류</span> · 대신 조회 상위 장면만 원본에서 다시 생성 (선택)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>모바일·VR 큐브 (<code>512_</code> · <code>1024_</code>)</td>
+<td>JPG 유지 권장 · 구형 기기 대체 경로로 남김</td>
+</tr>
+<tr>
+<td>4</td>
+<td>지원 하한</td>
+<td>iOS 14 · Safari 14 미만은 WebP 를 못 엶 → 비율 확인 후 결정</td>
+</tr>
+<tr>
+<td>5</td>
+<td>진행 방식</td>
+<td>에픽 발주 또는 직접 구현 (오빠 지시 필요)</td>
+</tr>
+</tbody>
+</table>
+<p>전환 작업 순서는 «읽는 쪽 먼저(확장자 값 지원) → 만드는 쪽(utils) → 신규 1~2건 시범» 입니다. 읽는 쪽을 먼저 배포하면 모든 값이 <code>jpg</code> 인 상태라 서비스 동작은 바뀌지 않습니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="4" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EB%8C%80%EC%83%81-%EA%B7%9C%EB%AA%A8--filespano-%EC%8B%A4%EC%B8%A1-4477gb-%EA%B7%B8%EC%A4%91-jpg-352gb">대상 규모 — files/pano 실측 447.7GB, 그중 JPG 352GB</h2>
+<p>백업 목록표(2026-11-12 기준, 현재 버전만 집계)로 셌습니다. 서버 마운트는 순회하지 않았습니다.</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>개수</th>
+<th>용량</th>
+<th>전환 대상</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>큐브 타일 <code>mres_*/l*/…jpg</code></td>
+<td>1,222만</td>
+<td><span class="hl-blue">275.0GB</span></td>
+<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/> 핵심</td>
+</tr>
+<tr>
+<td>장면 단위 JPG (<code>imglink_*</code> · <code>1024_*</code> · <code>view_*</code> · <code>pv</code> 등)</td>
+<td>88.8만</td>
+<td>74.7GB</td>
+<td>일부 (og·메일용은 유지)</td>
+</tr>
+<tr>
+<td>기타 JPG (flat 타일 등)</td>
+<td>약 11만</td>
+<td>2.5GB</td>
+<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/></td>
+</tr>
+<tr>
+<td>애니메이션 GIF (<code>imglink_*.gif</code>)</td>
+<td>37.9만</td>
+<td>76.0GB</td>
+<td>별도 검토</td>
+</tr>
+<tr>
+<td>zip · 영상 · 음원 · XML 등</td>
+<td>—</td>
+<td>19.5GB</td>
+<td><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/274c.svg" data-marp-twemoji=""/></td>
+</tr>
+</tbody>
+</table>
+<p><span class="hl-amber">확인 필요</span> 오빠가 말한 700GB 와 차이가 큽니다. 목록표는 현재 버전만 세므로, 버킷의 이전 버전(버전 관리)이나 다른 경로가 포함된 값일 수 있습니다(추정).</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="5" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EC%8B%A0%EA%B7%9C-%EC%BD%98%ED%85%90%EC%B8%A0--%EA%B0%99%EC%9D%80-%EC%9B%90%EB%B3%B8%EC%97%90%EC%84%9C-%EB%A7%8C%EB%93%A4%EB%A9%B4-webp-%EA%B0%80-%ED%99%95%EC%8B%A4%ED%9E%88-%EC%9E%91%EC%8A%B5%EB%8B%88%EB%8B%A4">신규 콘텐츠 — 같은 원본에서 만들면 WebP 가 확실히 작습니다</h2>
+<p>궁디팡팡 보정 원본 3장(12000×6000, JPG 99)을 8192 폭으로 줄여 512 타일 135장을 잘라 비교했습니다. SSIM 은 원본 대비 값입니다(1 = 동일).</p>
+<table>
+<thead>
+<tr>
+<th>형식</th>
+<th>타일 평균</th>
+<th>현재 대비</th>
+<th>SSIM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JPG q60 4:2:0 (현재 방식)</td>
+<td>31.6KB</td>
+<td>기준</td>
+<td>0.876</td>
+</tr>
+<tr>
+<td>WebP q50</td>
+<td>22.3KB</td>
+<td><span class="hl-green">−29.3%</span></td>
+<td>0.888</td>
+</tr>
+<tr>
+<td><img class="emoji" draggable="false" alt="⭐" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2b50.svg" data-marp-twemoji=""/> WebP q55</td>
+<td>24.2KB</td>
+<td><span class="hl-green">−23.4%</span></td>
+<td>0.896</td>
+</tr>
+<tr>
+<td>WebP q60</td>
+<td>26.1KB</td>
+<td>−17.3%</td>
+<td>0.903</td>
+</tr>
+<tr>
+<td>WebP q70</td>
+<td>30.3KB</td>
+<td>−4.0%</td>
+<td>0.917 (≈ JPG q80 0.918)</td>
+</tr>
+</tbody>
+</table>
+<p>같은 화질(SSIM)로 맞추면 WebP 는 약 −30%, 같은 용량이면 화질이 JPG q80 수준까지 올라갑니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EC%8B%A0%EA%B7%9C-%EC%BD%98%ED%85%90%EC%B8%A0-%EB%B9%84%EA%B5%90--%EC%9B%90%EB%B3%B8--jpg-q60--webp-q55-2%EB%B0%B0-%ED%99%95%EB%8C%80">신규 콘텐츠 비교 — 원본 · JPG q60 · WebP q55 (2배 확대)</h2>
+<p><img src="assets/2026-11-13-webp-transition/cmp_new.jpg" alt="" style="width:900px;" /></p>
+<p>JPG q60 은 하늘·유리에 블록 무늬가 보이고, WebP q55 는 용량이 31KB → 20KB 로 줄면서 블록 무늬가 덜합니다. 대신 잔디 같은 미세 질감은 약간 뭉개집니다.</p>
+<div class="links"><span class="lbl">직접 확인</span>
+<a class="lnk" href="https://kabkee-decks.netlify.app/reports/assets/2026-11-13-webp-transition/cmp_new.jpg" target="_blank">원본 크기 비교 이미지 (cmp_new.jpg)</a></div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="7" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EA%B8%B0%EC%A1%B4-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%9E%AC%EC%9D%B8%EC%BD%94%EB%94%A9--%EC%A4%84%EC%9D%BC%EC%88%98%EB%A1%9D-%ED%99%94%EC%A7%88%EC%9D%B4-%ED%95%9C-%EB%B2%88-%EB%8D%94-%EB%96%A8%EC%96%B4%EC%A7%91%EB%8B%88%EB%8B%A4">기존 데이터 재인코딩 — 줄일수록 화질이 한 번 더 떨어집니다</h2>
+<p>운영 버킷에서 무작위 타일 500장(장소 120곳)을 받아 WebP 로 다시 저장했습니다. 기존 타일은 전부 <span class="hl-blue">JPG q60 · 4:2:0</span> 입니다(300장 확인). SSIM 은 «현재 타일» 대비 값입니다.</p>
+<table>
+<thead>
+<tr>
+<th>WebP 품질</th>
+<th>용량 변화</th>
+<th>SSIM 평균</th>
+<th>하위 5%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>q60</td>
+<td><span class="hl-green">−25.9%</span></td>
+<td>0.950</td>
+<td>0.895</td>
+</tr>
+<tr>
+<td>q70</td>
+<td>−16.4%</td>
+<td>0.959</td>
+<td>0.912</td>
+</tr>
+<tr>
+<td>q75</td>
+<td>−11.2%</td>
+<td>0.963</td>
+<td>0.921</td>
+</tr>
+<tr>
+<td>q80</td>
+<td><span class="hl-amber">+6.2%</span></td>
+<td>0.973</td>
+<td>0.945</td>
+</tr>
+</tbody>
+</table>
+<p>이미 압축으로 사라진 정보는 되돌릴 수 없어서, WebP 로 바꾸면 «JPG 손실 + WebP 손실»이 겹칩니다. 화질을 지키려고 품질을 올리면(q80) 오히려 커집니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="8" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EA%B8%B0%EC%A1%B4-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B9%84%EA%B5%90--%EC%A7%88%EA%B0%90%EC%9D%B4-%EB%A7%8E%EC%9D%80-%ED%83%80%EC%9D%BC%EC%9D%80-%EA%B1%B0%EC%9D%98-%EC%A4%84%EC%A7%80-%EC%95%8A%EC%8A%B5%EB%8B%88%EB%8B%A4">기존 데이터 비교 — 질감이 많은 타일은 거의 줄지 않습니다</h2>
+<p><img src="assets/2026-11-13-webp-transition/cmp_existing.jpg" alt="" style="width:900px;" /></p>
+<p>숲 장면 타일(56KB)입니다. WebP q60 은 55KB 로 1KB 만 줄었고 잎 질감이 뭉개졌습니다. q75 는 64KB 로 오히려 커졌습니다. 평균 −26% 는 하늘·벽처럼 단순한 타일에서 나온 값입니다.</p>
+<div class="links"><span class="lbl">직접 확인</span>
+<a class="lnk" href="https://kabkee-decks.netlify.app/reports/assets/2026-11-13-webp-transition/cmp_existing.jpg" target="_blank">원본 크기 비교 이미지 (cmp_existing.jpg)</a></div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="9" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EC%A0%84%EC%88%98-%EB%B3%80%ED%99%98-%EB%B9%84%EC%9A%A9-%EB%8C%80%EB%B9%84-%ED%9A%A8%EA%B3%BC--%EC%A7%80%EA%B8%88%EC%9D%80-%EB%82%A8%EB%8A%94-%EA%B2%83%EC%9D%B4-%EC%A0%81%EC%8A%B5%EB%8B%88%EB%8B%A4">전수 변환 비용 대비 효과 — 지금은 남는 것이 적습니다</h2>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>값</th>
+<th>근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>타일 절감 (q60)</td>
+<td>275GB → 약 204GB (−71GB)</td>
+<td>실측 비율 × 목록표 용량</td>
+</tr>
+<tr>
+<td>월 저장비 절감</td>
+<td>약 $1.8</td>
+<td>S3 Standard 서울 $0.025/GB 가정 (추정)</td>
+</tr>
+<tr>
+<td>업로드 요청 비용</td>
+<td>약 $55 (1회)</td>
+<td>PUT 1,222만 건 × $0.0045/1천 (추정)</td>
+</tr>
+<tr>
+<td>인코딩 시간</td>
+<td>약 44 CPU시간 (20코어 약 2.5시간)</td>
+<td>실측 13ms/타일, 업로드 시간 별도</td>
+</tr>
+<tr>
+<td>이전 버전</td>
+<td>버전 관리가 켜져 있으면 지운 JPG 가 남아 오히려 늘어남</td>
+<td>목록표에 version_id 존재 (설정 조회 권한 없음)</td>
+</tr>
+</tbody>
+</table>
+<p>효과는 저장비보다 <span class="hl-blue">관람자 전송량 −26%</span> 쪽이 큽니다. 다만 그 효과는 조회가 많은 장면에서만 의미가 있으므로, 필요하면 <strong>조회 상위 장면만 원본에서 다시 생성</strong>하는 쪽이 화질·비용 모두 낫습니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-class="sec" data-theme="clean" lang="C" class="sec" data-marpit-pagination="10" style="--paginate:true;--class:sec;--theme:clean;" data-marpit-pagination-total="18">
+<p><span class="sec-num">Section 02</span></p>
+<h2 id="%EC%BD%94%EB%93%9C-%EC%A0%84%ED%99%98-%EA%B3%84%ED%9A%8D">코드 전환 계획</h2>
+<p>utils · BE · client · admin · 레거시에서 확장자를 고정한 지점과 단계별 순서</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="11" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EC%A0%84%ED%99%98-%EB%8B%A8%EA%B3%84--%EC%9D%BD%EB%8A%94-%EC%AA%BD%EB%B6%80%ED%84%B0-%EC%84%9C%EB%B9%84%EC%8A%A4-%EB%8F%99%EC%9E%91%EC%9D%80-%EB%A7%88%EC%A7%80%EB%A7%89%EC%97%90-%EB%B0%94%EB%80%9D%EB%8B%88%EB%8B%A4">전환 단계 — 읽는 쪽부터, 서비스 동작은 마지막에 바뀝니다</h2>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>할 일</th>
+<th>서비스 영향</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 준비</td>
+<td><code>tile_info</code> 에 확장자 값(예: <code>tile_ext</code>, 기본 <code>jpg</code>) 추가</td>
+<td>없음</td>
+</tr>
+<tr>
+<td>1 읽는 쪽</td>
+<td>BE XML 빌더 · 레거시 PHP XML 생성기 · client · admin 이 이 값을 읽도록 변경</td>
+<td>없음 (전부 jpg)</td>
+</tr>
+<tr>
+<td>2 만드는 쪽</td>
+<td>utils: krpanotools 를 JPG q95 로 출력 → <code>cwebp</code>/libvips 로 WebP 변환 · <code>tile_ext=webp</code> 기록 · S3 ContentType 지정</td>
+<td>신규만</td>
+</tr>
+<tr>
+<td>3 시범</td>
+<td>신규 1~2건을 WebP 로 올려 기기별 확인 (iOS Safari · 안드로이드 · 카톡 인앱 · VR 모드)</td>
+<td>시범 장면만</td>
+</tr>
+<tr>
+<td>4 선택</td>
+<td>조회 상위 장면을 원본에서 다시 생성</td>
+<td>해당 장면만</td>
+</tr>
+</tbody>
+</table>
+<p><img class="emoji" draggable="false" alt="🔑" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f511.svg" data-marp-twemoji=""/> JPG 와 WebP 는 장면마다 섞여서 오래 공존합니다. 그래서 <code>.jpg</code> 를 <code>.webp</code> 로 일괄 치환하면 안 되고, <span class="hl-blue">파노마다 저장된 확장자 값</span>으로 URL 을 만들어야 합니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="12" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="utils--%ED%83%80%EC%9D%BC-%EC%83%9D%EC%84%B1-%EB%8F%84%EA%B5%AC%EA%B0%80-webp-%EB%A5%BC-%EB%A7%8C%EB%93%A4%EC%A7%80-%EB%AA%BB%ED%95%A9%EB%8B%88%EB%8B%A4">utils — 타일 생성 도구가 WebP 를 만들지 못합니다</h2>
+<p><code>look360_utils_v3</code> 에 번들된 krpanotools 는 <strong>1.20.9 (2020-11-19)</strong> 입니다. krpano 1.23.3 문서에서도 출력 형식은 JPEG·TIFF 뿐입니다.</p>
+<table>
+<thead>
+<tr>
+<th>출력물</th>
+<th>현재</th>
+<th>바꿀 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>큐브 타일 · <code>pv</code> · <code>1024_</code> · <code>512_</code></td>
+<td><code>multires_*.config</code> 25개, <code>jpegquality=60</code></td>
+<td>JPG q95 중간 출력 → WebP q55 변환 · 파일명 <code>.webp</code></td>
+</tr>
+<tr>
+<td><code>sphere_*</code> · <code>view_800</code> 등 미리보기</td>
+<td><code>kmakepreview</code> q80</td>
+<td>카드용은 WebP, <strong>og 용 JPG 1장은 유지</strong></td>
+</tr>
+<tr>
+<td>flat 타일 · 미리보기</td>
+<td><code>flatTiles.mjs</code>, magick q85</td>
+<td>같은 방식</td>
+</tr>
+<tr>
+<td><code>imglink_*_src2.jpg</code></td>
+<td>레거시 og:image 원본</td>
+<td><span class="hl-amber">JPG 유지</span></td>
+</tr>
+<tr>
+<td><code>imglink_*.gif</code></td>
+<td>애니메이션 GIF 76GB</td>
+<td>이번 범위 밖 (별도 검토)</td>
+</tr>
+</tbody>
+</table>
+<p>수정 지점: 약 22건 + 설정 파일 25개. 업로드는 utils 가 아니라 BE <code>uploadPanoramaZip</code> 이 합니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="13" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="be--xml-%EB%B9%8C%EB%8D%94-8%EA%B1%B4--%EC%8D%B8%EB%84%A4%EC%9D%BC-%EC%83%81%EC%88%98--s3-content-type">BE — XML 빌더 8건 · 썸네일 상수 · S3 Content-Type</h2>
+<table>
+<thead>
+<tr>
+<th>위치</th>
+<th>현재</th>
+<th>바꿀 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>utils/krpano-xml-builder.ts:1463</code> · <code>:1488</code> · <code>:1494~1505</code></td>
+<td><code>pv.jpg</code> · <code>mres_%s/…%h.jpg</code> · <code>512_</code>/<code>1024_</code></td>
+<td>파노의 확장자 값으로 조립</td>
+</tr>
+<tr>
+<td><code>krpano-xml-builder.ts:1306~1308</code> · <code>:563</code></td>
+<td>flat · cylinder 타일 <code>.jpg</code> 고정, <code>tilepath</code> 무시</td>
+<td><code>tile_info.tilepath</code> 우선 사용</td>
+</tr>
+<tr>
+<td><code>utils/panostory-xml-builder.ts:541~566</code></td>
+<td>같은 패턴 5건</td>
+<td>같음</td>
+</tr>
+<tr>
+<td><code>utils/pano-thumb.util.ts:22</code></td>
+<td><code>NEW_PANO_VIEW_FILE = 'view_800.jpg'</code> (= og:image)</td>
+<td>카드용과 og 용 파일명 분리</td>
+</tr>
+<tr>
+<td><code>file-uploads/file-upload.service.ts:200</code></td>
+<td><code>PutObjectCommand</code> 에 ContentType 없음</td>
+<td>확장자별 <code>image/webp</code> 지정</td>
+</tr>
+<tr>
+<td>레거시 폴백 리터럴 33곳</td>
+<td><code>view_250.jpg</code> · <code>view_500.jpg</code></td>
+<td>기존 데이터를 바꿀 때만</td>
+</tr>
+</tbody>
+</table>
+<p>하드코딩이 아닌 곳: <code>preview_file</code> · <code>cube_levels[].url</code> · <code>single_image_url</code> 은 DB 값을 그대로 씁니다. <code>legacy-files.util.ts</code> 는 이미 webp 를 허용합니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="14" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="client--admin--%EC%88%98%EC%A0%95%EC%9D%80-%EC%A0%81%EA%B3%A0-krpano-%EB%B2%84%EC%A0%84%EC%9D%80-%EB%91%98-%EB%8B%A4-webp-%EA%B0%80%EB%8A%A5">client · admin — 수정은 적고, krpano 버전은 둘 다 WebP 가능</h2>
+<table>
+<thead>
+<tr>
+<th>저장소</th>
+<th>위치</th>
+<th>현재</th>
+<th>바꿀 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>client</td>
+<td><code>VrShareModal.vue:553</code> · <code>:834</code></td>
+<td>공유 미니뷰 <code>512_%s.jpg</code> 고정</td>
+<td>본 뷰어의 <code>image.cube.url</code> 사용</td>
+</tr>
+<tr>
+<td>client</td>
+<td><code>VrDetailPanoList.vue:125</code></td>
+<td><code>view_250.jpg</code> → <code>view_500.jpg</code> 치환</td>
+<td>확장자 무관하게 치환</td>
+</tr>
+<tr>
+<td>admin</td>
+<td><code>src/utils/sphereUrl.js:28</code> · <code>:33</code></td>
+<td><code>sphere_1200.jpg</code> · <code>sphere_2000.jpg</code> 기본값</td>
+<td>확장자 값 반영</td>
+</tr>
+<tr>
+<td>admin</td>
+<td><code>View360/…/List.vue:342</code> · <code>Panorama/…/List.vue:409</code></td>
+<td><code>retouched_2000.jpg</code></td>
+<td>같음</td>
+</tr>
+</tbody>
+</table>
+<p>krpano 뷰어: client <code>1.23.3</code> · admin <code>1.22.4</code> · 레거시 <code>1.23.3</code>. 셋 다 이미지를 브라우저가 디코딩하므로 WebP 를 지원하는 브라우저면 그대로 열립니다. og:image 는 client 가 아니라 BE 가 만듭니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="15" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EB%A0%88%EA%B1%B0%EC%8B%9Clook360kr--%EA%B0%99%EC%9D%80-filespano-%EB%A5%BC-%EC%93%B0%EB%AF%80%EB%A1%9C-%ED%95%A8%EA%BB%98-%EB%B0%94%EA%BF%94%EC%95%BC-%ED%95%A9%EB%8B%88%EB%8B%A4">레거시(look360.kr) — 같은 files/pano 를 쓰므로 함께 바꿔야 합니다</h2>
+<table>
+<thead>
+<tr>
+<th>위치</th>
+<th>건수</th>
+<th>바꿀 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>a.createCyberTourXML.php</code> 등 XML 생성기 (<code>pv</code> · <code>mres</code> · <code>512_</code> · <code>1024_</code>)</td>
+<td>약 52건</td>
+<td>확장자 값으로 조립</td>
+</tr>
+<tr>
+<td><code>a.createCyberTourXML.php:520</code> → <code>a.getImg.php</code></td>
+<td>1건</td>
+<td><code>ext=jpg</code> 고정 · mime 을 확장자로 판정</td>
+</tr>
+<tr>
+<td><code>look360_seo.php</code> og:image (<code>imglink_view_900_src2.jpg</code>)</td>
+<td>11건</td>
+<td><span class="hl-amber">JPG 유지</span></td>
+</tr>
+<tr>
+<td><code>email_form_factory.php</code> 메일 이미지</td>
+<td>8건</td>
+<td><span class="hl-amber">JPG 유지</span> (메일 앱 WebP 미지원)</td>
+</tr>
+<tr>
+<td>썸네일 표시 (<code>view_500</code> · <code>view_250</code> · <code>imglink_*</code>)</td>
+<td>약 50건</td>
+<td>기존 데이터를 바꿀 때만</td>
+</tr>
+</tbody>
+</table>
+<p>이미 저장된 장면 XML 은 약 1.2만 개(0.3GB)입니다. 기존 장면은 이 XML 이 <code>.jpg</code> 를 가리키므로, 신규만 WebP 로 바꾸면 기존 XML 은 고칠 필요가 없습니다. <code>.htaccess</code> 핫링크 규칙은 이미 webp 를 허용합니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="16" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EC%9C%84%ED%97%98-%EC%9A%94%EC%86%8C%EC%99%80-%EB%8C%80%EC%9D%91">위험 요소와 대응</h2>
+<table>
+<thead>
+<tr>
+<th>위험</th>
+<th>대응</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>카카오·페이스북 공유 이미지가 WebP 가 됨</td>
+<td>og 용 JPG 파일을 따로 유지 (BE 상수 분리 · 레거시 <code>src2.jpg</code> 유지)</td>
+</tr>
+<tr>
+<td>구형 iOS(14 미만) · Safari 에서 화면이 안 뜸</td>
+<td>krpano 는 자동 JPG 대체가 없음 → 모바일·VR 큐브 JPG 유지 + 접속 비율 확인</td>
+</tr>
+<tr>
+<td>S3 Content-Type 누락</td>
+<td>업로드 시 <code>image/webp</code> 지정 (<code>nosniff</code>·크롤러 대비)</td>
+</tr>
+<tr>
+<td>DB 의 <code>tile_info</code>·<code>thumb_filename</code> 에 <code>.jpg</code> 값 저장</td>
+<td>신규만 새 값으로 기록, 기존 값은 건드리지 않음</td>
+</tr>
+<tr>
+<td>재인코딩 화질 저하</td>
+<td>기존 데이터는 원본(retouched)이 있는 장면만 다시 생성</td>
+</tr>
+<tr>
+<td>전환 중 일부만 올라간 장면</td>
+<td>장면 단위로 «전부 올린 뒤 확장자 값 변경» 순서 고정</td>
+</tr>
+</tbody>
+</table>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="17" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="18">
+<h2 id="%EC%B8%A1%EC%A0%95-%EB%B0%A9%EB%B2%95%EA%B3%BC-%EA%B7%BC%EA%B1%B0">측정 방법과 근거</h2>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>용량</td>
+<td><code>look360-v1-files</code> 백업 목록표 <code>state/pano__*.csv.gz</code> 1,764개 집계 (2026-11-12)</td>
+</tr>
+<tr>
+<td>기존 타일 표본</td>
+<td>목록표에서 무작위 장소 120곳 · 타일 500장 · 장면 파일 200개를 S3 에서 받음 (약 42MB)</td>
+</tr>
+<tr>
+<td>기존 품질값</td>
+<td>ImageMagick <code>identify %Q</code> → 타일 300장 전부 q60 · 4:2:0</td>
+</tr>
+<tr>
+<td>신규 비교</td>
+<td>궁디팡팡 <code>retouched.jpg</code> 3장 사본 → 512 타일 135장 · JPG q60 4:2:0 vs WebP (libwebp 1.6.0, method 6)</td>
+</tr>
+<tr>
+<td>화질 지표</td>
+<td>밝기 채널 SSIM (가우시안 11×11, σ 1.5) · PSNR</td>
+</tr>
+<tr>
+<td>krpano</td>
+<td>krpano 1.23.3 문서 (<code>image</code> url · krpanotools 지원 형식) · 저장소별 <code>vr.js</code> 헤더</td>
+</tr>
+<tr>
+<td>코드</td>
+<td>5개 저장소 읽기 전용 조사 (수정 없음)</td>
+</tr>
+</tbody>
+</table>
+<p><span class="hl-amber">추정 값</span> 저장·요청 단가는 AWS 서울 공시가 기준이며 실제 청구액과 다를 수 있습니다. 신규 비교는 실제 큐브 면이 아니라 정방형 사진의 가운데 띠를 잘라 쓴 근사입니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="closing" data-theme="clean" lang="C" class="closing" style="--class:closing;--theme:clean;">
+<h2 id="%EA%B0%90%EC%82%AC%ED%95%A9%EB%8B%88%EB%8B%A4">감사합니다</h2>
+<p>신규는 WebP q55 로 −23%, 기존 352GB 는 화질·비용을 따져 보류를 권합니다.</p>
+<p>Indyspot AI Corp  ·  Engineering Manager  ·  2026-11-13</p>
+</section>
+<script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()})}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame(()=>{t.style.display=""}))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=()=>o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o),l=Symbol();let c;const d="marpitSVGPolyfill:setZoomFactor,",h=Symbol(),g=Symbol();const p=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[v]:[],i={then:e=>(t?(async()=>{if(void 0===c){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise(t=>{i.addEventListener("load",()=>t())});i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),c=e.getImageData(5,5,1,1).data[3]<128}return c})().then(t=>{null==e||e(t?[v]:[])}):null==e||e([]),i)};return Object.assign(e,i)};let m,u;function v(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[g]||(Object.defineProperty(window,g,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(d)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(u=i)}}catch(t){console.error(t)}}));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||u||t.currentScale||1;m!==a&&(m=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}}),!1!==n&&Array.from(e.querySelectorAll("iframe"),({contentWindow:t})=>{null==t||t.postMessage(`${d}${n}`,"null"===window.origin?"*":window.origin)})}function w({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[h])return t[h];let e=!0;const i=()=>{e=!1,delete t[h]};Object.defineProperty(t,h,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await p()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}m=1,u=void 0;const b=Symbol(),y=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[l];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,o=t[n].proto();a()&&o!==HTMLElement?i||customElements.define(s,r(o,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach(t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)}))}window[l]=!0})(e),e[b])return e[b];const i=w({target:e}),n=()=>{i(),delete e[b]},o=Object.assign(n,{cleanup:n,update:()=>y(e)});return Object.defineProperty(e,b,{configurable:!0,value:o}),o},f=document.currentScript;y(f?f.getRootNode():document)}();
+</script></foreignObject></svg></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@4.5.1/lib/bespoke.js.LICENSE.txt */
+!function(){"use strict";function e(e){return e&&e.__esModule&&Object.prototype.hasOwnProperty.call(e,"default")?e.default:e}var t,n,r=(n||(n=1,t={from:function(e,t){var n,r=1===(e.parent||e).nodeType?e.parent||e:document.querySelector(e.parent||e),o=[].filter.call("string"==typeof e.slides?r.querySelectorAll(e.slides):e.slides||r.children,function(e){return"SCRIPT"!==e.nodeName}),i={},a=function(e,t){return(t=t||{}).index=o.indexOf(e),t.slide=e,t},s=function(e,t){i[e]=(i[e]||[]).filter(function(e){return e!==t})},l=function(e,t){return(i[e]||[]).reduce(function(e,n){return e&&!1!==n(t)},!0)},c=function(e,t){o[e]&&(n&&l("deactivate",a(n,t)),n=o[e],l("activate",a(n,t)))},d=function(e,t){var r=o.indexOf(n)+e;l(e>0?"next":"prev",a(n,t))&&c(r,t)},u={off:s,on:function(e,t){return(i[e]||(i[e]=[])).push(t),s.bind(null,e,t)},fire:l,slide:function(e,t){if(!arguments.length)return o.indexOf(n);l("slide",a(o[e],t))&&c(e,t)},next:d.bind(null,1),prev:d.bind(null,-1),parent:r,slides:o,destroy:function(e){l("destroy",a(n,e)),i={}}};return(t||[]).forEach(function(e){e(u)}),n||c(0),u}}),t),o=e(r);const i=document.body,a=(...e)=>history.replaceState(...e),s="",l="presenter",c="next",d="overview",u=["",l,d,c],f="bespoke-marp-",m=`data-${f}`,g=(e,{protocol:t,host:n,pathname:r,hash:o}=location)=>{const i=e.toString();return`${t}//${n}${r}${i?"?":""}${i}${o}`},p=()=>i.dataset.bespokeView,v=e=>new URLSearchParams(location.search).get(e),h=(e,t={})=>{const n={location,setter:a,...t},r=new URLSearchParams(n.location.search);for(const t of Object.keys(e)){const n=e[t];"string"==typeof n?r.set(t,n):r.delete(t)}try{n.setter({...window.history.state??{}},"",g(r,n.location))}catch(e){console.error(e)}},w=(()=>{const e="bespoke-marp";try{return localStorage.setItem(e,e),localStorage.removeItem(e),!0}catch{return!1}})(),y=e=>{try{return localStorage.getItem(e)}catch{return null}},b=(e,t)=>{try{return localStorage.setItem(e,t),!0}catch{return!1}},k=e=>{try{return localStorage.removeItem(e),!0}catch{return!1}},x=(e,t)=>{const n="aria-hidden";t?e.setAttribute(n,"true"):e.removeAttribute(n)},E=e=>{e.parent.classList.add(`${f}parent`),e.slides.forEach(e=>e.classList.add(`${f}slide`)),e.on("activate",t=>{const n=`${f}active`,r=t.slide,o=r.classList,i=!o.contains(n);if(e.slides.forEach(e=>{e.classList.remove(n),x(e,!0)}),o.add(n),x(r,!1),i){const e=`${n}-ready`;o.add(e),document.body.clientHeight,o.remove(e)}})},$=e=>{let t=0,n=0;Object.defineProperty(e,"fragments",{enumerable:!0,value:e.slides.map(e=>[null,...e.querySelectorAll("[data-marpit-fragment]")])});const r=r=>void 0!==e.fragments[t][n+r],o=(r,o)=>{t=r,n=o,e.fragments.forEach((e,t)=>{e.forEach((e,n)=>{if(null==e)return;const i=t<r||t===r&&n<=o;e.setAttribute(`${m}fragment`,(i?"":"in")+"active");const a=`${m}current-fragment`;t===r&&n===o?e.setAttribute(a,"current"):e.removeAttribute(a)})}),e.fragmentIndex=o;const i={slide:e.slides[r],index:r,fragments:e.fragments[r],fragmentIndex:o};e.fire("fragment",i)};e.on("next",({fragment:i=!0})=>{if(i){if(r(1))return o(t,n+1),!1;const i=t+1;e.fragments[i]&&o(i,0)}else{const r=e.fragments[t].length;if(n+1<r)return o(t,r-1),!1;const i=e.fragments[t+1];i&&o(t+1,i.length-1)}}),e.on("prev",({fragment:i=!0})=>{if(r(-1)&&i)return o(t,n-1),!1;const a=t-1;e.fragments[a]&&o(a,e.fragments[a].length-1)}),e.on("slide",({index:t,fragment:n})=>{let r=0;if(void 0!==n){const o=e.fragments[t];if(o){const{length:e}=o;r=-1===n?e-1:Math.min(Math.max(n,0),e-1)}}o(t,r)}),o(0,0)},L=document,S=()=>!(!L.fullscreenEnabled&&!L.webkitFullscreenEnabled),P=()=>!(!L.fullscreenElement&&!L.webkitFullscreenElement),_=e=>{e.fullscreen=()=>{S()&&(async()=>{P()?(L.exitFullscreen||L.webkitExitFullscreen)?.call(L):((e=L.body)=>{(e.requestFullscreen||e.webkitRequestFullscreen)?.call(e)})()})()},document.addEventListener("keydown",t=>{"f"!==t.key&&"F11"!==t.key||t.altKey||t.ctrlKey||t.metaKey||!S()||(e.fullscreen(),t.preventDefault())})},O=`${f}inactive`,T=(e=2e3)=>({parent:t,fire:n})=>{const r=t.classList,o=e=>n(`marp-${e?"":"in"}active`);let i;const a=()=>{i&&clearTimeout(i),i=setTimeout(()=>{r.add(O),o()},e),r.contains(O)&&(r.remove(O),o(!0))};for(const e of["mousedown","mousemove","touchend"])document.addEventListener(e,a);setTimeout(a,0)},I=["AUDIO","BUTTON","INPUT","SELECT","TEXTAREA","VIDEO"],M=e=>{e.parent.addEventListener("keydown",e=>{if(!e.target)return;const t=e.target;(I.includes(t.nodeName)||"true"===t.contentEditable)&&e.stopPropagation()})},A=e=>{window.addEventListener("load",()=>{for(const t of e.slides){const e=t.querySelector("marp-auto-scaling, [data-auto-scaling], [data-marp-fitting]");t.setAttribute(`${m}load`,e?"":"hideable")}})},C=({interval:e=250}={})=>t=>{document.addEventListener("keydown",e=>{if(" "===e.key&&e.shiftKey)t.prev();else if("ArrowLeft"===e.key||"ArrowUp"===e.key||"PageUp"===e.key)t.prev({fragment:!e.shiftKey});else if(" "!==e.key||e.shiftKey)if("ArrowRight"===e.key||"ArrowDown"===e.key||"PageDown"===e.key)t.next({fragment:!e.shiftKey});else if("End"===e.key)t.slide(t.slides.length-1,{fragment:-1});else{if("Home"!==e.key)return;t.slide(0)}else t.next();e.preventDefault()});let n,r,o=0;t.parent.addEventListener("wheel",i=>{let a=!1;const s=(e,t)=>{e&&(a=a||((e,t)=>((e,t)=>{const n="X"===t?"Width":"Height";return e[`client${n}`]<e[`scroll${n}`]})(e,t)&&((e,t)=>{const{overflow:n}=e,r=e[`overflow${t}`];return"auto"===n||"scroll"===n||"auto"===r||"scroll"===r})(getComputedStyle(e),t))(e,t)),e?.parentElement&&s(e.parentElement,t)};if(0!==i.deltaX&&s(i.target,"X"),0!==i.deltaY&&s(i.target,"Y"),a)return;i.preventDefault();const l=Math.sqrt(i.deltaX**2+i.deltaY**2);if(void 0!==i.wheelDelta){if(void 0===i.webkitForce&&Math.abs(i.wheelDelta)<40)return;if(i.deltaMode===i.DOM_DELTA_PIXEL&&l<4)return}else if(i.deltaMode===i.DOM_DELTA_PIXEL&&l<12)return;r&&clearTimeout(r),r=setTimeout(()=>{n=0},e);const c=Date.now()-o<e,d=l<=n;if(n=l,c||d)return;let u;(i.deltaX>0||i.deltaY>0)&&(u="next"),(i.deltaX<0||i.deltaY<0)&&(u="prev"),u&&(t[u](),o=Date.now())})},D=(e=`.${f}osc`)=>{const t=document.querySelector(e);if(!t)return()=>{};const n=(e,n)=>{t.querySelectorAll(`[${m}osc=${JSON.stringify(e)}]`).forEach(n)};if(S()||n("fullscreen",e=>e.style.display="none"),!w){const e=(e,t)=>{e.disabled=!0,e.title=`${t} is disabled due to restricted localStorage.`};n("presenter",t=>e(t,"Presenter view")),n("overview",t=>e(t,"Overview view"))}return e=>{t.addEventListener("click",t=>{if(t.target instanceof HTMLElement){const{bespokeMarpOsc:n}=t.target.dataset;n&&t.target.blur();const r={fragment:!t.shiftKey};"next"===n?e.next(r):"prev"===n?e.prev(r):"fullscreen"===n?e?.fullscreen():"presenter"===n?e.openPresenterView():"overview"===n&&e.toggleOverviewView()}}),e.parent.appendChild(t),e.on("activate",({index:t})=>{n("page",n=>n.textContent=`Page ${t+1} of ${e.slides.length}`)}),e.on("fragment",({index:t,fragments:r,fragmentIndex:o})=>{n("prev",e=>e.disabled=0===t&&0===o),n("next",n=>n.disabled=t===e.slides.length-1&&o===r.length-1)}),e.on("marp-active",()=>x(t,!1)),e.on("marp-inactive",()=>x(t,!0)),S()&&(e=>{for(const t of["","webkit"])L.addEventListener(t+"fullscreenchange",e)})(()=>n("fullscreen",e=>e.classList.toggle("exit",S()&&P())))}},N=e=>{if(e.syncKey&&"string"==typeof e.syncKey)return!0;throw new Error("The current instance of Bespoke.js is incompatible with Marp bespoke sync plugin.")},B=(e={})=>{const t=e.key||window.history.state?.marpBespokeSyncKey||Math.random().toString(36).slice(2),n=`bespoke-marp-sync-${t}`;var r;r={marpBespokeSyncKey:t},h({},{setter:(e,...t)=>a({...e,...r},...t)});const o=()=>{const e=y(n);return e?JSON.parse(e):Object.create(null)},i=e=>{const t=o(),r={...t,...e(t)};return b(n,JSON.stringify(r)),r},s=()=>{window.removeEventListener("pageshow",s),i(e=>({reference:(e.reference||0)+1}))};return e=>{s(),Object.defineProperty(e,"syncKey",{value:t,enumerable:!0});let r=!0;setTimeout(()=>{e.on("fragment",e=>{r&&i(()=>({index:e.index,fragmentIndex:e.fragmentIndex}))})},0),window.addEventListener("storage",t=>{if(t.key===n&&t.oldValue&&t.newValue){const n=JSON.parse(t.oldValue),o=JSON.parse(t.newValue);if(n.index!==o.index||n.fragmentIndex!==o.fragmentIndex)try{r=!1,e.slide(o.index,{fragment:o.fragmentIndex,forSync:!0})}finally{r=!0}}});const a=()=>{const{reference:e}=o();void 0===e||e<=1?k(n):i(()=>({reference:e-1}))};window.addEventListener("pagehide",e=>{e.persisted&&window.addEventListener("pageshow",s),a()}),e.on("destroy",a)}},K=e=>{w&&document.addEventListener("keydown",t=>{("o"!==t.key||t.altKey||t.ctrlKey||t.metaKey)&&"Escape"!==t.key||(t.preventDefault(),e())})};let q=null;const V=({closeOnSelect:e=!0}={})=>t=>{N(t);const n=n=>{const r=(()=>{if(!q||!q.isConnected){q=document.createElement("div"),q.className=`${f}overview`,q.inert=!0;const n=document.createElement("iframe");n.src=(()=>{const n=new URLSearchParams(location.search);return n.set("view","overview"),n.set("sync",t.syncKey),e&&n.set("closeOnSelect","1"),g(n)})(),q.append(n),document.body.append(q)}return q})(),o=n??!r.dataset.open;setTimeout(()=>{if(r.dataset.open=o?"1":"",r.inert=!o,t.skipTransition=o,o){const e=r.querySelector("iframe");try{e?.contentWindow?.focus()}catch{e?.focus()}}else window.focus()},0)};Object.defineProperties(t,{toggleOverviewView:{enumerable:!0,value:n}}),window.addEventListener("message",e=>{e.origin===window.origin&&"closeOverview"===e.data&&n(!1)}),K(n)},j=e=>{const{title:t}=document;document.title="[Overview]"+(t?` - ${t}`:"");const n=!!v("closeOnSelect"),r=()=>{window.parent.postMessage("closeOverview","null"===window.origin?"*":window.origin)};if(e.slides.forEach((t,o)=>{t.tabIndex=0;const i=()=>{e.slide(o,{fragment:-1}),n&&r()};t.addEventListener("click",i),t.addEventListener("keydown",e=>{"Enter"!==e.key&&" "!==e.key||(e.preventDefault(),i())})}),window.addEventListener("keydown",t=>{const n=e.slide(),r=t=>{const r=t=>{const n=e.slides[t].getBoundingClientRect();return[Math.round((n.left+n.right)/2),Math.round((n.top+n.bottom)/2)]};let o=null,i=n;do{const e=r(i);if(o){if(Math.abs(e[0]-o[0])<2)return i}else o=e;i+=t}while(i>=0&&i<e.slides.length);return n};if("ArrowLeft"===t.key)e.slide(Math.max(n-1,0),{fragment:-1});else if("ArrowRight"===t.key)e.slide(Math.min(n+1,e.slides.length-1),{fragment:-1});else if("ArrowUp"===t.key)e.slide(r(-1),{fragment:-1});else if("ArrowDown"===t.key)e.slide(r(1),{fragment:-1});else if("End"===t.key)e.slide(e.slides.length-1,{fragment:-1});else{if("Home"!==t.key)return;e.slide(0,{fragment:-1})}t.preventDefault();const o=e.slide();e.slides[o]?.focus?.(),e.slides[o]?.scrollIntoView?.({behavior:"smooth",block:"nearest"})}),e.on("slide",({index:t})=>{e.slides[t]?.scrollIntoView?.({behavior:"smooth",block:"nearest"})}),window.parent!==window){K(r);const e=document.createElement("header");e.className=`${f}overview-header`;const t=document.createElement("button");t.className=`${f}overview-close`,t.type="button",t.title="Close overview",t.textContent=t.title,t.addEventListener("click",r),e.append(t),document.body.prepend(e)}},F=()=>{const e=p();return{[s]:V(),[l]:V({closeOnSelect:!1}),[d]:j}[e]},U=e=>{window.addEventListener("message",t=>{if(t.origin!==window.origin)return;const[n,r]=t.data.split(":");if("navigate"===n){const[t,n]=r.split(",");let o=Number.parseInt(t,10),i=Number.parseInt(n,10)+1;i>=e.fragments[o].length&&(o+=1,i=0),e.slide(o,{fragment:i})}})};var R,X,H,W,J,Y,z,G={exports:{}},Q=(R||(R=1,G.exports=(X=["area","base","br","col","command","embed","hr","img","input","keygen","link","meta","param","source","track","wbr"],H=function(e){return String(e).replace(/[&<>"']/g,function(e){return"&"+W[e]+";"})},W={"&":"amp","<":"lt",">":"gt",'"':"quot","'":"apos"},J="dangerouslySetInnerHTML",Y={className:"class",htmlFor:"for"},z={},function(e,t){var n=[],r="";t=t||{};for(var o=arguments.length;o-- >2;)n.push(arguments[o]);if("function"==typeof e)return t.children=n.reverse(),e(t);if(e){if(r+="<"+e,t)for(var i in t)!1!==t[i]&&null!=t[i]&&i!==J&&(r+=" "+(Y[i]?Y[i]:H(i))+'="'+H(t[i])+'"');r+=">"}if(-1===X.indexOf(e)){if(t[J])r+=t[J].__html;else for(;n.length;){var a=n.pop();if(a)if(a.pop)for(var s=a.length;s--;)n.push(a[s]);else r+=!0===z[a]?a:H(a)}r+=e?"</"+e+">":""}return z[r]=!0,r})),G.exports),Z=e(Q);const ee=({children:e})=>Z(null,null,...e),te=`${f}presenter-`,ne={container:`${te}container`,dragbar:`${te}dragbar-container`,next:`${te}next`,nextContainer:`${te}next-container`,noteContainer:`${te}note-container`,noteWrapper:`${te}note-wrapper`,noteButtons:`${te}note-buttons`,infoContainer:`${te}info-container`,infoPageArea:`${te}info-page-area`,infoPage:`${te}info-page`,infoPagePrev:`${te}info-page-prev`,infoPageNext:`${te}info-page-next`,noteButtonsBigger:`${te}note-bigger`,noteButtonsSmaller:`${te}note-smaller`,infoTime:`${te}info-time`,infoTimer:`${te}info-timer`},re=e=>{const{title:t}=document;document.title="[Presenter view]"+(t?` - ${t}`:"");const n={},r=e=>(n[e]=n[e]||document.querySelector(`.${e}`),n[e]);document.body.appendChild((e=>{const t=document.createElement("div");return t.className=ne.container,t.appendChild(e),t.insertAdjacentHTML("beforeend",Z(ee,null,Z("div",{class:ne.nextContainer},Z("iframe",{class:ne.next,src:"?view=next"})),Z("div",{class:ne.dragbar}),Z("div",{class:ne.noteContainer},Z("div",{class:ne.noteWrapper}),Z("div",{class:ne.noteButtons},Z("button",{class:ne.noteButtonsSmaller,tabindex:"-1",title:"Smaller notes font size"},"Smaller notes font size"),Z("button",{class:ne.noteButtonsBigger,tabindex:"-1",title:"Bigger notes font size"},"Bigger notes font size"))),Z("div",{class:ne.infoContainer},Z("div",{class:ne.infoPageArea},Z("button",{class:ne.infoPagePrev,tabindex:"-1",title:"Previous"},"Previous"),Z("button",{class:ne.infoPage}),Z("button",{class:ne.infoPageNext,tabindex:"-1",title:"Next"},"Next")),Z("time",{class:ne.infoTime,title:"Current time"}),Z("time",{class:ne.infoTimer,title:"Timer"})))),t})(e.parent)),(e=>{let t=!1;r(ne.dragbar).addEventListener("mousedown",()=>{t=!0,r(ne.dragbar).classList.add("active")}),window.addEventListener("mouseup",()=>{t=!1,r(ne.dragbar).classList.remove("active")}),window.addEventListener("mousemove",e=>{if(!t)return;const n=e.clientX/document.documentElement.clientWidth*100;r(ne.container).style.setProperty("--bespoke-marp-presenter-split-ratio",`${Math.max(0,Math.min(100,n))}%`)}),r(ne.nextContainer).addEventListener("click",()=>e.next());const n=r(ne.next),o=(i=n,(e,t)=>i.contentWindow?.postMessage(`navigate:${e},${t}`,"null"===window.origin?"*":window.origin));var i;n.addEventListener("load",()=>{r(ne.nextContainer).classList.add("active"),o(e.slide(),e.fragmentIndex),e.on("fragment",({index:e,fragmentIndex:t})=>o(e,t))});const a=document.querySelectorAll(".bespoke-marp-note");a.forEach(e=>{e.addEventListener("keydown",e=>e.stopPropagation()),r(ne.noteWrapper).appendChild(e)}),e.on("activate",()=>a.forEach(t=>t.classList.toggle("active",t.dataset.index==e.slide())));let s=0;const l=e=>{s=Math.max(-5,s+e),r(ne.noteContainer).style.setProperty("--bespoke-marp-note-font-scale",(1.2**s).toFixed(4))},c=()=>l(1),d=()=>l(-1),u=r(ne.noteButtonsBigger),f=r(ne.noteButtonsSmaller);u.addEventListener("click",()=>{u.blur(),c()}),f.addEventListener("click",()=>{f.blur(),d()}),document.addEventListener("keydown",e=>{"+"===e.key&&c(),"-"===e.key&&d()},!0);const m=r(ne.infoPage);e.on("activate",({index:t})=>{m.textContent=`${t+1} / ${e.slides.length}`}),m.addEventListener("click",()=>{m.blur(),e.toggleOverviewView()});const g=r(ne.infoPagePrev),p=r(ne.infoPageNext);g.addEventListener("click",t=>{g.blur(),e.prev({fragment:!t.shiftKey})}),p.addEventListener("click",t=>{p.blur(),e.next({fragment:!t.shiftKey})}),e.on("fragment",({index:t,fragments:n,fragmentIndex:r})=>{g.disabled=0===t&&0===r,p.disabled=t===e.slides.length-1&&r===n.length-1});let v=new Date;const h=()=>{const e=new Date,t=e=>`${Math.floor(e)}`.padStart(2,"0"),n=e.getTime()-v.getTime(),o=t(n/1e3%60),i=t(n/1e3/60%60),a=t(n/36e5%24);r(ne.infoTime).textContent=e.toLocaleTimeString(),r(ne.infoTimer).textContent=`${a}:${i}:${o}`};h(),setInterval(h,250),r(ne.infoTimer).addEventListener("click",()=>{v=new Date})})(e)},oe=e=>{N(e),Object.defineProperties(e,{openPresenterView:{enumerable:!0,value:ie},presenterUrl:{enumerable:!0,get:ae}}),w&&document.addEventListener("keydown",t=>{"p"!==t.key||t.altKey||t.ctrlKey||t.metaKey||(t.preventDefault(),e.openPresenterView())})};function ie(){const{max:e,floor:t}=Math,n=e(t(.85*window.innerWidth),640),r=e(t(.85*window.innerHeight),360);return window.open(this.presenterUrl,te+this.syncKey,`width=${n},height=${r},menubar=no,toolbar=no`)}function ae(){const e=new URLSearchParams(location.search);return e.set("view","presenter"),e.set("sync",this.syncKey),g(e)}const se=e=>{const t=p();return t===c&&e.appendChild(document.createElement("span")),{[s]:oe,[l]:re,[c]:U}[t]},le=e=>{e.on("activate",t=>{document.querySelectorAll(".bespoke-progress-parent > .bespoke-progress-bar").forEach(n=>{n.style.flexBasis=100*t.index/(e.slides.length-1)+"%"})})},ce=e=>{const t=Number.parseInt(e,10);return Number.isNaN(t)?null:t},de=(e={})=>{const t={history:!0,...e};return e=>{let n=!0;const r=e=>{const t=n;try{return n=!0,e()}finally{n=t}},o=(t={fragment:!0})=>{let n=t.fragment?ce(v("f")||""):null;((t,n)=>{const{min:r,max:o}=Math,{fragments:i,slides:a}=e,s=o(0,r(t,a.length-1)),l=o(0,r(n||0,i[s].length-1));s===e.slide()&&l===e.fragmentIndex||e.slide(s,{fragment:l})})((()=>{if(location.hash){const[t]=location.hash.slice(1).split(":~:");if(/^\d+$/.test(t))return(ce(t)??1)-1;const r=document.getElementById(t)||document.querySelector(`a[name="${CSS.escape(t)}"]`);if(r){const{length:t}=e.slides;for(let o=0;o<t;o+=1)if(e.slides[o].contains(r)){const t=e.fragments?.[o],i=r.closest("[data-marpit-fragment]");if(t&&i){const e=t.indexOf(i);e>=0&&(n=e)}return o}}}return 0})(),n)};e.on("fragment",({index:e,fragmentIndex:r})=>{n||h({f:0===r||r.toString()},{location:{...location,hash:`#${e+1}`},setter:(...e)=>t.history?history.pushState(...e):history.replaceState(...e)})}),setTimeout(()=>{o(),window.addEventListener("hashchange",()=>r(()=>{o({fragment:!1}),h({f:void 0})})),window.addEventListener("popstate",()=>{n||r(()=>o())}),n=!1},0)}},{PI:ue,abs:fe,sqrt:me,atan2:ge}=Math,pe={passive:!0},ve=({slope:e=-.7,swipeThreshold:t=30}={})=>n=>{let r;const o=n.parent,i=e=>{const t=o.getBoundingClientRect();return{x:e.pageX-(t.left+t.right)/2,y:e.pageY-(t.top+t.bottom)/2}};o.addEventListener("touchstart",({touches:e})=>{r=1===e.length?i(e[0]):void 0},pe),o.addEventListener("touchmove",e=>{if(r)if(1===e.touches.length){e.preventDefault();const t=i(e.touches[0]),n=t.x-r.x,o=t.y-r.y;r.delta=me(fe(n)**2+fe(o)**2),r.radian=ge(n,o)}else r=void 0}),o.addEventListener("touchend",o=>{if(r){if(r.delta&&r.delta>=t&&r.radian){const t=(r.radian-e+ue)%(2*ue)-ue;n[t<0?"next":"prev"](),o.stopPropagation()}r=void 0}},pe)},he=new Map;he.clear(),he.set("none",{backward:{both:void 0,incoming:void 0,outgoing:void 0},forward:{both:void 0,incoming:void 0,outgoing:void 0}});const we={both:"",outgoing:"outgoing-",incoming:"incoming-"},ye={forward:"",backward:"-backward"},be=e=>`--marp-bespoke-transition-animation-${e}`,ke=e=>`--marp-transition-${e}`,xe=be("name"),Ee=be("duration"),$e=e=>new Promise(t=>{const n={},r=document.createElement("div"),o=e=>{r.remove(),t(e)};r.addEventListener("animationstart",()=>o(n)),Object.assign(r.style,{animationName:e,animationDuration:"1s",animationFillMode:"both",animationPlayState:"paused",position:"absolute",pointerEvents:"none"}),document.body.appendChild(r);const i=getComputedStyle(r).getPropertyValue(ke("duration"));i&&Number.parseFloat(i)>=0&&(n.defaultDuration=i),((e,t)=>{requestAnimationFrame(()=>{e.style.animationPlayState="running",requestAnimationFrame(()=>t(void 0))})})(r,o)}),Le=async e=>he.has(e)?he.get(e):(e=>{const t={},n=[];for(const[r,o]of Object.entries(we))for(const[i,a]of Object.entries(ye)){const s=`marp-${o}transition${a}-${e}`;n.push($e(s).then(e=>{t[i]=t[i]||{},t[i][r]=e?{...e,name:s}:void 0}))}return Promise.all(n).then(()=>t)})(e).then(t=>(he.set(e,t),t)),Se=e=>Object.values(e).flatMap(Object.values).every(e=>!e),Pe=(e,{type:t,backward:n})=>{const r=e[n?"backward":"forward"],o=(()=>{const e=r[t],n=e=>({[xe]:e.name});if(e)return n(e);if(r.both){const e=n(r.both);return"incoming"===t&&(e[be("direction")]="reverse"),e}})();return!o&&n?Pe(e,{type:t,backward:!1}):o||{[xe]:"__bespoke_marp_transition_no_animation__"}},_e=e=>{if(e)try{const t=JSON.parse(e);if((e=>{if("object"!=typeof e)return!1;const t=e;return"string"==typeof t.name&&(void 0===t.duration||"string"==typeof t.duration)})(t))return t}catch{}},Oe="_tSId",Te="_tA",Ie="bespoke-marp-transition-warming-up",Me=window.matchMedia("(prefers-reduced-motion: reduce)"),Ae="__bespoke_marp_transition_reduced_outgoing__",Ce="__bespoke_marp_transition_reduced_incoming__",De={forward:{both:void 0,incoming:{name:Ce},outgoing:{name:Ae}},backward:{both:void 0,incoming:{name:Ce},outgoing:{name:Ae}}},Ne=e=>{if(!document.startViewTransition)return;const t=t=>(void 0!==t&&(e._tD=t),e._tD);let n;t(!1),((...e)=>{CSS.registerProperty({name:ke("duration"),syntax:"<time>",inherits:!0,initialValue:"-1s"});const t=[...new Set(e).values()];return Promise.all(t.map(e=>Le(e))).then()})(...Array.from(document.querySelectorAll("section[data-transition], section[data-transition-back]")).flatMap(e=>[e.dataset.transition,e.dataset.transitionBack].flatMap(e=>{const t=_e(e);return[t?.name,t?.builtinFallback?`__builtin__${t.name}`:void 0]}).filter(e=>!!e))).then(()=>{document.querySelectorAll("style").forEach(e=>{e.innerHTML=e.innerHTML.replace(/--marp-transition-duration:[^;}]*[;}]/g,e=>e.slice(0,-1)+"!important"+e.slice(-1))})});const r=(n,{back:r,cond:o})=>i=>{const a=t();if(a)return!!i[Te]||!("object"!=typeof a||(a.skipTransition(),!i.forSync));if(e.skipTransition)return!0;if(!o(i))return!0;const s=e.slides[e.slide()],l=()=>i.back??r,c="data-transition"+(l()?"-back":""),d=s.querySelector(`section[${c}]`);if(!d)return!0;const u=_e(d.getAttribute(c)??void 0);return!u||((async(e,{builtinFallback:t=!0}={})=>{let n=await Le(e);if(Se(n)){if(!t)return;return n=await Le(`__builtin__${e}`),Se(n)?void 0:n}return n})(u.name,{builtinFallback:u.builtinFallback}).then(e=>{if(!e){t(!0);try{n(i)}finally{t(!1)}return}let r=e;Me.matches&&(console.warn("Use a constant animation to transition because preferring reduced motion by viewer has detected."),r=De);const o=document.getElementById(Oe);o&&o.remove();const a=document.createElement("style");a.id=Oe,document.head.appendChild(a),((e,t)=>{const n=[`:root{${ke("direction")}:${t.backward?-1:1};}`,":root:has(.bespoke-marp-inactive){cursor:none;}"],r=t=>{const n=e[t].both?.defaultDuration||e[t].outgoing?.defaultDuration||e[t].incoming?.defaultDuration;return"forward"===t?n:n||r("forward")},o=t.duration||r(t.backward?"backward":"forward");void 0!==o&&n.push(`::view-transition-group(*){${Ee}:${o};}`);const i=e=>Object.entries(e).map(([e,t])=>`${e}:${t};`).join("");return n.push(`::view-transition-old(root){${i(Pe(e,{...t,type:"outgoing"}))}}`,`::view-transition-new(root){${i(Pe(e,{...t,type:"incoming"}))}}`),n})(r,{backward:l(),duration:u.duration}).forEach(e=>a.sheet?.insertRule(e));const s=document.documentElement.classList;s.add(Ie);let c=!1;const d=()=>{c||(n(i),c=!0,s.remove(Ie))},f=()=>{t(!1),a.remove(),s.remove(Ie)};try{t(!0);const e=document.startViewTransition(d);t(e),e.finished.finally(f)}catch(e){console.error(e),d(),f()}}),!1)};e.on("prev",r(t=>e.prev({...t,[Te]:!0}),{back:!0,cond:e=>e.index>0&&!((e.fragment??1)&&n.fragmentIndex>0)})),e.on("next",r(t=>e.next({...t,[Te]:!0}),{cond:t=>t.index+1<e.slides.length&&!(n.fragmentIndex+1<n.fragments.length)})),setTimeout(()=>{e.on("slide",r(t=>e.slide(t.index,{...t,[Te]:!0}),{cond:t=>{const n=e.slide();return t.index!==n&&(t.back=t.index<n,!0)}}))},0),e.on("fragment",e=>{n=e})};let Be;const Ke=()=>(void 0===Be&&(Be="wakeLock"in navigator&&navigator.wakeLock),Be),qe=async()=>{const e=Ke();if(e)try{return await e.request("screen")}catch(e){console.warn(e)}return null},Ve=async()=>{if(!Ke())return;let e;const t=()=>{e&&"visible"===document.visibilityState&&qe()};for(const e of["visibilitychange","fullscreenchange"])document.addEventListener(e,t);return e=await qe(),e};((e=document.getElementById(":$p"))=>{(()=>{const e=v("view");i.dataset.bespokeView=u.some(t=>t&&t===e)?e:""})();const t=(e=>{const t=v(e);return h({[e]:void 0}),t})("sync")||void 0;o.from(e,((...e)=>{const t=u.findIndex(e=>p()===e);return e.map(([e,n])=>e[t]&&n).filter(e=>e)})([[1,1,1,0],B({key:t})],[[1,1,0,1],se(e)],[[1,1,0,0],M],[[1,1,1,1],E],[[1,0,0,0],T()],[[1,1,1,1],A],[[1,1,1,1],de({history:!1})],[[1,1,0,0],C()],[[1,1,1,0],_],[[1,0,0,0],le],[[1,1,0,0],ve()],[[1,0,0,0],D()],[[1,1,1,0],F()],[[1,0,0,0],Ne],[[1,1,1,1],$],[[1,1,1,0],Ve]))})()}();</script><script data-lightbox>
+/* 스크린샷 클릭 → 확대 보기
+   · 열면 먼저 화면에 꽉 맞춰 보여주고, 한 번 더 누르면 원본 100% 크기로 확대
+   · 확대 상태에서 드래그(모바일은 한 손가락)로 이동, 휠·핀치로 자유 배율
+   · ESC·✕·배경 클릭으로 닫기 (오너 상시 요구 · 2026-10-06 도입)                      */
+(() => {
+  if (window.__lb) return; window.__lb = 2;   // 2 = 원본 크기 확대판(2026-11-04)
+
+  const PAD = 28, MAXZ = 4;
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99999;display:none;overflow:hidden;' +
+    'background:rgba(10,14,22,.93);touch-action:none;-webkit-user-select:none;user-select:none';
+
+  const im = document.createElement('img');
+  im.draggable = false;
+  im.style.cssText = 'position:absolute;left:0;top:0;transform-origin:0 0;background:#fff;' +
+    'border-radius:4px;box-shadow:0 12px 44px rgba(0,0,0,.5);will-change:transform';
+  ov.appendChild(im);
+
+  const hud = document.createElement('div');
+  hud.style.cssText = 'position:absolute;right:16px;top:14px;display:flex;gap:8px;align-items:center;' +
+    'font:600 13px/1 system-ui,-apple-system,sans-serif;color:#eaf0fb;pointer-events:none';
+  const chip = 'background:rgba(255,255,255,.15);padding:8px 12px;border-radius:999px;backdrop-filter:blur(6px)';
+  const tip = document.createElement('span'); tip.style.cssText = chip + ';transition:opacity .4s';
+  const pct = document.createElement('span'); pct.style.cssText = chip + ';font-variant-numeric:tabular-nums';
+  const xb  = document.createElement('button'); xb.textContent = '✕'; xb.setAttribute('aria-label', '닫기');
+  xb.style.cssText = chip + ';pointer-events:auto;border:0;color:#fff;width:36px;height:36px;padding:0;' +
+    'font:600 16px/1 system-ui;cursor:pointer';
+  hud.append(tip, pct, xb);
+  ov.appendChild(hud);
+
+  let nw = 0, nh = 0, fit = 1, s = 1, tx = 0, ty = 0;
+  let drag = false, lx = 0, ly = 0, moved = false, tipT = 0;
+
+  const clamp = () => {
+    const W = innerWidth, H = innerHeight, w = nw * s, h = nh * s;
+    tx = w <= W ? (W - w) / 2 : Math.min(0, Math.max(W - w, tx));
+    ty = h <= H ? (H - h) / 2 : Math.min(0, Math.max(H - h, ty));
+  };
+  const draw = () => {
+    im.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')';
+    pct.textContent = Math.round(s * 100) + '%';
+    const big = nw * s > innerWidth + 1 || nh * s > innerHeight + 1;
+    im.style.cursor = big ? (drag ? 'grabbing' : 'grab') : (s < 1 ? 'zoom-in' : 'zoom-out');
+  };
+  const zoom = (ns, cx, cy) => {
+    ns = Math.max(Math.min(fit, 1) * 0.9, Math.min(ns, MAXZ));
+    const k = ns / s;
+    tx = cx - (cx - tx) * k; ty = cy - (cy - ty) * k;
+    s = ns; clamp(); draw();
+  };
+  const showTip = (t) => {
+    tip.textContent = t; tip.style.opacity = '1';
+    clearTimeout(tipT); tipT = setTimeout(() => { tip.style.opacity = '0'; }, 2600);
+  };
+  const close = () => { ov.style.display = 'none'; im.removeAttribute('src'); document.body.style.overflow = ''; };
+
+  const open = (src) => {
+    im.onload = () => {
+      nw = im.naturalWidth; nh = im.naturalHeight;
+      im.style.width = nw + 'px'; im.style.height = nh + 'px';
+      fit = Math.min((innerWidth - PAD * 2) / nw, (innerHeight - PAD * 2) / nh);
+      s = Math.min(fit, 1);            // 원본보다 크게는 띄우지 않는다
+      tx = ty = 0; clamp(); draw();
+      showTip(fit < 0.995 ? '클릭하면 원본 크기 · 드래그 이동 · ESC 닫기' : '휠로 확대 · ESC 닫기');
+    };
+    im.src = src;
+    ov.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  };
+
+  // 배경 클릭 → 닫기 / 이미지 클릭 → 맞춤 ↔ 원본 토글
+  ov.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (moved) { moved = false; return; }
+    if (e.target === xb || e.target === ov) { close(); return; }
+    if (e.target === im) {
+      const f = Math.min(fit, 1);
+      zoom(s > f + 0.005 ? f : Math.max(1, f * 2), e.clientX, e.clientY);
+    }
+  });
+
+  // 드래그 이동 (마우스 · 터치 공통)
+  im.addEventListener('pointerdown', (e) => {
+    if (nw * s <= innerWidth && nh * s <= innerHeight) return;
+    drag = true; moved = false; lx = e.clientX; ly = e.clientY;
+    im.setPointerCapture(e.pointerId); draw(); e.preventDefault();
+  });
+  im.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.clientX - lx, dy = e.clientY - ly;
+    if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+    tx += dx; ty += dy; lx = e.clientX; ly = e.clientY; clamp(); draw();
+  });
+  const endDrag = (e) => { if (drag) { drag = false; try { im.releasePointerCapture(e.pointerId); } catch (_) {} draw(); } };
+  im.addEventListener('pointerup', endDrag);
+  im.addEventListener('pointercancel', endDrag);
+
+  // 휠 줌 (슬라이드 전환으로 새지 않게 차단)
+  ov.addEventListener('wheel', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    zoom(s * (e.deltaY < 0 ? 1.18 : 1 / 1.18), e.clientX, e.clientY);
+  }, { passive: false });
+
+  // 핀치 줌
+  let pts = new Map(), pd = 0;
+  ov.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') pts.set(e.pointerId, e); });
+  ov.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'touch' || !pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, e);
+    if (pts.size !== 2) return;
+    const [a, b] = [...pts.values()];
+    const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+    if (pd) { moved = true; zoom(s * (d / pd), (a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2); }
+    pd = d;
+  });
+  const dropPt = (e) => { pts.delete(e.pointerId); if (pts.size < 2) pd = 0; };
+  ov.addEventListener('pointerup', dropPt);
+  ov.addEventListener('pointercancel', dropPt);
+
+  // 열려 있는 동안 키보드는 전부 여기서 소비 (화살표가 슬라이드를 넘기면 안 된다)
+  document.addEventListener('keydown', (e) => {
+    if (ov.style.display === 'none') return;
+    const cx = innerWidth / 2, cy = innerHeight / 2;
+    if (e.key === 'Escape') close();
+    else if (e.key === '+' || e.key === '=') zoom(s * 1.25, cx, cy);
+    else if (e.key === '-' || e.key === '_') zoom(s / 1.25, cx, cy);
+    else if (e.key === '0') zoom(Math.min(fit, 1), cx, cy);
+    else if (e.key === '1') zoom(1, cx, cy);
+    else if (e.key === 'ArrowLeft') { tx += 60; clamp(); draw(); }
+    else if (e.key === 'ArrowRight') { tx -= 60; clamp(); draw(); }
+    else if (e.key === 'ArrowUp') { ty += 60; clamp(); draw(); }
+    else if (e.key === 'ArrowDown') { ty -= 60; clamp(); draw(); }
+    else return;
+    e.preventDefault(); e.stopPropagation();
+  }, true);
+
+  addEventListener('resize', () => {
+    if (ov.style.display === 'none' || !nw) return;
+    fit = Math.min((innerWidth - PAD * 2) / nw, (innerHeight - PAD * 2) / nh);
+    clamp(); draw();
+  });
+
+  const ready = () => {
+    document.body.appendChild(ov);
+    document.addEventListener('click', (e) => {
+      const t = e.target;
+      if (t && t.tagName === 'IMG' && t.closest('section') && !t.classList.contains('emoji')) {
+        e.preventDefault(); e.stopPropagation(); open(t.currentSrc || t.src);
+      }
+    }, true);
+  };
+  document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', ready) : ready();
+})();
+</script>
+</body></html>
