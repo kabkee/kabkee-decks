@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>모바일 핫스팟 회전 UI 시안 비교 — IND-9524</title>
+<style>
+  :root { --accent: #6b8e00; --ink: #111827; --sub: #5b6474; --line: #e5e7eb; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Pretendard, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; color: var(--ink); background: #f5f6f8; }
+  header { max-width: 1320px; margin: 0 auto; padding: 32px 24px 8px; }
+  h1 { margin: 0 0 8px; font-size: 26px; }
+  .lead { margin: 0; color: var(--sub); line-height: 1.6; font-size: 15px; }
+  .lead b { color: var(--ink); }
+  .note { margin: 14px 0 0; padding: 10px 14px; border-radius: 10px; background: #fff; border: 1px solid var(--line); font-size: 13px; color: var(--sub); line-height: 1.6; }
+  table { width: 100%; max-width: 1320px; margin: 18px auto 0; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; font-size: 13px; }
+  .tableWrap { max-width: 1320px; margin: 0 auto; padding: 0 24px; overflow-x: auto; }
+  th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; line-height: 1.5; }
+  th { background: #f9fafb; font-weight: 600; white-space: nowrap; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .stage { max-width: 1320px; margin: 0 auto; padding: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 28px; justify-items: center; }
+  .opt { display: grid; gap: 12px; justify-items: center; width: 100%; max-width: 400px; }
+  .optHead { width: 100%; min-height: 92px; }
+  .opt { align-content: start; }
+  .optHead h2 { margin: 0; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+  .tag { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #eef2e1; color: #3f5400; }
+  .tag.new { background: #e8eefc; color: #1d4ed8; }
+  .optHead p { margin: 6px 0 0; font-size: 13px; color: var(--sub); line-height: 1.55; }
+  .pc { width: 100%; font-size: 13px; line-height: 1.55; display: grid; gap: 6px; }
+  .pc div { padding: 8px 12px; border-radius: 10px; background: #fff; border: 1px solid var(--line); }
+  .pc .plus::before { content: "＋ "; color: #15803d; font-weight: 700; }
+  .pc .minus::before { content: "－ "; color: #b91c1c; font-weight: 700; }
+  .meter { font-size: 12px; color: var(--sub); }
+  .meter b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* ===== 휴대폰 틀 (390 × 760) ===== */
+  .phone { position: relative; width: 390px; height: 760px; border-radius: 44px; padding: 10px; background: #0b0c0f; box-shadow: 0 18px 40px rgba(0,0,0,.25); }
+  .screen { position: relative; width: 100%; height: 100%; border-radius: 34px; overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,.0) 55%, rgba(0,0,0,.25)),
+      linear-gradient(180deg, #c9d6e3 0%, #e9eef3 38%, #b9a58b 38.2%, #a38c70 70%, #7d6a54 100%); }
+  .screen::before { content: ""; position: absolute; left: 0; right: 0; top: 38%; height: 1px; background: rgba(0,0,0,.15); }
+  .wall { position: absolute; top: 9%; height: 29%; border-left: 2px solid rgba(0,0,0,.06); }
+  .scene { position: absolute; left: 0; right: 0; top: 0; perspective: 700px; display: grid; place-items: center; }
+  .marker { width: 150px; height: 100px; border-radius: 10px; display: grid; place-items: center; color: #fff; font-weight: 800; letter-spacing: .5px;
+    background: linear-gradient(135deg, #e11d48, #fb7185); box-shadow: 0 6px 16px rgba(0,0,0,.3); outline: 2px solid #fff; outline-offset: 3px; transform-style: preserve-3d; }
+  .marker small { display: block; font-size: 11px; font-weight: 600; opacity: .9; text-align: center; }
+  .topbar { position: absolute; left: 14px; right: 14px; top: 14px; display: flex; justify-content: space-between; }
+  .topbar span { padding: 6px 10px; border-radius: 999px; background: rgba(0,0,0,.45); color: #fff; font-size: 11px; }
+
+  /* ===== 실제 바텀시트 CSS (HotspotMobileController.vue · HotspotPrecisionSlider.vue 에서 그대로 옮김) ===== */
+  .hsCtl { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 12px; padding: 8px 14px 20px; border-radius: 22px 22px 0 0;
+    background: rgba(20,22,28,.9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: #f4f5f8; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .hsCtl__grab { width: 40px; height: 5px; margin: 0 auto; border-radius: 3px; background: rgba(255,255,255,.3); }
+  .hsCtl__tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 2px; padding: 3px; border-radius: 12px; background: rgba(255,255,255,.06); }
+  .hsCtl__tab { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; line-height: 1; height: 50px; padding: 0; border: 0; border-radius: 9px; background: transparent; color: #a3a9b8; font-size: 11px; font-weight: 500; font-family: inherit; cursor: pointer; }
+  .hsCtl__tab svg { width: 20px; height: 20px; }
+  .hsCtl__tab[aria-selected="true"] { background: rgba(255,255,255,.14); color: #fff; }
+  .hsCtl__panels { min-height: 196px; }
+  .hsCtl__panel { display: grid; gap: 12px; align-content: start; }
+  .hsCtl__row2 { display: grid; grid-template-columns: 132px 1fr; gap: 14px; align-items: center; }
+  .hsCtl__between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .hsCtl__lab { font-size: 13px; color: #a3a9b8; }
+  .hsCtl__val { font: 500 14px ui-monospace, monospace; font-variant-numeric: tabular-nums; color: #fff; }
+  .hsCtl__side { display: grid; gap: 8px; align-content: center; }
+  .hsCtl__side p { margin: 0; font-size: 12px; color: #a3a9b8; line-height: 1.45; }
+  .hsCtl__chip { display: inline-flex; align-items: center; justify-content: center; gap: 4px; line-height: 1; height: 32px; padding: 0 12px; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; background: transparent; color: #f4f5f8; font-size: 12px; font-weight: 500; font-family: inherit; cursor: pointer; }
+  .hsCtl__pad { position: relative; width: 132px; height: 132px; border-radius: 18px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); touch-action: none; cursor: grab; }
+  .hsCtl__knob { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: #fff; box-shadow: 0 3px 10px rgba(0,0,0,.45); pointer-events: none; }
+  .hsCtl__axis { position: absolute; background: rgba(255,255,255,.12); }
+  .hsCtl__axis.h { left: 10px; right: 10px; top: 50%; height: 1px; }
+  .hsCtl__axis.v { top: 10px; bottom: 10px; left: 50%; width: 1px; }
+  .hsCtl__padLab { position: absolute; font-size: 10px; color: #a3a9b8; pointer-events: none; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+  .hsCtl__dial { width: 132px; height: 132px; touch-action: none; cursor: grab; }
+  .hsCtl__dial svg { width: 100%; height: 100%; display: block; }
+  .hsScrub { display: grid; gap: 6px; }
+  .hsScrub__head { display: flex; align-items: center; justify-content: space-between; }
+  .hsScrub__lab { font-size: 13px; color: #a3a9b8; }
+  .hsScrub__val { font: 500 14px ui-monospace, monospace; font-variant-numeric: tabular-nums; color: #fff; }
+  .hsScrub__body { display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; gap: 8px; }
+  .hsScrub__track { position: relative; height: 44px; touch-action: none; cursor: ew-resize; }
+  .hsScrub__track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 4px; margin-top: -2px; border-radius: 2px; background: rgba(255,255,255,.18); }
+  .hsScrub__fill { position: absolute; top: 50%; height: 4px; margin-top: -2px; border-radius: 2px; background: var(--accent); }
+  .hsScrub__snap { position: absolute; left: 50%; top: 50%; width: 2px; height: 12px; margin: -6px 0 0 -1px; background: rgba(255,255,255,.45); }
+  .hsScrub__thumb { position: absolute; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.4); pointer-events: none; }
+  .hsScrub__step { display: inline-flex; align-items: center; justify-content: center; line-height: 1; width: 36px; height: 36px; padding: 0; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; background: transparent; color: #fff; font-size: 18px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  /* 시안 C 의 작은 슬라이더(패드 아래 2줄) */
+  .mini .hsScrub__track { height: 32px; }
+  .mini .hsScrub__step { width: 30px; height: 30px; font-size: 16px; }
+  .mini .hsScrub__body { grid-template-columns: 30px 1fr 30px; }
+  .mini.hsScrub { gap: 2px; }
+  footer { max-width: 1320px; margin: 0 auto; padding: 8px 24px 40px; font-size: 12px; color: var(--sub); line-height: 1.7; }
+</style>
+</head>
+<body>
+<header>
+  <h1>모바일 핫스팟 회전 UI — 시안 비교</h1>
+  <p class="lead">대상: 360 게시물 이미지 마커 · VR 스티커의 <b>모바일(터치·세로) 바텀시트</b>, 「화면에 붙이기」를 <b>켠</b> 상태(x·y·z축 회전).
+    지금은 <b>A안(탭 2개)</b>으로 배포돼 있고 오너 실기 확인을 마쳤다(2026-11-14). 이 문서는 «축별 3줄»로 바꾸자는 제안(QC IND-9531 관찰)을 회의에서 판단하기 위한 비교 시안이다.</p>
+  <p class="note">🖐️ 아래 휴대폰 3대는 <b>직접 조작</b>할 수 있다. 다이얼·패드·슬라이더를 끌면 위 마커가 같이 기운다. 탭도 누를 수 있다.<br>
+    ⚠️ 마커가 기우는 모습은 CSS 3D 로 흉내 낸 근사치다. 실제 krpano 렌더링은 세 안 모두 같고, 다른 것은 <b>조작 도구</b>뿐이다.<br>
+    「화면에 붙이기」를 <b>끈</b> 상태는 세 안 모두 같다. 「회전」 탭의 다이얼 하나로 화면 평면 회전(<code>rotate</code>)만 바꾼다.</p>
+</header>
+
+<div class="tableWrap">
+<table>
+  <thead><tr><th></th><th>A. 현행 — 탭 2개</th><th>B. 축별 3줄</th><th>C. 혼합 — 패드 + 미세조정 2줄</th></tr></thead>
+  <tbody>
+    <tr><th>탭 구성</th><td>위치 · 크기 · <b>회전</b> · <b>기울기</b> · 순서·설정 (5개)</td><td>위치 · 크기 · <b>회전</b> · 순서·설정 (4개)</td><td>A와 같음 (5개)</td></tr>
+    <tr><th>z축 회전</th><td>「회전」 탭 다이얼</td><td>「회전」 탭 3줄 중 셋째 줄 슬라이더</td><td>「회전」 탭 다이얼</td></tr>
+    <tr><th>x·y축 회전</th><td>「기울기」 탭 패드 하나로 두 축 동시</td><td>「회전」 탭 첫째·둘째 줄 슬라이더 (축마다 따로)</td><td>「기울기」 탭 패드 + 그 아래 x·y 슬라이더 2줄</td></tr>
+    <tr><th>한 축만 정확히</th><td>어렵다 (패드를 끌면 두 축이 같이 움직인다)</td><td>쉽다 (−/+ 로 1°씩)</td><td>쉽다 (아래 슬라이더)</td></tr>
+    <tr><th>대충 빨리 기울이기</th><td>쉽다 (손가락 한 번)</td><td>느리다 (슬라이더 2개를 따로)</td><td>쉽다 (패드)</td></tr>
+    <tr><th>바텀시트 높이 · 가림</th><td class="num" data-meter="A">측정 중…</td><td class="num" data-meter="B">측정 중…</td><td class="num" data-meter="C">측정 중…</td></tr>
+    <tr><th>PC 카드와의 일관성</th><td>낮다 (PC 는 3줄)</td><td>높다 (PC 와 같은 3줄)</td><td>중간 (숫자 슬라이더는 PC 와 같다)</td></tr>
+    <tr><th>구현 범위</th><td>없음 (배포됨)</td><td>FE 1곳 — 회전 탭 재구성 · 기울기 탭 제거 · i18n · 테스트</td><td>FE 1곳 — 기울기 탭에 슬라이더 2줄 추가 · 테스트</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="stage">
+  <section class="opt" data-opt="A">
+    <div class="optHead"><h2>A. 현행 — 탭 2개 <span class="tag">배포됨</span></h2>
+      <p>「회전」 탭 = z축 다이얼, 「기울기」 탭 = x·y축 패드. 오너가 방향을 실기로 확인한 상태 그대로다.</p></div>
+    <div class="phone"><div class="screen"></div></div>
+    <div class="meter" data-meter-inline="A"></div>
+    <div class="pc">
+      <div class="plus">손가락 한 번으로 두 축을 같이 기울인다. «벽에 붙인 느낌» 을 맞추기 빠르다.</div>
+      <div class="plus">바텀시트가 가장 낮다(실측 309px). 파노라마가 가장 많이 보인다.</div>
+      <div class="minus">x축만 30°처럼 한 축만 정확히 맞추기 어렵다. 두 번 탭으로 0 으로 되돌리는 것만 가능하다.</div>
+      <div class="minus">PC 카드(3줄)와 조작 방식이 다르다.</div>
+    </div>
+  </section>
+
+  <section class="opt" data-opt="B">
+    <div class="optHead"><h2>B. 축별 3줄 <span class="tag new">제안</span></h2>
+      <p>「기울기」 탭을 없애고 「회전」 탭 안에 x축 · y축 · z축 슬라이더 3줄을 둔다. PC 카드와 같은 구조다.</p></div>
+    <div class="phone"><div class="screen"></div></div>
+    <div class="meter" data-meter-inline="B"></div>
+    <div class="pc">
+      <div class="plus">축마다 −/+ 와 숫자가 있어 한 축만 정확히 맞추기 쉽다.</div>
+      <div class="plus">PC 와 이름·구조가 같아서 설명이 하나로 끝난다. x·y·z 가 한 탭에 모여 탭도 하나 줄어든다.</div>
+      <div class="minus">A 보다 바텀시트가 23px 높다(실측 332px). 슬라이더 3줄이 빽빽해 손가락이 옆 줄을 건드리기 쉽다.</div>
+      <div class="minus">대충 기울이려 해도 슬라이더 2개를 따로 끌어야 한다. z축 다이얼의 «돌리는» 감각도 사라진다.</div>
+    </div>
+  </section>
+
+  <section class="opt" data-opt="C">
+    <div class="optHead"><h2>C. 혼합 — 패드 + 미세조정 2줄 <span class="tag new">절충안</span></h2>
+      <p>A 를 그대로 두고, 「기울기」 탭의 패드 아래에 x축 · y축 작은 슬라이더 2줄만 더한다.</p></div>
+    <div class="phone"><div class="screen"></div></div>
+    <div class="meter" data-meter-inline="C"></div>
+    <div class="pc">
+      <div class="plus">패드로 대충 기울이고 슬라이더로 1°씩 다듬는다. A 와 B 의 장점을 함께 가진다.</div>
+      <div class="plus">오너가 확인한 패드 조작감을 버리지 않는다.</div>
+      <div class="minus">「기울기」 탭의 바텀시트가 세 안 중 가장 높다(실측 363px · A 보다 54px). 마커가 시트 뒤로 숨기 쉽다.</div>
+      <div class="minus">같은 값을 바꾸는 도구가 두 개라 화면이 조금 복잡하다.</div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  근거 좌표: 바텀시트 <code>look360_v3_client/src/components/hotspot/HotspotMobileController.vue</code> · 슬라이더 <code>HotspotPrecisionSlider.vue</code>(시안의 바텀시트 CSS 는 두 파일에서 그대로 옮겼다) · 패드 방향 <code>src/utils/hotspot/controllerMath.js</code> <code>tiltFromDrag</code>(커밋 <code>e6bd882e</code>·<code>9f737bd6</code>).<br>
+  관련 이슈: IND-9524(EPIC) · IND-9526(FE) · IND-9531(QC — «모바일 켬은 3줄이 아니라 탭 2개» 관찰). 바텀시트 높이·가림 비율은 이 페이지가 390×740 화면에서 직접 잰 값이다.
+</footer>
+
+<script>
+const TILT = 80, GAIN = 0.9
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
+const ICON = {
+  position: ['M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3'],
+  size: ['M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7'],
+  rotate: ['M21 12a9 9 0 1 1-3-6.7L21 8', 'M21 3v5h-5'],
+  tilt: ['M4 7l8-4 8 4-8 4z', 'M4 7v10l8 4 8-4V7'],
+  order: ['M6 4h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z', 'M9 19h9a2 2 0 0 0 2-2V8'],
+}
+const LABEL = { position: '위치', size: '크기', rotate: '회전', tilt: '기울기', order: '순서·설정' }
+const svg = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[k].map((d) => `<path d="${d}"/>`).join('')}</svg>`
+
+function dialSvg() {
+  let ticks = ''
+  for (let i = 0; i < 24; i++) {
+    const a = (i * 15 - 90) * Math.PI / 180, big = i % 6 === 0, r1 = big ? 50 : 54, r2 = 60
+    ticks += `<line x1="${66 + r1 * Math.cos(a)}" y1="${66 + r1 * Math.sin(a)}" x2="${66 + r2 * Math.cos(a)}" y2="${66 + r2 * Math.sin(a)}" stroke="rgba(255,255,255,${big ? .7 : .25})" stroke-width="${big ? 2 : 1}"/>`
+  }
+  return `<svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="64" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.12)"/>${ticks}<g data-dial-g><circle cx="66" cy="16" r="9" fill="#fff"/></g><circle cx="66" cy="66" r="34" fill="rgba(0,0,0,.25)"/></svg>`
+}
+const slider = (key, label, min, max, mini = false) => `
+  <div class="hsScrub${mini ? ' mini' : ''}" data-slider="${key}" data-min="${min}" data-max="${max}">
+    <div class="hsScrub__head"><span class="hsScrub__lab">${label}</span><span class="hsScrub__val" data-v="${key}">0°</span></div>
+    <div class="hsScrub__body">
+      <button type="button" class="hsScrub__step" data-step="-1">−</button>
+      <div class="hsScrub__track"><i class="hsScrub__snap"></i><i class="hsScrub__fill"></i><i class="hsScrub__thumb"></i></div>
+      <button type="button" class="hsScrub__step" data-step="1">+</button>
+    </div>
+  </div>`
+const PANEL = {
+  dial: `<div class="hsCtl__panel"><div class="hsCtl__row2"><div class="hsCtl__dial" data-dial>${dialSvg()}</div>
+    <div class="hsCtl__side"><div class="hsCtl__between"><span class="hsCtl__lab">z축 회전</span><span class="hsCtl__val" data-v="rz">0°</span></div>
+    <p>원을 따라 돌리면 마커가 같이 돌아가요. 0°·90°·180° 근처에서는 살짝 붙어요.</p>
+    <button type="button" class="hsCtl__chip" data-reset="rz">똑바로 세우기</button></div></div></div>`,
+  pad: `<div class="hsCtl__row2"><div class="hsCtl__pad" data-pad><i class="hsCtl__axis h"></i><i class="hsCtl__axis v"></i>
+      <span class="hsCtl__padLab" style="top:4px">위로 눕히기</span><span class="hsCtl__padLab" style="bottom:4px">아래로 눕히기</span><span class="hsCtl__knob"></span></div>
+    <div class="hsCtl__side"><div class="hsCtl__between"><span class="hsCtl__lab">y축 · x축 회전</span><span class="hsCtl__val" data-v="tilt">0° · 0°</span></div>
+    <p>벽이나 바닥에 붙인 것처럼 비스듬하게 만들어요. 두 번 탭하면 정면으로 돌아와요.</p></div></div>`,
+}
+const OPTS = {
+  A: { tabs: ['position', 'size', 'rotate', 'tilt', 'order'], start: 'tilt',
+       panels: { rotate: PANEL.dial, tilt: `<div class="hsCtl__panel">${PANEL.pad}</div>` } },
+  B: { tabs: ['position', 'size', 'rotate', 'order'], start: 'rotate',
+       panels: { rotate: `<div class="hsCtl__panel" style="gap:6px">${slider('rx', 'x축 회전', -TILT, TILT)}${slider('ry', 'y축 회전', -TILT, TILT)}${slider('rz', 'z축 회전', -180, 180)}</div>` } },
+  C: { tabs: ['position', 'size', 'rotate', 'tilt', 'order'], start: 'tilt',
+       panels: { rotate: PANEL.dial, tilt: `<div class="hsCtl__panel" style="gap:6px">${PANEL.pad}${slider('rx', 'x축 회전', -TILT, TILT, true)}${slider('ry', 'y축 회전', -TILT, TILT, true)}</div>` } },
+}
+const OTHER = `<div class="hsCtl__panel"><p style="margin:24px 0 0;text-align:center;font-size:13px;color:#a3a9b8">이 시안에서는 회전·기울기 탭만 비교한다</p></div>`
+
+function build(section) {
+  const id = section.dataset.opt, cfg = OPTS[id]
+  const s = { rx: 20, ry: -25, rz: 0, tab: cfg.start }
+  const screen = section.querySelector('.screen')
+  screen.innerHTML = `<i class="wall" style="left:22%"></i><i class="wall" style="left:71%"></i>
+    <div class="topbar"><span>←  360 게시물 작성</span><span>되돌리기 ↺</span></div>
+    <div class="scene"><div class="marker"><div>LOOK360<small>이미지 마커</small></div></div></div>
+    <div class="hsCtl"><div class="hsCtl__grab"></div>
+      <div class="hsCtl__tabs">${cfg.tabs.map((t) => `<button type="button" class="hsCtl__tab" data-tab="${t}">${svg(t)}${LABEL[t]}</button>`).join('')}</div>
+      <div class="hsCtl__panels"></div></div>`
+  const sheet = screen.querySelector('.hsCtl'), panels = screen.querySelector('.hsCtl__panels'), marker = screen.querySelector('.marker'), scene = screen.querySelector('.scene')
+
+  function render() {
+    marker.style.transform = `rotateX(${-s.rx}deg) rotateY(${-s.ry}deg) rotateZ(${s.rz}deg)`
+    screen.querySelectorAll('[data-v]').forEach((el) => {
+      const k = el.dataset.v
+      el.textContent = k === 'tilt' ? `${Math.round(s.ry)}° · ${Math.round(s.rx)}°` : `${Math.round(s[k])}°`
+    })
+    const knob = screen.querySelector('.hsCtl__knob')
+    if (knob) knob.style.transform = `translate(${(-s.ry / TILT) * 43}px, ${(s.rx / TILT) * 43}px)`
+    const g = screen.querySelector('[data-dial-g]')
+    if (g) g.setAttribute('transform', `rotate(${s.rz} 66 66)`)
+    screen.querySelectorAll('[data-slider]').forEach((el) => {
+      const k = el.dataset.slider, min = +el.dataset.min, max = +el.dataset.max
+      const p = (s[k] - min) / (max - min), z = (0 - min) / (max - min)
+      el.querySelector('.hsScrub__thumb').style.left = `${p * 100}%`
+      const f = el.querySelector('.hsScrub__fill')
+      f.style.left = `${Math.min(p, z) * 100}%`; f.style.width = `${Math.abs(p - z) * 100}%`
+    })
+  }
+  function measure() {
+    const h = screen.clientHeight, sh = sheet.offsetHeight
+    scene.style.height = `${h - sh}px`
+    const pct = Math.round((sh / h) * 100)
+    const txt = `바텀시트 <b>${sh}px</b> · 화면의 <b>${pct}%</b> 가림 · 파노라마 보이는 높이 <b>${h - sh}px</b>`
+    section.querySelector('[data-meter-inline]').innerHTML = `${LABEL[s.tab]} 탭 기준 — ${txt}`
+    const cell = document.querySelector(`[data-meter="${id}"]`)
+    const tiltTab = cfg.panels.tilt ? 'tilt' : 'rotate'
+    if (s.tab === tiltTab) cell.innerHTML = `${sh}px · 화면의 ${pct}% (x·y 조작 탭 기준)`
+  }
+  function selectTab(t) {
+    s.tab = t
+    screen.querySelectorAll('.hsCtl__tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === t)))
+    panels.innerHTML = cfg.panels[t] || OTHER
+    wire(); render(); measure()
+  }
+  function drag(el, onStart, onMove) {
+    el.addEventListener('pointerdown', (e) => {
+      e.preventDefault(); el.setPointerCapture(e.pointerId)
+      const st = onStart(e)
+      const mv = (ev) => onMove(ev, st)
+      const up = () => { el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up) }
+      el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up)
+    })
+  }
+  function wire() {
+    const pad = panels.querySelector('[data-pad]')
+    if (pad) {
+      let last = 0
+      pad.addEventListener('pointerdown', () => { const n = Date.now(); if (n - last < 300) { s.rx = 0; s.ry = 0; render() } last = n })
+      drag(pad, (e) => ({ x: e.clientX, y: e.clientY, rx: s.rx, ry: s.ry }), (e, st) => {
+        s.ry = clamp(st.ry - (e.clientX - st.x) * GAIN, -TILT, TILT)
+        s.rx = clamp(st.rx + (e.clientY - st.y) * GAIN, -TILT, TILT)
+        render()
+      })
+    }
+    const dial = panels.querySelector('[data-dial]')
+    if (dial) drag(dial, () => null, (e) => {
+      const r = dial.getBoundingClientRect()
+      let a = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI + 90
+      if (a > 180) a -= 360
+      for (const t of [0, 90, -90, 180]) if (Math.abs(a - t) < 3) a = t
+      s.rz = a; render()
+    })
+    panels.querySelectorAll('[data-reset]').forEach((b) => b.addEventListener('click', () => { s[b.dataset.reset] = 0; render() }))
+    panels.querySelectorAll('[data-slider]').forEach((el) => {
+      const k = el.dataset.slider, min = +el.dataset.min, max = +el.dataset.max, track = el.querySelector('.hsScrub__track')
+      const setX = (x) => { const r = track.getBoundingClientRect(); s[k] = Math.round(clamp(min + ((x - r.left) / r.width) * (max - min), min, max)); render() }
+      drag(track, (e) => setX(e.clientX), (e) => setX(e.clientX))
+      el.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => { s[k] = clamp(s[k] + +b.dataset.step, min, max); render() }))
+    })
+  }
+  screen.querySelectorAll('.hsCtl__tab').forEach((b) => b.addEventListener('click', () => selectTab(b.dataset.tab)))
+  selectTab(cfg.start)
+  // 표의 «가림» 칸은 x·y 를 조작하는 탭 기준으로 채운다
+  return { selectTab, start: cfg.start }
+}
+document.querySelectorAll('.opt').forEach(build)
+</script>
+</body>
+</html>
