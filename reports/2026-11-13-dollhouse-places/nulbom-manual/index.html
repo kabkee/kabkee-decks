@@ -24,6 +24,10 @@
   .sub { font-size:12px; color:var(--muted); margin-bottom:12px; line-height:1.5; }
   h2 { font-size:13px; margin:16px 0 6px; }
   #plan { width:100%; aspect-ratio:1/1; border:1px solid var(--line); border-radius:8px; background:#fcfcfa; touch-action:none; }
+  #planWrap.big { position:fixed; left:0; top:0; bottom:0; right:380px; z-index:20; background:#fff; padding:10px 14px; display:flex; flex-direction:column; border-right:1px solid var(--line); }
+  #planWrap.big #plan { flex:1; aspect-ratio:auto; min-height:0; }
+  .planbar button { padding:4px 8px; }
+  @media (max-width: 900px) { #planWrap.big { right:0; } }
   .row { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:6px 0; }
   .row label { font-size:12px; color:var(--muted); }
   table { width:100%; border-collapse:collapse; font-size:12px; }
@@ -70,11 +74,27 @@
     <div class="sub">360 사진 5장만으로 만든 결과야. 방 모양은 AI(HorizonNet)가 자동으로 추정했고, 방 배치는 기존 투어의 이동 핫스팟으로 자동 계산했어. 어긋난 곳은 아래 평면도에서 방을 끌어서 맞추면 돼.</div>
 
     <h2>평면도 (방 선택 → 드래그로 이동)</h2>
+    <div id="planWrap">
+    <div class="row planbar">
+      <button id="pBig">⛶ 크게 보기</button>
+      <button data-zoom="0.7" title="확대">＋</button><button data-zoom="1.43" title="축소">－</button><button id="pFit">전체 보기</button>
+      <span class="muted">지도 회전</span><button data-vrot="-90">⟲90°</button><button data-vrot="-15">⟲15°</button><button data-vrot="15">⟳15°</button><button data-vrot="90">⟳90°</button><button data-vrot="0">0°</button>
+      <label class="muted"><input type="checkbox" id="pGhost" checked> 다른 버전 점선</label>
+    </div>
     <svg id="plan"></svg>
     <div class="row">
+      <span class="muted">선택한 방 이동</span>
+      <button data-nudge="-1,0">←</button><button data-nudge="0,1">↑</button><button data-nudge="0,-1">↓</button><button data-nudge="1,0">→</button>
+      <select id="nStep"><option value="0.01">1cm</option><option value="0.05">5cm</option><option value="0.1">10cm</option></select>
+      <span class="muted">방 회전</span>
       <button data-rot="-90">⟲ 90°</button><button data-rot="-1">⟲ 1°</button>
       <button data-rot="1">⟳ 1°</button><button data-rot="90">⟳ 90°</button>
+    </div>
+    <div class="muted">휠·핀치=확대/축소 · 빈 곳 드래그=지도 이동 · 방향키=선택한 방 1cm 이동(Shift=10cm) · Esc=크게 보기 닫기<br>
+      선택한 방의 벽 옆 색 막대: <b style="color:#2e9e5b">초록=닿음</b> · <b style="color:#e08a00">주황=틈</b> · <b style="color:#d62828">빨강=겹침</b> (숫자=cm, 50cm 이내 벽만)</div>
+    <div class="row">
       <button id="bReset">자동 배치 보기</button><button id="bSaved">저장된 보정 배치</button>
+    </div>
     </div>
     <div class="row">
       <label for="camH">카메라 높이(축척)</label>
@@ -298,68 +318,175 @@ function drawLabels() {
 }
 
 // ---------- 평면도 SVG 에디터 ----------
-const svg = document.getElementById('plan');
-let view = null;
+// 화면 좌표 = 픽셀(viewBox = svg 실제 크기) → 글자·선 굵기가 확대와 무관하게 일정하다
+// view = {cx, cy, span}: 화면 중심의 세계 좌표(m, scale 적용)와 짧은 변에 들어가는 폭(m)
+// vrot = 지도 전체를 시계 방향으로 돌려 보여주는 각도(표시만 바뀌고 보정 데이터는 그대로)
+const svg = document.getElementById('plan'), planWrap = document.getElementById('planWrap');
+let view = null, vrot = 0;
+const rotFwd = (dx, dy) => { const c = Math.cos(rad(vrot)), s = Math.sin(rad(vrot)); return [dx*c + dy*s, -dx*s + dy*c]; };
+const rotInv = (u, v) => { const c = Math.cos(rad(vrot)), s = Math.sin(rad(vrot)); return [u*c - v*s, u*s + v*c]; };
+function planDims() { const W = svg.clientWidth || 360, H = svg.clientHeight || 360; return { W, H, k: Math.min(W, H) / view.span }; }
 function planView() {
   const all = rooms.flatMap(r => r.floor.map(p => toWorld(r, p)));
   const xs = all.map(p => p[0]), ys = all.map(p => p[1]);
-  const pad = 1.2, minx = Math.min(...xs) - pad, maxx = Math.max(...xs) + pad, miny = Math.min(...ys) - pad, maxy = Math.max(...ys) + pad;
-  const span = Math.max(maxx - minx, maxy - miny);
-  return { minx, maxy, span, cx: (minx + maxx) / 2, cy: (miny + maxy) / 2 };
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const ext = Math.max(...all.map(([x, y]) => { const [u, v] = rotFwd(x - cx, y - cy); return Math.max(Math.abs(u), Math.abs(v)); }));
+  return { cx, cy, span: 2 * ext + 2.4 };
+}
+// 화면 오프셋(px, 중심 기준·아래가 +) → 세계 오프셋(m)
+const scr2world = (sx, sy, k) => rotInv(sx / k, -sy / k);
+const signedArea = poly => poly.reduce((t, p, i) => { const q = poly[(i+1)%poly.length]; return t + p[0]*q[1] - q[0]*p[1]; }, 0) / 2;
+// 선택한 방의 벽마다, 50cm 이내에서 거의 평행하게 마주 보는 다른 방의 벽을 찾아 간격을 잰다
+// dist > 0 = 틈, dist < 0 = 겹침(상대 벽이 내 방 안쪽으로 들어옴)
+function contacts(sel) {
+  const A = sel.floor.map(p => toWorld(sel, p)), ccw = signedArea(A) > 0, out = [];
+  for (const o of rooms) {
+    if (o === sel) continue;
+    const B = o.floor.map(p => toWorld(o, p));
+    for (let i = 0; i < A.length; i++) {
+      const a = A[i], b = A[(i+1)%A.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 0.3) continue;
+      const t = [(b[0]-a[0])/L, (b[1]-a[1])/L], n = ccw ? [t[1], -t[0]] : [-t[1], t[0]];
+      for (let j = 0; j < B.length; j++) {
+        const c = B[j], d = B[(j+1)%B.length], M = Math.hypot(d[0]-c[0], d[1]-c[1]); if (M < 0.3) continue;
+        const u = [(d[0]-c[0])/M, (d[1]-c[1])/M];
+        if (Math.abs(t[0]*u[1] - t[1]*u[0]) > 0.09) continue;          // 약 5° 이상 비스듬하면 제외
+        const s1 = (c[0]-a[0])*t[0] + (c[1]-a[1])*t[1], s2 = (d[0]-a[0])*t[0] + (d[1]-a[1])*t[1];
+        const lo = Math.max(0, Math.min(s1, s2)), hi = Math.min(L, Math.max(s1, s2)); if (hi - lo < 0.15) continue;
+        const mid = (lo + hi) / 2, w = (mid - s1) / (s2 - s1), q = [c[0] + (d[0]-c[0])*w, c[1] + (d[1]-c[1])*w];
+        const dist = (q[0]-a[0])*n[0] + (q[1]-a[1])*n[1]; if (Math.abs(dist) > 0.5) continue;
+        out.push({ p0: [a[0] + t[0]*lo, a[1] + t[1]*lo], p1: [a[0] + t[0]*hi, a[1] + t[1]*hi], n, dist });
+      }
+    }
+  }
+  return out;
 }
 function drawPlan() {
-  if (!view || !drag) view = planView();
-  const W = 1000, k = W / view.span;
-  const X = x => (x - view.cx) * k + W / 2, Y = y => (view.cy - y) * k + W / 2;
+  if (!view) view = planView();
+  const { W, H, k } = planDims();
+  const P = (x, y) => { const [u, v] = rotFwd(x - view.cx, y - view.cy); return [W/2 + u*k, H/2 - v*k]; };
+  const ptsStr = pts => pts.map(p => P(p[0], p[1]).map(v => v.toFixed(1)).join(',')).join(' ');
   let s = '';
-  for (let gx = Math.floor(view.cx - view.span); gx <= view.cx + view.span; gx++) s += `<line x1="${X(gx)}" y1="0" x2="${X(gx)}" y2="${W}" stroke="#eee"/>`;
-  for (let gy = Math.floor(view.cy - view.span); gy <= view.cy + view.span; gy++) s += `<line x1="0" y1="${Y(gy)}" x2="${W}" y2="${Y(gy)}" stroke="#eee"/>`;
-  if (PACK) PACK.versions.forEach((v, vi) => {
+  // 격자: 1m(확대하면 10cm 보조선 추가) — 회전해도 화면을 덮도록 대각선 반경만큼 그린다
+  const R = Math.hypot(W, H) / 2 / k;
+  const gridStep = (st, col) => {
+    for (let g = Math.floor((view.cx - R) / st) * st; g <= view.cx + R; g += st) { const [p, q] = [P(g, view.cy - R), P(g, view.cy + R)]; s += `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="${col}"/>`; }
+    for (let g = Math.floor((view.cy - R) / st) * st; g <= view.cy + R; g += st) { const [p, q] = [P(view.cx - R, g), P(view.cx + R, g)]; s += `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="${col}"/>`; }
+  };
+  if (k > 120) gridStep(0.1, '#f4f4f1');
+  if (R < 80) gridStep(1, '#e6e6e2');
+  if (PACK && document.getElementById('pGhost').checked) PACK.versions.forEach((v, vi) => {
     if (v.key === curKey) return;
     for (const vr of v.rooms) {
       if (vr.variantOf) continue;
       const cur = rooms.find(r => r.id === vr.id); if (!cur) continue;
       // 위치·회전은 지금 화면의 방을 따르고(카메라 위치·방향은 버전과 무관), 모양만 그 버전 것으로 그린다
       const g = { ...vr, x: cur.x, y: cur.y, theta: cur.theta };
-      const pts = vr.floor.map(p => toWorld(g, p));
-      s += `<polygon points="${pts.map(p => X(p[0]) + ',' + Y(p[1])).join(' ')}" fill="none" stroke="${VCOLORS[vi % VCOLORS.length]}" stroke-width="3" stroke-dasharray="10 7" opacity=".8" pointer-events="none"/>`;
+      s += `<polygon points="${ptsStr(vr.floor.map(p => toWorld(g, p)))}" fill="none" stroke="${VCOLORS[vi % VCOLORS.length]}" stroke-width="1.5" stroke-dasharray="5 4" opacity=".8" pointer-events="none"/>`;
     }
   });
+  const txt = [];
   for (const r of rooms) {
     const pts = r.floor.map(p => toWorld(r, p)), sel = r.id === selected;
-    s += `<polygon data-id="${r.id}" points="${pts.map(p => X(p[0]) + ',' + Y(p[1])).join(' ')}" fill="${sel ? 'rgba(228,87,46,.12)' : 'rgba(0,0,0,.03)'}" stroke="${sel ? '#e4572e' : '#555'}" stroke-width="${sel ? 5 : 3}" style="cursor:move"/>`;
-    // 벽 길이 치수
+    s += `<polygon data-id="${r.id}" points="${ptsStr(pts)}" fill="${sel ? 'rgba(228,87,46,.12)' : 'rgba(0,0,0,.03)'}" stroke="${sel ? '#e4572e' : '#555'}" stroke-width="${sel ? 2.5 : 1.5}" style="cursor:move"/>`;
+    // 벽 길이 치수(화면에서 40px 이상인 벽만)
     for (let i = 0; i < pts.length; i++) {
       const a = pts[i], b = pts[(i+1)%pts.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]);
-      if (L < 0.6) continue;
-      s += `<text x="${X((a[0]+b[0])/2)}" y="${Y((a[1]+b[1])/2)}" font-size="20" fill="#999" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${L.toFixed(2)}</text>`;
+      if (L * k < 40) continue;
+      const [x, y] = P((a[0]+b[0])/2, (a[1]+b[1])/2);
+      txt.push(`<text x="${x}" y="${y}" font-size="10" fill="#999" text-anchor="middle" dominant-baseline="middle">${L.toFixed(2)}</text>`);
     }
-    const [cx, cy] = toWorld(r, [0, 0]);
-    s += `<circle cx="${X(cx)}" cy="${Y(cy)}" r="7" fill="${sel ? '#e4572e' : '#555'}" pointer-events="none"/>`;
-    const mx = pts.reduce((t, p) => t + p[0], 0) / pts.length, my = pts.reduce((t, p) => t + p[1], 0) / pts.length;
-    s += `<text x="${X(mx)}" y="${Y(my) - 22}" font-size="28" font-weight="700" text-anchor="middle" pointer-events="none">${r.title}</text>`;
-    s += `<text x="${X(mx)}" y="${Y(my) + 10}" font-size="22" fill="#666" text-anchor="middle" pointer-events="none">${area(pts).toFixed(1)}㎡</text>`;
+    const [cx, cy] = P(...toWorld(r, [0, 0]));
+    s += `<circle cx="${cx}" cy="${cy}" r="3.5" fill="${sel ? '#e4572e' : '#555'}" pointer-events="none"/>`;
+    const [mx, my] = P(pts.reduce((t, p) => t + p[0], 0) / pts.length, pts.reduce((t, p) => t + p[1], 0) / pts.length);
+    txt.push(`<text x="${mx}" y="${my - 7}" font-size="13" font-weight="700" text-anchor="middle">${r.title}</text>`);
+    txt.push(`<text x="${mx}" y="${my + 8}" font-size="11" fill="#666" text-anchor="middle">${area(pts).toFixed(1)}㎡</text>`);
   }
-  s += `<text x="20" y="${W - 20}" font-size="20" fill="#aaa">격자 1m · 숫자=벽 길이(m)</text>`;
-  svg.setAttribute('viewBox', `0 0 ${W} ${W}`);
+  // 벽 닿음 표시(선택한 방 기준)
+  const selRoom = rooms.find(r => r.id === selected);
+  if (selRoom) for (const c of contacts(selRoom)) {
+    const ok = Math.abs(c.dist) <= 0.02, col = ok ? '#2e9e5b' : c.dist > 0 ? '#e08a00' : '#d62828';
+    const off = c.dist / 2, [p, q] = [P(c.p0[0] + c.n[0]*off, c.p0[1] + c.n[1]*off), P(c.p1[0] + c.n[0]*off, c.p1[1] + c.n[1]*off)];
+    s += `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="${col}" stroke-width="6" stroke-linecap="round" opacity=".75" pointer-events="none"/>`;
+    const lab = ok ? '닿음' : (c.dist > 0 ? '틈 ' : '겹침 ') + Math.round(Math.abs(c.dist) * 100) + 'cm';
+    txt.push(`<text x="${(p[0]+q[0])/2}" y="${(p[1]+q[1])/2 - 7}" font-size="11" font-weight="700" fill="${col}" text-anchor="middle">${lab}</text>`);
+  }
+  // 글자는 흰 테두리를 둘러 선 위에서도 읽히게, 클릭은 방 다각형으로 통과
+  s += `<g pointer-events="none" stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round">${txt.join('')}</g>`;
+  s += `<text x="10" y="${H - 10}" font-size="10" fill="#aaa" pointer-events="none">격자 1m${k > 120 ? '(보조선 10cm)' : ''} · 숫자=벽 길이(m)${vrot ? ` · 지도 ${vrot}° 회전` : ''}</text>`;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.innerHTML = s;
-  svg._k = k;
 }
-let drag = null;
+function zoomAt(sx, sy, f) {   // sx, sy = 화면 중심 기준 px. 커서 아래 지점이 그대로 머물게 확대
+  const { W, H, k } = planDims(), ns = Math.max(0.4, Math.min(200, view.span * f)), k2 = Math.min(W, H) / ns;
+  const [a1, b1] = scr2world(sx, sy, k), [a2, b2] = scr2world(sx, sy, k2);
+  view.cx += a1 - a2; view.cy += b1 - b2; view.span = ns; drawPlan();
+}
+let drag = null, pan = null, pinch = null;
+const ptrs = new Map();
+const ptrDist = () => { const [p, q] = [...ptrs.values()]; return Math.hypot(p[0]-q[0], p[1]-q[1]); };
 svg.addEventListener('pointerdown', e => {
-  const id = e.target.dataset?.id; if (!id) return;
-  if (tap(id)) return;
-  const r = rooms.find(r => r.id === id);
-  drag = { r, x0: e.clientX, y0: e.clientY, rx: r.x, ry: r.y };
+  ptrs.set(e.pointerId, [e.clientX, e.clientY]);
   svg.setPointerCapture(e.pointerId);
+  if (ptrs.size === 2) { if (drag) refreshUI(); drag = pan = null; pinch = { d: ptrDist(), span: view.span }; return; }
+  const id = e.target.dataset?.id;
+  if (id) {
+    if (tap(id)) return;
+    const r = rooms.find(r => r.id === id);
+    drag = { r, x0: e.clientX, y0: e.clientY, rx: r.x, ry: r.y };
+  } else pan = { x0: e.clientX, y0: e.clientY, cx: view.cx, cy: view.cy };
 });
 svg.addEventListener('pointermove', e => {
-  if (!drag) return;
-  const px = 1000 / svg.clientWidth / svg._k / scale;
-  drag.r.x = drag.rx + (e.clientX - drag.x0) * px; drag.r.y = drag.ry - (e.clientY - drag.y0) * px;
-  drag.r.via = 'manual'; buildRoom(drag.r); drawPlan();
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+  if (pinch && ptrs.size === 2) { view.span = Math.max(0.4, Math.min(200, pinch.span * pinch.d / ptrDist())); drawPlan(); return; }
+  const { k } = planDims();
+  if (drag) {
+    const [dx, dy] = scr2world(e.clientX - drag.x0, e.clientY - drag.y0, k);
+    drag.r.x = drag.rx + dx / scale; drag.r.y = drag.ry + dy / scale;
+    drag.r.via = 'manual'; buildRoom(drag.r); drawPlan();
+  } else if (pan) {
+    const [dx, dy] = scr2world(e.clientX - pan.x0, e.clientY - pan.y0, k);
+    view.cx = pan.cx - dx; view.cy = pan.cy - dy; drawPlan();
+  }
 });
-svg.addEventListener('pointerup', () => { if (drag) { drag = null; refreshUI(); } });
+const ptrEnd = e => {
+  ptrs.delete(e.pointerId);
+  if (ptrs.size < 2) pinch = null;
+  if (drag) { drag = null; refreshUI(); }
+  pan = null;
+};
+svg.addEventListener('pointerup', ptrEnd); svg.addEventListener('pointercancel', ptrEnd);
+svg.addEventListener('wheel', e => {
+  e.preventDefault();
+  const b = svg.getBoundingClientRect();
+  zoomAt(e.clientX - b.left - b.width / 2, e.clientY - b.top - b.height / 2, wheelFactor(e));
+}, { passive: false });
+new ResizeObserver(() => { if (view) drawPlan(); }).observe(svg);
+document.querySelectorAll('[data-zoom]').forEach(b => b.onclick = () => zoomAt(0, 0, +b.dataset.zoom));
+document.getElementById('pGhost').onchange = () => drawPlan();
+document.getElementById('pFit').onclick = () => { view = planView(); drawPlan(); };
+document.querySelectorAll('[data-vrot]').forEach(b => b.onclick = () => {
+  const d = +b.dataset.vrot;
+  vrot = d === 0 ? 0 : (((vrot + d) % 360) + 360) % 360;
+  drawPlan();
+});
+const pBig = document.getElementById('pBig');
+function setBig(v) { planWrap.classList.toggle('big', v); pBig.textContent = v ? '✕ 크게 보기 닫기' : '⛶ 크게 보기'; pBig.classList.toggle('on', v); }
+pBig.onclick = () => setBig(!planWrap.classList.contains('big'));
+// 선택한 방을 «화면 방향»으로 미세 이동(지도를 돌려 놓아도 ↑ 는 화면 위쪽)
+function nudge(sx, sy, step) {
+  const r = rooms.find(r => r.id === selected); if (!r) return;
+  const [dx, dy] = rotInv(sx * step, sy * step);
+  r.x += dx / scale; r.y += dy / scale; r.via = 'manual'; buildRoom(r); refreshUI();
+}
+document.querySelectorAll('[data-nudge]').forEach(b => b.onclick = () => { const [sx, sy] = b.dataset.nudge.split(',').map(Number); nudge(sx, sy, +document.getElementById('nStep').value); });
+addEventListener('keydown', e => {
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+  if (e.key === 'Escape' && planWrap.classList.contains('big')) { setBig(false); return; }
+  const dir = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[e.key];
+  if (!dir || inside) return;
+  e.preventDefault(); nudge(dir[0], dir[1], e.shiftKey ? 0.1 : 0.01);
+});
 
 document.querySelectorAll('[data-rot]').forEach(b => b.onclick = () => {
   const r = rooms.find(r => r.id === selected), d = +b.dataset.rot;
@@ -446,7 +573,7 @@ function switchVersion(key) {
   S = JSON.parse(JSON.stringify(scene0));
   rooms = S.rooms.filter(r => !r.variantOf);
   variants = Object.fromEntries(S.rooms.filter(r => r.variantOf).map(r => [r.variantOf, r]));
-  rebuildAll(); view = null; renderVersions(); refreshUI();
+  rebuildAll(); renderVersions(); refreshUI();
 }
 if (PACK) document.querySelector('h1').textContent = (PACK.title || '미노네집') + ' 돌하우스 · 모델 버전 비교';
 if (window.__PLACES__) {
