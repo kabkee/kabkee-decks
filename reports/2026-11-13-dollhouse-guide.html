@@ -472,7 +472,7 @@
 </tr>
 <tr>
 <td>모델 가중치</td>
-<td><s>ZInD 학습본</s> → <span class="hl-red">상업 불가 확인</span> · <strong>자체 학습본(3차 라벨 349장, 일반 방 79.1%)</strong> 으로 교체 · 단 ImageNet 초기값 사용 = 테스트용, 도입 전 자체 사전학습 필수</td>
+<td><s>ZInD 학습본</s> → <span class="hl-red">상업 불가 확인</span> · <strong>자체 학습본(3차 라벨 349장, 일반 방 79.1%)</strong> 으로 교체 · 초기값은 ImageNet 사용(빼면 −8.5점) · 장기: 우리 사진 사전학습</td>
 </tr>
 <tr>
 <td>파이프라인</td>
@@ -547,7 +547,7 @@
 <tr>
 <td>3</td>
 <td>모델 가중치 라이선스</td>
-<td><img class="emoji" draggable="false" alt="🟡" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f7e1.svg" data-marp-twemoji=""/> <strong>진행 중</strong> — ZInD 는 제거(자체 학습 3차 79.1%) · 남은 ImageNet 초기값도 권리 불명확 → <strong>도입 전 자체 사전학습 필수</strong></td>
+<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/> <strong>해결</strong> — ZInD 제거(자체 학습 3차 79.1%) · ImageNet 초기값은 금지 조항이 없어 <strong>현재 사용</strong> · 장기: 우리 사진 사전학습으로 대체</td>
 </tr>
 <tr>
 <td>4</td>
