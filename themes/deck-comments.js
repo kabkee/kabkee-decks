@@ -203,6 +203,19 @@
     };
     dr.append($('div', { className: 'dc-row' }, $('h3', {}, `코멘트 ${comments.length}건`), close));
     dr.append($('div', { className: 'dc-status' }, remoteOk ? '공유 저장소에 연결됨 — Claude 가 직접 읽을 수 있어요.' : '공유 저장소 미연결 — 이 브라우저 저장분은 「Claude 용으로 복사」로 넘겨 주세요.'), copy);
+    // 이 브라우저(localStorage)에만 저장된 코멘트 지우기 — 공유 저장소의 코멘트는 건드리지 않는다.
+    // 실수로 지우지 않게 두 번 눌러야 지운다(브라우저 확인 창은 쓰지 않음).
+    const nLocal = comments.filter(c => c.local).length;
+    if (nLocal) {
+      const del = $('button', { className: 'dc-btn', type: 'button' }, `이 브라우저 저장분 ${nLocal}건 지우기`);
+      let armed = false;
+      del.onclick = () => {
+        if (!armed) { armed = true; del.textContent = `한 번 더 누르면 ${nLocal}건을 지워요 (공유 저장소는 그대로)`; del.style.borderColor = '#dc2626'; del.style.color = '#dc2626'; return; }
+        localStorage.removeItem(LS);
+        comments = comments.filter(c => !c.local); paint(); showAll();
+      };
+      dr.append(del);
+    }
     const list = [...comments].sort((a, b) => a.anchor.localeCompare(b.anchor));
     dr.append(list.length ? $('div', { className: 'dc-list' }, ...list.map(card)) : $('div', { className: 'dc-status' }, '아직 코멘트가 없어요.'));
     dr.hidden = false;
