@@ -14,7 +14,7 @@ title: 360 작업실 RAW 일괄 보정 — Camera Raw 수작업을 작업실로 
 
 <hr>
 
-Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
+Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13 (보라 번짐 11-16 갱신)
 
 ---
 
@@ -47,6 +47,10 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 ### 저장 형식
 - WebP 90 = JPG 95 대비 <span class="hl-blue">−36~−62%</span>
 - 스티칭 품질 차이 없음
+
+### 보라 번짐 (11-16)
+- 작업자 결과를 학습 → 실내·실외 3곳 <span class="hl-green">작업자 수준</span>
+- ISO 800 장소는 아직 약 11배 (노이즈 차이로 추정)
 
 ### 결정 필요
 - 저장 형식 기본값 · 실사용 시작 시점
@@ -137,7 +141,7 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 | 로비 사진 녹색 경계 화소 | 35,905 → <span class="hl-green">2,210</span> |
 | 카페테리아 (ISO 800) | <span class="hl-green">해결</span> 한 장 단독 측정은 «보정 불필요»로 틀림 → 렌즈 공통값으로 정상 보정 |
 
-<span class="hl-amber">남은 것</span> 보라 번짐은 작업자 결과보다 아직 10배 이상 남습니다. 줌 렌즈(초점거리별 값)는 지원하지 않습니다.
+보라 번짐은 색수차 보정만으로는 거의 줄지 않아, 11-16 에 작업자 보정을 학습한 방식으로 바꿨습니다(다음 장). <span class="hl-amber">남은 것</span> 줌 렌즈(초점거리별 값)는 지원하지 않습니다.
 
 ---
 
@@ -149,6 +153,57 @@ Indyspot AI Corp &nbsp;·&nbsp; Engineering Manager &nbsp;·&nbsp; 2026-11-13
 
 <div class="links"><span class="lbl">직접 확인</span>
 <a class="lnk" href="https://studio.look360.kr/rawbatch.html" target="_blank">렌즈 색수차 재기 · 크게 보기에서 1:1 확대경</a></div>
+
+---
+
+## 🟣 보라 번짐 — 작업자 보정을 학습해 맞췄습니다 (11-16)
+
+<span class="hl-green">해결</span> 기존 방식은 경계 근처 보라를 일률적으로 절반만 줄여서, 작업자 결과보다 **20~32배** 남았습니다. 작업자 Camera Raw 결과(4개 장소 NEF 26장)를 정답으로 놓고 «어떤 화소를 얼마나 지웠는지»를 학습해 바꿨습니다.
+
+| 장소 (경계 근처 보라 화소, 장소 합계) | 보정 전 | 기존 방식 | <span class="hl-blue">새 방식</span> | 작업자 |
+|---|---|---|---|---|
+| 1 전시관 입구 (실외 · 6장) | 286,720 | 102,871 | <span class="hl-green">2,417</span> | 3,218 |
+| 2 로비 (9장) | 346,959 | 169,794 | <span class="hl-green">14,781</span> | 8,268 |
+| 3 포토존 (5장) | 161,314 | 68,848 | <span class="hl-green">2,061</span> | 3,390 |
+| 14 카페테리아 (ISO 800 · 6장) | 326,305 | 169,081 | <span class="hl-amber">78,624</span> | 7,301 |
+
+새 방식 수치는 **그 장소를 빼고 학습한 표**로 잰 값입니다(처음 보는 장소 기준). 원본 1장당 처리 시간은 약 0.8초 늘었습니다.
+
+---
+
+## 보라 번짐 — Adobe 는 «하이라이트 옆 진한 마젠타»만 지웁니다
+
+| 학습으로 확인한 것 | 실측 (1 전시관 입구 6장 · 작업자 채도 ÷ 우리 채도, 중앙값) |
+|---|---|
+| 색상 | 마젠타 쪽 보라(Lab 300~330°) 0.34~0.37배 · 파랑 쪽(250~285°)은 0.8배 안팎 |
+| 밝은 이웃 | 바로 옆이 하이라이트(밝기 224+)면 0.33배 · 밝은 이웃이 없으면(96~128) 0.91배 |
+| 채도 | 진할수록 세게: 연한 보라 0.63배 → 진한 보라 0.24배 |
+
+→ 색상 × 밝은 이웃 × 채도별 «지우는 양» 표 2개로 만들었습니다(밝기 기준 · 어두운 장면용 대비 기준, 둘 중 센 쪽). 보라 번짐은 렌즈 배율 차이(가로 색수차)가 아니라 **밝은 경계 옆에 번지는 색**이라 색수차 보정으로는 거의 안 줄었습니다(11-12 실험, 로비 사진 60,161 → 51,968).
+
+<span class="hl-amber">남은 것</span> ① 카페테리아(ISO 800)의 남은 화소는 대부분 어두운 곳(밝기 중앙값 23)이고, 같은 자리 작업자 채도가 3.6(우리 8.5)이라 **색 노이즈 감소 차이**로 추정합니다. ② 학습 자료가 «보라 양 2» 한 값뿐이라 다른 값은 비례로 늘리고 줄입니다(미검증). ③ 작업자가 남긴 보라 일부도 함께 줄어드는 경우가 수치로는 있으나, 확대 확인한 간판·현수막 색은 그대로였습니다.
+
+---
+
+## 보라 번짐 확대 비교 — 로비 창가 나뭇잎
+
+![w:1100](assets/2026-11-13-studio-raw-batch/purple-fringe-lobby.jpg)
+
+원본 해상도 300×300 을 확대했습니다. 나뭇잎 가장자리의 보라 테두리가 기존 방식(두 번째)에서는 그대로였고, 새 방식(세 번째)에서는 작업자 결과처럼 사라졌습니다. 전체적인 하늘색 기운은 프린지가 아니라 톤·화이트밸런스 차이입니다.
+
+<div class="links"><span class="lbl">직접 확인</span>
+<a class="lnk" href="https://studio.look360.kr/rawbatch.html" target="_blank">360 작업실 · RAW 일괄 보정 → 크게 보기 1:1 확대경 (보라색 양 2)</a></div>
+
+---
+
+## 보라 번짐 확대 비교 — 진짜 보라 물체는 그대로
+
+![w:1100](assets/2026-11-13-studio-raw-batch/purple-keep-banner.jpg)
+
+로비 현수막(분홍·보라)은 밝은 경계 옆이 아니라서 새 방식에서도 색이 그대로입니다. 작업자 쪽이 더 깨끗한 것은 노이즈 감소가 더 들어갔기 때문입니다.
+
+<div class="links"><span class="lbl">직접 확인</span>
+<a class="lnk" href="https://studio.look360.kr/rawbatch.html" target="_blank">360 작업실 · RAW 일괄 보정 → 크게 보기 1:1 확대경 (보라색 양 2)</a></div>
 
 ---
 
@@ -270,7 +325,7 @@ WebP 90 결과를 작업실 입력으로 써서 ① 정렬 → 미리보기 → 
 
 | 항목 | 결과 |
 |---|---|
-| 단위 테스트 | 새 테스트 40개 + 기존 작업실 테스트 9종 전부 통과 |
+| 단위 테스트 | 새 테스트 48개(보라 번짐 8개 추가) + 기존 작업실 테스트 9종 전부 통과 |
 | 끝까지 시험 | 사본 NEF 로 화면 → 적용 → ① 정렬(잔차 8.8′) → 미리보기 → ④ 최종 렌더 → 취소 |
 | 고친 문제 ① | 같은 초에 다시 적용하다 멈추면 현재 결과 폴더가 지워짐 → 버전 이름 고유값 |
 | 고친 문제 ② | ISO 50(Lo 1) 을 못 읽음(표준 EXIF 에 없음) → LibRaw 값 사용 |
@@ -288,7 +343,7 @@ WebP 90 결과를 작업실 입력으로 써서 ① 정렬 → 미리보기 → 
 | 1 | 저장 형식 기본값 | <span class="hl-blue">WebP 90</span> (−38% 추정). 속도가 중요하면 JPG 90 (용량 차이 6%, 저장 0.1초) |
 | 2 | 실사용 시작 | 다음 촬영 프로젝트 1건을 Camera Raw 대신 작업실로 시범 보정 |
 | 3 | 실외 장면 개선 | 실외 장면을 맞춤 기준에 추가 (입구 L 6.72 → 목표 3 이하) |
-| 4 | 남은 품질 과제 | 보라 번짐 잔여 · Adobe 색감 b 축 −2~−4 편차 · 줌 렌즈 색수차 |
+| 4 | 남은 품질 과제 | ISO 800 색 노이즈 감소(보라 번짐 잔여 대부분) · Adobe 색감 b 축 −2~−4 편차 · 줌 렌즈 색수차 |
 | 5 | 시험 프로젝트 폴더 | 9.3GB — 시범 기간 유지 후 삭제 |
 
 ---
@@ -301,14 +356,15 @@ WebP 90 결과를 작업실 입력으로 써서 ① 정렬 → 미리보기 → 
 <span class="lbl">근거</span>
 <a class="lnk" href="https://kabkee-decks.netlify.app/reports/2026-11-12-studio-raw-batch-edit.html" target="_blank">가능성 확인 보고서 (11-12)</a>
 <span class="lbl">코드</span>
-<a class="lnk" href="https://github.com/kabkee/pano-stitcher" target="_blank">pano-stitcher master — 0217cca · 672ef34 · c0649a2 · dc71454 · 3b129a8</a>
+<a class="lnk" href="https://github.com/kabkee/pano-stitcher" target="_blank">pano-stitcher master — 0217cca · 672ef34 · c0649a2 · dc71454 · 3b129a8 · ba3f638(보라 번짐)</a>
 </div>
 
 | 파일 | 역할 |
 |---|---|
 | `mosaic/rawbatch.py` · `static/rawbatch.html` | 서버 API · 화면 |
 | `stitcher/crs_develop.py` | Camera Raw 식 현상 엔진 · 적용용 CLI |
-| `mosaic/test_rawbatch.py` | 테스트 40개 · README §35 에 사용법·빼는 법 |
+| `stitcher/crs_defringe_purple.json` | 작업자 결과로 학습한 보라 번짐 표 |
+| `mosaic/test_rawbatch.py` | 테스트 48개 · README §35 에 사용법·빼는 법 |
 
 ---
 
