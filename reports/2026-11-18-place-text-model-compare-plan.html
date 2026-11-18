@@ -41,11 +41,11 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 </style></head><body>
 <header><div class="w">
 <h1>장소 가이드 글 — 모델 비교 테스트 계획</h1>
-<div class="sub">v3 «가이드» 기준(g1.5)으로 장면 설명 → 장면 가이드 → 장소 소개·설명을 여러 모델에 똑같이 맡겨 비교한다 · API 는 OpenCode Zen · 2026-11-18 작성 · 실행 전 계획 문서</div>
+<div class="sub">v3 «가이드» 기준(g1.5)으로 장면 설명 → 장면 가이드 → 장소 소개·설명을 여러 모델에 똑같이 맡겨 비교한다 · Claude 계열은 <b>claude -p(구독)</b>, 그 외는 OpenCode Zen · 2026-11-18 작성 · 실행 전 계획 문서</div>
 <div class="kpis">
 <div class="kpi"><b>5곳 · 37장면</b><span>권장 시험 규모 (10곳 → 5곳으로 축소, 대표성 위주 선정)</span></div>
-<div class="kpi"><b>필수 7 + 추천 5</b><span>모델 12개 (이미지 입력 지원 · 유료 모델만)</span></div>
-<div class="kpi"><b>약 $15 + $6</b><span>생성 전체 12모델 + AI 교차 채점 2심 (예산 상한 $40 권장)</span></div>
+<div class="kpi"><b>필수 8 + 추천 3 + 선택 1</b><span>모델 12개 — Claude 3개는 구독(claude -p) · 8개는 Zen 유료 + 선택 1(Astra)</span></div>
+<div class="kpi"><b>약 $5 + $2</b><span>Zen 지출만 — 생성(Claude 외 8모델, Astra 넣으면 +$3.5) + 채점(Gemini). Claude 3모델·Opus 심사는 <b>구독 claude -p</b> 라 0원 · Zen 예산 상한 $25</span></div>
 <div class="kpi"><b>반나절</b><span>실행 약 1~2시간 · 오빠 검토는 대표 8장면 + 5곳 블라인드 투표</span></div>
 </div></div></header>
 <nav><div class="w">
@@ -83,7 +83,7 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <div class="box"><h4>🔀 모델마다 달라지는 것</h4><ul class="t">
 <li>장면 설명·장면 가이드·장소 글 전부(②③)</li>
 <li>③ 장소 단계는 «자기 모델이 ②에서 쓴 장면 가이드»를 받는다 — 모델별 결과가 처음부터 끝까지 한 줄로 이어지게</li>
-<li>API 형식(Zen 이 제조사별 형식을 그대로 받음 — 5장 참고)</li>
+<li>호출 경로: Claude 계열은 <code>claude -p</code>(구독), 나머지는 Zen(제조사별 형식 — 5장 참고)</li>
 </ul>
 <p style="margin:8px 0 0">📌 기존 «장면 메모»(Claude Haiku 가 쓴 것)는 <b>주지 않는다</b>. 주면 Claude 계열에 유리하고, 사진 판독 능력을 비교할 수 없기 때문이다.</p></div>
 </div>
@@ -101,10 +101,11 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <p style="font-size:.85em;color:#6b7280">빠진 곳과 이유: 에코델타(43장면)는 정보가 많아 좋은 표본이지만 장면 수가 커서 2차 결선용으로 남긴다. 서라벌고·부산교대·한림초·한라중은 유형이 위 학교들과 겹친다. <b>2차(결선)</b>는 상위 3~4개 모델만 에코델타 + 부산교대를 추가해 2회씩 돌려 편차까지 본다.</p>
 </section>
 
-<section class="s" id="models"><h2>4. 비교할 모델 <small>Zen 에서 이미지 입력이 되는 유료 모델 · 2026-11-18 Zen 모델 목록 기준</small></h2>
+<section class="s" id="models"><h2>4. 비교할 모델 <small>Claude 계열 = claude -p 구독 · 그 외 = Zen 유료 모델(이미지 입력 지원) · 2026-11-18 목록 기준</small></h2>
+<div class="ok" style="margin-bottom:12px">💡 <b>Claude 계열은 구독으로 돌린다.</b> content studio 가 이미 쓰는 <code>claude -p</code> 경로(사진은 첫 메시지에 base64 로 싣는 stream-json 입력 · <code>--json-schema</code> 로 JSON 강제)를 그대로 쓴다. 2026-11-18 에 <code>claude-fable-5-2</code> · <code>claude-opus-5-5</code> · <code>claude-haiku-5-5</code> 를 <code>-p --model</code> 로 실제 호출해 응답을 확인했다. 표의 Claude 가격은 «API 였다면» 참고값이고 실제 지출은 0원이다.</div>
 <table><thead><tr><th>구분</th><th>모델 (Zen id)</th><th>입력/출력 $ per 1M</th><th>API 형식</th><th>넣는 이유</th></tr></thead><tbody>
-<tr><td><span class="tag t-must">필수</span></td><td><b>Claude Fable 5.2</b> <code>claude-fable-5-2</code></td><td class="n">8 / 40</td><td>messages</td><td>오빠 지정. Anthropic 최상위 — 품질 상한선 확인</td></tr>
-<tr><td><span class="tag t-must">필수</span></td><td><b>Claude Sonnet 5.5</b> <code>claude-sonnet-5-5</code></td><td class="n">2 / 10</td><td>messages</td><td><b>기준선</b> — 지금 v3 를 쓰는 모델. API 로 돌려서 같은 조건에 놓는다</td></tr>
+<tr><td><span class="tag t-must">필수</span></td><td><b>Claude Fable 5.2</b> <code>claude-fable-5-2</code></td><td class="n">구독 (API 8 / 40)</td><td>claude -p</td><td>오빠 지정. Anthropic 최상위 — 품질 상한선 확인. 구독이라 비용 부담 없이 넣는다</td></tr>
+<tr><td><span class="tag t-must">필수</span></td><td><b>Claude Sonnet 5.5</b> <code>claude-sonnet-5-5</code></td><td class="n">구독 (API 2 / 10)</td><td>claude -p</td><td><b>기준선</b> — 지금 v3 를 쓰는 모델·경로 그대로. 단 이번엔 기존 장면 메모 없이 사진만 받는다</td></tr>
 <tr><td><span class="tag t-must">필수</span></td><td><b>Gemini 4 Carbon</b> <code>gemini-4-carbon</code></td><td class="n">2 / 10 ⚠️</td><td>generate-content</td><td>오빠 지정. Google 최상위·사실 정확도 강조. ⚠️ <b>12/1 부터 가격 2배</b>(4/20) — 11월 안에 돌리는 게 이득</td></tr>
 <tr><td><span class="tag t-must">필수</span></td><td><b>GPT-6.2 Sol</b> <code>gpt-6.2-sol</code></td><td class="n">2 / 10</td><td>responses</td><td>오빠 지정. 11/17 출시 최신 · 가격이 Sonnet 과 같아 1:1 비교가 깔끔</td></tr>
 <tr><td><span class="tag t-must">필수</span></td><td><b>Grok 4.7</b> <code>grok-4.7</code></td><td class="n">2 / 6</td><td>responses</td><td>오빠 지정. 출력이 싸서 장문 생성에 유리</td></tr>
@@ -113,7 +114,7 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <tr><td><span class="tag t-rec">추천</span></td><td><b>Qwen3.8 Max</b> <code>qwen3.8-max</code></td><td class="n">2 / 6</td><td>chat-completions</td><td>한중일 문자·간판 판독에 강한 계열 — 한자 간판 장면 비교용</td></tr>
 <tr><td><span class="tag t-rec">추천</span></td><td><b>Kimi K3</b> <code>kimi-k3</code></td><td class="n">3 / 15</td><td>chat-completions</td><td>멀티모달 · 긴 문맥 — 다른 계열의 글쓰기 비교군</td></tr>
 <tr><td><span class="tag t-rec">추천</span></td><td><b>Mistral Large 4</b> <code>mistral-large-4</code></td><td class="n">0.68 / 2.09</td><td>chat-completions</td><td>저렴한 대형 멀티모달(할인 중) — 유럽 계열 비교군</td></tr>
-<tr><td><span class="tag t-cheap">추천·저가</span></td><td><b>Claude Haiku 5.5</b> <code>claude-haiku-5-5</code></td><td class="n">0.1 / 0.5</td><td>messages</td><td>지금 «장면 메모»를 쓰는 모델 — 장면 단계 기준선</td></tr>
+<tr><td><span class="tag t-must">필수</span></td><td><b>Claude Haiku 5.5</b> <code>claude-haiku-5-5</code></td><td class="n">구독 (API 0.1 / 0.5)</td><td>claude -p</td><td>지금 «장면 메모»를 쓰는 모델 — 장면 단계 기준선</td></tr>
 <tr><td><span class="tag t-opt">선택</span></td><td><b>GPT-6.2 Astra</b> <code>gpt-6.2-astra</code></td><td class="n">8 / 40</td><td>responses</td><td>GPT 최상위. Fable 과 «최상위끼리» 비교가 필요할 때만</td></tr>
 </tbody></table>
 <div class="warn" style="margin-top:12px">🚫 <b>넣지 않는 모델</b> — ① 무료 모델(Big Pickle·Iceman·Nemotron 등): 일부는 입력을 학습·보존에 쓰고, 속도·가용성이 불안정해 비교 결과를 재현하기 어렵다. ② 이미지 입력이 안 되는 모델(GLM-5.3·DeepSeek V4 Pro·MiniMax M2.x): 사진을 못 보면 같은 조건이 아니다. ③ 코딩 특화 모델(*-codex, Kimi K2.7 Code): 이번 작업과 용도가 다르다. ④ Pro 계열(GPT-5.5 Pro 등 30/180): 비용 대비 의미가 작다.</div>
@@ -151,9 +152,15 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <li>마지막 텍스트: «S1~S4 장면 설명과 가이드를 JSON 으로»</li>
 </ol></div>
 </div>
-<h3>5-3. Zen API 형식별 보내는 법</h3>
-<p style="font-size:.88em;margin:0 0 6px">Zen 은 제조사 원래 형식을 그대로 받는다. 기본 주소 <code>https://opencode.ai/inference/…</code>, 키는 <code>Authorization: Bearer</code>(Anthropic 형식은 <code>x-api-key</code> 도 가능). 실행 스크립트에서는 Vercel AI SDK 의 제조사별 공급자(@ai-sdk/anthropic·openai·google·openai-compatible)를 Zen 주소로 돌려 <code>generateObject</code> 하나로 통일하는 방식을 권장한다.</p>
-<pre>// Claude·Qwen Plus  → POST /inference/anthropic/v1/messages
+<h3>5-3. 호출 경로별 보내는 법</h3>
+<pre>// Claude 계열 (Fable 5.2 · Sonnet 5.5 · Haiku 5.5 · 심사 Opus 5.5) → claude -p (구독, content studio callJson 과 같은 방식)
+claude -p --model claude-fable-5-2 --system-prompt "…" --json-schema '{…}' --effort medium \
+  --tools '' --input-format stream-json --output-format stream-json --verbose \
+  --strict-mcp-config --mcp-config '{"mcpServers":{}}' --no-session-persistence
+// 표준 입력 = 첫 사용자 메시지 1건: [{type:text,"[S1] 대강당\n사진(앞):"}, {type:image, source:{base64 …}}, …]
+// 환경: CLAUDE_CODE_DISABLE_CLAUDE_MDS=1 (전역 CLAUDE.md·말투가 섞이지 않게) · 빈 작업 폴더에서 실행</pre>
+<p style="font-size:.88em;margin:0 0 6px">그 외 모델 — Zen 은 제조사 원래 형식을 그대로 받는다. 기본 주소 <code>https://opencode.ai/inference/…</code>, 키는 <code>Authorization: Bearer</code>(Anthropic 형식은 <code>x-api-key</code> 도 가능). 실행 스크립트에서는 Vercel AI SDK 의 제조사별 공급자(@ai-sdk/anthropic·openai·google·openai-compatible)를 Zen 주소로 돌려 <code>generateObject</code> 하나로 통일하는 방식을 권장한다.</p>
+<pre>// (참고) Anthropic 형식 → POST /inference/anthropic/v1/messages — 이번엔 Claude 를 구독으로 돌리므로 쓰지 않음
 { "model":"claude-fable-5-2", "system":"…", "max_tokens":8000,
   "messages":[{"role":"user","content":[
     {"type":"text","text":"[S1] 대강당\n사진(앞):"},
@@ -177,7 +184,7 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
   "messages":[{"role":"system","content":"…"},{"role":"user","content":[
     {"type":"text","text":"[S1] 대강당\n사진(앞):"},
     {"type":"image_url","image_url":{"url":"data:image/jpeg;base64,…"}}, … ]}] }</pre>
-<div class="ok">🧩 <b>JSON 이 깨질 때</b>: 스키마 강제가 안 되는 모델(Claude·Qwen Max·Kimi K2.x 등은 Zen 목록에 structured_output 표시가 없음)은 «JSON 만 출력» 지시 + 관대한 파서(코드 블록·앞뒤 설명 제거) + <b>1회 재시도</b>. 그래도 실패하면 «실패»로 기록하고 그 모델 점수에 반영한다(실패율 자체가 비교 지표).</div>
+<div class="ok">🧩 <b>JSON 이 깨질 때</b>: Claude 는 <code>claude -p --json-schema</code> 로 강제된다. 스키마 강제가 안 되는 Zen 모델(Qwen Max 등은 Zen 목록에 structured_output 표시가 없음)은 «JSON 만 출력» 지시 + 관대한 파서(코드 블록·앞뒤 설명 제거) + <b>1회 재시도</b>. 그래도 실패하면 «실패»로 기록하고 그 모델 점수에 반영한다(실패율 자체가 비교 지표).</div>
 </section>
 
 <section class="s" id="run"><h2>6. 실행과 저장 <small>다시 돌려도 이어서 할 수 있게</small></h2>
@@ -186,6 +193,7 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <li>재료 묶음: <code>data/model-compare/pack-2026-11-xx.json</code> — 장소 5곳의 사실·등록 정보·촬영일·장면 목록 + 사진 경로. 이 파일 해시가 같으면 «같은 재료»</li>
 <li>결과: <code>data/model-compare/{run}/{model}/{place}.json</code> — 원문 응답 · 파싱 결과 · 토큰 사용량 · 계산한 비용 · 지연 시간 · 재시도 횟수 · 프롬프트 해시. 이미 있는 파일은 건너뛴다(중단 후 재개)</li>
 <li>동시 실행: 제조사별 2개씩(제조사 한도에 걸려도 다른 모델은 계속 돈다)</li>
+<li>Claude 계열은 content studio 의 <code>callJson</code>(claude-cli.ts)을 그대로 불러 쓴다 — 칸 수·간격·<b>구독 한도에 걸리면 자정까지 멈춤</b> 장치가 함께 따라온다. 운영 AI 초안 생성과 <b>같은 구독 한도를 나눠 쓰므로</b>, 시험은 운영 생성이 한가한 시간에 돌린다</li>
 <li>DB 에는 쓰지 않는다 — 글쓰기 도구·운영 데이터와 완전히 분리한 실험이다</li>
 <li>Zen 키는 기존 opencode 로그인 키를 환경변수로만 읽고, 결과 파일·페이지에 남기지 않는다</li>
 </ul>
@@ -194,7 +202,7 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <section class="s" id="eval"><h2>7. 평가 방법 <small>기계 → AI 2심 → 사람, 세 겹</small></h2>
 <table><thead><tr><th>층</th><th>무엇을</th><th>어떻게</th></tr></thead><tbody>
 <tr><td><b>① 자동 지표</b></td><td>JSON 성공률 · 금지어(홍보어·존댓말) · 추측 표현(«~로 보이는») · 메타 문장(«확인되지 않았다») · 분량 · 존재하지 않는 사실 id · 비용 · 지연</td><td>지금 생성기의 GUESS·META·BANNED 정규식을 그대로 재사용. 숫자로 바로 비교</td></tr>
-<tr><td><b>② AI 교차 채점</b></td><td>장면: 사진과 맞는가(<b>시각 정확도</b>) · 지어낸 것 · 의미 전달 · 한국어 자연스러움<br>장소: v3 채점 6항목(근거·의미·정보성·역할 구분·근거 없음·소개)</td><td>심사 모델 <b>2개</b>(제안: Claude Opus 5.5 + Gemini 4 Carbon — 서로 다른 제조사). <b>장면 하나에 12개 모델 글을 한꺼번에</b> 보여 주고(사진 4장 포함) A~L 로 이름을 가린 뒤 순서를 매번 섞어 점수·순위를 받는다. 자기 제조사 모델 점수는 따로 표시해 «제 식구 감싸기»를 확인</td></tr>
+<tr><td><b>② AI 교차 채점</b></td><td>장면: 사진과 맞는가(<b>시각 정확도</b>) · 지어낸 것 · 의미 전달 · 한국어 자연스러움<br>장소: v3 채점 6항목(근거·의미·정보성·역할 구분·근거 없음·소개)</td><td>심사 모델 <b>2개</b>(제안: Claude Opus 5.5 — <b>구독 claude -p</b> + Gemini 4 Carbon — Zen. 서로 다른 제조사). <b>장면 하나에 12개 모델 글을 한꺼번에</b> 보여 주고(사진 4장 포함) A~L 로 이름을 가린 뒤 순서를 매번 섞어 점수·순위를 받는다. 자기 제조사 모델 점수는 따로 표시해 «제 식구 감싸기»를 확인</td></tr>
 <tr><td><b>③ 오빠 블라인드 투표</b></td><td>대표 8장면(장소별 1~2개) + 장소 글 5편</td><td>이름이 가려진 카드에서 1등·2등과 «틀린 문장»을 고른다 → 끝나면 «공개» 버튼으로 모델 이름 확인. 투표는 브라우저에 저장 + JSON 내보내기</td></tr>
 </tbody></table>
 <p style="font-size:.88em;margin-top:10px"><b>최종 판단식</b>: 오빠 투표가 최우선. AI 2심은 444개 장면 글 전체를 훑는 «넓이», 오빠 투표는 «깊이» 역할이다. 두 결과가 크게 어긋나면 그 장면을 다시 본다.</p>
@@ -224,25 +232,26 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 </section>
 
 <section class="s" id="cost"><h2>9. 예상 비용 <small>추정 — 실제 토큰은 실행 후 결과 파일로 확정</small></h2>
-<p class="lead">가정: 장면 호출 1번 = 입력 약 8,300토큰(지시문·사실 3,500 + 사진 16장 × 약 300) · 출력 약 3,600토큰(본문 1,600 + 추론 2,000). 장소 호출 1번 = 입력 6,000 · 출력 3,500. 5곳 기준 장면 호출 10번 + 장소 호출 5번, 재시도 여유 15%. 전체 추정은 장면 29,928개(장소 1,636곳, 평균 18.3 · 중앙값 7 · 최대 516)를 같은 방식으로 늘린 값이며 <b>웹 조사 비용은 포함하지 않았다</b>.</p>
+<p class="lead">Claude 계열(생성 3모델 + Opus 심사)은 구독이라 <b>지출 0원</b> — 표에는 «API 였다면» 값을 회색으로 같이 적는다. 가정: 장면 호출 1번 = 입력 약 8,300토큰(지시문·사실 3,500 + 사진 16장 × 약 300) · 출력 약 3,600토큰(본문 1,600 + 추론 2,000). 장소 호출 1번 = 입력 6,000 · 출력 3,500. 5곳 기준 장면 호출 10번 + 장소 호출 5번, 재시도 여유 15%. 전체 추정은 장면 29,928개(장소 1,636곳, 평균 18.3 · 중앙값 7 · 최대 516)를 같은 방식으로 늘린 값이며 <b>웹 조사 비용은 포함하지 않았다</b>.</p>
 <table><thead><tr><th>모델</th><th>5곳 시험 (1회)</th><th>1,636곳 전체 추정</th><th>메모</th></tr></thead><tbody>
-<tr><td>Claude Fable 5.2</td><td class="n">$3.50</td><td class="n">$2,054</td><td></td></tr>
+<tr><td>Claude Fable 5.2</td><td class="n">$0 <small style="color:#9ca3af">(API $3.50)</small></td><td class="n">$0 <small style="color:#9ca3af">(API $2,054)</small></td><td>구독 — 대신 시간·한도 제약(아래)</td></tr>
 <tr><td>GPT-6.2 Astra (선택)</td><td class="n">$3.50</td><td class="n">$2,054</td><td></td></tr>
 <tr><td>Kimi K3</td><td class="n">$1.31</td><td class="n">$770</td><td></td></tr>
-<tr><td>Claude Sonnet 5.5 (기준선)</td><td class="n">$0.88</td><td class="n">$513</td><td>지금은 구독(claude -p)이라 API 비용 0 — API 로 돌릴 때의 값</td></tr>
+<tr><td>Claude Sonnet 5.5 (기준선)</td><td class="n">$0 <small style="color:#9ca3af">(API $0.88)</small></td><td class="n">$0 <small style="color:#9ca3af">(API $513)</small></td><td>구독 — 지금 운영과 같은 경로</td></tr>
 <tr><td>Gemini 4 Carbon</td><td class="n">$0.88</td><td class="n">$513 → $1,027</td><td>12/1 부터 2배</td></tr>
 <tr><td>GPT-6.2 Sol</td><td class="n">$0.88</td><td class="n">$513</td><td></td></tr>
 <tr><td>Grok 4.7</td><td class="n">$0.63</td><td class="n">$371</td><td></td></tr>
 <tr><td>Qwen3.8 Max</td><td class="n">$0.63</td><td class="n">$371</td><td></td></tr>
 <tr><td>Gemini 3.8 Flash</td><td class="n">$0.33</td><td class="n">$193</td><td>2027-01-01 부터 2배</td></tr>
 <tr><td>Mistral Large 4</td><td class="n">$0.22</td><td class="n">$128</td><td>할인가 기준</td></tr>
-<tr><td>Claude Haiku 5.5</td><td class="n">$0.04</td><td class="n">$26</td><td></td></tr>
+<tr><td>Claude Haiku 5.5</td><td class="n">$0 <small style="color:#9ca3af">(API $0.04)</small></td><td class="n">$0 <small style="color:#9ca3af">(API $26)</small></td><td>구독</td></tr>
 <tr><td>GPT-6 Luna</td><td class="n">$0.04</td><td class="n">$26</td><td></td></tr>
-<tr style="font-weight:700;background:#f9fafb"><td>생성 합계 (필수 7 + 추천 5)</td><td class="n">약 $13.4</td><td></td><td>Astra 포함 시 약 $17</td></tr>
-<tr><td>AI 교차 채점 2심 (Opus 5.5 + Gemini 4 Carbon)</td><td class="n">약 $6</td><td></td><td>장면당 12개 글을 한 번에 심사(사진 포함) · 장소 5곳</td></tr>
-<tr><td>2차 결선 (상위 3~4모델 × 7곳 × 2회)</td><td class="n">약 $10~20</td><td></td><td>상위 모델 가격에 따라</td></tr>
-<tr style="font-weight:700;background:#fffbeb"><td>권장 예산 상한</td><td class="n">$40</td><td></td><td>스크립트 시험 호출·재시도 포함</td></tr>
+<tr style="font-weight:700;background:#f9fafb"><td>생성 합계 — Zen 지출분 (Claude 외 8모델)</td><td class="n">약 $5</td><td></td><td>GPT-6.2 Astra(선택) 포함 시 약 $9</td></tr>
+<tr><td>AI 교차 채점 2심 (Opus 5.5 구독 + Gemini 4 Carbon Zen)</td><td class="n">약 $2</td><td></td><td>Opus 몫은 구독 0원(API 였다면 약 $4) · 장면당 12개 글을 사진과 함께 한 번에 심사</td></tr>
+<tr><td>2차 결선 (상위 3~4모델 × 7곳 × 2회)</td><td class="n">약 $0~10</td><td></td><td>결선 모델이 Claude 면 0원</td></tr>
+<tr style="font-weight:700;background:#fffbeb"><td>권장 예산 상한 (Zen 충전)</td><td class="n">$25</td><td></td><td>스크립트 시험 호출·재시도 포함</td></tr>
 </tbody></table>
+<div class="warn" style="margin:10px 0">⏱️ <b>Claude 를 전체 실행에 쓰면 돈 대신 «시간·한도»가 든다.</b> 오늘 v3 시범(10곳 · 251장면)이 동시 4칸으로 약 12분 걸렸다. 같은 속도면 29,928장면은 연속 약 24시간 분량이고, 구독 사용량 한도에 걸릴 때마다 자정까지 멈추므로 실제로는 <b>며칠~1주일</b>로 본다(추정). 운영 AI 초안 생성과 한도를 나눠 쓴다는 점도 같이 고려해야 한다.</div>
 <p style="font-size:.85em;color:#6b7280">⚠️ 추론 토큰(출력으로 과금)은 모델마다 편차가 크다. 추론을 많이 하는 모델은 실제 비용이 위 값의 1.5~2배가 될 수 있다. 사진 1장 토큰 계산식도 제조사마다 달라(약 250~350) ±30% 정도는 흔들린다고 본다.</p>
 </section>
 
@@ -254,7 +263,9 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <li><b>AI 심사의 편향.</b> 긴 글·자기 제조사 글·앞에 놓인 글을 좋게 보는 경향이 있다. 이름 가리기·순서 섞기·제조사 다른 2심으로 줄이지만 없앨 수는 없다. 그래서 오빠 투표가 최종이다.</li>
 <li><b>조건이 완전히 같지는 않다.</b> 추론 강도·JSON 강제 방식·이미지 처리 방식이 제조사마다 달라서, «같은 프롬프트»여도 내부 처리는 다르다. 그 차이까지 포함한 «실사용 성능» 비교로 본다.</li>
 <li><b>모델·가격이 바뀐다.</b> Zen 모델은 예고 없이 갱신될 수 있고, Gemini 4 Carbon 은 12/1 에 가격이 2배가 된다. 결과 페이지에 실행 날짜와 그날 가격표를 같이 남긴다.</li>
-<li><b>운영 비용과 다르다.</b> 지금 생성은 Claude 구독(claude -p)이라 토큰 비용이 0 이다. API 모델로 바꾸면 전체 실행에 위 표만큼 실제 돈이 든다.</li>
+<li><b>호출 경로가 다르다.</b> Claude 는 구독 CLI(<code>claude -p</code>), 나머지는 Zen API 라서 감싸는 층이 다르다(CLI 의 시스템 프롬프트 처리·JSON 강제 방식 등). 같은 모델이라도 API 와 결과가 미세하게 다를 수 있다. 대신 «실제로 운영에 쓸 경로 그대로»를 비교한다는 장점이 있다.</li>
+<li><b>구독 한도 공유.</b> Claude 시험 호출은 운영 AI 초안 생성과 같은 구독 한도를 쓴다. 한도에 걸리면 Claude 쪽만 다음 날로 밀리고 Zen 쪽은 계속 돈다 — 결과 페이지에 모델별 실행 시각을 남긴다.</li>
+<li><b>비용 비교의 의미.</b> Claude 는 구독이라 «건당 비용 0»이지만 처리량에 상한이 있다. Zen 모델은 돈은 들지만 병렬로 빠르게 돈다. 최종 선택은 «품질 · 돈 · 걸리는 시간» 세 축으로 본다.</li>
 <li><b>외부 전송.</b> 장소 사진·조사 사실을 여러 제조사로 보낸다. 모두 이미 공개된 VR·공개 자료지만, 유료 모델의 데이터 보존 정책은 제조사·Zen 정책을 따르므로 실행 전에 한 번 확인한다(무료 모델은 학습 사용 가능성이 있어 제외했다).</li>
 </ul>
 </section>
@@ -263,16 +274,16 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <table><thead><tr><th>단계</th><th>내용</th><th>예상</th></tr></thead><tbody>
 <tr><td>0</td><td>오빠 결정(아래 4가지)</td><td>—</td></tr>
 <tr><td>1</td><td>재료 묶음 만들기(<code>pack.mjs</code>) + 4개 API 형식 연결 확인(모델별 1호출 시험)</td><td>2~3시간 · $1 미만</td></tr>
-<tr><td>2</td><td>1차 생성 12모델 × 5곳(<code>run.mjs</code>)</td><td>1~2시간 · 약 $14</td></tr>
-<tr><td>3</td><td>자동 지표 + AI 2심(<code>judge.mjs</code>)</td><td>30분 · 약 $6</td></tr>
+<tr><td>2</td><td>1차 생성 12모델 × 5곳(<code>run.mjs</code>) — Claude 3개는 구독, 9개는 Zen</td><td>1~2시간 · Zen 약 $6~9</td></tr>
+<tr><td>3</td><td>자동 지표 + AI 2심(<code>judge.mjs</code> — Opus 구독 + Gemini Zen)</td><td>30분 · 약 $2</td></tr>
 <tr><td>4</td><td>비교 페이지 배포(<code>/reports/model-compare</code>) → 오빠 블라인드 투표</td><td>오빠 1~2시간</td></tr>
-<tr><td>5</td><td>2차 결선: 상위 3~4모델 × 7곳 × 2회 → 전체 실행 모델(또는 장면/장소 조합) 결정</td><td>약 $10~20</td></tr>
+<tr><td>5</td><td>2차 결선: 상위 3~4모델 × 7곳 × 2회 → 전체 실행 모델(또는 장면/장소 조합) 결정</td><td>약 $0~10</td></tr>
 </tbody></table>
 <div class="warn" style="margin-top:12px"><b>오빠가 정해 줄 것</b><ol style="margin:6px 0 0;padding-left:20px">
-<li><b>모델 목록</b>: 필수 7 + 추천 5 그대로 갈지, GPT-6.2 Astra 를 넣을지</li>
+<li><b>모델 목록</b>: 필수 8 + 추천 3 그대로 갈지, GPT-6.2 Astra 를 넣을지 (Claude 는 구독이라 Opus 5.5 도 생성 비교에 공짜로 추가 가능)</li>
 <li><b>장소</b>: 추천 5곳(박물관·폐교 대학·위키만 있는 중학교·사실 0건 초등학교·카페거리 표본 12장면)으로 갈지</li>
 <li><b>기존 장면 메모</b>: 주지 않는 것(사진 판독 비교)으로 갈지 — 주면 v3 운영 조건과 같아지지만 Claude 계열에 유리해진다</li>
-<li><b>예산 상한</b>: $40 으로 할지 · Gemini 4 Carbon 가격이 오르기 전(11월 안)에 1차를 돌릴지</li>
+<li><b>예산 상한</b>: Zen $25 로 할지 · Gemini 4 Carbon 가격이 오르기 전(11월 안)에 1차를 돌릴지 · Claude 시험을 운영 생성과 겹치지 않는 시간(예: 밤)에 돌릴지</li>
 </ol></div>
 </section>
 </main>
