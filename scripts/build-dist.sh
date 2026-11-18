@@ -4,7 +4,7 @@
 # 왜: 예전에는 `netlify deploy --dir=.` 로 저장소 전체를 올려서 scripts/·*.sh·*.md·백업 파일까지
 #     URL 로 열렸다(2026-11-02 확인). 이제는 이 스크립트가 만든 dist/ 만 배포한다.
 #
-# 들어가는 것: index.html · robots.txt · 아래 폴더의 html/css/js/이미지/영상/폰트
+# 들어가는 것: index.html · robots.txt · 파비콘(favicon.ico·favicon.svg·apple-touch-icon.png) · 아래 폴더의 html/css/js/이미지/영상/폰트
 # 빠지는 것  : *.md · *.sh · *.mjs · *.json · *.toml · scripts/ · themes/(marp 가 html 에 인라인) ·
 #              점(.)으로 시작하는 파일·폴더 · 백업류(*.bak* · *.pre-* · *.orig · *~)
 #
@@ -20,7 +20,8 @@ BACKUP_RE='(\.bak|\.pre-|\.orig$|~$)'
 rm -rf "$DIST"
 mkdir -p "$DIST"
 
-cp index.html robots.txt "$DIST/"
+# 파비콘: 덱 페이지 대부분은 <link rel="icon"> 이 없어 브라우저가 루트 /favicon.ico 를 찾는다 → 루트에 두면 전 페이지 적용(2026-11-18)
+cp index.html robots.txt favicon.ico favicon.svg apple-touch-icon.png "$DIST/"
 
 n=0
 while IFS= read -r -d '' f; do
