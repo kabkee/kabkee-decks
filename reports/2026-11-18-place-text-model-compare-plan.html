@@ -45,7 +45,7 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <div class="kpis">
 <div class="kpi"><b>5곳 · 37장면</b><span>권장 시험 규모 (10곳 → 5곳으로 축소, 대표성 위주 선정)</span></div>
 <div class="kpi"><b>필수 8 + 추천 3 + 선택 1</b><span>모델 12개 — Claude 3개는 구독(claude -p) · 8개는 Zen 유료 + 선택 1(Astra)</span></div>
-<div class="kpi"><b>약 $5 + $2</b><span>Zen 지출만 — 생성(Claude 외 8모델, Astra 넣으면 +$3.5) + 채점(Gemini). Claude 3모델·Opus 심사는 <b>구독 claude -p</b> 라 0원 · Zen 예산 상한 $25</span></div>
+<div class="kpi"><b>약 $7 + $3</b><span>Zen 지출만 — 생성(Claude 외 8모델, Astra 넣으면 +$3.5) + 채점(Gemini). Claude 3모델·Opus 심사는 <b>구독 claude -p</b> 라 0원 · Zen 예산 상한 $25</span></div>
 <div class="kpi"><b>반나절</b><span>실행 약 1~2시간 · 오빠 검토는 대표 8장면 + 5곳 블라인드 투표</span></div>
 </div></div></header>
 <nav><div class="w">
@@ -75,7 +75,7 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <div class="cols">
 <div class="box"><h4>🔒 고정하는 것 (모든 모델 동일)</h4><ul class="t">
 <li>시스템 프롬프트·출력 형식(JSON 스키마) — v3 g1.5 그대로</li>
-<li>사진: 장면마다 큐브 면 앞·오른쪽·뒤·왼쪽 4장, 같은 순서·같은 라벨</li>
+<li>사진: 장면마다 큐브 면 앞·오른쪽·뒤·왼쪽 4장(<b>1024px</b>), 같은 순서·같은 라벨</li>
 <li>조사한 사실(신뢰도 A/B/C 표시) — <b>웹 조사는 모델별로 다시 하지 않는다</b></li>
 <li>장면 묶음(4개씩)·장면 번호·촬영 시점 문구</li>
 <li>추론 강도 «중간»(지원하는 모델만) · 최대 출력 8,000 토큰</li>
@@ -139,9 +139,10 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <h3>5-2. 이미지 — 무엇을, 어떤 순서로</h3>
 <div class="cols">
 <div class="box"><h4>사진 사양</h4><ul class="t">
-<li>장면마다 큐브 면 <b>4장</b>: 앞(f) → 오른쪽(r) → 뒤(b) → 왼쪽(l), 각 512×512 JPEG (지금 생성기가 쓰는 파일 그대로 · <code>data/captures/_faces/</code>)</li>
+<li>장면마다 큐브 면 <b>4장</b>: 앞(f) → 오른쪽(r) → 뒤(b) → 왼쪽(l), 각 <b>1024×1024 JPEG</b>. 원본에 <code>1024_f/r/b/l.jpg</code> 가 이미 있다 — 시험 5곳 147장면 전부 4면 확인(2026-11-18 백업 목록표). 면당 약 100~150KB, S3 에서 받아 <code>data/captures/_faces1024/</code> 에 둔다(약 70MB · 비용 무시 가능)</li>
+<li>지금 운영 생성기는 512px 를 쓴다. 512 는 1024 를 줄인 같은 사진이라 간판·현수막·안내판의 <b>작은 글씨</b>를 놓치기 쉽다</li>
 <li>한 호출 = 장면 4개 = 사진 16장. 사진마다 바로 앞에 «S3 사진(오른쪽)» 같은 텍스트 라벨</li>
-<li>위·아래 면(천장·바닥)은 보내지 않는다(비용 대비 정보가 적다 — 10장 한계 참고)</li>
+<li>위·아래 면(<code>_u</code>·<code>_d</code>, 천장·바닥)도 원본에 있지만 보내지 않는다 — 사진이 1.5배가 되는데 정보는 적다(바닥 포장·천장 조명 정도)</li>
 <li>모든 모델에 base64 인라인으로 보낸다(URL 방식은 제조사마다 외부 URL 접근 정책이 달라 결과가 흔들린다)</li>
 </ul></div>
 <div class="box"><h4>메시지 순서 (모든 모델 동일)</h4><ol style="margin:0;padding-left:18px">
@@ -152,6 +153,14 @@ footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
 <li>마지막 텍스트: «S1~S4 장면 설명과 가이드를 JSON 으로»</li>
 </ol></div>
 </div>
+<h3>5-2-1. 해상도와 비용 — 512 vs 1024</h3>
+<table><thead><tr><th>계열</th><th>사진 1장 토큰 (512 → 1024)</th><th>배수</th></tr></thead><tbody>
+<tr><td>Claude</td><td class="n">약 350 → 약 1,400</td><td>4배 (가로×세로 ÷ 750)</td></tr>
+<tr><td>GPT·Grok (타일 방식)</td><td class="n">약 255 → 약 765</td><td>3배 (768px 로 줄인 뒤 512 타일 4개)</td></tr>
+<tr><td>Gemini</td><td class="n">약 258 → 약 1,032</td><td>4배 (768 타일 기준)</td></tr>
+</tbody></table>
+<p style="font-size:.86em;margin:8px 0">사진 토큰은 3~4배가 되지만 <b>전체 비용은 30~45%만</b> 오른다. 비용의 대부분이 사진이 아니라 «출력(본문+추론)»이기 때문이다. 장면 호출 입력이 약 8,300 → 21,000토큰이 되고, Zen 8모델 시험 비용은 약 $4.9 → $6.8. ⚠️ 위 토큰 계산은 제조사가 공개했던 규칙 기준이라 최신 모델은 다를 수 있다 — 1단계 연결 확인 때 모델별로 실측해서 결과 페이지에 적는다.</p>
+<div class="ok">🔬 <b>해상도 대조 실험(추가)</b>: 본 시험은 1024 로 돌리고, <b>Sonnet 5.5(구독) + Gemini 3.8 Flash</b> 두 모델만 512 로 한 번 더 돌린다(추가 지출 약 $0.3). 512 와 1024 의 글자 판독·지어냄 차이를 보면, 1,636곳 전체 실행을 어느 해상도로 할지 근거가 생긴다(전체 실행에서는 30~45% 차이가 수백 달러).</div>
 <h3>5-3. 호출 경로별 보내는 법</h3>
 <pre>// Claude 계열 (Fable 5.2 · Sonnet 5.5 · Haiku 5.5 · 심사 Opus 5.5) → claude -p (구독, content studio callJson 과 같은 방식)
 claude -p --model claude-fable-5-2 --system-prompt "…" --json-schema '{…}' --effort medium \
@@ -232,22 +241,22 @@ claude -p --model claude-fable-5-2 --system-prompt "…" --json-schema '{…}' -
 </section>
 
 <section class="s" id="cost"><h2>9. 예상 비용 <small>추정 — 실제 토큰은 실행 후 결과 파일로 확정</small></h2>
-<p class="lead">Claude 계열(생성 3모델 + Opus 심사)은 구독이라 <b>지출 0원</b> — 표에는 «API 였다면» 값을 회색으로 같이 적는다. 가정: 장면 호출 1번 = 입력 약 8,300토큰(지시문·사실 3,500 + 사진 16장 × 약 300) · 출력 약 3,600토큰(본문 1,600 + 추론 2,000). 장소 호출 1번 = 입력 6,000 · 출력 3,500. 5곳 기준 장면 호출 10번 + 장소 호출 5번, 재시도 여유 15%. 전체 추정은 장면 29,928개(장소 1,636곳, 평균 18.3 · 중앙값 7 · 최대 516)를 같은 방식으로 늘린 값이며 <b>웹 조사 비용은 포함하지 않았다</b>.</p>
+<p class="lead">Claude 계열(생성 3모델 + Opus 심사)은 구독이라 <b>지출 0원</b> — 표에는 «API 였다면» 값을 회색으로 같이 적는다. 가정: 장면 호출 1번 = 입력 약 21,000토큰(지시문·사실 3,500 + <b>1024px</b> 사진 16장 × 약 1,100) · 출력 약 3,600토큰(본문 1,600 + 추론 2,000). 장소 호출 1번 = 입력 6,000 · 출력 3,500. 5곳 기준 장면 호출 10번 + 장소 호출 5번, 재시도 여유 15%. 전체 추정은 장면 29,928개(장소 1,636곳, 평균 18.3 · 중앙값 7 · 최대 516)를 같은 방식으로 늘린 값이며 <b>웹 조사 비용은 포함하지 않았다</b>.</p>
 <table><thead><tr><th>모델</th><th>5곳 시험 (1회)</th><th>1,636곳 전체 추정</th><th>메모</th></tr></thead><tbody>
-<tr><td>Claude Fable 5.2</td><td class="n">$0 <small style="color:#9ca3af">(API $3.50)</small></td><td class="n">$0 <small style="color:#9ca3af">(API $2,054)</small></td><td>구독 — 대신 시간·한도 제약(아래)</td></tr>
-<tr><td>GPT-6.2 Astra (선택)</td><td class="n">$3.50</td><td class="n">$2,054</td><td></td></tr>
-<tr><td>Kimi K3</td><td class="n">$1.31</td><td class="n">$770</td><td></td></tr>
-<tr><td>Claude Sonnet 5.5 (기준선)</td><td class="n">$0 <small style="color:#9ca3af">(API $0.88)</small></td><td class="n">$0 <small style="color:#9ca3af">(API $513)</small></td><td>구독 — 지금 운영과 같은 경로</td></tr>
-<tr><td>Gemini 4 Carbon</td><td class="n">$0.88</td><td class="n">$513 → $1,027</td><td>12/1 부터 2배</td></tr>
-<tr><td>GPT-6.2 Sol</td><td class="n">$0.88</td><td class="n">$513</td><td></td></tr>
-<tr><td>Grok 4.7</td><td class="n">$0.63</td><td class="n">$371</td><td></td></tr>
-<tr><td>Qwen3.8 Max</td><td class="n">$0.63</td><td class="n">$371</td><td></td></tr>
-<tr><td>Gemini 3.8 Flash</td><td class="n">$0.33</td><td class="n">$193</td><td>2027-01-01 부터 2배</td></tr>
-<tr><td>Mistral Large 4</td><td class="n">$0.22</td><td class="n">$128</td><td>할인가 기준</td></tr>
-<tr><td>Claude Haiku 5.5</td><td class="n">$0 <small style="color:#9ca3af">(API $0.04)</small></td><td class="n">$0 <small style="color:#9ca3af">(API $26)</small></td><td>구독</td></tr>
-<tr><td>GPT-6 Luna</td><td class="n">$0.04</td><td class="n">$26</td><td></td></tr>
-<tr style="font-weight:700;background:#f9fafb"><td>생성 합계 — Zen 지출분 (Claude 외 8모델)</td><td class="n">약 $5</td><td></td><td>GPT-6.2 Astra(선택) 포함 시 약 $9</td></tr>
-<tr><td>AI 교차 채점 2심 (Opus 5.5 구독 + Gemini 4 Carbon Zen)</td><td class="n">약 $2</td><td></td><td>Opus 몫은 구독 0원(API 였다면 약 $4) · 장면당 12개 글을 사진과 함께 한 번에 심사</td></tr>
+<tr><td>Claude Fable 5.2</td><td class="n">$0 <small style="color:#9ca3af">(API $4.68)</small></td><td class="n">$0 <small style="color:#9ca3af">(API $2,904)</small></td><td>구독 — 대신 시간·한도 제약(아래)</td></tr>
+<tr><td>GPT-6.2 Astra (선택)</td><td class="n">$4.68</td><td class="n">$2,904</td><td></td></tr>
+<tr><td>Kimi K3</td><td class="n">$1.75</td><td class="n">$1,089</td><td></td></tr>
+<tr><td>Claude Sonnet 5.5 (기준선)</td><td class="n">$0 <small style="color:#9ca3af">(API $1.17)</small></td><td class="n">$0 <small style="color:#9ca3af">(API $726)</small></td><td>구독 — 지금 운영과 같은 경로</td></tr>
+<tr><td>Gemini 4 Carbon</td><td class="n">$1.17</td><td class="n">$726 → $1,452</td><td>12/1 부터 2배</td></tr>
+<tr><td>GPT-6.2 Sol</td><td class="n">$1.17</td><td class="n">$726</td><td></td></tr>
+<tr><td>Grok 4.7</td><td class="n">$0.92</td><td class="n">$584</td><td></td></tr>
+<tr><td>Qwen3.8 Max</td><td class="n">$0.92</td><td class="n">$584</td><td></td></tr>
+<tr><td>Gemini 3.8 Flash</td><td class="n">$0.44</td><td class="n">$272</td><td>2027-01-01 부터 2배</td></tr>
+<tr><td>Mistral Large 4</td><td class="n">$0.32</td><td class="n">$200</td><td>할인가 기준</td></tr>
+<tr><td>Claude Haiku 5.5</td><td class="n">$0 <small style="color:#9ca3af">(API $0.06)</small></td><td class="n">$0 <small style="color:#9ca3af">(API $36)</small></td><td>구독</td></tr>
+<tr><td>GPT-6 Luna</td><td class="n">$0.06</td><td class="n">$36</td><td></td></tr>
+<tr style="font-weight:700;background:#f9fafb"><td>생성 합계 — Zen 지출분 (Claude 외 8모델 · 1024px)</td><td class="n">약 $7</td><td></td><td>Astra(선택) 포함 시 약 $11.5 · 512 대조 실험 +$0.3</td></tr>
+<tr><td>AI 교차 채점 2심 (Opus 5.5 구독 + Gemini 4 Carbon Zen)</td><td class="n">약 $3</td><td></td><td>Opus 몫은 구독 0원(API 였다면 약 $4) · 장면당 12개 글을 사진과 함께 한 번에 심사</td></tr>
 <tr><td>2차 결선 (상위 3~4모델 × 7곳 × 2회)</td><td class="n">약 $0~10</td><td></td><td>결선 모델이 Claude 면 0원</td></tr>
 <tr style="font-weight:700;background:#fffbeb"><td>권장 예산 상한 (Zen 충전)</td><td class="n">$25</td><td></td><td>스크립트 시험 호출·재시도 포함</td></tr>
 </tbody></table>
@@ -258,7 +267,8 @@ claude -p --model claude-fable-5-2 --system-prompt "…" --json-schema '{…}' -
 <section class="s" id="limit"><h2>10. 이 테스트의 한계 <small>결과를 읽을 때 같이 봐야 할 것</small></h2>
 <ul class="t">
 <li><b>웹 조사는 비교하지 않는다.</b> 모든 모델이 Claude 가 조사한 사실을 그대로 받는다. 조사 결과에 틀린 사실이 있으면 모든 모델이 같이 틀리고, 모델별 «조사 능력»은 이 시험으로 알 수 없다. (필요하면 별도 시험으로 분리 — 웹 검색 도구 지원이 모델마다 달라 같은 조건을 만들기 어렵다)</li>
-<li><b>사진 정보가 제한적이다.</b> 512px 4방향만 보낸다. 천장·바닥·작은 글씨는 어느 모델도 못 읽을 수 있다. 실제 VR 을 둘러보는 것과 같지 않다.</li>
+<li><b>사진 정보가 제한적이다.</b> 1024px 4방향만 보낸다(천장·바닥 제외). 1024 로도 멀리 있는 작은 글씨는 못 읽을 수 있고, 2008년 무렵 촬영본은 원본 화질 자체가 낮다. 실제 VR 을 둘러보는 것과 같지 않다.</li>
+<li><b>구독 한도 소모.</b> 1024 사진은 Claude 쪽 입력 토큰을 약 4배 쓰므로, 구독 한도에 더 빨리 닿는다(돈은 0원이지만 시간이 늘어남).</li>
 <li><b>표본이 작다.</b> 5곳·37장면·1회 실행. 몇 점 차이는 우연일 수 있다. 확실한 격차만 결론으로 쓰고, 근소한 차이는 2차 결선(2회 실행)으로 확인한다.</li>
 <li><b>AI 심사의 편향.</b> 긴 글·자기 제조사 글·앞에 놓인 글을 좋게 보는 경향이 있다. 이름 가리기·순서 섞기·제조사 다른 2심으로 줄이지만 없앨 수는 없다. 그래서 오빠 투표가 최종이다.</li>
 <li><b>조건이 완전히 같지는 않다.</b> 추론 강도·JSON 강제 방식·이미지 처리 방식이 제조사마다 달라서, «같은 프롬프트»여도 내부 처리는 다르다. 그 차이까지 포함한 «실사용 성능» 비교로 본다.</li>
@@ -274,8 +284,8 @@ claude -p --model claude-fable-5-2 --system-prompt "…" --json-schema '{…}' -
 <table><thead><tr><th>단계</th><th>내용</th><th>예상</th></tr></thead><tbody>
 <tr><td>0</td><td>오빠 결정(아래 4가지)</td><td>—</td></tr>
 <tr><td>1</td><td>재료 묶음 만들기(<code>pack.mjs</code>) + 4개 API 형식 연결 확인(모델별 1호출 시험)</td><td>2~3시간 · $1 미만</td></tr>
-<tr><td>2</td><td>1차 생성 12모델 × 5곳(<code>run.mjs</code>) — Claude 3개는 구독, 9개는 Zen</td><td>1~2시간 · Zen 약 $6~9</td></tr>
-<tr><td>3</td><td>자동 지표 + AI 2심(<code>judge.mjs</code> — Opus 구독 + Gemini Zen)</td><td>30분 · 약 $2</td></tr>
+<tr><td>2</td><td>1차 생성 12모델 × 5곳 · 1024px(<code>run.mjs</code>) — Claude 3개는 구독, 나머지는 Zen · + 512 대조(Sonnet·Gemini Flash)</td><td>1~2시간 · Zen 약 $7~12</td></tr>
+<tr><td>3</td><td>자동 지표 + AI 2심(<code>judge.mjs</code> — Opus 구독 + Gemini Zen)</td><td>30분 · 약 $3</td></tr>
 <tr><td>4</td><td>비교 페이지 배포(<code>/reports/model-compare</code>) → 오빠 블라인드 투표</td><td>오빠 1~2시간</td></tr>
 <tr><td>5</td><td>2차 결선: 상위 3~4모델 × 7곳 × 2회 → 전체 실행 모델(또는 장면/장소 조합) 결정</td><td>약 $0~10</td></tr>
 </tbody></table>
