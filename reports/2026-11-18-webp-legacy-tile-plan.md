@@ -135,6 +135,53 @@ Cost Explorer 로 조회한 2026년 CloudFront 전체 사용량입니다(전송�
 
 ---
 
+## 화질 비교 ① 보통 타일 — q70 은 −28% 지만 경계가 조금 부드러워집니다
+
+<div class="cols">
+<div class="col">
+
+![h:540](assets/2026-11-18-webp-legacy/cmp-typical.png)
+
+</div>
+<div class="col">
+
+- 표본 180장 중 절감률이 **중앙값**인 타일(34.2KB · 장소 `1750` 장면 `3`)
+- 가장 질감이 많은 160×160 영역을 **3배 확대**(픽셀 그대로)
+- **무손실**은 지금과 픽셀이 같지만 <span class="hl-red">223KB (+553%)</span>
+- **q75 · q70** 은 21~28% 줄고, 확대하면 글자·창틀 경계가 조금 뭉개집니다
+- 실제 뷰어 크기에서 보이는 차이는 시범 장소에서 직접 비교해 판정합니다
+
+<div class="links"><span class="lbl">직접 확인</span>
+<a class="lnk" href="assets/2026-11-18-webp-legacy/cmp-typical.png" target="_blank">원본 크기 비교 이미지 (cmp-typical.png)</a></div>
+
+</div>
+</div>
+
+---
+
+## 화질 비교 ② 질감 많은 타일 — WebP 는 q60 까지 내려도 지금보다 큽니다
+
+<div class="cols">
+<div class="col">
+
+![h:540](assets/2026-11-18-webp-legacy/cmp-texture.png)
+
+</div>
+<div class="col">
+
+- 표본 중 q70 에서 가장 **많이 커진** 타일(62.7KB · 장소 `90` 장면 `23`, 나뭇가지·풀)
+- q80 +37% · q75 +21% · q70 +15% · **q60 도 +5%**
+- 이미 JPG q60 의 잡음이 들어 있는 질감을 WebP 가 다시 압축하느라 오히려 커집니다
+- 그래서 계획에 **장면 스킵 규칙**(장면 전체 절감률 8% 미만이면 JPG 유지)을 넣었습니다
+
+<div class="links"><span class="lbl">직접 확인</span>
+<a class="lnk" href="assets/2026-11-18-webp-legacy/cmp-texture.png" target="_blank">원본 크기 비교 이미지 (cmp-texture.png)</a></div>
+
+</div>
+</div>
+
+---
+
 ## 왜 무손실은 오히려 커지는가
 
 | 질문 | 답 |
