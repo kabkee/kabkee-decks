@@ -470,7 +470,7 @@
         <a class="deck-card" href="reports/2026-11-18-webp-legacy-tile-plan.html">
           <div class="date">2026-11-18</div>
           <div class="title">레거시 큐브 타일 WebP 전환 실행 계획<br>시범 3곳 → 점진 전환 (11-13 검토 후속)</div>
-          <div class="meta">mres 타일만 · 1,758곳 · 1,224만 개 · 275.6GB · 원본 없음(retouched 2개) → JPG q60 재인코딩 q70 −16.4% · 효과는 저장비(월 약 $1)가 아니라 CloudFront 전송비 · 장면별 tile_ext + 생성기 재생성(XML 만 고치면 .jpg 로 되돌아감) · kabkee-main 로컬 백업에서 변환(다운로드 0원 · 업로드 약 $55) · 함정 · 오너 결정 6건</div>
+          <div class="meta">mres 타일만 · 1,758곳 · 1,224만 개 · 275.6GB · 원본 없음 → 재인코딩 q70 −16~22% · q75 −11~16% · 무손실 WebP 는 +532%(SSIM 비교표) · 레거시 PHP 17곳 + 저장 XML 2,972개 + 플랫폼 BE 빌더 2개 수정 범위 · 효과는 저장비(월 약 $1)가 아니라 CloudFront 전송비 · 장면별 tile_ext + 생성기 재생성(XML 만 고치면 .jpg 로 되돌아감) · kabkee-main 로컬 백업에서 변환(다운로드 0원 · 업로드 약 $55) · 함정 · 오너 결정 6건</div>
           <span class="tag">NEW · WebP · 계획 · 레거시</span>
         </a>
         <a class="deck-card" href="reports/2026-11-13-webp-transition.html">

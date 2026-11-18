@@ -6,7 +6,7 @@
 <hr />
 <p>Indyspot AI Corp  ·  2026-11-18  ·  11-13 «files/pano WebP 전환 검토» 후속</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="agenda" data-theme="clean" lang="C" class="agenda" data-marpit-pagination="2" style="--paginate:true;--class:agenda;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="agenda" data-theme="clean" lang="C" class="agenda" data-marpit-pagination="2" style="--paginate:true;--class:agenda;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EA%B2%B0%EB%A1%A0--%ED%9A%A8%EA%B3%BC%EB%8A%94-%EC%A0%80%EC%9E%A5%EB%B9%84%EA%B0%80-%EC%95%84%EB%8B%88%EB%9D%BC-cloudfront-%EC%A0%84%EC%86%A1%EB%B9%84%EC%97%90%EC%84%9C-%EB%82%98%EC%98%A4%EB%AF%80%EB%A1%9C-%EC%A0%84%EC%86%A1%EB%9F%89-%ED%99%95%EC%9D%B8%EB%B6%80%ED%84%B0-%EC%8B%9C%EC%9E%91%ED%95%A9%EB%8B%88%EB%8B%A4">결론 — 효과는 저장비가 아니라 CloudFront 전송비에서 나오므로, 전송량 확인부터 시작합니다</h2>
 <div class="cols">
 <div class="col">
@@ -18,7 +18,8 @@
 <h3 id="%E2%91%A1-%ED%99%94%EC%A7%88%EA%B3%BC-%EC%9A%A9%EB%9F%89">② 화질과 용량</h3>
 <ul>
 <li>레거시는 원본이 없어(<code>retouched</code> 2개뿐) <span class="hl-amber">JPG q60 → WebP 재인코딩</span>만 가능</li>
-<li>WebP q70 = <span class="hl-green">−16.4%</span> (SSIM 0.959) · q75 = −11.2% (0.963)</li>
+<li>WebP q70 = <span class="hl-green">−16~22%</span> · q75 = −11~16% (표본 2종 실측)</li>
+<li><span class="hl-red">무손실 WebP 는 +532%</span> · JPG 무손실 최적화는 −0.5% → 무손실로는 줄일 수 없음</li>
 </ul>
 </div>
 <div class="col">
@@ -36,7 +37,7 @@
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="3" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="3" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%F0%9F%8E%AF-%EA%B2%B0%EC%A0%95-%ED%95%84%EC%9A%94--%EC%98%A4%EB%84%88-%ED%99%95%EC%9D%B8-%EC%82%AC%ED%95%AD"><img class="emoji" draggable="false" alt="🎯" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f3af.svg" data-marp-twemoji=""/> 결정 필요 — 오너 확인 사항</h2>
 <table>
 <thead>
@@ -60,7 +61,7 @@
 <tr>
 <td>3</td>
 <td>품질값</td>
-<td>시범 장소에서 <span class="hl-blue">q70 · q75</span> 를 뷰어로 나란히 비교한 뒤 결정</td>
+<td>무손실은 불가(+532%) · 시범 장소에서 <span class="hl-blue">q70 · q75</span> 를 뷰어로 나란히 비교한 뒤 결정</td>
 </tr>
 <tr>
 <td>4</td>
@@ -80,7 +81,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="4" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="4" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EB%A8%BC%EC%A0%80-%EB%B0%94%EB%A1%9C%EC%9E%A1%EC%9D%84-%EC%A0%84%EC%A0%9C--%EC%A0%80%EC%9E%A5-%EC%9A%A9%EB%9F%89%EC%9C%BC%EB%A1%9C-%EC%95%84%EB%81%BC%EB%8A%94-%EB%8F%88%EC%9D%80-%EC%9B%94-1-%EC%88%98%EC%A4%80%EC%9E%85%EB%8B%88%EB%8B%A4">먼저 바로잡을 전제 — 저장 용량으로 아끼는 돈은 월 $1 수준입니다</h2>
 <table>
 <thead>
@@ -114,7 +115,117 @@
 <li><span class="hl-amber">0단계 판정 기준</span> 전송량을 확인해 월 절감액이 1회 비용(약 $55 + 작업 시간)을 몇 달 안에 회수하는지 봅니다.</li>
 </ul>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="5" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="5" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+<h2 id="%EB%AC%B4%EC%86%90%EC%8B%A4-%EC%A0%84%ED%99%98%EC%9D%80-%EA%B0%80%EB%8A%A5%ED%95%9C%EA%B0%80--%EB%AC%B4%EC%86%90%EC%8B%A4-webp-%EB%8A%94-%EC%A7%80%EA%B8%88-jpg-%EB%B3%B4%EB%8B%A4-6%EB%B0%B0-%EC%9D%B4%EC%83%81-%EC%BB%A4%EC%A7%91%EB%8B%88%EB%8B%A4">무손실 전환은 가능한가 — 무손실 WebP 는 지금 JPG 보다 6배 이상 커집니다</h2>
+<table>
+<thead>
+<tr>
+<th>방식</th>
+<th>용량 변화</th>
+<th>SSIM 평균</th>
+<th>하위 5%</th>
+<th>판단</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WebP 무손실</td>
+<td><span class="hl-red">+531.8%</span></td>
+<td>1.0000</td>
+<td>1.0000</td>
+<td><img class="emoji" draggable="false" alt="🚫" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f6ab.svg" data-marp-twemoji=""/> 6.3배 커짐</td>
+</tr>
+<tr>
+<td>JPG 무손실 최적화 (<code>jpegtran -optimize</code>)</td>
+<td>−0.3%</td>
+<td>1.0000</td>
+<td>1.0000</td>
+<td>효과 없음</td>
+</tr>
+<tr>
+<td>JPG 무손실 프로그레시브 (<code>jpegtran -progressive</code>)</td>
+<td>−0.5%</td>
+<td>1.0000</td>
+<td>1.0000</td>
+<td>효과 없음</td>
+</tr>
+<tr>
+<td>WebP q90</td>
+<td>+57.5%</td>
+<td>0.9878</td>
+<td>0.9794</td>
+<td><img class="emoji" draggable="false" alt="🚫" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f6ab.svg" data-marp-twemoji=""/> 커짐</td>
+</tr>
+<tr>
+<td>WebP q85</td>
+<td>+23.7%</td>
+<td>0.9790</td>
+<td>0.9642</td>
+<td><img class="emoji" draggable="false" alt="🚫" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f6ab.svg" data-marp-twemoji=""/> 커짐</td>
+</tr>
+<tr>
+<td>WebP q80</td>
+<td>+1.3%</td>
+<td>0.9691</td>
+<td>0.9463</td>
+<td><img class="emoji" draggable="false" alt="🚫" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f6ab.svg" data-marp-twemoji=""/> 그대로</td>
+</tr>
+<tr>
+<td><span class="hl-blue">WebP q75</span></td>
+<td><span class="hl-green">−16.4%</span></td>
+<td>0.9577</td>
+<td>0.9242</td>
+<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/> 후보</td>
+</tr>
+<tr>
+<td><span class="hl-blue">WebP q70</span></td>
+<td><span class="hl-green">−21.6%</span></td>
+<td>0.9536</td>
+<td>0.9149</td>
+<td><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/> 후보</td>
+</tr>
+<tr>
+<td>WebP q60</td>
+<td>−31.3%</td>
+<td>0.9447</td>
+<td>0.8961</td>
+<td>화질 저하 큼</td>
+</tr>
+</tbody>
+</table>
+<p>운영 타일 무작위 180장 · SSIM 은 지금 JPG 대비(1 = 동일) · 11-13 표본 500장은 q70 −16.4% · q75 −11.2% → <strong>q70 −16~22% · q75 −11~16%</strong></p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+<h2 id="%EC%99%9C-%EB%AC%B4%EC%86%90%EC%8B%A4%EC%9D%80-%EC%98%A4%ED%9E%88%EB%A0%A4-%EC%BB%A4%EC%A7%80%EB%8A%94%EA%B0%80">왜 무손실은 오히려 커지는가</h2>
+<table>
+<thead>
+<tr>
+<th>질문</th>
+<th>답</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>이미 q60 으로 압축됐으니 «포장만» 바꾸면 되지 않나?</td>
+<td>WebP 는 JPG 의 압축 데이터를 그대로 옮겨 담을 수 없습니다. 반드시 <strong>픽셀로 풀었다가 다시 압축</strong>합니다</td>
+</tr>
+<tr>
+<td>그러면 왜 무손실이 커지나?</td>
+<td>풀어낸 픽셀에는 JPG 의 8×8 블록 무늬와 잡음이 그대로 남아 있습니다. 무손실은 이 잡음까지 한 픽셀도 틀리지 않게 보존해야 해서, 원래 그 잡음을 만든 JPG 보다 훨씬 비효율적입니다</td>
+</tr>
+<tr>
+<td>JPG 그대로 무손실로 줄이는 방법은?</td>
+<td><code>jpegtran</code> 이 대표적인데 −0.5% 뿐입니다. 지금 타일은 이미 최적화된 상태로 저장돼 있습니다</td>
+</tr>
+<tr>
+<td>JPEG XL 은?</td>
+<td>JPG 를 무손실로 약 20% 줄일 수 있다고 알려져 있지만(이번에 측정하지 않음), 주요 브라우저가 모두 지원하지 않아 지금은 쓸 수 없습니다</td>
+</tr>
+</tbody>
+</table>
+<p><span class="hl-amber">결론</span> SSIM 1 에 가깝게 유지하면서 용량을 줄이는 방법은 없습니다. 용량을 줄이려면 <strong>q70~q75 수준의 손실을 받아들이는 것</strong>이 유일한 길이고, 그래서 시범 장소에서 육안 비교가 필요합니다.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="7" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EB%8C%80%EC%83%81-%EA%B7%9C%EB%AA%A8--%EC%9E%A5%EC%86%8C-1758%EA%B3%B3--%ED%83%80%EC%9D%BC-1224%EB%A7%8C-%EA%B0%9C--2756gb">대상 규모 — 장소 1,758곳 · 타일 1,224만 개 · 275.6GB</h2>
 <p>백업 목록표(<code>state/pano__*.csv.gz</code>, 2026-11-17 기준)에서 <code>mres_[fblrud]/l*/…jpg</code> 만 집계했습니다. 서버 마운트는 순회하지 않았습니다.</p>
 <table>
@@ -149,7 +260,7 @@
 </table>
 <p>원본 이미지(<code>retouched</code> · <code>origin</code>)는 버킷 전체에서 20개뿐이라, 레거시 장소는 <strong>원본에서 다시 생성하는 방식을 쓸 수 없습니다.</strong></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="8" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EB%B2%94%EC%9C%84--xml-%EC%9D%98-cube-url-%ED%95%9C-%EC%A4%84%EB%A1%9C%EB%A7%8C-%EC%B0%B8%EC%A1%B0%EB%90%98%EB%8A%94-%ED%83%80%EC%9D%BC%EB%A7%8C-%EB%B0%94%EA%BF%89%EB%8B%88%EB%8B%A4">범위 — XML 의 <code>&lt;cube url&gt;</code> 한 줄로만 참조되는 타일만 바꿉니다</h2>
 <table>
 <thead>
@@ -188,7 +299,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="7" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="9" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EC%99%9C-%C2%ABxml-%EB%A7%8C-%EA%B3%A0%EC%B9%98%EB%A9%B4-%EB%81%9D%C2%BB%EC%9D%B4-%EC%95%84%EB%8B%8C%EA%B0%80">왜 «XML 만 고치면 끝»이 아닌가</h2>
 <p>레거시 XML 생성기는 <strong>DB 를 기준으로 투어 XML 을 통째로 다시 쓰고</strong>, 타일 확장자를 <code>.jpg</code> 로 고정합니다. 핫스팟·스티커를 편집할 때마다 이 생성기가 돕니다.</p>
 <pre><code class="language-php"><span class="hljs-comment">// a.createCyberTourXML.php:523 · :525</span>
@@ -214,7 +325,7 @@
 </table>
 <p>투어 XML 예시(<code>pano/0/329/865.xml</code>)도 장면마다 <code>53/mres_%s/l2/%v/l2_%s_%v_%h.jpg</code> 형태로 적혀 있습니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="8" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="10" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%ED%95%B5%EC%8B%AC-%EC%84%A4%EA%B3%84--%EC%9E%A5%EB%A9%B4%EB%A7%88%EB%8B%A4-%ED%99%95%EC%9E%A5%EC%9E%90-%EA%B0%92%EC%9D%84-%EB%91%90%EA%B3%A0-%EC%83%9D%EC%84%B1%EA%B8%B0%EA%B0%80-%EB%8B%A4%EC%8B%9C-%EC%93%B0%EA%B2%8C-%ED%95%A9%EB%8B%88%EB%8B%A4">핵심 설계 — 장면마다 확장자 값을 두고, 생성기가 다시 쓰게 합니다</h2>
 <ol>
 <li><strong>장면(pano)마다 <code>tile_ext</code></strong> (기본값 <code>jpg</code>) 를 DB 에 둡니다.</li>
@@ -230,7 +341,125 @@
 </ol>
 <p><span class="hl-amber">미확인</span> 레거시 pano 테이블과 플랫폼 <code>tile_info</code> 의 동기화 경로는 이번에 조회하지 못했습니다(MySQL 연결 끊김). 1단계 첫 작업입니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="9" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="11" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+<h2 id="%EC%88%98%EC%A0%95-%EB%B2%94%EC%9C%84-%E2%91%A0-%EB%A0%88%EA%B1%B0%EC%8B%9C-php--%ED%83%80%EC%9D%BC-jpg-%EB%A5%BC-%EA%B3%A0%EC%A0%95%ED%95%9C-%EC%83%9D%EC%84%B1%EA%B8%B0%ED%8E%98%EC%9D%B4%EC%A7%80-17%EA%B3%B3">수정 범위 ① 레거시 PHP — 타일 <code>.jpg</code> 를 고정한 생성기·페이지 17곳</h2>
+<p>같은 <code>files/pano</code> 타일을 레거시와 플랫폼이 함께 쓰므로, <strong>타일 URL 을 만드는 모든 페이지</strong>가 <code>tile_ext</code> 를 읽어야 합니다.</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>파일 (<code>Look360_ksq1.2/</code>) · 줄</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>투어 XML 저장 생성기</td>
+<td><code>PanoramaManagement/…/hotspot/a.createCyberTourXML.php:520~552</code> · <code>_multiLanguage.php:422~512</code> · <code>_BATCH.php:115</code></td>
+</tr>
+<tr>
+<td>실시간 XML (편집기·미리보기·지도)</td>
+<td><code>PanoramaManagement/…/a.krpanoXml.php:458</code> · <code>a.krpanoXmlForHotspotEditor.php:215</code> · <code>a.krpanoXmlForPanoramaMap.php:222</code> · <code>…MapBatch.php:214</code> · <code>…Preview.php:232</code></td>
+</tr>
+<tr>
+<td>다른 모듈</td>
+<td><code>look360_pano_cms/…/a.getKrpanoXml.php:365</code> · <code>look360_place_map/…/a.krpanoXmlForIndoorMap.php:430~450</code> · <code>look360_ucc/…/a.getKrpanoXml.php:206~218</code> · <code>plugins/indyspot/php/indyspot_default_plugin.php:1270</code></td>
+</tr>
+<tr>
+<td>이미지 프록시</td>
+<td><code>vr/…/a.getImg.php</code> — XML 이 <code>ext=jpg</code> 로 넘기고, <code>Content-Type: image/{ext}</code> 로 응답</td>
+</tr>
+<tr>
+<td>확인만</td>
+<td><code>modules/vr/xml/*.php</code> 5개는 구형 <code>tablet_%s.jpg</code> 형식이라 <code>mres</code> 대상이 아님</td>
+</tr>
+</tbody>
+</table>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="12" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+<h2 id="%EC%88%98%EC%A0%95-%EB%B2%94%EC%9C%84-%E2%91%A1-%EB%A0%88%EA%B1%B0%EC%8B%9C-%EC%A0%80%EC%9E%A5-xml--%ED%83%80%EC%9D%BC%EC%9D%84-%ED%92%88%EC%9D%80-2972%EA%B0%9C%EB%A5%BC-%EC%83%9D%EC%84%B1%EA%B8%B0%EB%A1%9C-%EB%8B%A4%EC%8B%9C-%EC%94%81%EB%8B%88%EB%8B%A4">수정 범위 ② 레거시 저장 XML — 타일을 품은 2,972개를 생성기로 다시 씁니다</h2>
+<p>버킷의 XML 5,994개(<code>xmlBackup</code> 제외)를 모두 받아 <code>mres_…jpg</code> 참조 여부를 검사했습니다.</p>
+<table>
+<thead>
+<tr>
+<th>저장된 XML (버킷 실측 5,994개 중)</th>
+<th>개수</th>
+<th>처리</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>투어 XML (<code>{장소}/{투어}.xml</code>, 직접 경로)</td>
+<td>2,256</td>
+<td>생성기로 재생성</td>
+</tr>
+<tr>
+<td>투어 XML (<code>a.getImg.php</code> 프록시 · <code>ext=jpg</code>)</td>
+<td>495</td>
+<td>생성기로 재생성</td>
+</tr>
+<tr>
+<td>다국어 투어 XML (<code>_us</code> 109 · <code>_cn</code> 13 · <code>_jp</code> 12)</td>
+<td>134</td>
+<td><code>_multiLanguage</code> 로 재생성</td>
+</tr>
+<tr>
+<td>패노스토리 XML (<code>panostory_{N}.xml</code>)</td>
+<td>87</td>
+<td>생성 경로 확인 후 재생성</td>
+</tr>
+<tr>
+<td>커스텀 XML 1,451 · 일괄 업로드 목록 1,477</td>
+<td>0</td>
+<td>타일 참조 없음 (확인 완료)</td>
+</tr>
+</tbody>
+</table>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="13" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
+<h2 id="%EC%88%98%EC%A0%95-%EB%B2%94%EC%9C%84-%E2%91%A2-%ED%94%8C%EB%9E%AB%ED%8F%BC--be-%EB%B9%8C%EB%8D%94-2%EA%B0%9C%EA%B0%80-%ED%95%B5%EC%8B%AC%EC%9E%85%EB%8B%88%EB%8B%A4">수정 범위 ③ 플랫폼 — BE 빌더 2개가 핵심입니다</h2>
+<table>
+<thead>
+<tr>
+<th>저장소</th>
+<th>위치</th>
+<th>처리</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BE</td>
+<td><code>nestjs-look360-api/src/utils/krpano-xml-builder.ts:1488~1505</code> · <code>:1704~1720</code> (<code>:40~56</code> 은 상단 예시)</td>
+<td><code>mres</code> · <code>512_</code> · <code>1024_</code> URL 을 <code>tile_ext</code> 로 조립</td>
+</tr>
+<tr>
+<td>BE</td>
+<td><code>nestjs-look360-api/src/utils/panostory-xml-builder.ts:580~587</code></td>
+<td>같음</td>
+</tr>
+<tr>
+<td>client</td>
+<td><code>look360_v3_client/src/components/vr-viewer/VrShareModal.vue:553</code> · <code>:834</code></td>
+<td>공유 미니뷰 <code>512_%s.jpg</code> 고정 → 2차(<code>512_</code> 전환 시)</td>
+</tr>
+<tr>
+<td>admin</td>
+<td>해당 없음</td>
+<td>타일 URL 을 직접 만들지 않음</td>
+</tr>
+<tr>
+<td>utils</td>
+<td>수정 불필요</td>
+<td>신규 업로드는 계속 JPG(<code>tile_ext=jpg</code>) · 신규 WebP 는 11-13 덱의 별도 트랙</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>플랫폼은 XML 을 저장하지 않고 요청마다 DB 로 만들므로, <code>tile_ext</code> 만 읽으면 재생성 작업이 없습니다.</li>
+<li>확인 순서: 1단계에서 <strong>전 장소 XML 을 바꾸기 전과 바이트 단위로 비교</strong>해, <code>jpg</code> 기본값일 때 결과가 하나도 달라지지 않는지 봅니다.</li>
+</ul>
+<p><span class="hl-amber">관찰</span> <code>a.getImg.php</code> 프록시를 거치는 투어 495개는 타일을 <strong>서버 마운트(<code>./files/pano/…</code>)에서 PHP 로 읽어</strong> 응답합니다. CloudFront → S3 직결이 아니라서 S3 Files 읽기 비용이 따로 생길 수 있습니다(이번 범위 밖, 별도 확인 필요).</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="14" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EB%8B%A8%EA%B3%84--%EC%9D%BD%EB%8A%94-%EC%AA%BD%EB%B6%80%ED%84%B0-%EC%84%9C%EB%B9%84%EC%8A%A4-%EB%8F%99%EC%9E%91%EC%9D%80-%EC%8B%9C%EB%B2%94-%EC%9E%A5%EC%86%8C%EC%97%90%EC%84%9C-%EC%B2%98%EC%9D%8C-%EB%B0%94%EB%80%9D%EB%8B%88%EB%8B%A4">단계 — 읽는 쪽부터, 서비스 동작은 시범 장소에서 처음 바뀝니다</h2>
 <table>
 <thead>
@@ -279,7 +508,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="10" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="15" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EC%8B%9C%EB%B2%94-%EA%B2%80%EC%A6%9D-%EB%AA%A9%EB%A1%9D--%EC%9E%A5%EC%86%8C-3%EA%B3%B3%EC%97%90%EC%84%9C-%EB%AA%A8%EB%91%90-%ED%86%B5%EA%B3%BC%ED%95%B4%EC%95%BC-%EB%8B%A4%EC%9D%8C-%EB%8B%A8%EA%B3%84%EB%A1%9C-%EA%B0%91%EB%8B%88%EB%8B%A4">시범 검증 목록 — 장소 3곳에서 모두 통과해야 다음 단계로 갑니다</h2>
 <table>
 <thead>
@@ -324,7 +553,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="11" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="16" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EC%8B%A4%ED%96%89-%EC%9C%84%EC%B9%98--kabkee-main-%EC%9D%84-%EC%B6%94%EC%B2%9C%ED%95%A9%EB%8B%88%EB%8B%A4">실행 위치 — kabkee-main 을 추천합니다</h2>
 <table>
 <thead>
@@ -353,7 +582,7 @@
 <li>업로드는 S3 API 로 직접 합니다(서버 마운트 경유 금지).</li>
 </ul>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="12" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="17" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EB%B9%84%EC%9A%A9%EA%B3%BC-%EA%B8%B0%EA%B0%84-%EC%B6%94%EC%A0%95">비용과 기간 (추정)</h2>
 <table>
 <thead>
@@ -393,7 +622,7 @@
 </table>
 <p><span class="hl-amber">추정 값</span> 단가는 AWS 서울 공시가 기준이며 실제 청구액과 다를 수 있습니다. 절감률은 기존 리포트의 표본 500장(장소 120곳) 실측 기준이라 장소마다 다를 수 있습니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="13" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="18" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EB%86%93%EC%B9%98%EB%A9%B4-%EC%82%AC%EA%B3%A0%EA%B0%80-%EB%82%98%EB%8A%94-%ED%95%A8%EC%A0%95">놓치면 사고가 나는 함정</h2>
 <table>
 <thead>
@@ -430,7 +659,7 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="14" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="15">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="19" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="20">
 <h2 id="%EC%B8%A1%EC%A0%95-%EB%B0%A9%EB%B2%95%EA%B3%BC-%EA%B7%BC%EA%B1%B0">측정 방법과 근거</h2>
 <table>
 <thead>
@@ -462,7 +691,15 @@
 </tr>
 <tr>
 <td>화질·용량 비율</td>
-<td>11-13 «files/pano WebP 전환 검토» 덱의 기존 데이터 재인코딩 실측</td>
+<td>무작위 타일 180장(샤드 30개) · Pillow WebP <code>method=6</code> · <code>jpegtran</code> 2.1.5 · 밝기 SSIM(가우시안 11×11, σ 1.5) + 11-13 덱 표본 500장</td>
+</tr>
+<tr>
+<td>고정 <code>.jpg</code> 지점</td>
+<td><code>Look360_ksq1.2</code> · <code>nestjs-look360-api</code> · <code>look360_v3_client</code> · <code>look360_platform_admin</code> · <code>look360_utils_v3</code> 소스 검색 (주석 줄 제외)</td>
+</tr>
+<tr>
+<td>저장된 XML</td>
+<td>버킷 XML 5,994개(<code>xmlBackup</code> 제외)를 받아 <code>mres_…jpg</code> · <code>512_/1024_%s.jpg</code> 참조 검사</td>
 </tr>
 <tr>
 <td>미확인</td>
@@ -471,9 +708,9 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="closing" data-theme="clean" lang="C" class="closing" style="--class:closing;--theme:clean;">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-class="closing" data-theme="clean" lang="C" class="closing" style="--class:closing;--theme:clean;">
 <h2 id="%EA%B0%90%EC%82%AC%ED%95%A9%EB%8B%88%EB%8B%A4">감사합니다</h2>
-<p>레거시 큐브 타일은 WebP q70 재인코딩으로 −16% 안팎을 기대할 수 있습니다. 효과는 CloudFront 전송비에서 나오므로 전송량 확인 → 읽는 쪽 수정 → 시범 3곳 → 점진 전환 순서로 진행합니다.</p>
+<p>레거시 큐브 타일은 무손실로는 줄일 수 없고, WebP q70~q75 재인코딩으로 −11~22% 를 기대할 수 있습니다. 효과는 CloudFront 전송비에서 나오므로 전송량 확인 → 읽는 쪽 수정 → 시범 3곳 → 점진 전환 순서로 진행합니다.</p>
 <p>Indyspot AI Corp  ·  2026-11-18</p>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()})}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame(()=>{t.style.display=""}))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=()=>o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o),l=Symbol();let c;const d="marpitSVGPolyfill:setZoomFactor,",h=Symbol(),g=Symbol();const p=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[v]:[],i={then:e=>(t?(async()=>{if(void 0===c){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise(t=>{i.addEventListener("load",()=>t())});i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),c=e.getImageData(5,5,1,1).data[3]<128}return c})().then(t=>{null==e||e(t?[v]:[])}):null==e||e([]),i)};return Object.assign(e,i)};let m,u;function v(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[g]||(Object.defineProperty(window,g,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(d)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(u=i)}}catch(t){console.error(t)}}));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||u||t.currentScale||1;m!==a&&(m=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}}),!1!==n&&Array.from(e.querySelectorAll("iframe"),({contentWindow:t})=>{null==t||t.postMessage(`${d}${n}`,"null"===window.origin?"*":window.origin)})}function w({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[h])return t[h];let e=!0;const i=()=>{e=!1,delete t[h]};Object.defineProperty(t,h,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await p()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}m=1,u=void 0;const b=Symbol(),y=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[l];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,o=t[n].proto();a()&&o!==HTMLElement?i||customElements.define(s,r(o,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach(t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)}))}window[l]=!0})(e),e[b])return e[b];const i=w({target:e}),n=()=>{i(),delete e[b]},o=Object.assign(n,{cleanup:n,update:()=>y(e)});return Object.defineProperty(e,b,{configurable:!0,value:o}),o},f=document.currentScript;y(f?f.getRootNode():document)}();

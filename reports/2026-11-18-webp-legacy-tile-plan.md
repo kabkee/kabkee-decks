@@ -31,7 +31,8 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 
 ### ② 화질과 용량
 - 레거시는 원본이 없어(`retouched` 2개뿐) <span class="hl-amber">JPG q60 → WebP 재인코딩</span>만 가능
-- WebP q70 = <span class="hl-green">−16.4%</span> (SSIM 0.959) · q75 = −11.2% (0.963)
+- WebP q70 = <span class="hl-green">−16~22%</span> · q75 = −11~16% (표본 2종 실측)
+- <span class="hl-red">무손실 WebP 는 +532%</span> · JPG 무손실 최적화는 −0.5% → 무손실로는 줄일 수 없음
 
 </div>
 <div class="col">
@@ -56,7 +57,7 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 |---|---|---|
 | 1 | CloudFront 월 전송량 확인 방법 | 콘솔(Billing·Cost Explorer)에서 직접 확인, 또는 CloudWatch 읽기 권한 프로필 발급 |
 | 2 | 시범 장소 3곳 | 크기 소·중·대 1곳씩 + 그중 1곳은 커스텀·다국어 XML 사용 장소 |
-| 3 | 품질값 | 시범 장소에서 <span class="hl-blue">q70 · q75</span> 를 뷰어로 나란히 비교한 뒤 결정 |
+| 3 | 품질값 | 무손실은 불가(+532%) · 시범 장소에서 <span class="hl-blue">q70 · q75</span> 를 뷰어로 나란히 비교한 뒤 결정 |
 | 4 | JPG 삭제 시점 | 관찰 <span class="hl-blue">30일</span> 후 · 백업 대조 완료분만 · `files/pano` 삭제 금지 규칙에 따라 오너 승인 필수 |
 | 5 | 버킷 이전 버전 만료 규칙 | 버전 관리가 켜져 있으면 삭제해도 용량이 안 줄어듦 → 만료 규칙 추가 여부 |
 | 6 | 진행 방식 | 에픽 발주 또는 직접 구현 (오빠 지시 필요) |
@@ -74,6 +75,37 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 - 효과는 **관람자가 받는 타일 양**에 비례합니다. 그래서 전송량 상위 장소부터 바꾸는 것이 맞습니다.
 - 실제 월 전송량은 아직 모릅니다. 현재 AWS 프로필(`look360-backup-reader`)은 CloudWatch 조회 권한이 없어 `AccessDenied` 가 났습니다.
 - <span class="hl-amber">0단계 판정 기준</span> 전송량을 확인해 월 절감액이 1회 비용(약 $55 + 작업 시간)을 몇 달 안에 회수하는지 봅니다.
+
+---
+
+## 무손실 전환은 가능한가 — 무손실 WebP 는 지금 JPG 보다 6배 이상 커집니다
+
+| 방식 | 용량 변화 | SSIM 평균 | 하위 5% | 판단 |
+|---|---|---|---|---|
+| WebP 무손실 | <span class="hl-red">+531.8%</span> | 1.0000 | 1.0000 | 🚫 6.3배 커짐 |
+| JPG 무손실 최적화 (`jpegtran -optimize`) | −0.3% | 1.0000 | 1.0000 | 효과 없음 |
+| JPG 무손실 프로그레시브 (`jpegtran -progressive`) | −0.5% | 1.0000 | 1.0000 | 효과 없음 |
+| WebP q90 | +57.5% | 0.9878 | 0.9794 | 🚫 커짐 |
+| WebP q85 | +23.7% | 0.9790 | 0.9642 | 🚫 커짐 |
+| WebP q80 | +1.3% | 0.9691 | 0.9463 | 🚫 그대로 |
+| <span class="hl-blue">WebP q75</span> | <span class="hl-green">−16.4%</span> | 0.9577 | 0.9242 | ✅ 후보 |
+| <span class="hl-blue">WebP q70</span> | <span class="hl-green">−21.6%</span> | 0.9536 | 0.9149 | ✅ 후보 |
+| WebP q60 | −31.3% | 0.9447 | 0.8961 | 화질 저하 큼 |
+
+운영 타일 무작위 180장 · SSIM 은 지금 JPG 대비(1 = 동일) · 11-13 표본 500장은 q70 −16.4% · q75 −11.2% → **q70 −16~22% · q75 −11~16%**
+
+---
+
+## 왜 무손실은 오히려 커지는가
+
+| 질문 | 답 |
+|---|---|
+| 이미 q60 으로 압축됐으니 «포장만» 바꾸면 되지 않나? | WebP 는 JPG 의 압축 데이터를 그대로 옮겨 담을 수 없습니다. 반드시 **픽셀로 풀었다가 다시 압축**합니다 |
+| 그러면 왜 무손실이 커지나? | 풀어낸 픽셀에는 JPG 의 8×8 블록 무늬와 잡음이 그대로 남아 있습니다. 무손실은 이 잡음까지 한 픽셀도 틀리지 않게 보존해야 해서, 원래 그 잡음을 만든 JPG 보다 훨씬 비효율적입니다 |
+| JPG 그대로 무손실로 줄이는 방법은? | `jpegtran` 이 대표적인데 −0.5% 뿐입니다. 지금 타일은 이미 최적화된 상태로 저장돼 있습니다 |
+| JPEG XL 은? | JPG 를 무손실로 약 20% 줄일 수 있다고 알려져 있지만(이번에 측정하지 않음), 주요 브라우저가 모두 지원하지 않아 지금은 쓸 수 없습니다 |
+
+<span class="hl-amber">결론</span> SSIM 1 에 가깝게 유지하면서 용량을 줄이는 방법은 없습니다. 용량을 줄이려면 **q70~q75 수준의 손실을 받아들이는 것**이 유일한 길이고, 그래서 시범 장소에서 육안 비교가 필요합니다.
 
 ---
 
@@ -134,6 +166,51 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 5. **장면 스킵 규칙** — 한 장면 안에서는 확장자를 섞을 수 없으므로, 장면 전체 절감률이 <span class="hl-amber">8% 미만</span>이면(질감 많은 숲 장면 등) JPG 로 둡니다.
 
 <span class="hl-amber">미확인</span> 레거시 pano 테이블과 플랫폼 `tile_info` 의 동기화 경로는 이번에 조회하지 못했습니다(MySQL 연결 끊김). 1단계 첫 작업입니다.
+
+---
+
+## 수정 범위 ① 레거시 PHP — 타일 `.jpg` 를 고정한 생성기·페이지 17곳
+
+같은 `files/pano` 타일을 레거시와 플랫폼이 함께 쓰므로, **타일 URL 을 만드는 모든 페이지**가 `tile_ext` 를 읽어야 합니다.
+
+| 구분 | 파일 (`Look360_ksq1.2/`) · 줄 |
+|---|---|
+| 투어 XML 저장 생성기 | `PanoramaManagement/…/hotspot/a.createCyberTourXML.php:520~552` · `_multiLanguage.php:422~512` · `_BATCH.php:115` |
+| 실시간 XML (편집기·미리보기·지도) | `PanoramaManagement/…/a.krpanoXml.php:458` · `a.krpanoXmlForHotspotEditor.php:215` · `a.krpanoXmlForPanoramaMap.php:222` · `…MapBatch.php:214` · `…Preview.php:232` |
+| 다른 모듈 | `look360_pano_cms/…/a.getKrpanoXml.php:365` · `look360_place_map/…/a.krpanoXmlForIndoorMap.php:430~450` · `look360_ucc/…/a.getKrpanoXml.php:206~218` · `plugins/indyspot/php/indyspot_default_plugin.php:1270` |
+| 이미지 프록시 | `vr/…/a.getImg.php` — XML 이 `ext=jpg` 로 넘기고, `Content-Type: image/{ext}` 로 응답 |
+| 확인만 | `modules/vr/xml/*.php` 5개는 구형 `tablet_%s.jpg` 형식이라 `mres` 대상이 아님 |
+
+---
+
+## 수정 범위 ② 레거시 저장 XML — 타일을 품은 2,972개를 생성기로 다시 씁니다
+
+버킷의 XML 5,994개(`xmlBackup` 제외)를 모두 받아 `mres_…jpg` 참조 여부를 검사했습니다.
+
+| 저장된 XML (버킷 실측 5,994개 중) | 개수 | 처리 |
+|---|---|---|
+| 투어 XML (`{장소}/{투어}.xml`, 직접 경로) | 2,256 | 생성기로 재생성 |
+| 투어 XML (`a.getImg.php` 프록시 · `ext=jpg`) | 495 | 생성기로 재생성 |
+| 다국어 투어 XML (`_us` 109 · `_cn` 13 · `_jp` 12) | 134 | `_multiLanguage` 로 재생성 |
+| 패노스토리 XML (`panostory_{N}.xml`) | 87 | 생성 경로 확인 후 재생성 |
+| 커스텀 XML 1,451 · 일괄 업로드 목록 1,477 | 0 | 타일 참조 없음 (확인 완료) |
+
+---
+
+## 수정 범위 ③ 플랫폼 — BE 빌더 2개가 핵심입니다
+
+| 저장소 | 위치 | 처리 |
+|---|---|---|
+| BE | `nestjs-look360-api/src/utils/krpano-xml-builder.ts:1488~1505` · `:1704~1720` (`:40~56` 은 상단 예시) | `mres` · `512_` · `1024_` URL 을 `tile_ext` 로 조립 |
+| BE | `nestjs-look360-api/src/utils/panostory-xml-builder.ts:580~587` | 같음 |
+| client | `look360_v3_client/src/components/vr-viewer/VrShareModal.vue:553` · `:834` | 공유 미니뷰 `512_%s.jpg` 고정 → 2차(`512_` 전환 시) |
+| admin | 해당 없음 | 타일 URL 을 직접 만들지 않음 |
+| utils | 수정 불필요 | 신규 업로드는 계속 JPG(`tile_ext=jpg`) · 신규 WebP 는 11-13 덱의 별도 트랙 |
+
+- 플랫폼은 XML 을 저장하지 않고 요청마다 DB 로 만들므로, `tile_ext` 만 읽으면 재생성 작업이 없습니다.
+- 확인 순서: 1단계에서 **전 장소 XML 을 바꾸기 전과 바이트 단위로 비교**해, `jpg` 기본값일 때 결과가 하나도 달라지지 않는지 봅니다.
+
+<span class="hl-amber">관찰</span> `a.getImg.php` 프록시를 거치는 투어 495개는 타일을 **서버 마운트(`./files/pano/…`)에서 PHP 로 읽어** 응답합니다. CloudFront → S3 직결이 아니라서 S3 Files 읽기 비용이 따로 생길 수 있습니다(이번 범위 밖, 별도 확인 필요).
 
 ---
 
@@ -215,7 +292,9 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 | XML 형식 | S3 에서 `pano/0/329/865.xml` 1개를 받아 확인 |
 | 생성기 고정 지점 | `Look360_ksq1.2` 소스 검색 (`a.createCyberTourXML.php:523` · `:525` 등) |
 | 타일 메타데이터 | `head-object pano/0/329/53/mres_f/l1/1/l1_f_1_1.jpg` |
-| 화질·용량 비율 | 11-13 «files/pano WebP 전환 검토» 덱의 기존 데이터 재인코딩 실측 |
+| 화질·용량 비율 | 무작위 타일 180장(샤드 30개) · Pillow WebP `method=6` · `jpegtran` 2.1.5 · 밝기 SSIM(가우시안 11×11, σ 1.5) + 11-13 덱 표본 500장 |
+| 고정 `.jpg` 지점 | `Look360_ksq1.2` · `nestjs-look360-api` · `look360_v3_client` · `look360_platform_admin` · `look360_utils_v3` 소스 검색 (주석 줄 제외) |
+| 저장된 XML | 버킷 XML 5,994개(`xmlBackup` 제외)를 받아 `mres_…jpg` · `512_/1024_%s.jpg` 참조 검사 |
 | 미확인 | CloudFront 전송량 (CloudWatch 권한 없음) · 버킷 버전 관리 설정 (권한 없음) · DB 동기화 경로 (MySQL 연결 끊김) |
 
 ---
@@ -225,6 +304,6 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 
 ## 감사합니다
 
-레거시 큐브 타일은 WebP q70 재인코딩으로 −16% 안팎을 기대할 수 있습니다. 효과는 CloudFront 전송비에서 나오므로 전송량 확인 → 읽는 쪽 수정 → 시범 3곳 → 점진 전환 순서로 진행합니다.
+레거시 큐브 타일은 무손실로는 줄일 수 없고, WebP q70~q75 재인코딩으로 −11~22% 를 기대할 수 있습니다. 효과는 CloudFront 전송비에서 나오므로 전송량 확인 → 읽는 쪽 수정 → 시범 3곳 → 점진 전환 순서로 진행합니다.
 
 Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18
