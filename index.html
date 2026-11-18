@@ -475,8 +475,8 @@
         </a>
         <a class="deck-card" href="reports/2026-11-18-webp-legacy-tile-plan.html">
           <div class="date">2026-11-18</div>
-          <div class="title">레거시 큐브 타일 WebP 전환 실행 계획<br>시범 3곳 → 점진 전환 (11-13 검토 후속)</div>
-          <div class="meta">⚠️ CloudFront 실측 월 200~400GB = 무료 한도(1TB) 안 → 전송비 0원 · 비용 절감 월 약 $1(회수 약 4년) · 목적을 로딩 속도로 둘지 결정 · mres 타일만 · 1,758곳 · 1,224만 개 · 275.6GB · 원본 없음 → 재인코딩 q70 −16~22% · q75 −11~16% · 무손실 WebP 는 +532%(SSIM 비교표) · 레거시 PHP 17곳 + 저장 XML 2,972개 + 플랫폼 BE 빌더 2개 수정 범위 · 효과는 저장비(월 약 $1)가 아니라 CloudFront 전송비 · 장면별 tile_ext + 생성기 재생성(XML 만 고치면 .jpg 로 되돌아감) · kabkee-main 로컬 백업에서 변환(다운로드 0원 · 업로드 약 $55) · 함정 · 오너 결정 6건</div>
+          <div class="title">레거시 큐브 타일 WebP 전환 실행 계획<br>전환 확정 후 · 절감 효과와 미래 시나리오</div>
+          <div class="meta">mres 타일 275.6GB → 215~245GB · 저장비 월 −$0.8~1.5 · 지금은 CloudFront 무료 한도(1TB) 안 · 1TB 초과 시 타일 1TB 당 월 −$20~27 · 월 2TB 면 연 $330~454 · 5년 누적·회수 기간 · 무손실 +532%(화질 비교 이미지) · 레거시 PHP 17곳 + 저장 XML 2,972개 + BE 빌더 2개 · 시범 3곳 → 점진 전환</div>
           <span class="tag">NEW · WebP · 계획 · 레거시</span>
         </a>
         <a class="deck-card" href="reports/2026-11-13-webp-transition.html">
