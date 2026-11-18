@@ -58,8 +58,11 @@ main{padding:20px 24px 60px;display:flex;flex-direction:column;gap:18px}
 .vn-tab{display:flex;flex-direction:column;padding:8px 16px 9px;border-radius:10px 10px 0 0;color:#9ca3af;text-decoration:none;border:1px solid transparent;border-bottom:0}
 .vn-tab b{font-size:.86em;font-weight:700}.vn-tab small{font-size:.68em;opacity:.85}
 .vn-tab:hover{color:#e5e7eb;background:#111827;text-decoration:none}.vn-tab.on{background:#111827;color:#fff;border-color:#374151}.vn-tab.on b{color:#fbbf24}
+.vn-copy{margin:0 0 9px auto;padding:6px 12px;border-radius:8px;border:1px solid #374151;background:#111827;color:#d1d5db;font:inherit;font-size:.74em;cursor:pointer}.vn-copy:hover{color:#fff;border-color:#6b7280}
 @media(max-width:760px){.vn .w{padding:8px 14px 0}.vn-tab{padding:7px 10px 8px}}
-</style><nav class="vn" aria-label="버전"><div class="w"><span class="lbl">글 버전</span><a class="vn-tab on" href="2026-11-18-place-feel-scores.html" aria-current="page"><b>v1 · 블로그 감성</b><small>감상 에세이 · 시범 4편 · 보관</small></a><a class="vn-tab" href="2026-11-18-place-report-scores.html"><b>v2 · 현장 리포트</b><small>촬영 기록·현장 기록·확인 시설 · 시범 10편 · 현재</small></a></div></nav><!-- version-nav:end -->
+</style><nav class="vn" aria-label="버전"><div class="w"><span class="lbl">글 버전</span><a class="vn-tab on" href="/reports/place-scores/v1" aria-current="page"><b>v1 · 블로그 감성</b><small>감상 에세이 · 시범 4편 · 보관</small></a><a class="vn-tab" href="/reports/place-scores/v2"><b>v2 · 현장 리포트</b><small>촬영 기록·현장 기록·확인 시설 · 시범 10편 · 현재</small></a><button type="button" class="vn-copy" data-route="/reports/place-scores/v1" title="https://kabkee-decks.netlify.app/reports/place-scores/v1">🔗 이 버전 링크 복사</button></div></nav><script>
+document.querySelector('.vn-copy').addEventListener('click',async(e)=>{const b=e.currentTarget,u=location.origin+b.dataset.route;try{await navigator.clipboard.writeText(u);b.textContent='✅ 복사됨 · '+u}catch(_){b.textContent=u}setTimeout(()=>{b.textContent='🔗 이 버전 링크 복사'},4000)});
+</script><!-- version-nav:end -->
 <header><div class="w">
 <h1>장소 감상글 검토 순위</h1>
 <div class="sub">점수 낮은 순 = 사람 검토 우선 · 4곳 · 생성 2026. 11. 18. AM 11:49:55</div>

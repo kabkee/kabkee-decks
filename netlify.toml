@@ -12,3 +12,22 @@
   for = "/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow, noarchive, nosnippet, noimageindex"
+
+# ===== 장소 글 검토 페이지 — 버전별 공유 주소 (2026-11-18 오너 요청) =====
+# 파일 이름(날짜 포함) 대신 고정 주소로 링크를 공유한다. status 200 = rewrite(주소창은 공유 주소 그대로).
+#   /reports/place-scores     → 현재 버전(v2 현장 리포트) · 새 버전이 나오면 이 줄만 바꾼다
+#   /reports/place-scores/v1  → v1 블로그 감성 4편(보관)
+#   /reports/place-scores/v2  → v2 현장 리포트 10편
+# 생성: look360_content_studio/scripts/visitor-place-text/version-nav.mjs (탭이 이 주소를 절대 경로로 가리킨다)
+[[redirects]]
+  from = "/reports/place-scores/v1"
+  to = "/reports/2026-11-18-place-feel-scores.html"
+  status = 200
+[[redirects]]
+  from = "/reports/place-scores/v2"
+  to = "/reports/2026-11-18-place-report-scores.html"
+  status = 200
+[[redirects]]
+  from = "/reports/place-scores"
+  to = "/reports/2026-11-18-place-report-scores.html"
+  status = 200
