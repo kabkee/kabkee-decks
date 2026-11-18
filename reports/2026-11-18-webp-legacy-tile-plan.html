@@ -195,7 +195,7 @@
 </tr>
 </tbody>
 </table>
-<p><span class="hl-amber">시사점</span> 비용을 줄이는 것이 목적이라면 WebP 보다 <strong>S3 Files 비용($72)</strong> 이 훨씬 큰 대상입니다. 특히 <code>a.getImg.php</code> 프록시 투어 495개가 타일을 마운트로 읽는 경로가 S3 Files 읽기 비용과 관련 있는지 따로 볼 가치가 있습니다(추정, 미검증).</p>
+<p><span class="hl-amber">시사점</span> 비용을 줄이는 것이 목적이라면 WebP 보다 <strong>S3 Files 비용($72)</strong> 이 훨씬 큰 대상입니다. 원인은 마운트 전체 순회로 생긴 메타데이터(inode 1,661만 개)이며, 별도 분석에서 다룹니다.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%EB%AC%B4%EC%86%90%EC%8B%A4-%EC%A0%84%ED%99%98%EC%9D%80-%EA%B0%80%EB%8A%A5%ED%95%9C%EA%B0%80--%EB%AC%B4%EC%86%90%EC%8B%A4-webp-%EB%8A%94-%EC%A7%80%EA%B8%88-jpg-%EB%B3%B4%EB%8B%A4-6%EB%B0%B0-%EC%9D%B4%EC%83%81-%EC%BB%A4%EC%A7%91%EB%8B%88%EB%8B%A4">무손실 전환은 가능한가 — 무손실 WebP 는 지금 JPG 보다 6배 이상 커집니다</h2>
@@ -539,7 +539,7 @@
 <li>플랫폼은 XML 을 저장하지 않고 요청마다 DB 로 만들므로, <code>tile_ext</code> 만 읽으면 재생성 작업이 없습니다.</li>
 <li>확인 순서: 1단계에서 <strong>전 장소 XML 을 바꾸기 전과 바이트 단위로 비교</strong>해, <code>jpg</code> 기본값일 때 결과가 하나도 달라지지 않는지 봅니다.</li>
 </ul>
-<p><span class="hl-amber">관찰</span> <code>a.getImg.php</code> 프록시를 거치는 투어 495개는 타일을 <strong>서버 마운트(<code>./files/pano/…</code>)에서 PHP 로 읽어</strong> 응답합니다. CloudFront → S3 직결이 아니라서 S3 Files 읽기 비용이 따로 생길 수 있습니다(이번 범위 밖, 별도 확인 필요).</p>
+<p><span class="hl-gray">확인</span> <code>a.getImg.php</code> 프록시는 타일을 서버 마운트에서 읽지만, 최근 15일 호출은 하루 0~576건이고 마운트의 데이터 읽기량도 거의 0이라 S3 Files 비용과는 무관합니다.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="15" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="21">
 <h2 id="%EB%8B%A8%EA%B3%84--%EC%9D%BD%EB%8A%94-%EC%AA%BD%EB%B6%80%ED%84%B0-%EC%84%9C%EB%B9%84%EC%8A%A4-%EB%8F%99%EC%9E%91%EC%9D%80-%EC%8B%9C%EB%B2%94-%EC%9E%A5%EC%86%8C%EC%97%90%EC%84%9C-%EC%B2%98%EC%9D%8C-%EB%B0%94%EB%80%9D%EB%8B%88%EB%8B%A4">단계 — 읽는 쪽부터, 서비스 동작은 시범 장소에서 처음 바뀝니다</h2>
