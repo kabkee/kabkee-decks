@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>장소 가이드 글 — 모델 비교 테스트 계획</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif;color:#1f2937;background:#f3f4f6;line-height:1.7}
+a{color:#2563eb}code{background:#eef2ff;border-radius:4px;padding:1px 5px;font-size:.88em}
+header{background:#111827;color:#f9fafb;padding:40px 24px 30px}header .w,main,nav .w{max-width:1120px;margin:0 auto}
+header h1{margin:0;font-size:1.7em}header .sub{color:#9ca3af;margin-top:6px;font-size:.9em}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:20px}
+.kpi{background:#1f2937;border:1px solid #374151;border-radius:12px;padding:12px 14px}.kpi b{display:block;font-size:1.5em;color:#fbbf24}.kpi span{font-size:.8em;color:#d1d5db}
+nav{position:sticky;top:0;z-index:5;background:rgba(243,244,246,.95);backdrop-filter:blur(6px);border-bottom:1px solid #e5e7eb}
+nav .w{padding:10px 24px;display:flex;gap:6px;flex-wrap:wrap;font-size:.82em}nav a{text-decoration:none;color:#374151;background:#fff;border:1px solid #e5e7eb;border-radius:999px;padding:3px 11px}nav a:hover{border-color:#2563eb;color:#2563eb}
+main{padding:24px;display:flex;flex-direction:column;gap:22px}
+section.s{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:22px 24px}
+section.s h2{margin:0 0 4px;font-size:1.25em}section.s h2 small{font-weight:400;color:#6b7280;font-size:.7em;margin-left:6px}
+.lead{color:#4b5563;margin:0 0 14px}
+h3{font-size:1em;margin:18px 0 8px}
+table{width:100%;border-collapse:collapse;font-size:.86em}th,td{border-bottom:1px solid #e5e7eb;padding:7px 8px;text-align:left;vertical-align:top}th{background:#f9fafb;font-weight:700;color:#374151;white-space:nowrap}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;font-size:.75em;border-radius:999px;padding:0 8px;border:1px solid;margin-right:4px;white-space:nowrap}
+.t-must{color:#b91c1c;border-color:#fecaca;background:#fef2f2}.t-rec{color:#1d4ed8;border-color:#bfdbfe;background:#eff6ff}.t-cheap{color:#047857;border-color:#a7f3d0;background:#ecfdf5}.t-opt{color:#6b7280;border-color:#e5e7eb}
+.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:10px 0}
+.flow div{background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:10px;font-size:.8em;position:relative}.flow div b{display:block;color:#0f172a;margin-bottom:2px}
+.flow .fx{background:#fffbeb;border-color:#fde68a}.flow .md{background:#eff6ff;border-color:#bfdbfe}.flow .ev{background:#ecfdf5;border-color:#a7f3d0}
+@media(max-width:900px){.flow{grid-template-columns:1fr 1fr}}
+pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font-size:.78em;line-height:1.55}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:860px){.cols{grid-template-columns:1fr}}
+.box{border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;background:#fafafa;font-size:.88em}.box h4{margin:0 0 6px;font-size:.95em}
+.warn{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;font-size:.88em}
+.ok{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:10px 14px;font-size:.88em}
+ul.t{margin:6px 0;padding-left:20px}ul.t li{margin:3px 0}
+/* 와이어프레임 */
+.wf{border:2px dashed #94a3b8;border-radius:12px;padding:12px;background:#f8fafc;font-size:.78em}
+.wf .bar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}.wf .bar span{background:#e2e8f0;border-radius:6px;padding:2px 8px}.wf .bar span.on{background:#1e293b;color:#fff}
+.wf .imgs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}.wf .imgs div{aspect-ratio:1;background:linear-gradient(135deg,#cbd5e1,#e2e8f0);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#475569}
+.wf .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.wf .grid div{background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:6px;min-height:90px}
+.wf .grid div i{display:block;height:6px;background:#e2e8f0;border-radius:3px;margin:5px 0}.wf .grid div i.h{background:#fde68a;width:70%}
+.wf .mx{display:grid;grid-template-columns:110px repeat(6,1fr);gap:3px}.wf .mx div{background:#fff;border:1px solid #e2e8f0;border-radius:4px;padding:3px 5px;text-align:center}.wf .mx div.g{background:#bbf7d0}.wf .mx div.y{background:#fef08a}.wf .mx div.r{background:#fecaca}.wf .mx div.hd{background:#1e293b;color:#fff}
+footer{text-align:center;color:#9ca3af;font-size:.78em;padding:10px 0 40px}
+</style></head><body>
+<header><div class="w">
+<h1>장소 가이드 글 — 모델 비교 테스트 계획</h1>
+<div class="sub">v3 «가이드» 기준(g1.5)으로 장면 설명 → 장면 가이드 → 장소 소개·설명을 여러 모델에 똑같이 맡겨 비교한다 · API 는 OpenCode Zen · 2026-11-18 작성 · 실행 전 계획 문서</div>
+<div class="kpis">
+<div class="kpi"><b>5곳 · 37장면</b><span>권장 시험 규모 (10곳 → 5곳으로 축소, 대표성 위주 선정)</span></div>
+<div class="kpi"><b>필수 7 + 추천 5</b><span>모델 12개 (이미지 입력 지원 · 유료 모델만)</span></div>
+<div class="kpi"><b>약 $15 + $6</b><span>생성 전체 12모델 + AI 교차 채점 2심 (예산 상한 $40 권장)</span></div>
+<div class="kpi"><b>반나절</b><span>실행 약 1~2시간 · 오빠 검토는 대표 8장면 + 5곳 블라인드 투표</span></div>
+</div></div></header>
+<nav><div class="w">
+<a href="#why">1. 목적</a><a href="#flow">2. 진행 구조</a><a href="#places">3. 시험 장소</a><a href="#models">4. 모델</a><a href="#prompt">5. 프롬프트·이미지 전달</a><a href="#run">6. 실행·저장</a><a href="#eval">7. 평가 방법</a><a href="#page">8. 비교 페이지</a><a href="#cost">9. 비용</a><a href="#limit">10. 한계</a><a href="#next">11. 진행 순서·결정할 것</a>
+</div></nav>
+<main>
+
+<section class="s" id="why"><h2>1. 목적 <small>무엇을 알고 싶은가</small></h2>
+<p class="lead">지금 v3 가이드는 Claude(Sonnet 5.5)가 쓰고 있다. 같은 재료와 같은 프롬프트를 다른 모델에 줬을 때 <b>사진을 얼마나 정확히 읽는지</b>, <b>근거 없는 내용을 얼마나 덜 지어내는지</b>, <b>한국어 문장이 얼마나 자연스러운지</b>, <b>얼마의 비용으로 1,636곳 전체를 돌릴 수 있는지</b>를 비교해서, 전체 생성에 쓸 모델(또는 단계별 조합)을 고른다.</p>
+<ul class="t">
+<li><b>질문 1 · 품질</b>: v3 기준(사실·의미 전달·역할 구분·정보성)에서 어느 모델이 가장 좋은가</li>
+<li><b>질문 2 · 시각</b>: 360° 사진 4방향을 보고 간판 글자·재질·배치를 틀리지 않게 읽는가(지어내지 않는가)</li>
+<li><b>질문 3 · 비용</b>: 품질 대비 가격 — 전체(장면 29,928개 · 장소 1,636곳) 실행 비용 추정</li>
+<li><b>질문 4 · 조합</b>: 장면 단계는 싼 모델, 장소 단계는 비싼 모델처럼 나눠 써도 되는가</li>
+</ul>
+</section>
+
+<section class="s" id="flow"><h2>2. 진행 구조 <small>재료는 고정하고, 쓰는 부분만 모델별로 바꾼다</small></h2>
+<div class="flow">
+<div class="fx"><b>① 재료 고정</b>조사한 사실(현재 cs_place_research)·장소 등록 정보·촬영일·큐브 면 사진을 한 번 뽑아 «재료 묶음»으로 얼린다</div>
+<div class="md"><b>② 장면 단계</b>장면 4개씩 사진 16장 + 사실 → <b>장면 설명</b>(사실 묘사 1~2문장)과 <b>장면 가이드</b>를 한 번에</div>
+<div class="md"><b>③ 장소 단계</b>사실 + 자기 모델이 쓴 장면 가이드 → <b>소개</b>(1~3문장) · <b>설명</b> · <b>둘러보기 포인트</b></div>
+<div class="ev"><b>④ 자동 점검</b>JSON 성공률 · 금지어·추측·메타 문장 · 분량 · 사실 id 유효성 · 비용·지연</div>
+<div class="ev"><b>⑤ AI 교차 채점</b>제조사가 다른 심사 모델 2개, 모델 이름을 가린 채(A~L) 장면·장소 단위로 순위·점수</div>
+<div class="ev"><b>⑥ 오빠 블라인드 투표</b>대표 8장면 + 5곳 장소 글을 이름 가린 채 고르고, 끝나면 공개</div>
+</div>
+<div class="cols">
+<div class="box"><h4>🔒 고정하는 것 (모든 모델 동일)</h4><ul class="t">
+<li>시스템 프롬프트·출력 형식(JSON 스키마) — v3 g1.5 그대로</li>
+<li>사진: 장면마다 큐브 면 앞·오른쪽·뒤·왼쪽 4장, 같은 순서·같은 라벨</li>
+<li>조사한 사실(신뢰도 A/B/C 표시) — <b>웹 조사는 모델별로 다시 하지 않는다</b></li>
+<li>장면 묶음(4개씩)·장면 번호·촬영 시점 문구</li>
+<li>추론 강도 «중간»(지원하는 모델만) · 최대 출력 8,000 토큰</li>
+</ul></div>
+<div class="box"><h4>🔀 모델마다 달라지는 것</h4><ul class="t">
+<li>장면 설명·장면 가이드·장소 글 전부(②③)</li>
+<li>③ 장소 단계는 «자기 모델이 ②에서 쓴 장면 가이드»를 받는다 — 모델별 결과가 처음부터 끝까지 한 줄로 이어지게</li>
+<li>API 형식(Zen 이 제조사별 형식을 그대로 받음 — 5장 참고)</li>
+</ul>
+<p style="margin:8px 0 0">📌 기존 «장면 메모»(Claude Haiku 가 쓴 것)는 <b>주지 않는다</b>. 주면 Claude 계열에 유리하고, 사진 판독 능력을 비교할 수 없기 때문이다.</p></div>
+</div>
+</section>
+
+<section class="s" id="places"><h2>3. 시험 장소 <small>10곳은 많다 — 5곳 · 37장면 권장</small></h2>
+<p class="lead">비용은 문제가 아니다(아래 9장). 병목은 <b>오빠가 읽어야 하는 양</b>이다. 12모델 × 37장면이면 장면 글만 444개라서 전부 사람이 읽을 수는 없다. 그래서 «서로 다른 함정»을 하나씩 가진 5곳으로 줄이고, 사람은 대표 장면만 본다.</p>
+<table><thead><tr><th>장소 (task)</th><th>장면</th><th>유형</th><th>이 장소로 시험하는 것</th></tr></thead><tbody>
+<tr><td><b>경기도박물관</b> (1498)</td><td class="n">4</td><td>단일 · 공공 문화시설</td><td>공식 자료가 풍부한 곳 — 사실을 정확히 옮기는지, «대표 박물관» 같은 평가를 붙이지 않는지, 곧 낡는 전시 일정을 거르는지</td></tr>
+<tr><td><b>한국국제대학교</b> (802)</td><td class="n">13</td><td>단일 · 폐교한 대학</td><td>2008년 촬영 → 2023년 폐교. <b>시간 순서 함정</b>(«폐교 후 모습»이라고 쓰는가), 자료끼리 어긋나는 개교 연도 처리</td></tr>
+<tr><td><b>중동중학교</b> (1025)</td><td class="n">4</td><td>단일 · 학교</td><td>사실이 위키 한 곳(C등급)뿐 — 약한 출처를 낮춰 쓰는지. 사자상 «中東中» 한자 간판 같은 <b>글자 판독</b></td></tr>
+<tr><td><b>한라초등학교</b> (889)</td><td class="n">4</td><td>단일 · 학교</td><td>조사한 사실 <b>0건</b> — 해석·입지 평가를 지어내지 않고 짧게 끝내는 «절제력»</td></tr>
+<tr><td><b>보정동 카페거리</b> (49) · 표본</td><td class="n">12</td><td>주제로 묶은 여러 장소</td><td>122장면 중 낮 6 + 야간 6 고정 표본. 장면마다 다른 가게를 소개하고, 거리 전체 사실을 반복하지 않는지(<b>역할 구분</b>), 야간 사진 판독</td></tr>
+</tbody></table>
+<p style="font-size:.85em;color:#6b7280">빠진 곳과 이유: 에코델타(43장면)는 정보가 많아 좋은 표본이지만 장면 수가 커서 2차 결선용으로 남긴다. 서라벌고·부산교대·한림초·한라중은 유형이 위 학교들과 겹친다. <b>2차(결선)</b>는 상위 3~4개 모델만 에코델타 + 부산교대를 추가해 2회씩 돌려 편차까지 본다.</p>
+</section>
+
+<section class="s" id="models"><h2>4. 비교할 모델 <small>Zen 에서 이미지 입력이 되는 유료 모델 · 2026-11-18 Zen 모델 목록 기준</small></h2>
+<table><thead><tr><th>구분</th><th>모델 (Zen id)</th><th>입력/출력 $ per 1M</th><th>API 형식</th><th>넣는 이유</th></tr></thead><tbody>
+<tr><td><span class="tag t-must">필수</span></td><td><b>Claude Fable 5.2</b> <code>claude-fable-5-2</code></td><td class="n">8 / 40</td><td>messages</td><td>오빠 지정. Anthropic 최상위 — 품질 상한선 확인</td></tr>
+<tr><td><span class="tag t-must">필수</span></td><td><b>Claude Sonnet 5.5</b> <code>claude-sonnet-5-5</code></td><td class="n">2 / 10</td><td>messages</td><td><b>기준선</b> — 지금 v3 를 쓰는 모델. API 로 돌려서 같은 조건에 놓는다</td></tr>
+<tr><td><span class="tag t-must">필수</span></td><td><b>Gemini 4 Carbon</b> <code>gemini-4-carbon</code></td><td class="n">2 / 10 ⚠️</td><td>generate-content</td><td>오빠 지정. Google 최상위·사실 정확도 강조. ⚠️ <b>12/1 부터 가격 2배</b>(4/20) — 11월 안에 돌리는 게 이득</td></tr>
+<tr><td><span class="tag t-must">필수</span></td><td><b>GPT-6.2 Sol</b> <code>gpt-6.2-sol</code></td><td class="n">2 / 10</td><td>responses</td><td>오빠 지정. 11/17 출시 최신 · 가격이 Sonnet 과 같아 1:1 비교가 깔끔</td></tr>
+<tr><td><span class="tag t-must">필수</span></td><td><b>Grok 4.7</b> <code>grok-4.7</code></td><td class="n">2 / 6</td><td>responses</td><td>오빠 지정. 출력이 싸서 장문 생성에 유리</td></tr>
+<tr><td><span class="tag t-must">필수</span></td><td><b>Gemini 3.8 Flash</b> <code>gemini-3.8-flash</code></td><td class="n">0.75 / 3.75</td><td>generate-content</td><td>전체 실행용 «가성비» 1순위 후보. 사진·한국어 모두 강한 편</td></tr>
+<tr><td><span class="tag t-must">필수</span></td><td><b>GPT-6 Luna</b> <code>gpt-6-luna</code></td><td class="n">0.1 / 0.5</td><td>responses</td><td>초저가. 장면 단계만 맡겨도 되는지 확인(질문 4)</td></tr>
+<tr><td><span class="tag t-rec">추천</span></td><td><b>Qwen3.8 Max</b> <code>qwen3.8-max</code></td><td class="n">2 / 6</td><td>chat-completions</td><td>한중일 문자·간판 판독에 강한 계열 — 한자 간판 장면 비교용</td></tr>
+<tr><td><span class="tag t-rec">추천</span></td><td><b>Kimi K3</b> <code>kimi-k3</code></td><td class="n">3 / 15</td><td>chat-completions</td><td>멀티모달 · 긴 문맥 — 다른 계열의 글쓰기 비교군</td></tr>
+<tr><td><span class="tag t-rec">추천</span></td><td><b>Mistral Large 4</b> <code>mistral-large-4</code></td><td class="n">0.68 / 2.09</td><td>chat-completions</td><td>저렴한 대형 멀티모달(할인 중) — 유럽 계열 비교군</td></tr>
+<tr><td><span class="tag t-cheap">추천·저가</span></td><td><b>Claude Haiku 5.5</b> <code>claude-haiku-5-5</code></td><td class="n">0.1 / 0.5</td><td>messages</td><td>지금 «장면 메모»를 쓰는 모델 — 장면 단계 기준선</td></tr>
+<tr><td><span class="tag t-opt">선택</span></td><td><b>GPT-6.2 Astra</b> <code>gpt-6.2-astra</code></td><td class="n">8 / 40</td><td>responses</td><td>GPT 최상위. Fable 과 «최상위끼리» 비교가 필요할 때만</td></tr>
+</tbody></table>
+<div class="warn" style="margin-top:12px">🚫 <b>넣지 않는 모델</b> — ① 무료 모델(Big Pickle·Iceman·Nemotron 등): 일부는 입력을 학습·보존에 쓰고, 속도·가용성이 불안정해 비교 결과를 재현하기 어렵다. ② 이미지 입력이 안 되는 모델(GLM-5.3·DeepSeek V4 Pro·MiniMax M2.x): 사진을 못 보면 같은 조건이 아니다. ③ 코딩 특화 모델(*-codex, Kimi K2.7 Code): 이번 작업과 용도가 다르다. ④ Pro 계열(GPT-5.5 Pro 등 30/180): 비용 대비 의미가 작다.</div>
+</section>
+
+<section class="s" id="prompt"><h2>5. 프롬프트와 이미지 전달 <small>모든 모델에 «같은 글자»를 보낸다</small></h2>
+<h3>5-1. 프롬프트 — v3 g1.5 를 그대로 쓰되 두 군데만 바꾼다</h3>
+<ul class="t">
+<li><b>장면 단계</b>: 지금의 장면 가이드 지시문(SCENE_SYSTEM) + 공통 지침(COMMON)에, 출력 항목 <code>description</code>(사진에서 보이는 사실만 1~2문장, 지금의 «장면 메모» 역할)을 추가한다. 기존 장면 메모는 주지 않는다.</li>
+<li><b>장소 단계</b>: PLACE_SYSTEM 그대로(소개 1~3문장 · 설명 1,800자 이내 · 둘러보기 포인트 3~5개).</li>
+<li>프롬프트 원문은 비교 페이지 «기준» 탭에 그대로 공개하고, 실행 결과 파일에 <b>프롬프트 해시</b>를 남겨 «같은 프롬프트로 돌렸음»을 증명한다.</li>
+</ul>
+<pre>// 장면 단계 출력 (모든 모델 공통 JSON 스키마)
+{ "scenes": [ { "no": 1,
+    "description": "사진에서 확인되는 사실 1~2문장 (장면 설명)",
+    "guide": "장면 가이드 2~5문장 (대상·의미·특징)",
+    "fids": ["f3"],              // 쓴 조사 사실 id
+    "review_note": "" } ] }    // 확인 필요 사항
+// 장소 단계 출력
+{ "introduction": "...", "paragraphs": [{ "text": "...", "fids": [] }],
+  "highlights": [{ "scenes": [2,3], "text": "..." }], "review": { "needs_review": false, "reasons": [] } }</pre>
+<h3>5-2. 이미지 — 무엇을, 어떤 순서로</h3>
+<div class="cols">
+<div class="box"><h4>사진 사양</h4><ul class="t">
+<li>장면마다 큐브 면 <b>4장</b>: 앞(f) → 오른쪽(r) → 뒤(b) → 왼쪽(l), 각 512×512 JPEG (지금 생성기가 쓰는 파일 그대로 · <code>data/captures/_faces/</code>)</li>
+<li>한 호출 = 장면 4개 = 사진 16장. 사진마다 바로 앞에 «S3 사진(오른쪽)» 같은 텍스트 라벨</li>
+<li>위·아래 면(천장·바닥)은 보내지 않는다(비용 대비 정보가 적다 — 10장 한계 참고)</li>
+<li>모든 모델에 base64 인라인으로 보낸다(URL 방식은 제조사마다 외부 URL 접근 정책이 달라 결과가 흔들린다)</li>
+</ul></div>
+<div class="box"><h4>메시지 순서 (모든 모델 동일)</h4><ol style="margin:0;padding-left:18px">
+<li>시스템: 공통 지침 + 장면 지시문</li>
+<li>사용자 텍스트: 촬영 시점 · 장소·유형 · 이 장면들에 연결된 조사 사실</li>
+<li>S1 머리글(장면 이름·동선) → 사진 4장(라벨 포함)</li>
+<li>S2 … S4 같은 방식</li>
+<li>마지막 텍스트: «S1~S4 장면 설명과 가이드를 JSON 으로»</li>
+</ol></div>
+</div>
+<h3>5-3. Zen API 형식별 보내는 법</h3>
+<p style="font-size:.88em;margin:0 0 6px">Zen 은 제조사 원래 형식을 그대로 받는다. 기본 주소 <code>https://opencode.ai/inference/…</code>, 키는 <code>Authorization: Bearer</code>(Anthropic 형식은 <code>x-api-key</code> 도 가능). 실행 스크립트에서는 Vercel AI SDK 의 제조사별 공급자(@ai-sdk/anthropic·openai·google·openai-compatible)를 Zen 주소로 돌려 <code>generateObject</code> 하나로 통일하는 방식을 권장한다.</p>
+<pre>// Claude·Qwen Plus  → POST /inference/anthropic/v1/messages
+{ "model":"claude-fable-5-2", "system":"…", "max_tokens":8000,
+  "messages":[{"role":"user","content":[
+    {"type":"text","text":"[S1] 대강당\n사진(앞):"},
+    {"type":"image","source":{"type":"base64","media_type":"image/jpeg","data":"…"}}, … ]}] }
+
+// GPT·Grok·Muse    → POST /inference/openai/v1/responses
+{ "model":"gpt-6.2-sol", "instructions":"…", "reasoning":{"effort":"medium"},
+  "text":{"format":{"type":"json_schema","name":"scenes","schema":{…},"strict":true}},
+  "input":[{"role":"user","content":[
+    {"type":"input_text","text":"[S1] 대강당\n사진(앞):"},
+    {"type":"input_image","image_url":"data:image/jpeg;base64,…"}, … ]}] }
+
+// Gemini           → POST /inference/google/v1beta/models/gemini-4-carbon:generateContent
+{ "systemInstruction":{"parts":[{"text":"…"}]},
+  "generationConfig":{"responseMimeType":"application/json","responseSchema":{…}},
+  "contents":[{"role":"user","parts":[{"text":"[S1] 대강당\n사진(앞):"},
+    {"inlineData":{"mimeType":"image/jpeg","data":"…"}}, … ]}] }
+
+// Qwen Max·Kimi·Mistral → POST /inference/openai/v1/chat/completions
+{ "model":"kimi-k3", "response_format":{"type":"json_schema","json_schema":{…}},
+  "messages":[{"role":"system","content":"…"},{"role":"user","content":[
+    {"type":"text","text":"[S1] 대강당\n사진(앞):"},
+    {"type":"image_url","image_url":{"url":"data:image/jpeg;base64,…"}}, … ]}] }</pre>
+<div class="ok">🧩 <b>JSON 이 깨질 때</b>: 스키마 강제가 안 되는 모델(Claude·Qwen Max·Kimi K2.x 등은 Zen 목록에 structured_output 표시가 없음)은 «JSON 만 출력» 지시 + 관대한 파서(코드 블록·앞뒤 설명 제거) + <b>1회 재시도</b>. 그래도 실패하면 «실패»로 기록하고 그 모델 점수에 반영한다(실패율 자체가 비교 지표).</div>
+</section>
+
+<section class="s" id="run"><h2>6. 실행과 저장 <small>다시 돌려도 이어서 할 수 있게</small></h2>
+<ul class="t">
+<li>스크립트: <code>look360_content_studio/scripts/model-compare/</code> — <code>pack.mjs</code>(재료 묶음 만들기) · <code>run.mjs --models … --places …</code>(생성) · <code>judge.mjs</code>(AI 채점) · <code>page.mjs</code>(비교 페이지 생성)</li>
+<li>재료 묶음: <code>data/model-compare/pack-2026-11-xx.json</code> — 장소 5곳의 사실·등록 정보·촬영일·장면 목록 + 사진 경로. 이 파일 해시가 같으면 «같은 재료»</li>
+<li>결과: <code>data/model-compare/{run}/{model}/{place}.json</code> — 원문 응답 · 파싱 결과 · 토큰 사용량 · 계산한 비용 · 지연 시간 · 재시도 횟수 · 프롬프트 해시. 이미 있는 파일은 건너뛴다(중단 후 재개)</li>
+<li>동시 실행: 제조사별 2개씩(제조사 한도에 걸려도 다른 모델은 계속 돈다)</li>
+<li>DB 에는 쓰지 않는다 — 글쓰기 도구·운영 데이터와 완전히 분리한 실험이다</li>
+<li>Zen 키는 기존 opencode 로그인 키를 환경변수로만 읽고, 결과 파일·페이지에 남기지 않는다</li>
+</ul>
+</section>
+
+<section class="s" id="eval"><h2>7. 평가 방법 <small>기계 → AI 2심 → 사람, 세 겹</small></h2>
+<table><thead><tr><th>층</th><th>무엇을</th><th>어떻게</th></tr></thead><tbody>
+<tr><td><b>① 자동 지표</b></td><td>JSON 성공률 · 금지어(홍보어·존댓말) · 추측 표현(«~로 보이는») · 메타 문장(«확인되지 않았다») · 분량 · 존재하지 않는 사실 id · 비용 · 지연</td><td>지금 생성기의 GUESS·META·BANNED 정규식을 그대로 재사용. 숫자로 바로 비교</td></tr>
+<tr><td><b>② AI 교차 채점</b></td><td>장면: 사진과 맞는가(<b>시각 정확도</b>) · 지어낸 것 · 의미 전달 · 한국어 자연스러움<br>장소: v3 채점 6항목(근거·의미·정보성·역할 구분·근거 없음·소개)</td><td>심사 모델 <b>2개</b>(제안: Claude Opus 5.5 + Gemini 4 Carbon — 서로 다른 제조사). <b>장면 하나에 12개 모델 글을 한꺼번에</b> 보여 주고(사진 4장 포함) A~L 로 이름을 가린 뒤 순서를 매번 섞어 점수·순위를 받는다. 자기 제조사 모델 점수는 따로 표시해 «제 식구 감싸기»를 확인</td></tr>
+<tr><td><b>③ 오빠 블라인드 투표</b></td><td>대표 8장면(장소별 1~2개) + 장소 글 5편</td><td>이름이 가려진 카드에서 1등·2등과 «틀린 문장»을 고른다 → 끝나면 «공개» 버튼으로 모델 이름 확인. 투표는 브라우저에 저장 + JSON 내보내기</td></tr>
+</tbody></table>
+<p style="font-size:.88em;margin-top:10px"><b>최종 판단식</b>: 오빠 투표가 최우선. AI 2심은 444개 장면 글 전체를 훑는 «넓이», 오빠 투표는 «깊이» 역할이다. 두 결과가 크게 어긋나면 그 장면을 다시 본다.</p>
+</section>
+
+<section class="s" id="page"><h2>8. 비교 페이지 구성 <small>kabkee-decks · /reports/model-compare</small></h2>
+<p class="lead">지금 장소 글 검토 페이지처럼 상단 탭 4개로 나눈다. 핵심은 <b>«같은 장면의 사진 아래에 모델 글을 나란히»</b> 놓는 것이다.</p>
+<div class="cols">
+<div><h3 style="margin-top:0">탭 1 · 요약표</h3>
+<div class="wf"><div class="bar"><span class="on">요약표</span><span>장면 비교</span><span>장소 비교</span><span>블라인드 투표</span><span>기준</span></div>
+<div class="mx"><div class="hd">모델</div><div class="hd">종합</div><div class="hd">시각</div><div class="hd">근거</div><div class="hd">실패율</div><div class="hd">5곳 비용</div><div class="hd">1,636곳 추정</div>
+<div>Fable 5.2</div><div class="g">84</div><div class="g">88</div><div class="g">82</div><div>0%</div><div>$3.5</div><div class="r">$2,054</div>
+<div>Gemini 3.8 F</div><div class="y">71</div><div class="g">80</div><div class="y">66</div><div>0%</div><div>$0.3</div><div class="g">$193</div>
+<div>GPT-6 Luna</div><div class="r">58</div><div class="y">64</div><div class="r">55</div><div>8%</div><div>$0.04</div><div class="g">$26</div></div>
+<p style="margin:6px 0 0;color:#64748b">(숫자는 예시) 열 머리 클릭 정렬 · «품질 ÷ 비용» 산점도 · 장면/장소 단계 조합 추천</p></div></div>
+<div><h3 style="margin-top:0">탭 2 · 장면 비교 (핵심)</h3>
+<div class="wf"><div class="bar"><span>◀</span><span class="on">한국국제대 · S10 정문 (2008-04)</span><span>▶</span><span>👁 이름 가리기</span><span>표시: 설명 / 가이드 / 둘 다</span></div>
+<div class="imgs"><div>앞</div><div>오른쪽</div><div>뒤</div><div>왼쪽</div></div>
+<div class="grid"><div><b>A</b><i></i><i class="h"></i><i></i></div><div><b>B</b><i></i><i></i><i></i></div><div><b>C</b><i></i><i class="h"></i><i></i></div><div><b>D</b><i></i><i></i><i></i></div></div>
+<p style="margin:6px 0 0;color:#64748b">사진 4장 고정 + 모델 카드 2~4열 · 노란색 = 심사가 지적한 문장 · 카드마다 심사 점수·코멘트 · ←/→ 키로 장면 이동 · VR 장면 바로가기</p></div></div>
+</div>
+<div class="cols" style="margin-top:14px">
+<div class="box"><h4>탭 3 · 장소 비교</h4>소개·설명·둘러보기 포인트를 모델별 열로 나란히. 문단 옆에 쓴 사실 id 칩(눌러서 사실 원문 보기), 근거 없는 문장 형광, 글자 수·문단 수. «두 모델만 골라 좌우 비교» 모드.</div>
+<div class="box"><h4>탭 4 · 블라인드 투표 / 탭 5 · 기준</h4>투표: 대표 8장면 + 5곳을 A~L 카드로, 1·2등과 틀린 문장 클릭 → 진행률 표시 → «공개». 기준: 프롬프트 원문·스키마·재료 묶음 해시·모델 목록과 실행 시각·가격표(실행 당일 Zen 목록에서 자동 기록).</div>
+</div>
+<p style="font-size:.85em;color:#6b7280;margin-top:10px">공유: 지금처럼 고정 주소 <code>/reports/model-compare</code> + 탭 해시(<code>#scene/802/10</code>)로 특정 장면을 바로 링크한다. 사진은 512px 큐브 면을 384px WebP 로 줄여 페이지에 넣는다(약 148장 · 4MB 안팎).</p>
+</section>
+
+<section class="s" id="cost"><h2>9. 예상 비용 <small>추정 — 실제 토큰은 실행 후 결과 파일로 확정</small></h2>
+<p class="lead">가정: 장면 호출 1번 = 입력 약 8,300토큰(지시문·사실 3,500 + 사진 16장 × 약 300) · 출력 약 3,600토큰(본문 1,600 + 추론 2,000). 장소 호출 1번 = 입력 6,000 · 출력 3,500. 5곳 기준 장면 호출 10번 + 장소 호출 5번, 재시도 여유 15%. 전체 추정은 장면 29,928개(장소 1,636곳, 평균 18.3 · 중앙값 7 · 최대 516)를 같은 방식으로 늘린 값이며 <b>웹 조사 비용은 포함하지 않았다</b>.</p>
+<table><thead><tr><th>모델</th><th>5곳 시험 (1회)</th><th>1,636곳 전체 추정</th><th>메모</th></tr></thead><tbody>
+<tr><td>Claude Fable 5.2</td><td class="n">$3.50</td><td class="n">$2,054</td><td></td></tr>
+<tr><td>GPT-6.2 Astra (선택)</td><td class="n">$3.50</td><td class="n">$2,054</td><td></td></tr>
+<tr><td>Kimi K3</td><td class="n">$1.31</td><td class="n">$770</td><td></td></tr>
+<tr><td>Claude Sonnet 5.5 (기준선)</td><td class="n">$0.88</td><td class="n">$513</td><td>지금은 구독(claude -p)이라 API 비용 0 — API 로 돌릴 때의 값</td></tr>
+<tr><td>Gemini 4 Carbon</td><td class="n">$0.88</td><td class="n">$513 → $1,027</td><td>12/1 부터 2배</td></tr>
+<tr><td>GPT-6.2 Sol</td><td class="n">$0.88</td><td class="n">$513</td><td></td></tr>
+<tr><td>Grok 4.7</td><td class="n">$0.63</td><td class="n">$371</td><td></td></tr>
+<tr><td>Qwen3.8 Max</td><td class="n">$0.63</td><td class="n">$371</td><td></td></tr>
+<tr><td>Gemini 3.8 Flash</td><td class="n">$0.33</td><td class="n">$193</td><td>2027-01-01 부터 2배</td></tr>
+<tr><td>Mistral Large 4</td><td class="n">$0.22</td><td class="n">$128</td><td>할인가 기준</td></tr>
+<tr><td>Claude Haiku 5.5</td><td class="n">$0.04</td><td class="n">$26</td><td></td></tr>
+<tr><td>GPT-6 Luna</td><td class="n">$0.04</td><td class="n">$26</td><td></td></tr>
+<tr style="font-weight:700;background:#f9fafb"><td>생성 합계 (필수 7 + 추천 5)</td><td class="n">약 $13.4</td><td></td><td>Astra 포함 시 약 $17</td></tr>
+<tr><td>AI 교차 채점 2심 (Opus 5.5 + Gemini 4 Carbon)</td><td class="n">약 $6</td><td></td><td>장면당 12개 글을 한 번에 심사(사진 포함) · 장소 5곳</td></tr>
+<tr><td>2차 결선 (상위 3~4모델 × 7곳 × 2회)</td><td class="n">약 $10~20</td><td></td><td>상위 모델 가격에 따라</td></tr>
+<tr style="font-weight:700;background:#fffbeb"><td>권장 예산 상한</td><td class="n">$40</td><td></td><td>스크립트 시험 호출·재시도 포함</td></tr>
+</tbody></table>
+<p style="font-size:.85em;color:#6b7280">⚠️ 추론 토큰(출력으로 과금)은 모델마다 편차가 크다. 추론을 많이 하는 모델은 실제 비용이 위 값의 1.5~2배가 될 수 있다. 사진 1장 토큰 계산식도 제조사마다 달라(약 250~350) ±30% 정도는 흔들린다고 본다.</p>
+</section>
+
+<section class="s" id="limit"><h2>10. 이 테스트의 한계 <small>결과를 읽을 때 같이 봐야 할 것</small></h2>
+<ul class="t">
+<li><b>웹 조사는 비교하지 않는다.</b> 모든 모델이 Claude 가 조사한 사실을 그대로 받는다. 조사 결과에 틀린 사실이 있으면 모든 모델이 같이 틀리고, 모델별 «조사 능력»은 이 시험으로 알 수 없다. (필요하면 별도 시험으로 분리 — 웹 검색 도구 지원이 모델마다 달라 같은 조건을 만들기 어렵다)</li>
+<li><b>사진 정보가 제한적이다.</b> 512px 4방향만 보낸다. 천장·바닥·작은 글씨는 어느 모델도 못 읽을 수 있다. 실제 VR 을 둘러보는 것과 같지 않다.</li>
+<li><b>표본이 작다.</b> 5곳·37장면·1회 실행. 몇 점 차이는 우연일 수 있다. 확실한 격차만 결론으로 쓰고, 근소한 차이는 2차 결선(2회 실행)으로 확인한다.</li>
+<li><b>AI 심사의 편향.</b> 긴 글·자기 제조사 글·앞에 놓인 글을 좋게 보는 경향이 있다. 이름 가리기·순서 섞기·제조사 다른 2심으로 줄이지만 없앨 수는 없다. 그래서 오빠 투표가 최종이다.</li>
+<li><b>조건이 완전히 같지는 않다.</b> 추론 강도·JSON 강제 방식·이미지 처리 방식이 제조사마다 달라서, «같은 프롬프트»여도 내부 처리는 다르다. 그 차이까지 포함한 «실사용 성능» 비교로 본다.</li>
+<li><b>모델·가격이 바뀐다.</b> Zen 모델은 예고 없이 갱신될 수 있고, Gemini 4 Carbon 은 12/1 에 가격이 2배가 된다. 결과 페이지에 실행 날짜와 그날 가격표를 같이 남긴다.</li>
+<li><b>운영 비용과 다르다.</b> 지금 생성은 Claude 구독(claude -p)이라 토큰 비용이 0 이다. API 모델로 바꾸면 전체 실행에 위 표만큼 실제 돈이 든다.</li>
+<li><b>외부 전송.</b> 장소 사진·조사 사실을 여러 제조사로 보낸다. 모두 이미 공개된 VR·공개 자료지만, 유료 모델의 데이터 보존 정책은 제조사·Zen 정책을 따르므로 실행 전에 한 번 확인한다(무료 모델은 학습 사용 가능성이 있어 제외했다).</li>
+</ul>
+</section>
+
+<section class="s" id="next"><h2>11. 진행 순서와 오빠가 정할 것</h2>
+<table><thead><tr><th>단계</th><th>내용</th><th>예상</th></tr></thead><tbody>
+<tr><td>0</td><td>오빠 결정(아래 4가지)</td><td>—</td></tr>
+<tr><td>1</td><td>재료 묶음 만들기(<code>pack.mjs</code>) + 4개 API 형식 연결 확인(모델별 1호출 시험)</td><td>2~3시간 · $1 미만</td></tr>
+<tr><td>2</td><td>1차 생성 12모델 × 5곳(<code>run.mjs</code>)</td><td>1~2시간 · 약 $14</td></tr>
+<tr><td>3</td><td>자동 지표 + AI 2심(<code>judge.mjs</code>)</td><td>30분 · 약 $6</td></tr>
+<tr><td>4</td><td>비교 페이지 배포(<code>/reports/model-compare</code>) → 오빠 블라인드 투표</td><td>오빠 1~2시간</td></tr>
+<tr><td>5</td><td>2차 결선: 상위 3~4모델 × 7곳 × 2회 → 전체 실행 모델(또는 장면/장소 조합) 결정</td><td>약 $10~20</td></tr>
+</tbody></table>
+<div class="warn" style="margin-top:12px"><b>오빠가 정해 줄 것</b><ol style="margin:6px 0 0;padding-left:20px">
+<li><b>모델 목록</b>: 필수 7 + 추천 5 그대로 갈지, GPT-6.2 Astra 를 넣을지</li>
+<li><b>장소</b>: 추천 5곳(박물관·폐교 대학·위키만 있는 중학교·사실 0건 초등학교·카페거리 표본 12장면)으로 갈지</li>
+<li><b>기존 장면 메모</b>: 주지 않는 것(사진 판독 비교)으로 갈지 — 주면 v3 운영 조건과 같아지지만 Claude 계열에 유리해진다</li>
+<li><b>예산 상한</b>: $40 으로 할지 · Gemini 4 Carbon 가격이 오르기 전(11월 안)에 1차를 돌릴지</li>
+</ol></div>
+</section>
+</main>
+<footer>kabkee-decks · 장소 글 모델 비교 계획 · 가격·모델 목록은 2026-11-18 OpenCode Zen 공개 목록(/zen/v1/models · docs/zen) 기준</footer>
+</body></html>
