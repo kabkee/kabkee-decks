@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>kabkee-decks</title>
+  <script>document.documentElement.classList.add('enhanced')</script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,17 +50,134 @@
       main { padding: 36px 28px; }
       .deck-grid { gap: 14px; }
     }
+
+    /* ===== 대시보드 · 전체 목록 · 아카이브 (스크립트가 #source 카드를 읽어 #app 에 그린다) ===== */
+    /* 테마 변수 — 아카이브(body[data-view=archive])는 같은 레이아웃에 색만 따뜻한 회갈색·주황으로 바꾼다 */
+    body {
+      --bg: #0F172A; --line: #1E293B; --card: #1E293B; --card-line: #334155; --accent: #3B82F6;
+      --accent-soft: rgba(59,130,246,0.14); --chip: #1E293B; --muted: #64748B; --tag-bg: #1D4ED8; --tag-fg: #BFDBFE;
+      transition: background-color 0.25s;
+    }
+    body[data-view="archive"] {
+      --bg: #1C1917; --line: #292524; --card: #292524; --card-line: #44403C; --accent: #F97316;
+      --accent-soft: rgba(249,115,22,0.14); --chip: #292524; --muted: #A8A29E; --tag-bg: #9A3412; --tag-fg: #FED7AA;
+      background: var(--bg);
+    }
+    html.enhanced body { background: var(--bg); }
+    html.enhanced #source { display: none; }
+    html.enhanced header { border-bottom-color: var(--line); }
+    header .wrap { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    header h1 a { color: inherit; text-decoration: none; }
+    .subtitle { color: #64748B; font-size: 0.85em; margin-top: 6px; }
+    .topnav { display: flex; gap: 6px; flex-wrap: wrap; }
+    .topnav[hidden] { display: none; }
+    .topnav a {
+      color: #CBD5E1; text-decoration: none; font-size: 0.85em; padding: 7px 14px; border-radius: 999px;
+      border: 1px solid transparent; transition: background 0.15s, border-color 0.15s;
+    }
+    .topnav a:hover { background: var(--chip); }
+    .topnav a.active { background: var(--accent-soft); border-color: var(--accent); color: #F8FAFC; }
+    .topnav .count { font-family: 'Inter', sans-serif; font-size: 0.85em; color: var(--muted); margin-left: 2px; }
+
+    html.enhanced section h2 { color: var(--accent); }
+    .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .sec-head h2 { margin-bottom: 0 !important; }
+    .more {
+      font-size: 0.8em; color: #94A3B8; text-decoration: none; white-space: nowrap;
+      padding: 4px 10px; border-radius: 999px; border: 1px solid var(--card-line);
+    }
+    .more:hover { color: #F8FAFC; border-color: var(--accent); }
+
+    .home-search { margin-bottom: 40px; }
+    .search-box { position: relative; max-width: 520px; }
+    .search-box input {
+      width: 100%; font: inherit; font-size: 0.95em; color: #F1F5F9; background: var(--card);
+      border: 1px solid var(--card-line); border-radius: 10px; padding: 11px 14px 11px 38px; outline: none;
+    }
+    .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .search-box::before { content: '🔍'; position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 0.85em; opacity: 0.7; }
+    .search-box kbd {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-family: 'Inter', monospace; font-size: 0.7em;
+      color: var(--muted); border: 1px solid var(--card-line); border-radius: 4px; padding: 1px 6px;
+    }
+
+    .page-head { margin-bottom: 20px; }
+    .page-head h2 { font-size: 1.3em !important; text-transform: none !important; letter-spacing: 0 !important; color: #F8FAFC !important; margin-bottom: 6px !important; }
+    .page-head p { color: var(--muted); font-size: 0.85em; }
+    .toolbar { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      font: inherit; font-size: 0.8em; color: #CBD5E1; background: var(--chip); border: 1px solid var(--card-line);
+      border-radius: 999px; padding: 6px 12px; cursor: pointer; text-decoration: none;
+    }
+    .chip:hover { border-color: var(--accent); }
+    .chip.active { background: var(--accent-soft); border-color: var(--accent); color: #F8FAFC; }
+    .chip .n { font-family: 'Inter', sans-serif; color: var(--muted); margin-left: 4px; }
+    .chip.empty { opacity: 0.45; }
+    .result-info { font-size: 0.8em; color: var(--muted); margin-bottom: 14px; }
+
+    .card-wrap { position: relative; display: flex; }
+    .card-wrap .deck-card { flex: 1; min-width: 0; background: var(--card); border-color: var(--card-line); }
+    .card-wrap .deck-card:hover { border-color: var(--accent); }
+    .card-wrap .tag { background: var(--tag-bg); color: var(--tag-fg); }
+    .card-wrap .deck-card .date { padding-right: 56px; }
+    .cat-line { font-size: 0.65em; color: var(--muted); margin-bottom: 8px; padding-right: 64px; }
+    .deck-card mark { background: rgba(251,191,36,0.35); color: inherit; border-radius: 2px; padding: 0 1px; }
+    .arch-btn {
+      position: absolute; top: 14px; right: 14px; font: inherit; font-size: 0.68em; color: #CBD5E1;
+      background: rgba(15,23,42,0.85); border: 1px solid var(--card-line); border-radius: 6px; padding: 3px 8px;
+      cursor: pointer; opacity: 0; transition: opacity 0.15s, border-color 0.15s;
+    }
+    .card-wrap:hover .arch-btn, .arch-btn:focus-visible { opacity: 1; }
+    .arch-btn:hover { border-color: var(--accent); color: #F8FAFC; }
+    body[data-view="archive"] .arch-btn { opacity: 1; background: rgba(28,25,23,0.9); color: #FDBA74; border-color: #9A3412; }
+    @media (hover: none) { .arch-btn { opacity: 1; } }
+
+    .empty-state { padding: 48px 20px; text-align: center; color: var(--muted); border: 1px dashed var(--card-line); border-radius: 12px; font-size: 0.9em; }
+    .pager { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 32px; flex-wrap: wrap; }
+    .pager a, .pager span {
+      min-width: 36px; text-align: center; font-family: 'Inter', sans-serif; font-size: 0.85em; color: #CBD5E1;
+      text-decoration: none; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--card-line); background: var(--chip);
+    }
+    .pager a:hover { border-color: var(--accent); }
+    .pager .cur { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+    .pager .gap, .pager .off { border-color: transparent; background: none; color: var(--muted); }
+    .archive-banner {
+      font-size: 0.8em; color: #FED7AA; background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.35);
+      border-radius: 10px; padding: 10px 14px; margin-bottom: 20px;
+    }
+    .sync-note { font-size: 0.75em; color: #FBBF24; margin-bottom: 16px; }
+
+    #toast {
+      position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+      background: #F8FAFC; color: #0F172A; font-size: 0.85em; padding: 10px 16px; border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35); transition: opacity 0.2s, transform 0.2s; display: flex; gap: 14px; align-items: center; z-index: 10;
+    }
+    #toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+    #toast { width: max-content; max-width: calc(100vw - 32px); }
+    #toast button { font: inherit; font-weight: 600; color: #1D4ED8; background: none; border: 0; cursor: pointer; padding: 0; white-space: nowrap; }
+    @media (hover: none) { .search-box kbd { display: none; } }
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
-      <h1>kabkee-decks</h1>
-      <p>슬라이드 저장소 — 주간회의 · 발표 · 기술 공유</p>
+      <div class="brand">
+        <h1><a href="#/">kabkee-decks</a></h1>
+        <p class="subtitle">슬라이드 저장소 — 주간회의 · 발표 · 기술 공유</p>
+      </div>
+      <nav class="topnav" hidden>
+        <a data-nav="home" href="#/">홈</a>
+        <a data-nav="list" href="#/list">전체 목록 <span class="count" data-count="list"></span></a>
+        <a data-nav="archive" href="#/archive">📦 아카이브 <span class="count" data-count="archive"></span></a>
+      </nav>
     </div>
   </header>
-  <main>
-    <section>
+  <main id="app" hidden></main>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <!-- 카드 원본: 새 덱은 여기 해당 섹션 맨 위에 deck-card 를 추가한다. 화면(대시보드·전체 목록·아카이브)은 아래 스크립트가 이 카드들을 읽어 만든다. -->
+  <main id="source">
+    <section data-cat="weekly">
       <h2>📅 Weekly Reports</h2>
       <div class="deck-grid">
         <a class="deck-card" href="weekly-reports/2026-11-16.html">
@@ -208,7 +326,7 @@
         </a>
       </div>
     </section>
-    <section>
+    <section data-cat="ai">
       <h2>🤖 AI 도구 · 실험</h2>
       <div class="deck-grid">
         <a class="deck-card" href="reports/2026-10-29-jev-judge-model.html">
@@ -219,7 +337,7 @@
         </a>
       </div>
     </section>
-    <section>
+    <section data-cat="ideas">
       <h2>💡 Ideas</h2>
       <div class="deck-grid">
         <a class="deck-card" href="ideas/2026-10-04-look360-landing-plan.html">
@@ -248,7 +366,7 @@
         </a>
       </div>
     </section>
-    <section>
+    <section data-cat="guides">
       <h2>📄 Guides</h2>
       <div class="deck-grid">
         <a class="deck-card" href="guides/2026-11-13-cta-lecture.html">
@@ -307,7 +425,7 @@
         </a>
       </div>
     </section>
-    <section>
+    <section data-cat="ops">
       <h2>🔧 운영 반영 · 확인 포인트</h2>
       <div class="deck-grid">
         <a class="deck-card" href="reports/2026-11-18-place-feel-scores.html">
@@ -372,7 +490,7 @@
         </a>
       </div>
     </section>
-    <section>
+    <section data-cat="data">
       <h2>🗺️ 데이터 품질 · 감사</h2>
       <div class="deck-grid">
         <a class="deck-card" href="reports/2026-11-06-external-vr-reclass.html">
@@ -395,7 +513,7 @@
         </a>
       </div>
     </section>
-    <section>
+    <section data-cat="infra">
       <h2>☁️ 인프라 · 비용 보고</h2>
       <div class="deck-grid">
         <a class="deck-card" href="reports/2026-09-14-look360-file-backup-strategy.html">
@@ -406,7 +524,7 @@
         </a>
       </div>
     </section>
-    <section>
+    <section data-cat="security">
       <h2>🛡️ 보안 · 사고 보고</h2>
       <div class="deck-grid">
         <a class="deck-card" href="reports/2026-06-02-look360-response-final.html">
@@ -424,5 +542,291 @@
       </div>
     </section>
   </main>
+  <script>
+  /* 대시보드 · 전체 목록(검색·페이지) · 아카이브 — 2026-11-18
+   * 원본은 위 #source 의 카드 HTML 이다. 이 스크립트는 그 카드를 읽어 화면만 다시 그린다(카드 추가 방식은 그대로).
+   *   #/                       홈: 카테고리마다 최근 PREVIEW 개 + 「전체 N개 보기」
+   *   #/list?cat=&q=&page=     전체 목록: 카테고리 칩 · 제목 검색 · 페이지
+   *   #/archive?cat=&q=&page=  아카이브: 같은 구성 · 색만 다름 · 「꺼내기」
+   * 아카이브 상태: /api/archive (Netlify 함수 · netlify/functions/archive.mjs). 로컬(:8088)에서도 netlify.app 의 같은 저장소를 쓴다.
+   * 서버에 못 보내면 이 브라우저(localStorage)에 기록해 두고 다음 접속 때 다시 보낸다.
+   * 카드 id = 카드의 href. href 를 바꾸면 그 덱의 보관 상태가 풀린다. */
+  (() => {
+    const PREVIEW = 4;      // 홈에서 카테고리당 보여 줄 개수 (섹션의 data-preview 로 개별 지정 가능)
+    const PER_PAGE = 12;    // 목록·아카이브 한 페이지 개수
+    const REMOTE = 'https://kabkee-decks.netlify.app/api/archive';
+    const API = /netlify\.app$/.test(location.hostname) ? '/api/archive' : REMOTE;
+    const LS_STATE = 'kabkee-decks.archive.v1';
+    const LS_PENDING = 'kabkee-decks.archive.pending.v1';
+
+    const $ = (sel, el = document) => el.querySelector(sel);
+    const h = (tag, props = {}, ...kids) => {
+      const el = document.createElement(tag);
+      for (const [k, v] of Object.entries(props)) {
+        if (k === 'class') el.className = v;
+        else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+        else if (v !== undefined && v !== null && v !== false) el.setAttribute(k, v === true ? '' : v);
+      }
+      for (const kid of kids.flat()) if (kid !== null && kid !== undefined && kid !== false) el.append(kid.nodeType ? kid : String(kid));
+      return el;
+    };
+    const norm = (s) => s.toLowerCase().replace(/\s+/g, ' ').trim();
+    const textOf = (el) => { const c = el.cloneNode(true); c.querySelectorAll('br').forEach((b) => b.replaceWith(' ')); return c.textContent.replace(/\s+/g, ' ').trim(); };
+
+    // ── 원본 카드 읽기 ──
+    const cats = [];
+    const decks = [];
+    document.querySelectorAll('#source > section').forEach((sec, si) => {
+      const id = sec.dataset.cat || `c${si}`;
+      cats.push({ id, label: $('h2', sec).textContent.trim(), preview: +sec.dataset.preview || PREVIEW });
+      sec.querySelectorAll('a.deck-card').forEach((a) => {
+        const dateEl = $('.date', a);
+        const date = dateEl ? (dateEl.firstChild?.textContent || '').trim() : '';
+        const titleEl = $('.title', a);
+        decks.push({ id: a.getAttribute('href'), cat: id, date, order: decks.length, node: a, title: titleEl ? textOf(titleEl) : '' });
+      });
+    });
+    const catById = Object.fromEntries(cats.map((c) => [c.id, c]));
+    const byRecent = (a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : a.order - b.order);
+    decks.sort(byRecent);
+
+    // ── 아카이브 상태 ──
+    const readLS = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+    const writeLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+    let archived = new Set(readLS(LS_STATE, []));
+    let pending = readLS(LS_PENDING, []);   // [{id, archived}] — 서버에 아직 못 보낸 변경
+    let syncState = 'loading';             // loading | ok | offline
+    const isArch = (d) => archived.has(d.id);
+    const saveState = () => { writeLS(LS_STATE, [...archived]); writeLS(LS_PENDING, pending); };
+
+    async function post(id, on) {
+      const r = await fetch(API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id, archived: on }) });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    }
+    async function sync() {
+      try {
+        const r = await fetch(API, { cache: 'no-store' });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const { ids } = await r.json();
+        const server = new Set(ids);
+        const left = [];
+        for (const op of pending) {   // 오프라인 동안 쌓인 변경을 순서대로 재전송
+          try { await post(op.id, op.archived); op.archived ? server.add(op.id) : server.delete(op.id); }
+          catch { left.push(op); op.archived ? server.add(op.id) : server.delete(op.id); }
+        }
+        pending = left;
+        archived = server;
+        syncState = 'ok';
+      } catch {
+        syncState = 'offline';
+      }
+      saveState();
+      render();
+    }
+    async function setArchived(id, on, { undo = true } = {}) {
+      on ? archived.add(id) : archived.delete(id);
+      saveState();
+      render({ keepScroll: true });
+      let note = '';
+      try { await post(id, on); }
+      catch {
+        pending = pending.filter((p) => p.id !== id).concat({ id, archived: on });
+        saveState();
+        note = ' (서버 연결 실패 — 이 브라우저에 기록, 다음 접속 때 다시 보냄)';
+      }
+      const d = decks.find((x) => x.id === id);
+      const name = d ? `「${d.title.slice(0, 28)}${d.title.length > 28 ? '…' : ''}」` : '';
+      toast(`${name} ${on ? '아카이브로 보냈습니다' : '아카이브에서 꺼냈습니다'}${note}`, undo ? () => setArchived(id, !on, { undo: false }) : null);
+    }
+
+    let toastTimer;
+    function toast(msg, onUndo) {
+      const t = $('#toast');
+      t.replaceChildren(h('span', {}, msg), onUndo ? h('button', { type: 'button', onclick: () => { t.classList.remove('show'); onUndo(); } }, '되돌리기') : '');
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 5000);
+    }
+
+    // ── 라우팅 ──
+    function parseRoute() {
+      const raw = location.hash.replace(/^#/, '') || '/';
+      const [path, qs = ''] = raw.split('?');
+      const p = new URLSearchParams(qs);
+      const view = path === '/list' ? 'list' : path === '/archive' ? 'archive' : 'home';
+      const cat = catById[p.get('cat')] ? p.get('cat') : '';
+      return { view, cat, q: p.get('q') || '', page: Math.max(1, parseInt(p.get('page'), 10) || 1) };
+    }
+    function hashOf(r) {
+      const p = new URLSearchParams();
+      if (r.cat) p.set('cat', r.cat);
+      if (r.q) p.set('q', r.q);
+      if (r.page > 1) p.set('page', r.page);
+      const s = p.toString();
+      return `#/${r.view === 'home' ? '' : r.view}${s ? '?' + s : ''}`;
+    }
+
+    // ── 카드 ──
+    function highlight(root, terms) {
+      if (!terms.length) return;
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      const re = new RegExp(terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi');
+      for (const n of nodes) {
+        const s = n.nodeValue;
+        if (!re.test(s)) continue;
+        re.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let last = 0;
+        s.replace(re, (m, i) => { frag.append(s.slice(last, i), h('mark', {}, m)); last = i + m.length; });
+        frag.append(s.slice(last));
+        n.replaceWith(frag);
+      }
+    }
+    function card(d, { mode, showCat, terms = [] }) {
+      const a = d.node.cloneNode(true);
+      if (showCat) a.insertBefore(h('div', { class: 'cat-line' }, catById[d.cat].label), a.firstChild);
+      const t = $('.title', a);
+      if (t) highlight(t, terms);
+      const toArchive = mode !== 'archive';
+      const btn = h('button', {
+        type: 'button', class: 'arch-btn',
+        title: toArchive ? '아카이브로 보내기 — 홈·전체 목록에서 숨기고 아카이브에서만 보입니다' : '아카이브에서 꺼내기 — 홈·전체 목록에 다시 보입니다',
+        'aria-label': `${d.title} ${toArchive ? '아카이브로 보내기' : '아카이브에서 꺼내기'}`,
+        onclick: (e) => { e.preventDefault(); e.stopPropagation(); setArchived(d.id, toArchive); },
+      }, toArchive ? '📦 보관' : '↩ 꺼내기');
+      return h('div', { class: 'card-wrap' }, a, btn);
+    }
+
+    // ── 화면 ──
+    const app = $('#app');
+    function syncNote() {
+      if (syncState === 'offline') return h('div', { class: 'sync-note' }, '⚠ 아카이브 서버에 연결하지 못해 이 브라우저에 저장된 보관 상태로 보여 주고 있습니다.');
+      if (pending.length) return h('div', { class: 'sync-note' }, `⚠ 서버에 아직 반영되지 않은 보관 변경 ${pending.length}건 — 다음 접속 때 다시 보냅니다.`);
+      return '';
+    }
+    function renderHome() {
+      const active = decks.filter((d) => !isArch(d));
+      const form = h('form', { class: 'home-search', onsubmit: (e) => {
+        e.preventDefault();
+        location.hash = hashOf({ view: 'list', cat: '', q: input.value.trim(), page: 1 });
+      } });
+      const input = h('input', { type: 'search', placeholder: `제목으로 검색 (전체 ${active.length}개)`, 'aria-label': '덱 제목 검색', autocomplete: 'off' });
+      form.append(h('div', { class: 'search-box' }, input, h('kbd', {}, '/')));
+      const secs = cats.map((c) => {
+        const list = active.filter((d) => d.cat === c.id);
+        if (!list.length) return '';
+        const head = h('div', { class: 'sec-head' }, h('h2', {}, c.label),
+          list.length > c.preview ? h('a', { class: 'more', href: hashOf({ view: 'list', cat: c.id, q: '', page: 1 }) }, `전체 ${list.length}개 보기 →`) : '');
+        return h('section', {}, head, h('div', { class: 'deck-grid' }, list.slice(0, c.preview).map((d) => card(d, { mode: 'home' }))));
+      });
+      app.replaceChildren(syncNote(), form, ...secs);
+      if (!active.length) app.append(h('div', { class: 'empty-state' }, '표시할 덱이 없습니다. 모두 아카이브에 있습니다.'));
+    }
+
+    function renderList(r) {
+      const isArchive = r.view === 'archive';
+      const input = h('input', { type: 'search', value: r.q, placeholder: '제목으로 검색', 'aria-label': '덱 제목 검색', autocomplete: 'off' });
+      const results = h('div');
+      let timer;
+      input.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          r.q = input.value.trim(); r.page = 1;
+          history.replaceState(null, '', hashOf(r));   // hashchange 없이 주소만 갱신 → 입력 포커스 유지
+          fill();
+        }, 120);
+      });
+      const head = h('div', { class: 'page-head' },
+        h('h2', {}, isArchive ? '📦 아카이브' : '전체 목록'),
+        h('p', {}, isArchive
+          ? '홈과 전체 목록에서 숨긴 덱입니다. 「꺼내기」를 누르면 다시 보입니다.'
+          : '최근 순으로 정렬됩니다. 잘 안 볼 덱은 카드의 「보관」으로 아카이브에 보낼 수 있습니다.'));
+      const chips = h('div', { class: 'chips' });
+      app.replaceChildren(syncNote(), head,
+        h('div', { class: 'toolbar' }, h('div', { class: 'search-box' }, input, h('kbd', {}, '/')), chips),
+        results);
+
+      function fill() {
+        const terms = norm(r.q).split(' ').filter(Boolean);
+        const pool = decks.filter((d) => isArch(d) === isArchive && terms.every((t) => norm(d.title).includes(t)));
+        // 칩: 검색 결과 안에서 카테고리별 개수
+        const count = (cid) => pool.filter((d) => !cid || d.cat === cid).length;
+        chips.replaceChildren(...[{ id: '', label: '전체' }, ...cats].map((c) => {
+          const n = count(c.id);
+          return h('a', {
+            class: `chip${r.cat === c.id ? ' active' : ''}${n ? '' : ' empty'}`,
+            href: hashOf({ ...r, cat: c.id, page: 1 }),
+          }, c.label, h('span', { class: 'n' }, n));
+        }));
+        const list = pool.filter((d) => !r.cat || d.cat === r.cat);
+        const pages = Math.max(1, Math.ceil(list.length / PER_PAGE));
+        if (r.page > pages) r.page = pages;
+        const start = (r.page - 1) * PER_PAGE;
+        const slice = list.slice(start, start + PER_PAGE);
+        const label = r.cat ? catById[r.cat].label : '전체';
+        const info = list.length
+          ? `${label} · ${list.length}개 중 ${start + 1}–${start + slice.length}${r.q ? ` · 「${r.q}」 검색 결과` : ''}`
+          : '';
+        const empty = r.q
+          ? `「${r.q}」 와 일치하는 제목이 ${isArchive ? '아카이브에 ' : ''}없습니다.`
+          : isArchive ? '아카이브가 비어 있습니다. 홈·전체 목록 카드의 「📦 보관」으로 보낼 수 있습니다.' : '표시할 덱이 없습니다.';
+        results.replaceChildren(
+          info ? h('div', { class: 'result-info' }, info) : '',
+          slice.length ? h('div', { class: 'deck-grid' }, slice.map((d) => card(d, { mode: r.view, showCat: !r.cat, terms }))) : h('div', { class: 'empty-state' }, empty),
+          pager(r, pages));
+      }
+      fill();
+      return input;
+    }
+
+    function pager(r, pages) {
+      if (pages <= 1) return '';
+      const link = (p, txt, cls = '') => h('a', { href: hashOf({ ...r, page: p }), class: cls, 'aria-label': `${p}페이지` }, txt);
+      const nums = new Set([1, pages, r.page - 1, r.page, r.page + 1].filter((p) => p >= 1 && p <= pages));
+      const sorted = [...nums].sort((a, b) => a - b);
+      const out = [r.page > 1 ? link(r.page - 1, '‹ 이전') : h('span', { class: 'off' }, '‹ 이전')];
+      sorted.forEach((p, i) => {
+        if (i && p - sorted[i - 1] > 1) out.push(h('span', { class: 'gap' }, '…'));
+        out.push(p === r.page ? h('span', { class: 'cur', 'aria-current': 'page' }, p) : link(p, p));
+      });
+      out.push(r.page < pages ? link(r.page + 1, '다음 ›') : h('span', { class: 'off' }, '다음 ›'));
+      return h('nav', { class: 'pager', 'aria-label': '페이지' }, out);
+    }
+
+    let lastKey = '';
+    function render({ keepScroll = false } = {}) {
+      const r = parseRoute();
+      document.body.dataset.view = r.view;
+      document.title = r.view === 'archive' ? '아카이브 · kabkee-decks' : r.view === 'list' ? '전체 목록 · kabkee-decks' : 'kabkee-decks';
+      document.querySelectorAll('.topnav a').forEach((a) => a.classList.toggle('active', a.dataset.nav === r.view));
+      $('[data-count="list"]').textContent = decks.filter((d) => !isArch(d)).length;
+      $('[data-count="archive"]').textContent = archived.size ? decks.filter(isArch).length : '';
+      const active = document.activeElement;
+      const hadFocus = active && active.matches('#app input[type=search]');
+      const y = scrollY;
+      let input = null;
+      if (r.view === 'home') renderHome(); else input = renderList(r);
+      if (hadFocus && input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+      const key = `${r.view}|${r.cat}|${r.page}`;
+      if (keepScroll || key === lastKey) scrollTo(0, y); else scrollTo(0, 0);
+      lastKey = key;
+    }
+
+    document.documentElement.classList.add('enhanced');
+    app.hidden = false;
+    $('.topnav').hidden = false;
+    addEventListener('hashchange', () => render());
+    addEventListener('keydown', (e) => {   // 「/」 로 검색창 이동
+      if (e.key === '/' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '')) {
+        const i = $('#app input[type=search]');
+        if (i) { e.preventDefault(); i.focus(); }
+      }
+    });
+    render();
+    sync();
+  })();
+  </script>
 </body>
 </html>
