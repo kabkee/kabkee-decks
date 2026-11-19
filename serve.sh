@@ -11,4 +11,4 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "$DIR"
 echo "[kabkee-decks] serving $DIR on 0.0.0.0:$PORT"
-exec python3 -m http.server "$PORT" --bind 0.0.0.0
+exec python3 scripts/serve.py "$PORT"  # netlify.toml rewrite 적용(2026-11-19)

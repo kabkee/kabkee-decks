@@ -16,7 +16,7 @@ if ss -tln 2>/dev/null | grep -q ":${PORT} "; then
 fi
 
 cd "$DIR" || exit 1
-nohup python3 -m http.server "$PORT" --bind 0.0.0.0 </dev/null &
+nohup python3 scripts/serve.py "$PORT" </dev/null &  # netlify.toml rewrite 적용(2026-11-19)
 PID=$!
 echo "$PID" > "$PIDFILE"
 disown "$PID" 2>/dev/null
