@@ -1,3 +1,10 @@
 dist/
 node_modules/
 .netlify/functions-serve/
+
+# Netlify CLI 로컬 산출물 — state.json(siteId, scripts/deploy.sh 가 읽음)만 추적
+.netlify/*
+!.netlify/state.json
+
+# Claude Code 로컬 설정
+.claude/
