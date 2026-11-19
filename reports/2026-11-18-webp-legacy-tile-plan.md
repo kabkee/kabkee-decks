@@ -175,7 +175,7 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 | `-quality` · `-webpquality` | 손실 압축 화질 (0~100) | 85 | **60 · 70 · 75 · 80 · 85 · 90 · 95** | 지금 JPG(q60)보다 작아지는 지점을 찾으려고 구간 전체를 쟀습니다 → 70·75 가 후보 |
 | `-webpmethod` | 압축 노력 (0 = 빠르고 큼 ~ 6 = 느리고 작음) | 문서 0 · 1.24 도움말 2 | **6** | 0 이면 q60 도 JPG 보다 커집니다(11-13 실측). 변환은 한 번뿐이라 가장 작은 값을 씁니다 |
 | `-lossless` | 무손실 모드 켜기 | 끔 | **끔 / 켬 비교** | «무손실로 포장만 바꾸기»가 되는지 확인했습니다 |
-| `-webplossless` | 무손실 모드의 전처리 강도 (100 = 완전 무손실, 낮을수록 근사 무손실) | 100 | **100 · 80 · 60 · 40 · 20 · 0** | SSIM 을 1 가까이 두고 줄어드는 값이 있는지 확인했습니다 |
+| `-webplossless` | 무손실 모드의 전처리 강도 (100 = 완전 무손실, 낮을수록 근사 무손실) | 100 | **100 · 80 · 60 · 40 · 20 · 0** | SSIM 을 1 가까이 두고 줄어드는 값이 있는지 확인 → 0~100 모두 +517~670% |
 | `-webpalphaq` | 투명 채널 화질 | 95 | 해당 없음 | 타일에 투명 채널이 없습니다 |
 
 <span class="hl-green">적용할 설정</span> `-quality=70`(또는 75) `-webpmethod=6` · `-lossless` 는 쓰지 않습니다. krpanotools `convert` 와 Pillow(`quality=70, method=6`)는 결과가 같습니다(다음 장).
@@ -187,20 +187,18 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 <div class="cols">
 <div class="col">
 
-### krpanotools 1.24 `convert` · 같은 타일 180장
+### krpanotools 1.24 · 180장 · 무손실은 `method` 6
 
 | 설정 | 용량 변화 | SSIM | 커진 타일 |
 |---|---|---|---|
 | `-lossless -webplossless=100` | <span class="hl-red">+670%</span> | 0.998 | 175 |
-| `-lossless -webplossless=60` | <span class="hl-red">+617%</span> | 0.996 | 175 |
-| `-lossless -webplossless=20` | <span class="hl-red">+525%</span> | 0.991 | 175 |
 | `-lossless -webplossless=0` | <span class="hl-red">+517%</span> | 0.989 | 175 |
 | `-quality=85` (기본값 그대로) | +45% | 0.976 | 162 |
 | `-quality=70` (`method` 기본값) | −7.2% | 0.951 | 36 |
+| `-quality=60` (`method` 기본값) | −17.7% | 0.943 | 10 |
 | `-quality=75 -webpmethod=6` | <span class="hl-green">−16.4%</span> | 0.956 | 9 |
 | `-quality=70 -webpmethod=6` | <span class="hl-green">−20.8%</span> | 0.952 | 7 |
-
-무손실 계열은 모두 `-webpmethod=6` · SSIM 이 1 이 아닌 건 JPG 복원 방식 차이로 추정
+| `-quality=60 -webpmethod=6` | <span class="hl-green">−30.2%</span> | 0.944 | 2 |
 
 </div>
 <div class="col">
@@ -213,8 +211,8 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 | 4 (Pillow 기본값) | −19.6% | −14.5% | 13ms |
 | **6** | **−21.6%** | **−16.4%** | 27ms |
 
-- `method=6` 은 4 보다 2배 느리지만 2%p 더 줄어듭니다. 1,224만 장 ≈ 92 코어시간이라 kabkee-main 16코어로 **하루 안에** 끝납니다.
-- krpanotools 와 Pillow 결과가 거의 같아 도구 선택은 결과에 영향이 없습니다.
+- `method=6` 은 4 보다 2배 느리지만 2%p 더 줄어듭니다. 1,224만 장 ≈ 92 코어시간 → kabkee-main 에서 **하루 안**
+- krpanotools 와 Pillow 결과가 거의 같습니다
 
 </div>
 </div>
