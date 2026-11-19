@@ -469,8 +469,8 @@
         </a>
         <a class="deck-card" href="reports/2026-11-18-s3files-cost.html">
           <div class="date">2026-11-18</div>
-          <div class="title">look360 S3 Files 비용 분석<br>월 $52 메타데이터 바닥값 · 재교체와 재발 경보</div>
-          <div class="meta">10월 S3 Files $72.55(저장 $52.23 + 읽기 $20.32) · inode 1,661만 개 = 버킷 전체 · 개당 10KiB 영구 과금 · 09-14 교체로 없앤 바닥값이 09-18~20 순회로 재발, 감시 없어 두 달간 방치 · 10월 읽기의 94% 는 순회 사고 6일 · getImg 프록시는 원인 아님 · 제안: 재교체 + Inodes 경보(월 약 −$40~46)</div>
+          <div class="title">S3 Files 와 WebP 전환<br>전환 작업이 S3 Files 비용에 주는 영향</div>
+          <div class="meta">서버 /files 는 S3 버킷을 폴더처럼 붙인 것 · 관람 타일은 CloudFront → S3 직접 · 서버 폴더로 변환하면 1회 약 $23~26 + 목록 정보 월 약 $39 증가 → S3 API 로만 변환 · 시범 전후 Inodes 비교로 직접 업로드 영향 확정 · 지금 월 약 $52 는 전환과 별개 과제</div>
           <span class="tag">NEW · AWS 비용 · S3 Files · 레거시</span>
         </a>
         <a class="deck-card" href="reports/2026-11-18-webp-legacy-tile-plan.html">

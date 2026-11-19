@@ -1,476 +1,206 @@
-<!DOCTYPE html><html lang="C"><head><title>look360 S3 Files 비용 분석 — 월 $52 메타데이터 바닥값과 재발 방지</title><meta property="og:title" content="look360 S3 Files 비용 분석 — 월 $52 메타데이터 바닥값과 재발 방지"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0"><meta name="apple-mobile-web-app-capable" content="yes"><meta http-equiv="X-UA-Compatible" content="ie=edge"><meta property="og:type" content="website"><meta name="twitter:card" content="summary"><style>@media screen{body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button,body[data-bespoke-view=overview] button.bespoke-marp-overview-close,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button{appearance:none;background-color:initial;border:0;color:inherit;cursor:pointer;font-size:inherit;opacity:.8;outline:none;padding:0;transition:opacity .2s linear;-webkit-tap-highlight-color:transparent}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:disabled,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:disabled,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:disabled{cursor:not-allowed;opacity:.15!important}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover{opacity:1}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:active,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:active,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover:active{opacity:.6}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:not(:disabled),body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:not(:disabled),body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover:not(:disabled){transition:none}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button.bespoke-marp-presenter-info-page-prev{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNNjggOTAgMjggNTBsNDAtNDAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button.bespoke-marp-presenter-info-page-next{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJtMzIgOTAgNDAtNDAtNDAtNDAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4fTwvc3R5bGU+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MCIgaGVpZ2h0PSI2MCIgeD0iMTAiIHk9IjIwIiBjbGFzcz0iYSIgcng9IjUuNjciLz48cGF0aCBkPSJNNDAgNzBIMjBWNTBtMjAgMEwyMCA3MG00MC00MGgyMHYyMG0tMjAgMCAyMC0yMCIgY2xhc3M9ImEiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button.exit[data-bespoke-marp-osc=fullscreen]{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4fTwvc3R5bGU+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MCIgaGVpZ2h0PSI2MCIgeD0iMTAiIHk9IjIwIiBjbGFzcz0iYSIgcng9IjUuNjciLz48cGF0aCBkPSJNMjAgNTBoMjB2MjBtLTIwIDAgMjAtMjBtNDAgMEg2MFYzMG0yMCAwTDYwIDUwIiBjbGFzcz0iYSIvPjwvc3ZnPg==")}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNODcuOCA0Ny41Qzg5IDUwIDg3LjcgNTIgODUgNTJIMzVhOC43IDguNyAwIDAgMS03LjItNC41bC0xNS42LTMxQzExIDE0IDEyLjIgMTIgMTUgMTJoNTBhOC44IDguOCAwIDAgMSA3LjIgNC41ek02MCA1MnYzNm0tMTAgMGgyME00NSA0MmgyMCIvPjwvc3ZnPg==") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=overview] button.bespoke-marp-overview-close,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button.bespoke-marp-presenter-note-bigger{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNMTIgNTBoODBNNTIgOTBWMTAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button.bespoke-marp-presenter-note-smaller{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNMTIgNTBoODAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=overview]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4O3J4OjVweDtyeTo1cHg7d2lkdGg6MjVweDtoZWlnaHQ6MjVweH08L3N0eWxlPjwvZGVmcz48cmVjdCB4PSIyMCIgeT0iMjAiIGNsYXNzPSJhIi8+PHJlY3QgeD0iNTUiIHk9IjIwIiBjbGFzcz0iYSIvPjxyZWN0IHg9IjIwIiB5PSI1NSIgY2xhc3M9ImEiLz48cmVjdCB4PSI1NSIgeT0iNTUiIGNsYXNzPSJhIi8+PC9zdmc+") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}}@keyframes __bespoke_marp_transition_reduced_outgoing__{0%{opacity:1}to{opacity:0}}@keyframes __bespoke_marp_transition_reduced_incoming__{0%{mix-blend-mode:plus-lighter;opacity:0}to{mix-blend-mode:plus-lighter;opacity:1}}.bespoke-marp-note,.bespoke-marp-osc,.bespoke-progress-parent{display:none;transition:none}@media screen{::view-transition-group(*){animation-duration:var(--marp-bespoke-transition-animation-duration,.5s);animation-timing-function:ease}::view-transition-new(*),::view-transition-old(*){animation-delay:0s;animation-direction:var(--marp-bespoke-transition-animation-direction,normal);animation-duration:var(--marp-bespoke-transition-animation-duration,.5s);animation-fill-mode:both;animation-name:var(--marp-bespoke-transition-animation-name,var(--marp-bespoke-transition-animation-name-fallback,__bespoke_marp_transition_no_animation__));mix-blend-mode:normal}::view-transition-old(*){--marp-bespoke-transition-animation-name-fallback:__bespoke_marp_transition_reduced_outgoing__;animation-timing-function:ease}::view-transition-new(*){--marp-bespoke-transition-animation-name-fallback:__bespoke_marp_transition_reduced_incoming__;animation-timing-function:ease}::view-transition-new(root),::view-transition-old(root){animation-timing-function:linear}::view-transition-new(__bespoke_marp_transition_osc__),::view-transition-old(__bespoke_marp_transition_osc__){animation-duration:0s!important;animation-name:__bespoke_marp_transition_osc__!important}::view-transition-new(__bespoke_marp_transition_osc__){opacity:0!important}.bespoke-marp-transition-warming-up::view-transition-group(*),.bespoke-marp-transition-warming-up::view-transition-new(*),.bespoke-marp-transition-warming-up::view-transition-old(*){animation-play-state:paused!important}body,html{height:100%;margin:0}body{background:#000;overflow:hidden}svg.bespoke-marp-slide{content-visibility:hidden;interactivity:inert;opacity:0;pointer-events:none;z-index:-1}svg.bespoke-marp-slide:not(.bespoke-marp-active) *{view-transition-name:none!important}svg.bespoke-marp-slide.bespoke-marp-active{content-visibility:visible;interactivity:auto;opacity:1;pointer-events:auto;z-index:0}svg.bespoke-marp-slide.bespoke-marp-active.bespoke-marp-active-ready *{animation-name:__bespoke_marp__!important}@supports not (content-visibility:hidden){svg.bespoke-marp-slide[data-bespoke-marp-load=hideable]{display:none}svg.bespoke-marp-slide[data-bespoke-marp-load=hideable].bespoke-marp-active{display:block}}}@media screen and (prefers-reduced-motion:reduce){svg.bespoke-marp-slide *{view-transition-name:none!important}}@media screen{[data-bespoke-marp-fragment=inactive]{visibility:hidden}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent{inset:0;position:absolute}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc{background:#000000a6;border-radius:7px;bottom:50px;color:#fff;contain:paint;display:block;font-family:Helvetica,Arial,sans-serif;font-size:16px;left:50%;line-height:0;opacity:1;padding:12px;position:absolute;touch-action:manipulation;transform:translateX(-50%);transition:opacity .2s linear;-webkit-user-select:none;user-select:none;view-transition-name:__bespoke_marp_transition_osc__;white-space:nowrap;will-change:transform;z-index:1}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>:where(*){margin-left:6px}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>:where(*):where(:first-child){margin-left:0}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>span{opacity:.8}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>span[data-bespoke-marp-osc=page]{display:inline-block;min-width:140px;text-align:center}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=overview],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev]{height:32px;line-height:32px;width:32px}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent.bespoke-marp-inactive{cursor:none}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent.bespoke-marp-inactive>.bespoke-marp-osc{opacity:0;pointer-events:none}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) svg.bespoke-marp-slide{height:100%;left:0;position:absolute;top:0;width:100%}body[data-bespoke-view=""] .bespoke-progress-parent{background:#222;display:flex;height:5px;width:100%}body[data-bespoke-view=""] .bespoke-progress-parent+:where(.bespoke-marp-parent){top:5px}body[data-bespoke-view=""] .bespoke-progress-parent .bespoke-progress-bar{background:#0288d1;flex:0 0 0;transition:flex-basis .2s cubic-bezier(0,1,1,1)}body[data-bespoke-view=next]{background:#0000}body[data-bespoke-view=presenter]{background:#161616}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container{display:grid;font-family:Helvetica,Arial,sans-serif;grid-template:"current dragbar next" minmax(140px,1fr) "current dragbar note" 2fr "info    dragbar note" 3em;grid-template-columns:minmax(3px,var(--bespoke-marp-presenter-split-ratio,66%)) 0 minmax(3px,1fr);height:100%;left:0;position:absolute;top:0;width:100%}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent){grid-area:current;overflow:hidden;position:relative}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent) :where(svg.bespoke-marp-slide){height:calc(100% - 40px);left:20px;pointer-events:none;position:absolute;top:20px;-webkit-user-select:none;user-select:none;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent) :where(svg.bespoke-marp-slide).bespoke-marp-active{filter:drop-shadow(0 3px 10px rgba(0,0,0,.5))}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container{background:#0288d1;cursor:col-resize;grid-area:dragbar;margin-left:-3px;opacity:0;position:relative;transition:opacity .4s linear .1s;width:6px;z-index:10}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container:hover{opacity:1}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container.active{opacity:1;transition-delay:0s}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container{background:#222;cursor:pointer;display:none;grid-area:next;overflow:hidden;position:relative}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container.active{display:block}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container iframe.bespoke-marp-presenter-next{background:#0000;border:0;display:block;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5));height:calc(100% - 40px);left:20px;pointer-events:none;position:absolute;interactivity:inert;top:20px;-webkit-user-select:none;user-select:none;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container{background:#222;color:#eee;grid-area:note;position:relative;z-index:1}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button{height:1.5em;line-height:1.5em;width:1.5em}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-wrapper{display:block;inset:0;position:absolute}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-buttons{background:#000000a6;border-radius:4px;bottom:0;display:flex;gap:4px;margin:12px;opacity:0;padding:6px;pointer-events:none;position:absolute;right:0;transition:opacity .2s linear}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-buttons:focus-within,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-wrapper:focus-within+.bespoke-marp-presenter-note-buttons,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container:hover .bespoke-marp-presenter-note-buttons{opacity:1;pointer-events:auto}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note{box-sizing:border-box;font-size:calc(1.1em*var(--bespoke-marp-note-font-scale, 1));height:calc(100% - 40px);margin:20px;overflow:auto;padding-right:3px;white-space:pre-wrap;width:calc(100% - 40px);word-wrap:break-word;scrollbar-color:#eeeeee80 #0000;scrollbar-width:thin}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar{width:6px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar-track{background:#0000}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar-thumb{background:#eeeeee80;border-radius:6px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note:empty{pointer-events:none}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note.active{display:block}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note p:first-child{margin-top:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note p:last-child{margin-bottom:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container{align-items:center;box-sizing:border-box;color:#eee;display:flex;flex-wrap:nowrap;grid-area:info;justify-content:center;overflow:hidden;padding:0 10px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container :is(.bespoke-marp-presenter-info-page-area,.bespoke-marp-presenter-info-time,.bespoke-marp-presenter-info-timer){box-sizing:border-box;display:block;padding:0 10px;white-space:nowrap;width:100%}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button{height:1.5em;line-height:1.5em;width:1.5em}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area{order:2;text-align:center}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page{display:inline-block;min-width:120px;text-align:center}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-time{color:#999;order:1;text-align:left}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer{color:#999;order:3;text-align:right}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer:hover{cursor:pointer}body[data-bespoke-view=overview]{background:#161616;overflow:auto}body[data-bespoke-view=overview] [data-bespoke-marp-fragment=inactive]{visibility:visible}body[data-bespoke-view=overview] .bespoke-marp-overview-header{backdrop-filter:blur(4px);background:#222222d9;box-shadow:0 3px 10px #00000080;box-sizing:border-box;display:flex;height:48px;inset:0 0 auto;justify-content:flex-end;padding:10px;position:fixed;z-index:1}body[data-bespoke-view=overview] button.bespoke-marp-overview-close{height:28px;line-height:28px;transform:rotate(45deg);width:28px}body[data-bespoke-view=overview] .bespoke-marp-parent{display:grid;gap:40px;grid-template-columns:repeat(auto-fit,minmax(0,240px));justify-content:space-around;padding:30px}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide{--bov-selected:#0000;--bov-focus:#161616;--bov-focus-outline:#0000;background-image:conic-gradient(#161616 0 0),conic-gradient(var(--bov-focus) 0 0),conic-gradient(var(--bov-focus-outline) 0 0),conic-gradient(var(--bov-selected) 0 0);background-position:5px 5px,3px 3px,2px 2px,0 0;background-repeat:no-repeat;background-size:calc(100% - 10px) calc(100% - 10px),calc(100% - 6px) calc(100% - 6px),calc(100% - 4px) calc(100% - 4px),100% 100%;content-visibility:visible;cursor:pointer;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5));margin:-6px;padding:6px;interactivity:auto;opacity:1;outline:0;pointer-events:auto;scroll-margin-block:30px;width:100%;z-index:0}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide *,body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide.bespoke-marp-active *{pointer-events:none;interactivity:inert}body[data-bespoke-view=overview] .bespoke-marp-parent :is(svg.bespoke-marp-slide:active,svg.bespoke-marp-slide:focus-visible,svg.bespoke-marp-slide:hover){--bov-focus-outline:#161616}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:focus-visible,body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:hover{--bov-focus:#999}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:active{--bov-focus:#eee}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide.bespoke-marp-active{--bov-selected:#0288d1}body[data-bespoke-view=overview]:has(.bespoke-marp-overview-header) .bespoke-marp-parent{padding-top:78px}body[data-bespoke-view=overview]:has(.bespoke-marp-overview-header) .bespoke-marp-parent svg.bespoke-marp-slide{scroll-margin-top:78px}.bespoke-marp-overview{background:#000000a6;inset:0;opacity:0;pointer-events:none;position:fixed;transition:opacity .1s ease;z-index:10}.bespoke-marp-overview iframe{background:#222;border:0;display:block;height:100%;left:0;position:absolute;top:0;width:100%}.bespoke-marp-overview[data-open="1"]{opacity:1;pointer-events:auto}}@media print{.bespoke-marp-overview,.bespoke-marp-presenter-info-container,.bespoke-marp-presenter-next-container,.bespoke-marp-presenter-note-container{display:none}}</style><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');div#\:\$p > svg > foreignObject > section{width:1280px;height:720px;box-sizing:border-box;overflow:hidden;position:relative;scroll-snap-align:center center;-webkit-text-size-adjust:100%;text-size-adjust:100%}div#\:\$p > svg > foreignObject > section::after{bottom:0;content:attr(data-marpit-pagination);padding:inherit;pointer-events:none;position:absolute;right:0}div#\:\$p > svg > foreignObject > section:not([data-marpit-pagination])::after{display:none}div#\:\$p > svg > foreignObject > section :where(:is(h1, marp-h1)){font-size:2em;margin-block:0.67em}div#\:\$p > svg > foreignObject > section section:where(:is(h1, marp-h1)){--marpit-root-font-size: 2em}div#\:\$p > svg > foreignObject > section video::-webkit-media-controls{will-change:transform}@page {size:1280px 720px;margin:0}@media print{html, body{background-color:#fff;margin:0;page-break-inside:avoid;break-inside:avoid-page}div#\:\$p > svg > foreignObject > section{page-break-before:always;break-before:page}div#\:\$p > svg > foreignObject > section, div#\:\$p > svg > foreignObject > section *{-webkit-print-color-adjust:exact!important;animation-delay:0s!important;animation-duration:0s!important;color-adjust:exact!important;print-color-adjust:exact!important;transition:none!important}div#\:\$p > svg[data-marpit-svg]{display:block;height:100vh;width:100vw}}div#\:\$p > svg > foreignObject > :where(section){container-type:size}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"]{direction:ltr}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] > svg{overflow:visible;min-height:1px;min-width:1px}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] > svg a{fill:blue;stroke:blue}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][display="true"]{display:block;text-align:center;margin:1em 0}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][display="true"][width="full"]{display:flex}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][justify="left"]{text-align:left}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][justify="right"]{text-align:right}div#\:\$p > svg > foreignObject > section g[data-mml-node="merror"] > g{fill:red;stroke:red}div#\:\$p > svg > foreignObject > section g[data-mml-node="merror"] > rect[data-background]{fill:yellow;stroke:none}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > line[data-line], div#\:\$p > svg > foreignObject > section svg[data-table] > g > line[data-line]{stroke-width:70px;fill:none}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > rect[data-frame], div#\:\$p > svg > foreignObject > section svg[data-table] > g > rect[data-frame]{stroke-width:70px;fill:none}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > .mjx-dashed, div#\:\$p > svg > foreignObject > section svg[data-table] > g > .mjx-dashed{stroke-dasharray:140}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > .mjx-dotted, div#\:\$p > svg > foreignObject > section svg[data-table] > g > .mjx-dotted{stroke-linecap:round;stroke-dasharray:0,140}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > g > svg{overflow:visible}div#\:\$p > svg > foreignObject > section [jax="SVG"] mjx-tool{display:inline-block;position:relative;width:0;height:0}div#\:\$p > svg > foreignObject > section [jax="SVG"] mjx-tool > mjx-tip{position:absolute;top:0;left:0}div#\:\$p > svg > foreignObject > section mjx-tool > mjx-tip{display:inline-block;padding:.2em;border:1px solid #888;font-size:70%;background-color:#F8F8F8;color:black;box-shadow:2px 2px 5px #AAAAAA}div#\:\$p > svg > foreignObject > section g[data-mml-node="maction"][data-toggle]{cursor:pointer}div#\:\$p > svg > foreignObject > section mjx-status{display:block;position:fixed;left:1em;bottom:1em;min-width:25%;padding:.2em .4em;border:1px solid #888;font-size:90%;background-color:#F8F8F8;color:black}div#\:\$p > svg > foreignObject > section foreignObject[data-mjx-xml]{font-family:initial;line-height:normal;overflow:visible}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] path[data-c], div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] use[data-c]{stroke-width:3}@media print{div#\:\$p > svg > foreignObject > section mjx-container[jax=SVG] path[data-c],div#\:\$p > svg > foreignObject > section mjx-container[jax=SVG] use[data-c]{stroke-width:0}}div#\:\$p > svg > foreignObject > section img[data-marp-twemoji]{background:transparent;height:1em;margin:0 .05em 0 .1em;vertical-align:-.1em;width:1em}div#\:\$p > svg > foreignObject > :where(section):not([\20 root]){--ink:       #1E1B4B;--ink-2:     #3730A3;--body:      #374151;--muted:     #6B7280;--accent:    #6366F1;--accent-l:  #A5B4FC;--accent-bg: #EEF2FF;--line:      #E5E7EB;--surface:   #F9FAFB;--white:     #FFFFFF;}div#\:\$p > svg > foreignObject > section{font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:24px;line-height:1.55;color:var(--body);background:var(--white);padding:52px 60px 48px;justify-content:flex-start;position:relative}div#\:\$p > svg > foreignObject > section{--marpit-root-font-size: 24px}div#\:\$p > svg > foreignObject > section::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, var(--accent) 0%, #818CF8 60%, transparent 100%)}div#\:\$p > svg > foreignObject > section::after{color:var(--muted);font-family:'JetBrains Mono', monospace;font-size:13px}div#\:\$p > svg > foreignObject > section::after{--marpit-root-font-size: 13px}div#\:\$p > svg > foreignObject > section :is(h1, marp-h1){font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:1.7em;font-weight:700;color:var(--ink);margin:0 0 28px;line-height:1.2}div#\:\$p > svg > foreignObject > section :is(h2, marp-h2){font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:1.05em;font-weight:700;color:var(--ink);margin:0 0 20px;padding:0 0 12px 16px;border-left:4px solid var(--accent);border-bottom:1px solid var(--line)}div#\:\$p > svg > foreignObject > section :is(h3, marp-h3){font-size:0.78em;font-weight:600;color:var(--accent);margin:20px 0 6px;text-transform:uppercase;letter-spacing:0.06em}div#\:\$p > svg > foreignObject > section ul{list-style:none;padding:0;margin:0}div#\:\$p > svg > foreignObject > section ul > li{position:relative;padding:7px 0 7px 22px;font-size:0.71em;line-height:1.55;color:var(--body);border-bottom:1px solid var(--surface)}div#\:\$p > svg > foreignObject > section ul > li:last-child{border-bottom:none}div#\:\$p > svg > foreignObject > section ul > li::before{content:'';position:absolute;left:4px;top:16px;width:6px;height:6px;border-radius:50%;background:var(--accent)}div#\:\$p > svg > foreignObject > section ul ul{margin-top:2px}div#\:\$p > svg > foreignObject > section ul ul > li{font-size:0.92em;color:var(--muted);border-bottom:none;padding:2px 0 2px 20px}div#\:\$p > svg > foreignObject > section ul ul > li::before{width:4px;height:4px;top:11px;background:var(--accent-l)}div#\:\$p > svg > foreignObject > section strong{color:var(--ink);font-weight:700}div#\:\$p > svg > foreignObject > section th strong{background:var(--accent-bg);color:var(--ink);font-weight:800;padding:2px 9px;border-radius:4px}div#\:\$p > svg > foreignObject > section em{color:var(--muted);font-style:italic}div#\:\$p > svg > foreignObject > section code{font-family:'JetBrains Mono', monospace;font-size:0.8em;background:var(--surface);color:var(--ink-2);padding:2px 7px;border-radius:5px;border:1px solid var(--line)}div#\:\$p > svg > foreignObject > section a{color:var(--accent);text-decoration:none}div#\:\$p > svg > foreignObject > section table{font-size:0.6em;border-collapse:collapse;margin:8px 0;width:100%}div#\:\$p > svg > foreignObject > section th{background:var(--ink);color:#F9FAFB;font-weight:600;text-align:left;padding:9px 14px;font-size:0.95em}div#\:\$p > svg > foreignObject > section td{border-bottom:1px solid var(--line);padding:8px 14px;color:var(--body)}div#\:\$p > svg > foreignObject > section tr:nth-child(even) td{background:var(--surface)}div#\:\$p > svg > foreignObject > section blockquote{border:none;font-size:0.55em;color:var(--muted);font-style:normal;margin:12px 0 0;padding:10px 14px;background:var(--surface);border-radius:6px;border-left:3px solid var(--accent-l)}div#\:\$p > svg > foreignObject > section blockquote::before{content:''}div#\:\$p > svg > foreignObject > section .badge{display:inline-block;font-size:0.4em;font-family:'JetBrains Mono', monospace;background:var(--accent-bg);color:var(--ink-2);padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:6px;font-weight:500}div#\:\$p > svg > foreignObject > section section.badge{--marpit-root-font-size: 0.4em}div#\:\$p > svg > foreignObject > section .badge-date{display:inline-block;font-size:0.38em;background:var(--surface);color:var(--muted);padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:5px;border:1px solid var(--line)}div#\:\$p > svg > foreignObject > section section.badge-date{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section .badge-new{display:inline-block;font-size:0.38em;font-family:'JetBrains Mono', monospace;background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:6px;font-weight:600}div#\:\$p > svg > foreignObject > section section.badge-new{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section .hl{padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-blue{background:#EEF2FF;color:var(--ink-2);padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-green{background:#ECFDF5;color:#065F46;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-red{background:#FEF2F2;color:#991B1B;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-amber{background:#FFFBEB;color:#92400E;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-teal{background:#F0FDFA;color:#0F766E;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-gray{background:var(--surface);color:#374151;padding:1px 7px;border-radius:4px}div#\:\$p > svg > foreignObject > section .links{margin-top:14px}div#\:\$p > svg > foreignObject > section .links .lbl{font-size:0.48em;color:var(--muted);margin-right:8px;font-weight:600}div#\:\$p > svg > foreignObject > section .links div#\:\$p > svg > foreignObject > section section.lbl{--marpit-root-font-size: 0.48em}div#\:\$p > svg > foreignObject > section a.lnk{display:inline-block;font-size:0.48em;font-family:'JetBrains Mono', monospace;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-l);padding:4px 12px;border-radius:20px;margin:3px 4px 3px 0;text-decoration:none}div#\:\$p > svg > foreignObject > section .stats{display:flex;gap:14px;justify-content:center;margin-top:20px}div#\:\$p > svg > foreignObject > section .stats .card{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 10px;text-align:center}div#\:\$p > svg > foreignObject > section .stats .card .num{font-size:1.8em;font-weight:700;color:var(--accent);line-height:1}div#\:\$p > svg > foreignObject > section .stats .card div#\:\$p > svg > foreignObject > section section.num{--marpit-root-font-size: 1.8em}div#\:\$p > svg > foreignObject > section .stats .card .lab{font-size:0.4em;color:var(--muted);margin-top:8px;line-height:1.4}div#\:\$p > svg > foreignObject > section .stats .card div#\:\$p > svg > foreignObject > section section.lab{--marpit-root-font-size: 0.4em}div#\:\$p > svg > foreignObject > section .cols{display:flex;gap:32px}div#\:\$p > svg > foreignObject > section .cols .col{flex:1}div#\:\$p > svg > foreignObject > section.cover{background:var(--ink);color:#F9FAFB;justify-content:center;text-align:left;padding:72px 72px}div#\:\$p > svg > foreignObject > section.cover::before{background:linear-gradient(90deg, var(--accent) 0%, #818CF8 100%);height:4px}div#\:\$p > svg > foreignObject > section.cover :is(h1, marp-h1){color:#F9FAFB;font-size:2.1em;font-weight:700;margin:0 0 12px;line-height:1.15}div#\:\$p > svg > foreignObject > section.cover :is(h2, marp-h2){border:none;color:var(--accent-l);font-size:0.68em;font-weight:400;margin:0 0 40px;padding:0;letter-spacing:0}div#\:\$p > svg > foreignObject > section.cover p{color:#6B7280;font-size:0.48em;margin-top:0}div#\:\$p > svg > foreignObject > section.cover hr{border:none;border-top:1px solid #374151;margin:28px 0;width:60px}div#\:\$p > svg > foreignObject > section.cover::after{color:#4B5563}div#\:\$p > svg > foreignObject > section.sec{background:var(--surface);justify-content:center;text-align:left;padding:72px}div#\:\$p > svg > foreignObject > section.sec::before{height:4px}div#\:\$p > svg > foreignObject > section.sec .sec-num{display:block;font-size:0.38em;font-family:'JetBrains Mono', monospace;color:var(--accent);font-weight:600;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:16px}div#\:\$p > svg > foreignObject > section.sec div#\:\$p > svg > foreignObject > section section.sec-num{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section.sec :is(h2, marp-h2){border:none;border-bottom:none;font-size:1.8em;color:var(--ink);padding:0;margin:0 0 10px}div#\:\$p > svg > foreignObject > section.sec p{font-size:0.58em;color:var(--muted);margin:0}div#\:\$p > svg > foreignObject > section.sec::after{color:var(--muted)}div#\:\$p > svg > foreignObject > section.agenda :is(h3, marp-h3){font-size:0.6em;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 6px}div#\:\$p > svg > foreignObject > section.agenda ul > li{font-size:0.62em;border-bottom:none;padding:4px 0 4px 18px}div#\:\$p > svg > foreignObject > section.closing{background:var(--ink);color:#F9FAFB;justify-content:center;text-align:center;padding:72px}div#\:\$p > svg > foreignObject > section.closing::before{background:linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);height:3px}div#\:\$p > svg > foreignObject > section.closing :is(h2, marp-h2){border:none;color:#F9FAFB;font-size:1.7em;padding:0;margin:0 0 16px}div#\:\$p > svg > foreignObject > section.closing p{font-size:0.5em;color:#6B7280}div#\:\$p > svg > foreignObject > section.closing::after{color:#4B5563}div#\:\$p > svg > foreignObject > section img:not(.emoji){display:block;margin:4px auto;border-radius:8px;border:1px solid var(--line);box-shadow:0 3px 14px rgba(15, 23, 42, 0.10)}div#\:\$p > svg > foreignObject > section figure{margin:0}div#\:\$p > svg > foreignObject > section figcaption{font-size:0.52em;color:var(--muted);text-align:center;margin-top:5px;line-height:1.4}div#\:\$p > svg > foreignObject > section .shot-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}div#\:\$p > svg > foreignObject > section .shot-row img:not(.emoji){margin:0;width:100%}div#\:\$p > svg > foreignObject > section .shot-pair{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;justify-items:center}div#\:\$p > svg > foreignObject > section .shot-pair figure{margin:0}div#\:\$p > svg > foreignObject > section .shot-pair img:not(.emoji){margin:0}div#\:\$p > svg > foreignObject > section .shot-pair figcaption{width:100%;word-break:keep-all}div#\:\$p > svg > foreignObject > section img:not(.emoji){cursor:zoom-in}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]{columns:initial!important;display:block!important;padding:0!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]::before, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]::after, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"]::before, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"]::after{display:none!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container]{all:initial;display:flex;flex-direction:row;height:100%;overflow:hidden;width:100%}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container][data-marpit-advanced-background-direction="vertical"]{flex-direction:column}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"][data-marpit-advanced-background-split] > div[data-marpit-advanced-background-container]{width:var(--marpit-advanced-background-split, 50%)}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"][data-marpit-advanced-background-split="right"] > div[data-marpit-advanced-background-container]{margin-left:calc(100% - var(--marpit-advanced-background-split, 50%))}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container] > figure{all:initial;background-position:center;background-repeat:no-repeat;background-size:cover;flex:auto;margin:0}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container] > figure > figcaption{position:absolute;border:0;clip:rect(0, 0, 0, 0);height:1px;margin:-1px;overflow:hidden;padding:0;white-space:nowrap;width:1px}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"], div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="pseudo"]{background:transparent!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="pseudo"], div#\:\$p > svg[data-marpit-svg] > foreignObject[data-marpit-advanced-background="pseudo"]{pointer-events:none!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background-split]{width:100%;height:100%}
+<!DOCTYPE html><html lang="C"><head><title>S3 Files 와 WebP 전환 — 전환 작업이 S3 Files 비용에 주는 영향</title><meta property="og:title" content="S3 Files 와 WebP 전환 — 전환 작업이 S3 Files 비용에 주는 영향"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0"><meta name="apple-mobile-web-app-capable" content="yes"><meta http-equiv="X-UA-Compatible" content="ie=edge"><meta property="og:type" content="website"><meta name="twitter:card" content="summary"><style>@media screen{body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button,body[data-bespoke-view=overview] button.bespoke-marp-overview-close,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button{appearance:none;background-color:initial;border:0;color:inherit;cursor:pointer;font-size:inherit;opacity:.8;outline:none;padding:0;transition:opacity .2s linear;-webkit-tap-highlight-color:transparent}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:disabled,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:disabled,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:disabled{cursor:not-allowed;opacity:.15!important}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover{opacity:1}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:active,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:active,body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover:active{opacity:.6}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:not(:disabled),body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:not(:disabled),body[data-bespoke-view=overview] button.bespoke-marp-overview-close:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover:not(:disabled){transition:none}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button.bespoke-marp-presenter-info-page-prev{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNNjggOTAgMjggNTBsNDAtNDAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button.bespoke-marp-presenter-info-page-next{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJtMzIgOTAgNDAtNDAtNDAtNDAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4fTwvc3R5bGU+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MCIgaGVpZ2h0PSI2MCIgeD0iMTAiIHk9IjIwIiBjbGFzcz0iYSIgcng9IjUuNjciLz48cGF0aCBkPSJNNDAgNzBIMjBWNTBtMjAgMEwyMCA3MG00MC00MGgyMHYyMG0tMjAgMCAyMC0yMCIgY2xhc3M9ImEiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button.exit[data-bespoke-marp-osc=fullscreen]{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4fTwvc3R5bGU+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MCIgaGVpZ2h0PSI2MCIgeD0iMTAiIHk9IjIwIiBjbGFzcz0iYSIgcng9IjUuNjciLz48cGF0aCBkPSJNMjAgNTBoMjB2MjBtLTIwIDAgMjAtMjBtNDAgMEg2MFYzMG0yMCAwTDYwIDUwIiBjbGFzcz0iYSIvPjwvc3ZnPg==")}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNODcuOCA0Ny41Qzg5IDUwIDg3LjcgNTIgODUgNTJIMzVhOC43IDguNyAwIDAgMS03LjItNC41bC0xNS42LTMxQzExIDE0IDEyLjIgMTIgMTUgMTJoNTBhOC44IDguOCAwIDAgMSA3LjIgNC41ek02MCA1MnYzNm0tMTAgMGgyME00NSA0MmgyMCIvPjwvc3ZnPg==") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=overview] button.bespoke-marp-overview-close,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button.bespoke-marp-presenter-note-bigger{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNMTIgNTBoODBNNTIgOTBWMTAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button.bespoke-marp-presenter-note-smaller{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNMTIgNTBoODAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=overview]{background:#0000 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4O3J4OjVweDtyeTo1cHg7d2lkdGg6MjVweDtoZWlnaHQ6MjVweH08L3N0eWxlPjwvZGVmcz48cmVjdCB4PSIyMCIgeT0iMjAiIGNsYXNzPSJhIi8+PHJlY3QgeD0iNTUiIHk9IjIwIiBjbGFzcz0iYSIvPjxyZWN0IHg9IjIwIiB5PSI1NSIgY2xhc3M9ImEiLz48cmVjdCB4PSI1NSIgeT0iNTUiIGNsYXNzPSJhIi8+PC9zdmc+") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}}@keyframes __bespoke_marp_transition_reduced_outgoing__{0%{opacity:1}to{opacity:0}}@keyframes __bespoke_marp_transition_reduced_incoming__{0%{mix-blend-mode:plus-lighter;opacity:0}to{mix-blend-mode:plus-lighter;opacity:1}}.bespoke-marp-note,.bespoke-marp-osc,.bespoke-progress-parent{display:none;transition:none}@media screen{::view-transition-group(*){animation-duration:var(--marp-bespoke-transition-animation-duration,.5s);animation-timing-function:ease}::view-transition-new(*),::view-transition-old(*){animation-delay:0s;animation-direction:var(--marp-bespoke-transition-animation-direction,normal);animation-duration:var(--marp-bespoke-transition-animation-duration,.5s);animation-fill-mode:both;animation-name:var(--marp-bespoke-transition-animation-name,var(--marp-bespoke-transition-animation-name-fallback,__bespoke_marp_transition_no_animation__));mix-blend-mode:normal}::view-transition-old(*){--marp-bespoke-transition-animation-name-fallback:__bespoke_marp_transition_reduced_outgoing__;animation-timing-function:ease}::view-transition-new(*){--marp-bespoke-transition-animation-name-fallback:__bespoke_marp_transition_reduced_incoming__;animation-timing-function:ease}::view-transition-new(root),::view-transition-old(root){animation-timing-function:linear}::view-transition-new(__bespoke_marp_transition_osc__),::view-transition-old(__bespoke_marp_transition_osc__){animation-duration:0s!important;animation-name:__bespoke_marp_transition_osc__!important}::view-transition-new(__bespoke_marp_transition_osc__){opacity:0!important}.bespoke-marp-transition-warming-up::view-transition-group(*),.bespoke-marp-transition-warming-up::view-transition-new(*),.bespoke-marp-transition-warming-up::view-transition-old(*){animation-play-state:paused!important}body,html{height:100%;margin:0}body{background:#000;overflow:hidden}svg.bespoke-marp-slide{content-visibility:hidden;interactivity:inert;opacity:0;pointer-events:none;z-index:-1}svg.bespoke-marp-slide:not(.bespoke-marp-active) *{view-transition-name:none!important}svg.bespoke-marp-slide.bespoke-marp-active{content-visibility:visible;interactivity:auto;opacity:1;pointer-events:auto;z-index:0}svg.bespoke-marp-slide.bespoke-marp-active.bespoke-marp-active-ready *{animation-name:__bespoke_marp__!important}@supports not (content-visibility:hidden){svg.bespoke-marp-slide[data-bespoke-marp-load=hideable]{display:none}svg.bespoke-marp-slide[data-bespoke-marp-load=hideable].bespoke-marp-active{display:block}}}@media screen and (prefers-reduced-motion:reduce){svg.bespoke-marp-slide *{view-transition-name:none!important}}@media screen{[data-bespoke-marp-fragment=inactive]{visibility:hidden}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent{inset:0;position:absolute}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc{background:#000000a6;border-radius:7px;bottom:50px;color:#fff;contain:paint;display:block;font-family:Helvetica,Arial,sans-serif;font-size:16px;left:50%;line-height:0;opacity:1;padding:12px;position:absolute;touch-action:manipulation;transform:translateX(-50%);transition:opacity .2s linear;-webkit-user-select:none;user-select:none;view-transition-name:__bespoke_marp_transition_osc__;white-space:nowrap;will-change:transform;z-index:1}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>:where(*){margin-left:6px}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>:where(*):where(:first-child){margin-left:0}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>span{opacity:.8}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>span[data-bespoke-marp-osc=page]{display:inline-block;min-width:140px;text-align:center}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=overview],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter],:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev]{height:32px;line-height:32px;width:32px}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent.bespoke-marp-inactive{cursor:none}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) .bespoke-marp-parent.bespoke-marp-inactive>.bespoke-marp-osc{opacity:0;pointer-events:none}:is(body[data-bespoke-view=""],body[data-bespoke-view=next]) svg.bespoke-marp-slide{height:100%;left:0;position:absolute;top:0;width:100%}body[data-bespoke-view=""] .bespoke-progress-parent{background:#222;display:flex;height:5px;width:100%}body[data-bespoke-view=""] .bespoke-progress-parent+:where(.bespoke-marp-parent){top:5px}body[data-bespoke-view=""] .bespoke-progress-parent .bespoke-progress-bar{background:#0288d1;flex:0 0 0;transition:flex-basis .2s cubic-bezier(0,1,1,1)}body[data-bespoke-view=next]{background:#0000}body[data-bespoke-view=presenter]{background:#161616}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container{display:grid;font-family:Helvetica,Arial,sans-serif;grid-template:"current dragbar next" minmax(140px,1fr) "current dragbar note" 2fr "info    dragbar note" 3em;grid-template-columns:minmax(3px,var(--bespoke-marp-presenter-split-ratio,66%)) 0 minmax(3px,1fr);height:100%;left:0;position:absolute;top:0;width:100%}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent){grid-area:current;overflow:hidden;position:relative}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent) :where(svg.bespoke-marp-slide){height:calc(100% - 40px);left:20px;pointer-events:none;position:absolute;top:20px;-webkit-user-select:none;user-select:none;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container :where(.bespoke-marp-parent) :where(svg.bespoke-marp-slide).bespoke-marp-active{filter:drop-shadow(0 3px 10px rgba(0,0,0,.5))}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container{background:#0288d1;cursor:col-resize;grid-area:dragbar;margin-left:-3px;opacity:0;position:relative;transition:opacity .4s linear .1s;width:6px;z-index:10}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container:hover{opacity:1}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container.active{opacity:1;transition-delay:0s}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container{background:#222;cursor:pointer;display:none;grid-area:next;overflow:hidden;position:relative}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container.active{display:block}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container iframe.bespoke-marp-presenter-next{background:#0000;border:0;display:block;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5));height:calc(100% - 40px);left:20px;pointer-events:none;position:absolute;interactivity:inert;top:20px;-webkit-user-select:none;user-select:none;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container{background:#222;color:#eee;grid-area:note;position:relative;z-index:1}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button{height:1.5em;line-height:1.5em;width:1.5em}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-wrapper{display:block;inset:0;position:absolute}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-buttons{background:#000000a6;border-radius:4px;bottom:0;display:flex;gap:4px;margin:12px;opacity:0;padding:6px;pointer-events:none;position:absolute;right:0;transition:opacity .2s linear}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-buttons:focus-within,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-wrapper:focus-within+.bespoke-marp-presenter-note-buttons,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container:hover .bespoke-marp-presenter-note-buttons{opacity:1;pointer-events:auto}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note{box-sizing:border-box;font-size:calc(1.1em*var(--bespoke-marp-note-font-scale, 1));height:calc(100% - 40px);margin:20px;overflow:auto;padding-right:3px;white-space:pre-wrap;width:calc(100% - 40px);word-wrap:break-word;scrollbar-color:#eeeeee80 #0000;scrollbar-width:thin}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar{width:6px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar-track{background:#0000}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar-thumb{background:#eeeeee80;border-radius:6px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note:empty{pointer-events:none}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note.active{display:block}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note p:first-child{margin-top:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note p:last-child{margin-bottom:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container{align-items:center;box-sizing:border-box;color:#eee;display:flex;flex-wrap:nowrap;grid-area:info;justify-content:center;overflow:hidden;padding:0 10px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container :is(.bespoke-marp-presenter-info-page-area,.bespoke-marp-presenter-info-time,.bespoke-marp-presenter-info-timer){box-sizing:border-box;display:block;padding:0 10px;white-space:nowrap;width:100%}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button{height:1.5em;line-height:1.5em;width:1.5em}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area{order:2;text-align:center}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page-area .bespoke-marp-presenter-info-page{display:inline-block;min-width:120px;text-align:center}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-time{color:#999;order:1;text-align:left}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer{color:#999;order:3;text-align:right}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer:hover{cursor:pointer}body[data-bespoke-view=overview]{background:#161616;overflow:auto}body[data-bespoke-view=overview] [data-bespoke-marp-fragment=inactive]{visibility:visible}body[data-bespoke-view=overview] .bespoke-marp-overview-header{backdrop-filter:blur(4px);background:#222222d9;box-shadow:0 3px 10px #00000080;box-sizing:border-box;display:flex;height:48px;inset:0 0 auto;justify-content:flex-end;padding:10px;position:fixed;z-index:1}body[data-bespoke-view=overview] button.bespoke-marp-overview-close{height:28px;line-height:28px;transform:rotate(45deg);width:28px}body[data-bespoke-view=overview] .bespoke-marp-parent{display:grid;gap:40px;grid-template-columns:repeat(auto-fit,minmax(0,240px));justify-content:space-around;padding:30px}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide{--bov-selected:#0000;--bov-focus:#161616;--bov-focus-outline:#0000;background-image:conic-gradient(#161616 0 0),conic-gradient(var(--bov-focus) 0 0),conic-gradient(var(--bov-focus-outline) 0 0),conic-gradient(var(--bov-selected) 0 0);background-position:5px 5px,3px 3px,2px 2px,0 0;background-repeat:no-repeat;background-size:calc(100% - 10px) calc(100% - 10px),calc(100% - 6px) calc(100% - 6px),calc(100% - 4px) calc(100% - 4px),100% 100%;content-visibility:visible;cursor:pointer;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5));margin:-6px;padding:6px;interactivity:auto;opacity:1;outline:0;pointer-events:auto;scroll-margin-block:30px;width:100%;z-index:0}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide *,body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide.bespoke-marp-active *{pointer-events:none;interactivity:inert}body[data-bespoke-view=overview] .bespoke-marp-parent :is(svg.bespoke-marp-slide:active,svg.bespoke-marp-slide:focus-visible,svg.bespoke-marp-slide:hover){--bov-focus-outline:#161616}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:focus-visible,body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:hover{--bov-focus:#999}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide:active{--bov-focus:#eee}body[data-bespoke-view=overview] .bespoke-marp-parent svg.bespoke-marp-slide.bespoke-marp-active{--bov-selected:#0288d1}body[data-bespoke-view=overview]:has(.bespoke-marp-overview-header) .bespoke-marp-parent{padding-top:78px}body[data-bespoke-view=overview]:has(.bespoke-marp-overview-header) .bespoke-marp-parent svg.bespoke-marp-slide{scroll-margin-top:78px}.bespoke-marp-overview{background:#000000a6;inset:0;opacity:0;pointer-events:none;position:fixed;transition:opacity .1s ease;z-index:10}.bespoke-marp-overview iframe{background:#222;border:0;display:block;height:100%;left:0;position:absolute;top:0;width:100%}.bespoke-marp-overview[data-open="1"]{opacity:1;pointer-events:auto}}@media print{.bespoke-marp-overview,.bespoke-marp-presenter-info-container,.bespoke-marp-presenter-next-container,.bespoke-marp-presenter-note-container{display:none}}</style><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');div#\:\$p > svg > foreignObject > section{width:1280px;height:720px;box-sizing:border-box;overflow:hidden;position:relative;scroll-snap-align:center center;-webkit-text-size-adjust:100%;text-size-adjust:100%}div#\:\$p > svg > foreignObject > section::after{bottom:0;content:attr(data-marpit-pagination);padding:inherit;pointer-events:none;position:absolute;right:0}div#\:\$p > svg > foreignObject > section:not([data-marpit-pagination])::after{display:none}div#\:\$p > svg > foreignObject > section :where(:is(h1, marp-h1)){font-size:2em;margin-block:0.67em}div#\:\$p > svg > foreignObject > section section:where(:is(h1, marp-h1)){--marpit-root-font-size: 2em}div#\:\$p > svg > foreignObject > section video::-webkit-media-controls{will-change:transform}@page {size:1280px 720px;margin:0}@media print{html, body{background-color:#fff;margin:0;page-break-inside:avoid;break-inside:avoid-page}div#\:\$p > svg > foreignObject > section{page-break-before:always;break-before:page}div#\:\$p > svg > foreignObject > section, div#\:\$p > svg > foreignObject > section *{-webkit-print-color-adjust:exact!important;animation-delay:0s!important;animation-duration:0s!important;color-adjust:exact!important;print-color-adjust:exact!important;transition:none!important}div#\:\$p > svg[data-marpit-svg]{display:block;height:100vh;width:100vw}}div#\:\$p > svg > foreignObject > :where(section){container-type:size}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"]{direction:ltr}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] > svg{overflow:visible;min-height:1px;min-width:1px}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] > svg a{fill:blue;stroke:blue}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][display="true"]{display:block;text-align:center;margin:1em 0}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][display="true"][width="full"]{display:flex}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][justify="left"]{text-align:left}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"][justify="right"]{text-align:right}div#\:\$p > svg > foreignObject > section g[data-mml-node="merror"] > g{fill:red;stroke:red}div#\:\$p > svg > foreignObject > section g[data-mml-node="merror"] > rect[data-background]{fill:yellow;stroke:none}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > line[data-line], div#\:\$p > svg > foreignObject > section svg[data-table] > g > line[data-line]{stroke-width:70px;fill:none}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > rect[data-frame], div#\:\$p > svg > foreignObject > section svg[data-table] > g > rect[data-frame]{stroke-width:70px;fill:none}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > .mjx-dashed, div#\:\$p > svg > foreignObject > section svg[data-table] > g > .mjx-dashed{stroke-dasharray:140}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > .mjx-dotted, div#\:\$p > svg > foreignObject > section svg[data-table] > g > .mjx-dotted{stroke-linecap:round;stroke-dasharray:0,140}div#\:\$p > svg > foreignObject > section g[data-mml-node="mtable"] > g > svg{overflow:visible}div#\:\$p > svg > foreignObject > section [jax="SVG"] mjx-tool{display:inline-block;position:relative;width:0;height:0}div#\:\$p > svg > foreignObject > section [jax="SVG"] mjx-tool > mjx-tip{position:absolute;top:0;left:0}div#\:\$p > svg > foreignObject > section mjx-tool > mjx-tip{display:inline-block;padding:.2em;border:1px solid #888;font-size:70%;background-color:#F8F8F8;color:black;box-shadow:2px 2px 5px #AAAAAA}div#\:\$p > svg > foreignObject > section g[data-mml-node="maction"][data-toggle]{cursor:pointer}div#\:\$p > svg > foreignObject > section mjx-status{display:block;position:fixed;left:1em;bottom:1em;min-width:25%;padding:.2em .4em;border:1px solid #888;font-size:90%;background-color:#F8F8F8;color:black}div#\:\$p > svg > foreignObject > section foreignObject[data-mjx-xml]{font-family:initial;line-height:normal;overflow:visible}div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] path[data-c], div#\:\$p > svg > foreignObject > section mjx-container[jax="SVG"] use[data-c]{stroke-width:3}@media print{div#\:\$p > svg > foreignObject > section mjx-container[jax=SVG] path[data-c],div#\:\$p > svg > foreignObject > section mjx-container[jax=SVG] use[data-c]{stroke-width:0}}div#\:\$p > svg > foreignObject > section img[data-marp-twemoji]{background:transparent;height:1em;margin:0 .05em 0 .1em;vertical-align:-.1em;width:1em}div#\:\$p > svg > foreignObject > :where(section):not([\20 root]){--ink:       #1E1B4B;--ink-2:     #3730A3;--body:      #374151;--muted:     #6B7280;--accent:    #6366F1;--accent-l:  #A5B4FC;--accent-bg: #EEF2FF;--line:      #E5E7EB;--surface:   #F9FAFB;--white:     #FFFFFF;}div#\:\$p > svg > foreignObject > section{font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:24px;line-height:1.55;color:var(--body);background:var(--white);padding:52px 60px 48px;justify-content:flex-start;position:relative}div#\:\$p > svg > foreignObject > section{--marpit-root-font-size: 24px}div#\:\$p > svg > foreignObject > section::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, var(--accent) 0%, #818CF8 60%, transparent 100%)}div#\:\$p > svg > foreignObject > section::after{color:var(--muted);font-family:'JetBrains Mono', monospace;font-size:13px}div#\:\$p > svg > foreignObject > section::after{--marpit-root-font-size: 13px}div#\:\$p > svg > foreignObject > section :is(h1, marp-h1){font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:1.7em;font-weight:700;color:var(--ink);margin:0 0 28px;line-height:1.2}div#\:\$p > svg > foreignObject > section :is(h2, marp-h2){font-family:'Noto Sans KR', 'Inter', sans-serif;font-size:1.05em;font-weight:700;color:var(--ink);margin:0 0 20px;padding:0 0 12px 16px;border-left:4px solid var(--accent);border-bottom:1px solid var(--line)}div#\:\$p > svg > foreignObject > section :is(h3, marp-h3){font-size:0.78em;font-weight:600;color:var(--accent);margin:20px 0 6px;text-transform:uppercase;letter-spacing:0.06em}div#\:\$p > svg > foreignObject > section ul{list-style:none;padding:0;margin:0}div#\:\$p > svg > foreignObject > section ul > li{position:relative;padding:7px 0 7px 22px;font-size:0.71em;line-height:1.55;color:var(--body);border-bottom:1px solid var(--surface)}div#\:\$p > svg > foreignObject > section ul > li:last-child{border-bottom:none}div#\:\$p > svg > foreignObject > section ul > li::before{content:'';position:absolute;left:4px;top:16px;width:6px;height:6px;border-radius:50%;background:var(--accent)}div#\:\$p > svg > foreignObject > section ul ul{margin-top:2px}div#\:\$p > svg > foreignObject > section ul ul > li{font-size:0.92em;color:var(--muted);border-bottom:none;padding:2px 0 2px 20px}div#\:\$p > svg > foreignObject > section ul ul > li::before{width:4px;height:4px;top:11px;background:var(--accent-l)}div#\:\$p > svg > foreignObject > section strong{color:var(--ink);font-weight:700}div#\:\$p > svg > foreignObject > section th strong{background:var(--accent-bg);color:var(--ink);font-weight:800;padding:2px 9px;border-radius:4px}div#\:\$p > svg > foreignObject > section em{color:var(--muted);font-style:italic}div#\:\$p > svg > foreignObject > section code{font-family:'JetBrains Mono', monospace;font-size:0.8em;background:var(--surface);color:var(--ink-2);padding:2px 7px;border-radius:5px;border:1px solid var(--line)}div#\:\$p > svg > foreignObject > section a{color:var(--accent);text-decoration:none}div#\:\$p > svg > foreignObject > section table{font-size:0.6em;border-collapse:collapse;margin:8px 0;width:100%}div#\:\$p > svg > foreignObject > section th{background:var(--ink);color:#F9FAFB;font-weight:600;text-align:left;padding:9px 14px;font-size:0.95em}div#\:\$p > svg > foreignObject > section td{border-bottom:1px solid var(--line);padding:8px 14px;color:var(--body)}div#\:\$p > svg > foreignObject > section tr:nth-child(even) td{background:var(--surface)}div#\:\$p > svg > foreignObject > section blockquote{border:none;font-size:0.55em;color:var(--muted);font-style:normal;margin:12px 0 0;padding:10px 14px;background:var(--surface);border-radius:6px;border-left:3px solid var(--accent-l)}div#\:\$p > svg > foreignObject > section blockquote::before{content:''}div#\:\$p > svg > foreignObject > section .badge{display:inline-block;font-size:0.4em;font-family:'JetBrains Mono', monospace;background:var(--accent-bg);color:var(--ink-2);padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:6px;font-weight:500}div#\:\$p > svg > foreignObject > section section.badge{--marpit-root-font-size: 0.4em}div#\:\$p > svg > foreignObject > section .badge-date{display:inline-block;font-size:0.38em;background:var(--surface);color:var(--muted);padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:5px;border:1px solid var(--line)}div#\:\$p > svg > foreignObject > section section.badge-date{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section .badge-new{display:inline-block;font-size:0.38em;font-family:'JetBrains Mono', monospace;background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:6px;font-weight:600}div#\:\$p > svg > foreignObject > section section.badge-new{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section .hl{padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-blue{background:#EEF2FF;color:var(--ink-2);padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-green{background:#ECFDF5;color:#065F46;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-red{background:#FEF2F2;color:#991B1B;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-amber{background:#FFFBEB;color:#92400E;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-teal{background:#F0FDFA;color:#0F766E;padding:1px 7px;border-radius:4px;font-weight:600}div#\:\$p > svg > foreignObject > section .hl-gray{background:var(--surface);color:#374151;padding:1px 7px;border-radius:4px}div#\:\$p > svg > foreignObject > section .links{margin-top:14px}div#\:\$p > svg > foreignObject > section .links .lbl{font-size:0.48em;color:var(--muted);margin-right:8px;font-weight:600}div#\:\$p > svg > foreignObject > section .links div#\:\$p > svg > foreignObject > section section.lbl{--marpit-root-font-size: 0.48em}div#\:\$p > svg > foreignObject > section a.lnk{display:inline-block;font-size:0.48em;font-family:'JetBrains Mono', monospace;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-l);padding:4px 12px;border-radius:20px;margin:3px 4px 3px 0;text-decoration:none}div#\:\$p > svg > foreignObject > section .stats{display:flex;gap:14px;justify-content:center;margin-top:20px}div#\:\$p > svg > foreignObject > section .stats .card{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 10px;text-align:center}div#\:\$p > svg > foreignObject > section .stats .card .num{font-size:1.8em;font-weight:700;color:var(--accent);line-height:1}div#\:\$p > svg > foreignObject > section .stats .card div#\:\$p > svg > foreignObject > section section.num{--marpit-root-font-size: 1.8em}div#\:\$p > svg > foreignObject > section .stats .card .lab{font-size:0.4em;color:var(--muted);margin-top:8px;line-height:1.4}div#\:\$p > svg > foreignObject > section .stats .card div#\:\$p > svg > foreignObject > section section.lab{--marpit-root-font-size: 0.4em}div#\:\$p > svg > foreignObject > section .cols{display:flex;gap:32px}div#\:\$p > svg > foreignObject > section .cols .col{flex:1}div#\:\$p > svg > foreignObject > section.cover{background:var(--ink);color:#F9FAFB;justify-content:center;text-align:left;padding:72px 72px}div#\:\$p > svg > foreignObject > section.cover::before{background:linear-gradient(90deg, var(--accent) 0%, #818CF8 100%);height:4px}div#\:\$p > svg > foreignObject > section.cover :is(h1, marp-h1){color:#F9FAFB;font-size:2.1em;font-weight:700;margin:0 0 12px;line-height:1.15}div#\:\$p > svg > foreignObject > section.cover :is(h2, marp-h2){border:none;color:var(--accent-l);font-size:0.68em;font-weight:400;margin:0 0 40px;padding:0;letter-spacing:0}div#\:\$p > svg > foreignObject > section.cover p{color:#6B7280;font-size:0.48em;margin-top:0}div#\:\$p > svg > foreignObject > section.cover hr{border:none;border-top:1px solid #374151;margin:28px 0;width:60px}div#\:\$p > svg > foreignObject > section.cover::after{color:#4B5563}div#\:\$p > svg > foreignObject > section.sec{background:var(--surface);justify-content:center;text-align:left;padding:72px}div#\:\$p > svg > foreignObject > section.sec::before{height:4px}div#\:\$p > svg > foreignObject > section.sec .sec-num{display:block;font-size:0.38em;font-family:'JetBrains Mono', monospace;color:var(--accent);font-weight:600;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:16px}div#\:\$p > svg > foreignObject > section.sec div#\:\$p > svg > foreignObject > section section.sec-num{--marpit-root-font-size: 0.38em}div#\:\$p > svg > foreignObject > section.sec :is(h2, marp-h2){border:none;border-bottom:none;font-size:1.8em;color:var(--ink);padding:0;margin:0 0 10px}div#\:\$p > svg > foreignObject > section.sec p{font-size:0.58em;color:var(--muted);margin:0}div#\:\$p > svg > foreignObject > section.sec::after{color:var(--muted)}div#\:\$p > svg > foreignObject > section.agenda :is(h3, marp-h3){font-size:0.6em;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 6px}div#\:\$p > svg > foreignObject > section.agenda ul > li{font-size:0.62em;border-bottom:none;padding:4px 0 4px 18px}div#\:\$p > svg > foreignObject > section.closing{background:var(--ink);color:#F9FAFB;justify-content:center;text-align:center;padding:72px}div#\:\$p > svg > foreignObject > section.closing::before{background:linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);height:3px}div#\:\$p > svg > foreignObject > section.closing :is(h2, marp-h2){border:none;color:#F9FAFB;font-size:1.7em;padding:0;margin:0 0 16px}div#\:\$p > svg > foreignObject > section.closing p{font-size:0.5em;color:#6B7280}div#\:\$p > svg > foreignObject > section.closing::after{color:#4B5563}div#\:\$p > svg > foreignObject > section img:not(.emoji){display:block;margin:4px auto;border-radius:8px;border:1px solid var(--line);box-shadow:0 3px 14px rgba(15, 23, 42, 0.10)}div#\:\$p > svg > foreignObject > section figure{margin:0}div#\:\$p > svg > foreignObject > section figcaption{font-size:0.52em;color:var(--muted);text-align:center;margin-top:5px;line-height:1.4}div#\:\$p > svg > foreignObject > section .shot-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}div#\:\$p > svg > foreignObject > section .shot-row img:not(.emoji){margin:0;width:100%}div#\:\$p > svg > foreignObject > section .shot-pair{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;justify-items:center}div#\:\$p > svg > foreignObject > section .shot-pair figure{margin:0}div#\:\$p > svg > foreignObject > section .shot-pair img:not(.emoji){margin:0}div#\:\$p > svg > foreignObject > section .shot-pair figcaption{width:100%;word-break:keep-all}div#\:\$p > svg > foreignObject > section img:not(.emoji){cursor:zoom-in}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]{columns:initial!important;display:block!important;padding:0!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]::before, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"]::after, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"]::before, div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"]::after{display:none!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container]{all:initial;display:flex;flex-direction:row;height:100%;overflow:hidden;width:100%}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container][data-marpit-advanced-background-direction="vertical"]{flex-direction:column}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"][data-marpit-advanced-background-split] > div[data-marpit-advanced-background-container]{width:var(--marpit-advanced-background-split, 50%)}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"][data-marpit-advanced-background-split="right"] > div[data-marpit-advanced-background-container]{margin-left:calc(100% - var(--marpit-advanced-background-split, 50%))}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container] > figure{all:initial;background-position:center;background-repeat:no-repeat;background-size:cover;flex:auto;margin:0}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="background"] > div[data-marpit-advanced-background-container] > figure > figcaption{position:absolute;border:0;clip:rect(0, 0, 0, 0);height:1px;margin:-1px;overflow:hidden;padding:0;white-space:nowrap;width:1px}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="content"], div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="pseudo"]{background:transparent!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background="pseudo"], div#\:\$p > svg[data-marpit-svg] > foreignObject[data-marpit-advanced-background="pseudo"]{pointer-events:none!important}div#\:\$p > svg > foreignObject > section[data-marpit-advanced-background-split]{width:100%;height:100%}
 </style><meta name="deck-comments" content="report-2026-11-18-s3files-cost">
 </head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="overview" tabindex="-1" title="Toggle overview view (o)">Toggle overview view</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-class="cover" data-theme="clean" lang="C" class="cover" style="--class:cover;--theme:clean;">
-<h1 id="look360-s3-files-%EB%B9%84%EC%9A%A9-%EB%B6%84%EC%84%9D">look360 S3 Files 비용 분석</h1>
-<h2 id="%EC%9B%94-52-%EB%A9%94%ED%83%80%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B0%94%EB%8B%A5%EA%B0%92--%EC%9B%90%EC%9D%B8--%EC%9E%AC%EA%B5%90%EC%B2%B4%EC%99%80-%EC%9E%AC%EB%B0%9C-%EA%B2%BD%EB%B3%B4">월 $52 메타데이터 바닥값 · 원인 · 재교체와 재발 경보</h2>
+<h1 id="s3-files-%EC%99%80-webp-%EC%A0%84%ED%99%98">S3 Files 와 WebP 전환</h1>
+<h2 id="%EC%A0%84%ED%99%98-%EC%9E%91%EC%97%85%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%ED%95%98%EB%A9%B4-s3-files-%EB%B9%84%EC%9A%A9%EC%9D%B4-%EB%8A%98%EC%A7%80-%EC%95%8A%EB%8A%94%EA%B0%80">전환 작업을 어떻게 하면 S3 Files 비용이 늘지 않는가</h2>
 <hr />
-<p>Indyspot AI Corp  ·  2026-11-18  ·  파일시스템 <code>fs-05467532f91faba9d</code> (버킷 <code>look360-v1-files</code>)</p>
+<p>Indyspot AI Corp  ·  2026-11-19  ·  「레거시 큐브 타일 WebP 전환 실행 계획」 부속 자료</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="agenda" data-theme="clean" lang="C" class="agenda" data-marpit-pagination="2" style="--paginate:true;--class:agenda;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="%EA%B2%B0%EB%A1%A0--%EB%B9%84%EC%9A%A9%EC%9D%98-%EB%8C%80%EB%B6%80%EB%B6%84%EC%9D%80-%ED%95%9C-%EB%B2%88%EC%9D%98-%EC%A0%84%EC%B2%B4-%EC%88%9C%ED%9A%8C%EB%A1%9C-%EC%83%9D%EA%B8%B4-%EB%A9%94%ED%83%80%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%9D%B4%EB%A9%B0-%EC%9E%AC%EA%B5%90%EC%B2%B4%ED%95%98%EB%A9%B4-%EC%9B%94-%EC%95%BD-4046-%EC%9D%B4-%EC%A4%84%EC%96%B4%EB%93%AD%EB%8B%88%EB%8B%A4">결론 — 비용의 대부분은 한 번의 전체 순회로 생긴 메타데이터이며, 재교체하면 월 약 $40~46 이 줄어듭니다</h2>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="agenda" data-theme="clean" lang="C" class="agenda" data-marpit-pagination="2" style="--paginate:true;--class:agenda;--theme:clean;" data-marpit-pagination-total="8">
+<h2 id="%EC%9A%94%EC%95%BD--%EC%A0%84%ED%99%98%EC%9D%84-%EC%84%9C%EB%B2%84-%ED%8F%B4%EB%8D%94%EA%B0%80-%EC%95%84%EB%8B%88%EB%9D%BC-s3-api-%EB%A1%9C%EB%A7%8C-%ED%95%98%EB%A9%B4-s3-files-%EB%B9%84%EC%9A%A9%EC%9D%80-%EA%B1%B0%EC%9D%98-%EB%8A%98%EC%A7%80-%EC%95%8A%EC%8A%B5%EB%8B%88%EB%8B%A4">요약 — 전환을 서버 폴더가 아니라 S3 API 로만 하면 S3 Files 비용은 거의 늘지 않습니다</h2>
 <div class="cols">
 <div class="col">
-<h3 id="%E2%91%A0-%EC%A7%80%EA%B8%88-%EB%B9%84%EC%9A%A9">① 지금 비용</h3>
+<h3 id="%E2%91%A0-s3-files-%EB%9E%80">① S3 Files 란</h3>
 <ul>
-<li>2026-10 S3 Files <span class="hl-red">$72.55</span> (저장 $52.23 + 읽기 $20.32)</li>
-<li>2026-11 저장은 하루 <span class="hl-blue">$1.74</span> 로 고정 → 월 약 $52</li>
-<li>AWS 전체 $203 중 <strong>두 번째로 큰 항목</strong> (WebP 전환 효과의 약 50배)</li>
+<li>운영 서버의 <code>/var/www/html/files</code> 는 서버 디스크가 아니라 S3 버킷 <code>look360-v1-files</code> 를 <strong>폴더처럼 붙여 놓은 것</strong>입니다</li>
+<li>서버가 쓴 파일은 약 1분 뒤 S3 에 반영됩니다 · 원본은 S3 입니다</li>
+<li>관람자가 받는 타일은 CloudFront 가 <strong>S3 에서 직접</strong> 가져오므로 S3 Files 를 거치지 않습니다</li>
 </ul>
-<h3 id="%E2%91%A1-%EC%9B%90%EC%9D%B8">② 원인</h3>
+<h3 id="%E2%91%A1-%EC%9A%94%EA%B8%88%EC%9D%B4-%EB%B6%99%EB%8A%94-%EC%84%B8-%EA%B0%80%EC%A7%80">② 요금이 붙는 세 가지</h3>
 <ul>
-<li>inode <span class="hl-red">1,661만 개</span> = 버킷 전체 객체 수</li>
-<li>개당 최소 10KiB 로 과금 · 만료 규칙과 무관하게 <strong>영구 보존</strong></li>
-<li>09-14 교체로 없앴던 바닥값이 <strong>09-18~20 순회로 다시 생김</strong></li>
+<li><strong>목록 정보</strong>: 서버 폴더에서 한 번이라도 보인 파일마다 10KiB 이상 · 월 $0.33/GB · 계속 유지</li>
+<li><strong>읽기</strong> $0.03/GB · <strong>쓰기</strong> $0.07/GB (서버 폴더를 거칠 때만)</li>
 </ul>
 </div>
 <div class="col">
-<h3 id="%E2%91%A2-%EC%9D%BD%EA%B8%B0-%EB%B9%84%EC%9A%A9">③ 읽기 비용</h3>
+<h3 id="%E2%91%A2-%EC%A0%84%ED%99%98-%EB%B0%A9%EC%8B%9D%EB%B3%84-%EC%B0%A8%EC%9D%B4">③ 전환 방식별 차이</h3>
 <ul>
-<li>10월 $20.32 중 <span class="hl-amber">$19.04</span> 가 순회 사고 6일치</li>
-<li>10-23 순회 금지 규칙 이후 튀는 날 없음 → 11월 $1.56</li>
-<li><code>a.getImg.php</code> 프록시는 원인 아님 (데이터 읽기 ≈ 0)</li>
+<li><span class="hl-red">서버 폴더로 변환</span>: 1회 약 $23~26 + 목록 정보 월 약 $39 증가 (JPG 를 지울 때까지)</li>
+<li><span class="hl-green">S3 API 로 변환 (계획안)</span>: 읽기·쓰기 0원 · 목록 정보 증가는 시범 장소에서 실측해 확정</li>
 </ul>
-<h3 id="%E2%91%A3-%EC%A0%9C%EC%95%88">④ 제안</h3>
+<h3 id="%E2%91%A3-%EC%A7%80%EC%BC%9C%EC%95%BC-%ED%95%A0-%EA%B2%83">④ 지켜야 할 것</h3>
 <ul>
-<li><span class="hl-green">A. 파일시스템 재교체 + 재발 경보</span> · 월 약 −$40~46</li>
-<li>경보가 없으면 또 무너짐 — 09-14 교체는 <strong>나흘 만에</strong> 원래대로 돌아갔고 두 달간 아무도 몰랐음</li>
+<li>읽기는 kabkee-main 로컬 백업, 업로드·삭제는 S3 API</li>
+<li>서버 폴더는 <strong>정확한 경로 몇 개</strong>만 확인</li>
+<li>시범 전후로 <code>Inodes</code> 지표를 비교해 직접 업로드의 영향을 확정</li>
 </ul>
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="3" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="%F0%9F%8E%AF-%EA%B2%B0%EC%A0%95-%ED%95%84%EC%9A%94--%EC%98%A4%EB%84%88-%ED%99%95%EC%9D%B8-%EC%82%AC%ED%95%AD"><img class="emoji" draggable="false" alt="🎯" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f3af.svg" data-marp-twemoji=""/> 결정 필요 — 오너 확인 사항</h2>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="3" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="8">
+<h2 id="s3-files-%EC%9D%98-%ED%8A%B9%EC%A7%95--webp-%EC%A0%84%ED%99%98%EC%97%90-%EA%B4%80%EA%B3%84%EB%90%98%EB%8A%94-%EA%B2%83%EB%A7%8C">S3 Files 의 특징 — WebP 전환에 관계되는 것만</h2>
 <table>
 <thead>
 <tr>
-<th>#</th>
-<th>결정할 것</th>
-<th>제안</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>파일시스템 재교체 여부</td>
-<td><span class="hl-green">진행</span> · 09-14 와 같은 절차 (fstab 한 줄 · 전환 약 1.2초 · 롤백 절차 있음)</td>
-</tr>
-<tr>
-<td>2</td>
-<td>재발 경보 방식</td>
-<td>kabkee-main 크론이 매일 <code>Inodes</code> 를 읽어 <strong>200만 개 초과 시 Slack</strong> · CloudWatch 읽기 전용 IAM 사용자 1개 필요</td>
-</tr>
-<tr>
-<td>3</td>
-<td>교체 시점</td>
-<td>업로드가 적은 새벽 · <code>PendingExports</code> 0 확인 직후</td>
-</tr>
-<tr>
-<td>4</td>
-<td>기존 파일시스템 삭제</td>
-<td>교체 후 7일 관찰 → 접근 지점 → 마운트 타깃 → 파일시스템 순으로 삭제</td>
-</tr>
-<tr>
-<td>5</td>
-<td>장기 방향</td>
-<td>마운트 자체를 없애는 안(C)은 레거시 쓰기 경로 전수 조사 후 별도 판단</td>
-</tr>
-<tr>
-<td>6</td>
-<td>진행 방식</td>
-<td>에픽 발주 또는 직접 진행 (오빠 지시 필요)</td>
-</tr>
-</tbody>
-</table>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="4" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="%EC%9B%94%EB%B3%84-%EB%B9%84%EC%9A%A9--%EC%A0%80%EC%9E%A5%EC%9D%80-9%EC%9B%94-%EC%9D%B4%ED%9B%84-%EB%A7%A4%EB%8B%AC-50-%EC%95%88%ED%8C%8E%EC%9C%BC%EB%A1%9C-%EA%B3%A0%EC%A0%95%EB%8F%BC-%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4">월별 비용 — 저장은 9월 이후 매달 $50 안팎으로 고정돼 있습니다</h2>
-<p>Cost Explorer <code>Amazon Simple Storage Service</code> 중 <code>APN2-Files-*</code> 사용 유형입니다.</p>
-<table>
-<thead>
-<tr>
-<th>월</th>
-<th>저장 (GB-월)</th>
-<th>저장 비용</th>
-<th>읽기 (GB)</th>
-<th>읽기 비용</th>
-<th>쓰기 비용</th>
-<th>S3 Files 합계</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>2026-08</td>
-<td>39.1</td>
-<td>$12.92</td>
-<td>42.0</td>
-<td>$1.26</td>
-<td>$2.27</td>
-<td>$16.45</td>
-</tr>
-<tr>
-<td>2026-09</td>
-<td>199.3</td>
-<td>$65.76</td>
-<td>923.2</td>
-<td>$27.70</td>
-<td>$45.33</td>
-<td>$138.79</td>
-</tr>
-<tr>
-<td>2026-10</td>
-<td>158.3</td>
-<td>$52.23</td>
-<td>677.4</td>
-<td>$20.32</td>
-<td>$0</td>
-<td><span class="hl-red">$72.55</span></td>
-</tr>
-<tr>
-<td>2026-11 (1~17일)</td>
-<td>89.8</td>
-<td>$29.63</td>
-<td>52.1</td>
-<td>$1.56</td>
-<td>$0</td>
-<td>$31.19</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>같은 기간 S3 일반 저장(모든 버킷 606GB)은 월 $15 안팎입니다. <strong>파일 «내용»보다 «목록 정보» 비용이 3배 이상 큽니다.</strong></li>
-<li>9월의 쓰기 $45 는 09-03 권한 복구 작업 때 생긴 일회성 비용입니다.</li>
-</ul>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="5" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="%EC%99%9C-%EB%A9%94%ED%83%80%EB%8D%B0%EC%9D%B4%ED%84%B0%EA%B0%80-%EB%8F%88%EC%9D%B4-%EB%90%98%EB%8A%94%EA%B0%80--%EA%B0%9C%EB%8B%B9-%EC%B5%9C%EC%86%8C-10kib--%EC%98%81%EA%B5%AC-%EB%B3%B4%EC%A1%B4">왜 메타데이터가 돈이 되는가 — 개당 최소 10KiB · 영구 보존</h2>
-<table>
-<thead>
-<tr>
-<th>사실</th>
+<th>특징</th>
+<th>WebP 전환에 주는 의미</th>
 <th>근거</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>마운트에서 파일·폴더를 «한 번이라도» 열거하거나 조회하면 그 항목의 inode 가 생깁니다</td>
-<td>CloudWatch <code>AWS/S3/Files</code> <code>Inodes</code></td>
+<td>서버 폴더와 S3 버킷은 같은 데이터입니다</td>
+<td>WebP 를 S3 에 올리면 서버 PHP 도 같은 파일을 봅니다</td>
+<td>서버 쓰기 → 약 1분 뒤 S3 반영</td>
 </tr>
 <tr>
-<td>inode 는 개당 최소 10KiB 로 고성능 저장소 요금($0.33/GB-월)이 붙습니다</td>
-<td>1,661만 × 10KiB ≈ 158GB = Cost Explorer 158.3 GB-월</td>
+<td>관람자 타일은 CloudFront → S3 로 바로 갑니다</td>
+<td>전환 후 관람 트래픽은 S3 Files 요금과 무관합니다</td>
+<td>CloudWatch 데이터 읽기 하루 0~0.34GB (11월)</td>
 </tr>
 <tr>
-<td>데이터 가져오기는 꺼져 있고(<code>ON_FILE_ACCESS</code> · <code>sizeLessThan 0</code>) 만료 1일 규칙도 있지만, <strong>메타데이터는 만료되지 않습니다</strong></td>
-<td><code>get-synchronization-configuration</code> · 09-13 실측 (바닥 158.9GB 유지)</td>
+<td>서버 폴더에서 파일을 조회하면 그 파일의 <strong>목록 정보(inode)</strong> 가 생기고, 개당 최소 10KiB 로 과금됩니다</td>
+<td>서버 폴더로 WebP 1,224만 개를 쓰면 약 117GB 가 늘어 월 약 $39</td>
+<td>1,661만 개 × 10KiB ≈ 158GB = 실제 청구 158.3 GB-월</td>
 </tr>
 <tr>
-<td>그래서 <code>find</code> · <code>du</code> · <code>ls -R</code> · <code>rsync</code> · <code>grep -r</code> 한 번이면 버킷 전체가 영구 과금 대상이 됩니다</td>
-<td>09-18~20 재발</td>
+<td>목록 정보는 자동으로 사라지지 않습니다</td>
+<td>한 번 늘면 해당 파일을 지울 때까지 남습니다</td>
+<td>1,659만 개(09-19) → 1,661만 개(11-18) 로 그대로</td>
+</tr>
+<tr>
+<td>읽기·쓰기 요금은 서버 폴더를 거칠 때만 붙습니다</td>
+<td>S3 API 로 직접 읽고 쓰면 0원입니다</td>
+<td>Cost Explorer <code>APN2-Files-Read</code> $0.03/GB · <code>-Write</code> $0.07/GB</td>
+</tr>
+<tr>
+<td>서버 폴더에서 <code>find</code> · <code>du</code> · <code>ls -R</code> · <code>rm -r</code> 를 쓰면 하위 전체를 조회합니다</td>
+<td>변환·검증·삭제에 서버 폴더 일괄 명령을 쓰면 안 됩니다</td>
+<td>AGENTS.md «서버 마운트 순회 금지»</td>
+</tr>
+<tr>
+<td>파일마다 소유자·권한 값이 S3 메타데이터로 붙어 있습니다</td>
+<td>WebP 를 올릴 때 같은 값(<code>file-owner: 33</code> · <code>file-permissions: 0100664</code>)을 넣어야 서버가 읽을 수 있습니다</td>
+<td><code>head-object</code> 실측</td>
 </tr>
 </tbody>
 </table>
-<p><span class="hl-amber">핵심</span> 데이터 캐시 비용은 09-13 설정으로 이미 막았습니다. 남은 것은 <strong>«한 번 생기면 지워지지 않는» 메타데이터</strong> 이고, 지우는 방법은 <strong>파일시스템을 새로 만드는 것뿐</strong>입니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="%EA%B2%BD%EA%B3%BC--%EA%B5%90%EC%B2%B4%EB%A1%9C-%EC%97%86%EC%95%B4%EB%8D%98-%EB%B0%94%EB%8B%A5%EA%B0%92%EC%9D%B4-%EB%82%98%ED%9D%98-%EB%A7%8C%EC%97%90-%EB%8F%8C%EC%95%84%EC%99%94%EC%8A%B5%EB%8B%88%EB%8B%A4">경과 — 교체로 없앴던 바닥값이 나흘 만에 돌아왔습니다</h2>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="4" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="8">
+<h2 id="%EC%A0%84%ED%99%98-%EB%B0%A9%EC%8B%9D%EB%B3%84-s3-files-%EB%B9%84%EC%9A%A9--%ED%83%80%EC%9D%BC-1224%EB%A7%8C-%EA%B0%9C--2756gb-%EA%B8%B0%EC%A4%80">전환 방식별 S3 Files 비용 — 타일 1,224만 개 · 275.6GB 기준</h2>
 <table>
 <thead>
 <tr>
-<th>날짜</th>
-<th>일</th>
-<th>S3 Files 저장 (일별 환산)</th>
+<th>항목</th>
+<th>서버 폴더에서 변환</th>
+<th><span class="hl-green">S3 API 로 변환 (계획안)</span></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>09-03 ~ 09-09</td>
-<td>권한 복구 작업의 전체 순회 + 데이터 가져오기</td>
-<td>35GB → 433GB</td>
+<td>JPG 읽기</td>
+<td>275.6GB × $0.03 = <strong>$8.3</strong></td>
+<td>0원 · kabkee-main 로컬 백업에서 읽음</td>
 </tr>
 <tr>
-<td>09-13</td>
-<td>데이터 가져오기 끔 (오너 승인)</td>
-<td>데이터는 빠지고 메타데이터 158.9GB 남음</td>
+<td>WebP 쓰기</td>
+<td>215~245GB × $0.07 = <strong>$15~17</strong></td>
+<td>0원 · S3 API 업로드 (S3 요청 요금 약 $55 는 별도, 계획 덱에 포함)</td>
 </tr>
 <tr>
-<td>09-14 19:31</td>
-<td><strong>새 파일시스템으로 교체</strong> (오너 지시)</td>
-<td>—</td>
+<td>목록 정보</td>
+<td>1,224만 개 × 10KiB ≈ 117GB → <span class="hl-red">월 약 $39 증가</span></td>
+<td><span class="hl-amber">미확인</span> · 서버 폴더가 그 경로를 조회할 때만 생기는 것으로 추정</td>
 </tr>
 <tr>
-<td>09-16 · 09-17</td>
-<td>교체 효과</td>
-<td><span class="hl-green">18.8GB · 23.4GB</span></td>
+<td>서버 부하</td>
+<td>운영 웹과 CPU·네트워크를 나눠 씀</td>
+<td>없음</td>
 </tr>
 <tr>
-<td>09-18 ~ 09-20</td>
-<td><strong>전체 순회 재발</strong> (원인 run 미확정)</td>
-<td>92GB → 145GB → <span class="hl-red">158.2GB</span></td>
-</tr>
-<tr>
-<td>09-20 ~ 현재</td>
-<td>그대로 유지 · 감시 없음</td>
-<td>153~158GB (하루 $1.68~1.74)</td>
-</tr>
-<tr>
-<td>10-23</td>
-<td>AGENTS.md «서버 마운트 순회 금지» 규칙</td>
-<td>읽기 사고 멈춤</td>
-</tr>
-</tbody>
-</table>
-<p><span class="hl-red">교훈</span> 09-14 교체 뒤 감시 스크립트는 테스트용(<code>~/look360-fs-swap/s3files_storage_check_test.py</code>)만 있었고 정기 실행이 없었습니다. 그래서 재발을 두 달 동안 아무도 몰랐습니다.</p>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="7" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="%EC%9D%BD%EA%B8%B0-%EB%B9%84%EC%9A%A9--10%EC%9B%94%EC%9D%80-%EC%88%9C%ED%9A%8C-%EC%82%AC%EA%B3%A0-6%EC%9D%BC%EC%9D%B4-19-%EB%A5%BC-%EB%A7%8C%EB%93%A4%EC%97%88%EC%8A%B5%EB%8B%88%EB%8B%A4">읽기 비용 — 10월은 순회 사고 6일이 $19 를 만들었습니다</h2>
-<table>
-<thead>
-<tr>
-<th>날짜</th>
-<th>읽기</th>
-<th>비용</th>
-<th>비고</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>10-01 · 10-02</td>
-<td>71.6GB · 82.5GB</td>
-<td>$2.15 · $2.47</td>
-<td>순회 사고</td>
-</tr>
-<tr>
-<td>10-16</td>
-<td>171.7GB</td>
-<td>$5.15</td>
-<td>순회 사고</td>
-</tr>
-<tr>
-<td>10-19</td>
-<td>33.9GB</td>
-<td>$1.02</td>
-<td>순회 사고</td>
-</tr>
-<tr>
-<td>10-21</td>
-<td>169.0GB</td>
-<td>$5.07</td>
-<td>순회 사고</td>
-</tr>
-<tr>
-<td>10-23</td>
-<td>106.0GB</td>
-<td>$3.18</td>
-<td>순회 사고 (IND-8731) → 같은 날 금지 규칙</td>
-</tr>
-<tr>
-<td>그 외 평일</td>
-<td>하루 1.2~2.9GB</td>
-<td>하루 $0.04~0.09</td>
-<td>정상</td>
+<td>사고 위험</td>
+<td>일괄 명령 한 번으로 버킷 전체 목록 정보가 생길 수 있음</td>
+<td>서버 폴더를 건드리지 않음</td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li>사고 6일 합계 <strong>$19.04</strong> = 10월 읽기 비용의 94%.</li>
-<li>11월에는 튀는 날이 없습니다. 다만 메타데이터 읽기가 <strong>11-01 1.5GB → 11-17 8.0GB</strong> 로 조금씩 늘고 있습니다(월 $3~5 수준).</li>
-<li>같은 기간 봇 요청도 하루 1.4만 → 3.4만 건으로 늘었지만 날짜별로 맞아떨어지지는 않아 원인은 확인하지 못했습니다.</li>
+<li>목록 정보 증가는 <strong>JPG 와 WebP 가 같이 있는 기간</strong>에만 생깁니다. JPG 를 지우면 개수는 지금과 같아집니다(삭제할 때 목록 정보가 같이 빠지는지도 시범에서 확인).</li>
+<li>계획 덱의 절감액(저장 월 $0.8~1.5 · 트래픽 1TB 초과 시 타일 1TB 당 월 $20~27)과 비교하면, 서버 폴더 방식의 월 $39 는 <strong>절감액보다 큽니다.</strong> 그래서 S3 API 방식만 씁니다.</li>
 </ul>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="8" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="%EC%A0%95%EC%A0%95--agetimgphp-%ED%94%84%EB%A1%9D%EC%8B%9C%EB%8A%94-%EC%9B%90%EC%9D%B8%EC%9D%B4-%EC%95%84%EB%8B%99%EB%8B%88%EB%8B%A4">정정 — <code>a.getImg.php</code> 프록시는 원인이 아닙니다</h2>
-<p>WebP 덱(11-18)에서 «프록시 투어 495개가 타일을 마운트로 읽어 S3 Files 비용을 만들 수 있다»고 추정했던 부분을 실측으로 확인했습니다.</p>
-<table>
-<thead>
-<tr>
-<th>확인</th>
-<th>값</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Apache 로그의 <code>a=getImg</code> 호출 (11-04 ~ 11-18, 15일)</td>
-<td>하루 0~576건 · 대부분 0</td>
-</tr>
-<tr>
-<td>CloudWatch <code>DataReadBytes</code> (11월)</td>
-<td>하루 0~0.34GB</td>
-</tr>
-<tr>
-<td>CloudWatch <code>MetadataReadBytes</code> (11월)</td>
-<td>하루 1.5~8.0GB ← 읽기 비용의 실체</td>
-</tr>
-</tbody>
-</table>
-<p><span class="hl-gray">결론</span> 읽기 비용은 파일 «내용»이 아니라 «목록·속성 조회»에서 나옵니다. 프록시 경로는 비용 원인 목록에서 뺍니다.</p>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="9" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="%EB%8C%80%EC%95%88-%EB%B9%84%EA%B5%90--a-%EC%95%88%EC%9D%84-%EC%B6%94%EC%B2%9C%ED%95%A9%EB%8B%88%EB%8B%A4">대안 비교 — A 안을 추천합니다</h2>
-<table>
-<thead>
-<tr>
-<th>안</th>
-<th>내용</th>
-<th>월 절감 (추정)</th>
-<th>일회성 작업</th>
-<th>위험</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><span class="hl-green">A</span></td>
-<td>파일시스템 재교체 + 재발 경보</td>
-<td><strong>약 $40~46</strong></td>
-<td>반나절 (09-14 절차 재사용)</td>
-<td>낮음 · 업로드 중 교체만 피하면 됨</td>
-</tr>
-<tr>
-<td>B</td>
-<td>재발 경보만 추가</td>
-<td>$0</td>
-<td>1~2시간</td>
-<td>없음 · 지금 바닥값은 그대로</td>
-</tr>
-<tr>
-<td>C</td>
-<td>마운트 제거 · PHP 쓰기를 S3 API 로</td>
-<td>약 $52 + 읽기 전액</td>
-<td>레거시 쓰기 경로 전수 수정 (수주)</td>
-<td>높음 · 업로드·XML 저장 경로 전부</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>A 의 절감을 $52 전액이 아니라 $40~46 으로 잡은 이유: 교체 직후에도 정상 사용만으로 18.8GB → 23.4GB(이틀) 가 늘었고, <strong>자연 증가가 어디서 멈추는지는 확인하지 못했습니다.</strong> 교체 후 <code>Inodes</code> 추이로 최종 판정합니다.</li>
-<li>A 와 B 는 경보가 핵심입니다. 경보가 없으면 A 의 효과는 다음 순회 사고 한 번으로 사라집니다.</li>
-</ul>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="10" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="a-%EC%95%88-%EC%A0%88%EC%B0%A8--09-14-%EC%97%90-%EA%B2%80%EC%A6%9D%EB%90%9C-%EC%88%9C%EC%84%9C%EB%A5%BC-%EA%B7%B8%EB%8C%80%EB%A1%9C-%EC%94%81%EB%8B%88%EB%8B%A4">A 안 절차 — 09-14 에 검증된 순서를 그대로 씁니다</h2>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="5" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="8">
+<h2 id="%EC%A0%84%ED%99%98-%EC%A4%91-%EC%A7%80%EC%BC%9C%EC%95%BC-%ED%95%A0-%EA%B2%83">전환 중 지켜야 할 것</h2>
 <table>
 <thead>
 <tr>
 <th>단계</th>
 <th>할 일</th>
-<th>확인</th>
+<th>하지 않을 것</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1 준비</td>
-<td>새 파일시스템 생성 (같은 버킷 · 같은 역할 <code>look360-v1-s3files-role</code>)</td>
+<td>읽기</td>
+<td>kabkee-main 로컬 백업(<code>/mnt/h/look360-v1-files-backup-20260913/</code>)에서 JPG 를 읽습니다</td>
+<td>서버 폴더에서 읽기</td>
+</tr>
+<tr>
+<td>업로드</td>
+<td>S3 API 로 올리고 <code>ContentType: image/webp</code> + 소유자·권한 메타데이터를 같이 지정합니다</td>
+<td>서버에서 <code>cp</code> · <code>rsync</code></td>
+</tr>
+<tr>
+<td>존재 확인</td>
+<td>백업 목록표 또는 <code>head-object</code> 로 확인합니다</td>
+<td>서버 폴더 <code>ls</code> · <code>find</code></td>
+</tr>
+<tr>
+<td>서버 쪽 확인</td>
+<td>시범 장소에서 <strong>정확한 경로 1~2개</strong>만 열어 서버 PHP 가 읽는지 봅니다</td>
+<td>폴더 전체 대조</td>
+</tr>
+<tr>
+<td>JPG 삭제</td>
+<td>S3 API <code>delete-objects</code> 로 지웁니다 (백업 확인 후)</td>
+<td>서버에서 <code>rm</code> · <code>rm -r</code></td>
+</tr>
+<tr>
+<td>영향 측정</td>
+<td>시범 업로드 전후로 CloudWatch <code>AWS/S3/Files</code> <code>Inodes</code> 를 비교합니다</td>
 <td>—</td>
-</tr>
-<tr>
-<td>2 설정 선적용</td>
-<td><strong>첫 마운트 전에</strong> 가져오기 끔(<code>ON_FILE_ACCESS</code> · <code>sizeLessThan 0</code>) + 만료 1일</td>
-<td>기본값(128KiB · 30일)으로 마운트하면 안 됨</td>
-</tr>
-<tr>
-<td>3 병행 마운트</td>
-<td>임시 경로에 마운트 → 상위 폴더 몇 개만 이름·소유자·권한 대조</td>
-<td>전체 대조 금지 (그 자체가 순회)</td>
-</tr>
-<tr>
-<td>4 전환</td>
-<td>쓰기성 POST 와 <code>PendingExports</code> 0 확인 → <code>/etc/fstab</code> 한 줄 교체 → <code>umount -l</code> → <code>mount</code></td>
-<td>약 1.2초</td>
-</tr>
-<tr>
-<td>5 확인</td>
-<td>업로드 1건 · XML 저장 1건 · 정확한 경로 몇 개 조회</td>
-<td>403 은 장소 폴더 <code>.htaccess</code> 일 수 있음 (오판 주의)</td>
-</tr>
-<tr>
-<td>6 경보 가동</td>
-<td>아래 경보를 <strong>전환 당일</strong> 켬</td>
-<td>Slack 시험 발송</td>
-</tr>
-<tr>
-<td>7 정리</td>
-<td>7일 관찰 후 기존 파일시스템 삭제</td>
-<td>접근 지점 → 마운트 타깃 → 파일시스템 순서</td>
 </tr>
 </tbody>
 </table>
-<p>롤백: 백업한 fstab 을 되돌리고 같은 절차로 다시 마운트합니다.</p>
+<p><span class="hl-amber">시범 판정</span> 시범 3곳의 타일 수만큼 <code>Inodes</code> 가 늘면 직접 업로드도 목록 정보를 만든다는 뜻입니다. 그 경우 장소 단위로 «WebP 업로드 → 확인 → JPG 삭제» 간격을 짧게 잡아 같이 있는 기간을 줄입니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="11" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="%EC%9E%AC%EB%B0%9C-%EA%B2%BD%EB%B3%B4--%EC%88%9C%ED%9A%8C%EA%B0%80-%EC%9D%BC%EC%96%B4%EB%82%9C-%C2%AB%EA%B7%B8%EB%82%A0%C2%BB-%EC%95%8C%EC%95%84%EC%95%BC-%ED%95%A9%EB%8B%88%EB%8B%A4">재발 경보 — 순회가 일어난 «그날» 알아야 합니다</h2>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="6" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="8">
+<h2 id="%EC%A7%80%EA%B8%88%EC%9D%98-s3-files-%EB%B9%84%EC%9A%A9%EA%B3%BC-webp-%EC%A0%84%ED%99%98%EC%9D%98-%EA%B4%80%EA%B3%84">지금의 S3 Files 비용과 WebP 전환의 관계</h2>
 <table>
 <thead>
 <tr>
 <th>항목</th>
-<th>설계</th>
+<th>값</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>지표</td>
-<td>CloudWatch <code>AWS/S3/Files</code> · <code>Inodes</code> (파일시스템 단위)</td>
+<td>지금 S3 Files 비용</td>
+<td>월 약 $52 (목록 정보 1,661만 개 ≈ 158GB) + 읽기 월 $2~5</td>
 </tr>
 <tr>
-<td>기준</td>
-<td>교체 직후 값 + 200만 개 초과 · 또는 하루 증가 50만 개 초과</td>
+<td>WebP 전환 후 (S3 API 방식)</td>
+<td>변화 없음 · JPG 가 WebP 로 바뀌어도 파일 개수는 같습니다</td>
 </tr>
 <tr>
-<td>실행</td>
-<td>kabkee-main 크론이 매일 1회 조회 → Slack 알림 (기존 <code>s3files_storage_check_test.py</code> 를 정식화)</td>
-</tr>
-<tr>
-<td>권한</td>
-<td>지금 프로필(<code>look360-backup-reader</code> · <code>look360-cf-invalidator</code> · EC2 역할)은 CloudWatch 조회 불가 → <strong><code>cloudwatch:GetMetricStatistics</code> 만 가진 사용자 1개</strong> 필요</td>
-</tr>
-<tr>
-<td>같이 볼 것</td>
-<td><code>MetadataReadBytes</code> 하루 20GB 초과 (순회 사고의 읽기 신호)</td>
-</tr>
-<tr>
-<td>비용</td>
-<td>사실상 0원 (지표 조회 하루 2회)</td>
+<td>이 비용을 줄이는 방법</td>
+<td>WebP 전환과 별개의 과제입니다 (목록 정보는 파일시스템을 새로 만들어야 지워짐)</td>
 </tr>
 </tbody>
 </table>
-<p><span class="hl-amber">왜 하루 단위인가</span> 순회 한 번에 바닥값이 다시 생기고, 그 뒤로는 매일 $1.7 씩 나갑니다. 발견이 하루 늦을 때마다 $1.7 이고, 두 달 늦으면 이번처럼 약 $100 입니다.</p>
+<p><span class="hl-gray">정리</span> WebP 전환은 S3 Files 비용을 줄이지도 늘리지도 않게 진행합니다. S3 Files 비용 절감은 따로 결정합니다.</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="12" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
-<h2 id="%ED%95%A8%EC%A0%95">함정</h2>
-<table>
-<thead>
-<tr>
-<th>함정</th>
-<th>대응</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>설정 없이 첫 마운트</td>
-<td>기본값(128KiB 미만 자동 가져오기 · 30일 만료)이 적용돼 데이터 캐시 비용이 다시 생김 → 설정 선적용</td>
-</tr>
-<tr>
-<td>교체 중 업로드</td>
-<td>09-14 에 «신규 장소는 S3 로 직접 올라간다»는 가정이 틀렸음 (마운트 경유 · 객체 <code>x-amz-meta-fs-id</code> 로 판별) → 쓰기성 POST 확인</td>
-</tr>
-<tr>
-<td>교체 검증을 위한 전체 대조</td>
-<td>대조 자체가 순회 → 상위 폴더 몇 개 + 정확한 경로만</td>
-</tr>
-<tr>
-<td>권한 일괄 변경 (<code>chown -R</code> 등)</td>
-<td>새 파일시스템에서 하면 바닥값 재발 → 임시 파일시스템에서 하고 삭제, 또는 S3 Batch Operations</td>
-</tr>
-<tr>
-<td><code>grep -r</code> · <code>find</code> 를 <code>/var/www/html</code> 에서 실행</td>
-<td><code>--exclude-dir=files</code> 또는 <code>-path ./files -prune</code> 필수 (결과 필터로는 못 막음)</td>
-</tr>
-<tr>
-<td>403 을 교체 실패로 오판</td>
-<td>장소 폴더 <code>.htaccess</code> 의 타일 직접 접근 차단일 수 있음</td>
-</tr>
-</tbody>
-</table>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="13" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="14">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="clean" lang="C" data-marpit-pagination="7" style="--paginate:true;--theme:clean;" data-marpit-pagination-total="8">
 <h2 id="%EC%B8%A1%EC%A0%95-%EB%B0%A9%EB%B2%95%EA%B3%BC-%EA%B7%BC%EA%B1%B0">측정 방법과 근거</h2>
 <table>
 <thead>
@@ -481,40 +211,40 @@
 </thead>
 <tbody>
 <tr>
-<td>월·일별 비용</td>
-<td>Cost Explorer <code>GetCostAndUsage</code> · 서비스 <code>Amazon Simple Storage Service</code> · 사용 유형 <code>APN2-Files-*</code> (2026-08-01 ~ 11-17)</td>
+<td>요금 단가</td>
+<td>Cost Explorer <code>GetCostAndUsage</code> 사용 유형 <code>APN2-Files-TimedStorage-ByteHrs</code> ($0.33/GB-월) · <code>APN2-Files-Read</code> ($0.03/GB) · <code>APN2-Files-Write</code> ($0.07/GB) · 2026-08-01~11-17 청구액 ÷ 사용량</td>
 </tr>
 <tr>
-<td>inode · 저장량 · 읽기</td>
-<td>CloudWatch <code>AWS/S3/Files</code> <code>Inodes</code> · <code>StorageBytes</code> · <code>DataReadBytes</code> · <code>MetadataReadBytes</code> (<code>fs-05467532f91faba9d</code>)</td>
+<td>목록 정보 개수</td>
+<td>CloudWatch <code>AWS/S3/Files</code> <code>Inodes</code> (<code>fs-05467532f91faba9d</code>, 09-15~11-18 일별 최대값)</td>
 </tr>
 <tr>
-<td>설정</td>
-<td><code>aws s3files get-file-system</code> · <code>get-synchronization-configuration</code></td>
+<td>관람 트래픽 경로</td>
+<td>CloudWatch <code>DataReadBytes</code> (11월 하루 0~0.34GB) · CloudFront 배포 <code>E134ZI2PZY55NN</code></td>
 </tr>
 <tr>
-<td>서버 쪽</td>
-<td>look360-aws Apache <code>look360-ssl-access.log*</code> 15일치 · <code>a=getImg</code> · <code>/files/</code> · 봇 문자열 집계 · crontab</td>
+<td>타일 규모</td>
+<td>백업 목록표 <code>state/pano__*.csv.gz</code> 의 <code>mres_*/l*/*.jpg</code> (2026-11-17 기준)</td>
 </tr>
 <tr>
-<td>경과</td>
-<td>09-13 · 09-14 작업 기록 (<code>/home/kabkee/backups/aws/s3files/</code>)</td>
+<td>파일 메타데이터</td>
+<td><code>head-object pano/0/329/53/mres_f/l1/1/l1_f_1_1.jpg</code></td>
 </tr>
 <tr>
 <td>조회 방식</td>
-<td>관리자 SSO 로 <strong>조회만</strong> · 서버 마운트 순회 없음 · 설정 변경 없음</td>
+<td>관리자 SSO 로 조회만 · 서버 폴더 순회 없음 · 설정 변경 없음</td>
 </tr>
 <tr>
 <td>미확인</td>
-<td>09-18~20 순회를 일으킨 작업 · 11월 메타데이터 읽기 증가 원인 · 교체 후 자연 증가의 상한</td>
+<td>S3 API 로 직접 올린 파일에도 목록 정보가 생기는지 · S3 에서 지운 파일의 목록 정보가 같이 빠지는지 (둘 다 시범에서 측정)</td>
 </tr>
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="closing" data-theme="clean" lang="C" class="closing" style="--class:closing;--theme:clean;">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="closing" data-theme="clean" lang="C" class="closing" style="--class:closing;--theme:clean;">
 <h2 id="%EA%B0%90%EC%82%AC%ED%95%A9%EB%8B%88%EB%8B%A4">감사합니다</h2>
-<p>S3 Files 비용의 대부분은 전체 순회 한 번으로 생겨 영구히 남은 메타데이터(월 약 $52)입니다. 파일시스템을 다시 교체하고 같은 날 재발 경보를 켜면 월 약 $40~46 을 줄일 수 있습니다.</p>
-<p>Indyspot AI Corp  ·  2026-11-18</p>
+<p>WebP 전환은 kabkee-main 로컬 백업에서 읽고 S3 API 로 올리면 S3 Files 비용이 거의 늘지 않습니다. 서버 폴더로 변환하면 월 약 $39 가 늘어 절감액을 넘기 때문에 쓰지 않습니다.</p>
+<p>Indyspot AI Corp  ·  2026-11-19</p>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()})}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame(()=>{t.style.display=""}))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=()=>o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o),l=Symbol();let c;const d="marpitSVGPolyfill:setZoomFactor,",h=Symbol(),g=Symbol();const p=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[v]:[],i={then:e=>(t?(async()=>{if(void 0===c){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise(t=>{i.addEventListener("load",()=>t())});i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),c=e.getImageData(5,5,1,1).data[3]<128}return c})().then(t=>{null==e||e(t?[v]:[])}):null==e||e([]),i)};return Object.assign(e,i)};let m,u;function v(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[g]||(Object.defineProperty(window,g,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(d)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(u=i)}}catch(t){console.error(t)}}));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||u||t.currentScale||1;m!==a&&(m=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}}),!1!==n&&Array.from(e.querySelectorAll("iframe"),({contentWindow:t})=>{null==t||t.postMessage(`${d}${n}`,"null"===window.origin?"*":window.origin)})}function w({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[h])return t[h];let e=!0;const i=()=>{e=!1,delete t[h]};Object.defineProperty(t,h,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await p()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}m=1,u=void 0;const b=Symbol(),y=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[l];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,o=t[n].proto();a()&&o!==HTMLElement?i||customElements.define(s,r(o,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach(t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)}))}window[l]=!0})(e),e[b])return e[b];const i=w({target:e}),n=()=>{i(),delete e[b]},o=Object.assign(n,{cleanup:n,update:()=>y(e)});return Object.defineProperty(e,b,{configurable:!0,value:o}),o},f=document.currentScript;y(f?f.getRootNode():document)}();
 </script></foreignObject></svg></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@4.5.1/lib/bespoke.js.LICENSE.txt */

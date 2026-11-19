@@ -168,12 +168,65 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 
 ---
 
+## 측정 설정값 — krpano 옵션 이름으로 정리했습니다
+
+| krpano 옵션 | 뜻 | krpano 기본값 | 이번 측정 값 | 이 값을 쓴 이유 |
+|---|---|---|---|---|
+| `-quality` · `-webpquality` | 손실 압축 화질 (0~100) | 85 | **60 · 70 · 75 · 80 · 85 · 90 · 95** | 지금 JPG(q60)보다 작아지는 지점을 찾으려고 구간 전체를 쟀습니다 → 70·75 가 후보 |
+| `-webpmethod` | 압축 노력 (0 = 빠르고 큼 ~ 6 = 느리고 작음) | 문서 0 · 1.24 도움말 2 | **6** | 0 이면 q60 도 JPG 보다 커집니다(11-13 실측). 변환은 한 번뿐이라 가장 작은 값을 씁니다 |
+| `-lossless` | 무손실 모드 켜기 | 끔 | **끔 / 켬 비교** | «무손실로 포장만 바꾸기»가 되는지 확인했습니다 |
+| `-webplossless` | 무손실 모드의 전처리 강도 (100 = 완전 무손실, 낮을수록 근사 무손실) | 100 | **100 · 80 · 60 · 40 · 20 · 0** | SSIM 을 1 가까이 두고 줄어드는 값이 있는지 확인했습니다 |
+| `-webpalphaq` | 투명 채널 화질 | 95 | 해당 없음 | 타일에 투명 채널이 없습니다 |
+
+<span class="hl-green">적용할 설정</span> `-quality=70`(또는 75) `-webpmethod=6` · `-lossless` 는 쓰지 않습니다. krpanotools `convert` 와 Pillow(`quality=70, method=6`)는 결과가 같습니다(다음 장).
+
+---
+
+## 설정별 실측 — 근사 무손실도 5배 이상 커지고, `method` 를 빼면 절감이 1/3 로 줄어듭니다
+
+<div class="cols">
+<div class="col">
+
+### krpanotools 1.24 `convert` · 같은 타일 180장
+
+| 설정 | 용량 변화 | SSIM | 커진 타일 |
+|---|---|---|---|
+| `-lossless -webplossless=100` | <span class="hl-red">+670%</span> | 0.998 | 175 |
+| `-lossless -webplossless=60` | <span class="hl-red">+617%</span> | 0.996 | 175 |
+| `-lossless -webplossless=20` | <span class="hl-red">+525%</span> | 0.991 | 175 |
+| `-lossless -webplossless=0` | <span class="hl-red">+517%</span> | 0.989 | 175 |
+| `-quality=85` (기본값 그대로) | +45% | 0.976 | 162 |
+| `-quality=70` (`method` 기본값) | −7.2% | 0.951 | 36 |
+| `-quality=75 -webpmethod=6` | <span class="hl-green">−16.4%</span> | 0.956 | 9 |
+| `-quality=70 -webpmethod=6` | <span class="hl-green">−20.8%</span> | 0.952 | 7 |
+
+무손실 계열은 모두 `-webpmethod=6` · SSIM 이 1 이 아닌 건 JPG 복원 방식 차이로 추정
+
+</div>
+<div class="col">
+
+### `method` 에 따른 용량과 속도 (Pillow · 1코어)
+
+| `method` | q70 | q75 | 타일당 시간 |
+|---|---|---|---|
+| 0 | −7.1% | −1.1% | 3.3ms |
+| 4 (Pillow 기본값) | −19.6% | −14.5% | 13ms |
+| **6** | **−21.6%** | **−16.4%** | 27ms |
+
+- `method=6` 은 4 보다 2배 느리지만 2%p 더 줄어듭니다. 1,224만 장 ≈ 92 코어시간이라 kabkee-main 16코어로 **하루 안에** 끝납니다.
+- krpanotools 와 Pillow 결과가 거의 같아 도구 선택은 결과에 영향이 없습니다.
+
+</div>
+</div>
+
+---
+
 ## 화질 비교 ① 보통 타일 — q70 은 −28% 지만 경계가 조금 부드러워집니다
 
 <div class="cols">
 <div class="col">
 
-![h:540](assets/2026-11-18-webp-legacy/cmp-typical.png)
+![h:490](assets/2026-11-18-webp-legacy/cmp-typical.png)
 
 </div>
 <div class="col">
@@ -197,7 +250,7 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 <div class="cols">
 <div class="col">
 
-![h:540](assets/2026-11-18-webp-legacy/cmp-texture.png)
+![h:490](assets/2026-11-18-webp-legacy/cmp-texture.png)
 
 </div>
 <div class="col">
@@ -445,16 +498,14 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-18 &nbsp;·&nbsp; 11-13 «files/pano Web
 |---|---|
 | 대상 규모 | `look360-v1-files` 백업 목록표 `state/pano__*.csv.gz` 1,764개에서 `mres_*/l*/*.jpg` 집계 (2026-11-17 기준) |
 | 원본 존재 여부 | 같은 목록표에서 파일명 `retouch` · `origin` 집계 → 20개 |
-| XML 형식 | S3 에서 `pano/0/329/865.xml` 1개를 받아 확인 |
 | 생성기 고정 지점 | `Look360_ksq1.2` 소스 검색 (`a.createCyberTourXML.php:523` · `:525` 등) |
-| 타일 메타데이터 | `head-object pano/0/329/53/mres_f/l1/1/l1_f_1_1.jpg` |
-| 화질·용량 비율 | 무작위 타일 180장(샤드 30개) · Pillow WebP `method=6` · `jpegtran` 2.1.5 · 밝기 SSIM(가우시안 11×11, σ 1.5) + 11-13 덱 표본 500장 |
+| 화질·용량 비율 | 무작위 타일 180장 · Pillow 13.0.0(libwebp 1.6.0) + krpanotools 1.24 `convert` 교차 확인 · `jpegtran` 2.1.5 · 밝기 SSIM(가우시안 11×11, σ 1.5) · 11-13 표본 500장 |
 | 고정 `.jpg` 지점 | `Look360_ksq1.2` · `nestjs-look360-api` · `look360_v3_client` · `look360_platform_admin` · `look360_utils_v3` 소스 검색 (주석 줄 제외) |
 | 저장된 XML | 버킷 XML 5,994개(`xmlBackup` 제외)를 받아 `mres_…jpg` · `512_/1024_%s.jpg` 참조 검사 |
-| 비용·전송량 | Cost Explorer(서비스·사용 유형별 월 비용, 2026-05~11-17) · CloudWatch `BytesDownloaded`·`Requests`(배포별 10-18~11-16) · 관리자 SSO 로 조회만 |
+| 비용·전송량 | Cost Explorer(2026-05~11-17) · CloudWatch `BytesDownloaded`·`Requests`(10-18~11-16) · 관리자 SSO 로 조회만 |
 | 전송 단가 | AWS Price List API `AmazonCloudFront` · `AP-DataTransfer-Out-Bytes` ($0.120/GB · 10TB 까지, $0.100 · 50TB 까지) · 무료 한도 월 1TB |
 | 미래 시나리오 | 타일 비중 70% · 절감률 16~22% · 트래픽 5년 유지 가정 · 1회 비용 $67 = 업로드 $55 + 공존 기간 저장 약 $12 |
-| 버킷 설정 | `get-bucket-versioning` · `get-bucket-lifecycle-configuration` (`look360-v1-files`) |
+| 단건 확인 | XML `pano/0/329/865.xml` · 타일 메타데이터 `head-object pano/0/329/53/mres_f/l1/1/l1_f_1_1.jpg` · 버킷 버전 관리·수명 주기 설정 |
 | 미확인 | DB 동기화 경로 (MySQL 연결 끊김) · look360.kr 전송량 중 타일 비중 (경로별 집계 없음) |
 
 ---
