@@ -58,8 +58,15 @@ for root, _, files in os.walk(dist):
             continue
         page = os.path.join(root, fn)
         text = open(page, encoding='utf-8', errors='ignore').read()
+        # <script> 본문은 JS 코드다 — 문자열 속 'href="app.css"' 같은 글자는 이 페이지의 링크가 아니다(2026-11-19).
+        # 여는 태그(src 속성)는 남기고 본문만 비운다.
+        if fn.endswith('.html'):
+            text = re.sub(r'(<script\b[^>]*>).*?</script>', r'\1', text, flags=re.S | re.I)
         for m in pat.finditer(text):
             ref = (m.group(1) or m.group(2) or '').strip()
+            # 본문 문장의 「URL(<code>…</code>)」 처럼 태그가 섞인 값은 CSS url() 이 아니다(2026-11-19)
+            if '<' in ref:
+                continue
             if not ref or re.match(r'^(?:[a-z][a-z0-9+.-]*:|//|#|\{|\$)', ref, re.I):
                 continue
             path = unquote(urlsplit(ref).path)
