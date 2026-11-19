@@ -44,6 +44,12 @@ python3 - "$DIST" <<'PY'
 import os, re, sys
 from urllib.parse import unquote, urlsplit
 dist = sys.argv[1]
+# netlify.toml 의 status 200 rewrite 주소(예: /reports/place-scores)는 파일이 없어도 정상 링크다.
+# 대신 rewrite 가 가리키는 대상 파일이 dist 에 있는지를 검사한다(2026-11-19).
+import tomllib
+with open('netlify.toml', 'rb') as f:
+    rewrites = {(r['from'].rstrip('/') or '/'): r['to'] for r in tomllib.load(f).get('redirects', [])
+                if int(r.get('status', 301)) == 200}
 pat = re.compile(r'''(?:href|src)\s*=\s*["']([^"']+)["']|url\(\s*["']?([^"')]+)["']?\s*\)''', re.I)
 missing, broken = [], []
 for root, _, files in os.walk(dist):
@@ -65,6 +71,12 @@ for root, _, files in os.walk(dist):
                 target = os.path.join(target, 'index.html')
             if os.path.exists(target):
                 continue
+            url = '/' + os.path.relpath(target, dist).replace(os.sep, '/')
+            if url in rewrites:
+                to = os.path.normpath(os.path.join(dist, rewrites[url].lstrip('/')))
+                if os.path.exists(to):
+                    continue
+                target = to  # rewrite 대상이 없으면 그 대상 파일 기준으로 누락/깨짐 판정
             src = os.path.relpath(target, dist)
             (missing if os.path.exists(src) else broken).append(f'{os.path.relpath(page, dist)} → {ref}')
 if broken:
