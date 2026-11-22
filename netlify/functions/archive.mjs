@@ -6,6 +6,10 @@
 //       언제든 꺼낼 수 있다. id 형식을 제한하고(ID_RE) 저장 개수를 MAX_ITEMS 로 막는다.
 import { getStore } from "@netlify/blobs";
 
+// 카드 id 정규화 — index.html 의 cardId() 와 같은 규칙(둘을 함께 고칠 것).
+// Netlify 가 배포 때 링크를 «예쁜 주소»(/reports/x · .html 없음)로 바꿔서, 로컬 :8088 과 netlify.app 의 href 가 갈린다(2026-11-22).
+const cardId = (href) => /^https?:\/\//i.test(href || "") ? href : String(href || "").replace(/^\.?\/+/, "").replace(/\.html$/i, "").replace(/(^|\/)index$/i, "$1").replace(/\/+$/, "");
+
 // 카드 href 형식만 받는다 — 상대 경로(weekly-reports/2026-11-16.html · reports/…/) 또는 외부 https 링크
 const ID_RE = /^(?:[A-Za-z0-9][A-Za-z0-9._~\/-]{0,250}|https:\/\/[A-Za-z0-9.-]{1,100}\/[A-Za-z0-9._~\/?#=&%:+-]{0,250})$/;
 // 로컬 열람 주소(tailnet 정적 서버 :8088)에서도 같은 저장소에 쓰도록 이 출처만 CORS 허용
@@ -23,14 +27,24 @@ export default async (req) => {
 
   if (req.method === "GET") {
     const { blobs } = await store.list();
-    const ids = blobs.map((b) => { try { return decodeURIComponent(b.key); } catch { return null; } }).filter(Boolean);
-    return json({ ids });
+    const ids = new Set();
+    for (const b of blobs) {
+      let raw; try { raw = decodeURIComponent(b.key); } catch { continue; }
+      const id = cardId(raw);
+      ids.add(id);
+      if (id !== raw) {   // 옛 모양(.html · 앞 /)으로 저장된 키는 정규화한 키로 옮긴다(멱등)
+        const nk = encodeURIComponent(id);
+        if (!blobs.some((x) => x.key === nk)) await store.setJSON(nk, { id, archivedAt: new Date().toISOString(), migratedFrom: raw });
+        await store.delete(b.key);
+      }
+    }
+    return json({ ids: [...ids] });
   }
 
   if (req.method === "POST") {
     let body;
     try { body = await req.json(); } catch { return json({ error: "JSON 본문이 필요합니다" }, 400); }
-    const id = typeof body?.id === "string" ? body.id.trim() : "";
+    const id = typeof body?.id === "string" ? cardId(body.id.trim()) : "";
     if (!ID_RE.test(id)) return json({ error: "id 형식이 올바르지 않습니다" }, 400);
     if (typeof body.archived !== "boolean") return json({ error: "archived(true/false) 가 필요합니다" }, 400);
     const key = encodeURIComponent(id);
@@ -40,6 +54,9 @@ export default async (req) => {
       await store.setJSON(key, { id, archivedAt: new Date().toISOString() });
     } else {
       await store.delete(key);
+      // 아직 옮기지 않은 옛 모양 키도 함께 지운다
+      const { blobs } = await store.list();
+      for (const b of blobs) { let raw; try { raw = decodeURIComponent(b.key); } catch { continue; } if (raw !== id && cardId(raw) === id) await store.delete(b.key); }
     }
     return json({ id, archived: body.archived });
   }

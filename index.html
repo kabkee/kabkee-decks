@@ -577,7 +577,9 @@
    *   #/archive?cat=&q=&page=  아카이브: 같은 구성 · 색만 다름 · 「꺼내기」
    * 아카이브 상태: /api/archive (Netlify 함수 · netlify/functions/archive.mjs). 로컬(:8088)에서도 netlify.app 의 같은 저장소를 쓴다.
    * 서버에 못 보내면 이 브라우저(localStorage)에 기록해 두고 다음 접속 때 다시 보낸다.
-   * 카드 id = 카드의 href. href 를 바꾸면 그 덱의 보관 상태가 풀린다. */
+   * 카드 id = 카드의 href 를 cardId() 로 정규화한 값. Netlify 가 배포 때 링크를 «예쁜 주소»(/reports/x · .html 없음)로 바꾸므로
+   * 앞의 / · ./ 와 끝의 .html · /index · / 를 떼고 비교·저장한다(2026-11-22 · 로컬 :8088 과 netlify.app 의 id 가 갈려 보관이 풀리던 문제).
+   * 같은 규칙이 netlify/functions/archive.mjs 에도 있다 — 둘을 함께 고칠 것. href 자체를 바꾸면 그 덱의 보관 상태가 풀린다. */
   (() => {
     const PREVIEW = 4;      // 홈에서 카테고리당 보여 줄 개수 (섹션의 data-preview 로 개별 지정 가능)
     const PER_PAGE = 12;    // 목록·아카이브 한 페이지 개수
@@ -597,6 +599,7 @@
       for (const kid of kids.flat()) if (kid !== null && kid !== undefined && kid !== false) el.append(kid.nodeType ? kid : String(kid));
       return el;
     };
+    const cardId = (href) => /^https?:\/\//i.test(href || '') ? href : String(href || '').replace(/^\.?\/+/, '').replace(/\.html$/i, '').replace(/(^|\/)index$/i, '$1').replace(/\/+$/, '');
     const norm = (s) => s.toLowerCase().replace(/\s+/g, ' ').trim();
     const textOf = (el) => { const c = el.cloneNode(true); c.querySelectorAll('br').forEach((b) => b.replaceWith(' ')); return c.textContent.replace(/\s+/g, ' ').trim(); };
 
@@ -610,7 +613,7 @@
         const dateEl = $('.date', a);
         const date = dateEl ? (dateEl.firstChild?.textContent || '').trim() : '';
         const titleEl = $('.title', a);
-        decks.push({ id: a.getAttribute('href'), cat: id, date, order: decks.length, node: a, title: titleEl ? textOf(titleEl) : '' });
+        decks.push({ id: cardId(a.getAttribute('href')), cat: id, date, order: decks.length, node: a, title: titleEl ? textOf(titleEl) : '' });
       });
     });
     const catById = Object.fromEntries(cats.map((c) => [c.id, c]));
@@ -620,8 +623,8 @@
     // ── 아카이브 상태 ──
     const readLS = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
     const writeLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
-    let archived = new Set(readLS(LS_STATE, []));
-    let pending = readLS(LS_PENDING, []);   // [{id, archived}] — 서버에 아직 못 보낸 변경
+    let archived = new Set(readLS(LS_STATE, []).map(cardId));
+    let pending = readLS(LS_PENDING, []).map((p) => ({ ...p, id: cardId(p.id) }));   // [{id, archived}] — 서버에 아직 못 보낸 변경
     let syncState = 'loading';             // loading | ok | offline
     const isArch = (d) => archived.has(d.id);
     const saveState = () => { writeLS(LS_STATE, [...archived]); writeLS(LS_PENDING, pending); };
@@ -635,7 +638,7 @@
         const r = await fetch(API, { cache: 'no-store' });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const { ids } = await r.json();
-        const server = new Set(ids);
+        const server = new Set(ids.map(cardId));
         const left = [];
         for (const op of pending) {   // 오프라인 동안 쌓인 변경을 순서대로 재전송
           try { await post(op.id, op.archived); op.archived ? server.add(op.id) : server.delete(op.id); }
