@@ -3,7 +3,10 @@
 
 계획 덱(2026-11-18-webp-legacy-tile-plan) 설정 그대로: Pillow quality=Q, method=6, 무손실 끔.
 
-사용법:  python3 -P scripts/convert.py <작업폴더>
+사용법:  python3 -P scripts/convert.py <작업폴더> [tiles|others]
+  tiles  (기본) : mres_* 큐브 타일 → metrics/tiles.csv
+  others        : 장면 폴더 바로 아래의 타일 외 JPG (512_ · 1024_ · pv · view_ · sphere_ · lp · thumb_)
+                  imglink_* 는 그대로 둔다(2026-11-23 오너 결정) → metrics/others.csv
   입력 : <작업폴더>/src/pano/**/mres_*/l*/*/*.jpg
   출력 : <작업폴더>/out/q{60,70,75}/pano/**/....webp   (폴더 구조 동일, 확장자만 .webp)
          <작업폴더>/metrics/tiles.csv                  (타일 × 품질별 용량·SSIM·최악 영역)
@@ -119,12 +122,17 @@ def work(args):
 
 def main():
     root = Path(sys.argv[1]).resolve()
-    tiles = sorted(p.relative_to(root / "src") for p in (root / "src").glob("pano/*/*/*/mres_*/l*/*/*.jpg"))
+    mode = sys.argv[2] if len(sys.argv) > 2 else "tiles"
+    if mode == "tiles":
+        tiles = sorted(p.relative_to(root / "src") for p in (root / "src").glob("pano/*/*/*/mres_*/l*/*/*.jpg"))
+    else:
+        tiles = sorted(p.relative_to(root / "src") for p in (root / "src").glob("pano/*/*/*/*.jpg")
+                       if not p.name.startswith("imglink_"))
     print(f"타일 {len(tiles)}장 × 품질 {QUALITIES}", flush=True)
     (root / "metrics").mkdir(exist_ok=True)
     fields = ["tile", "q", "w", "h", "jpg_bytes", "webp_bytes", "ssim", "ssim_blk_min", "ssim_blk_x",
               "ssim_blk_y", "err_blk_max", "err_blk_x", "err_blk_y", "edge_blk_max", "edge_blk_x", "edge_blk_y", "mae"]
-    with open(root / "metrics" / "tiles.csv", "w", newline="") as f:
+    with open(root / "metrics" / f"{mode}.csv", "w", newline="") as f:
         wr = csv.DictWriter(f, fieldnames=fields)
         wr.writeheader()
         with ProcessPoolExecutor(max_workers=max(1, (os.cpu_count() or 2) - 2)) as ex:

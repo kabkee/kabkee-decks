@@ -8,3 +8,7 @@ node_modules/
 
 # Claude Code 로컬 설정
 .claude/
+
+# WebP 화질 비교 VR 타일 사본 (~133MB) — git 에는 넣지 않고 로컬에서 Netlify 로만 배포.
+# 원본·재생성: /home/kabkee/webp-test-20261119/scripts/build_page.py (2026-11-23)
+reports/assets/2026-11-23-webp-q-compare-vr/

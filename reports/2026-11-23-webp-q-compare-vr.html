@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>VR 비교 — JPG | WebP q60</title>
+<style>
+html,body{height:100%;margin:0;background:#000;color:#f9fafb;font-family:'Noto Sans KR',system-ui,sans-serif;overflow:hidden}
+.top{position:fixed;top:0;left:0;right:0;z-index:20;background:#111827f0;padding:8px 12px;display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;font-size:13px}
+.top a{color:#93c5fd}.top b{color:#fbbf24}
+.top button{background:#374151;color:#f9fafb;border:0;border-radius:7px;padding:4px 10px;cursor:pointer;font:inherit}
+.top button.on{background:#fbbf24;color:#111827;font-weight:700}
+.top .hint{color:#9ca3af}
+.wrap{position:fixed;left:0;right:0;bottom:0;top:var(--top,46px);display:grid;grid-template-columns:1fr 1fr;gap:3px;background:#4b5563}
+@media (max-width:760px),(orientation:portrait) and (max-width:1100px){.wrap{grid-template-columns:1fr;grid-template-rows:1fr 1fr}.top .hint{display:none}}
+.pane{position:relative;background:#000;min-width:0;min-height:0;overflow:hidden}
+.pano{position:absolute;inset:0}
+.lab{position:absolute;left:8px;top:8px;z-index:10;background:#000000b0;padding:4px 10px;border-radius:7px;font-size:13px;pointer-events:none;line-height:1.45}
+.lab b{font-size:14px}.jpg .lab b{color:#fff}.q60 .lab b{color:#fca5a5}
+.bad{color:#fca5a5;font-weight:700}.good{color:#6ee7b7;font-weight:700}
+</style></head><body>
+<div class="top" id="top">
+ <a href="2026-11-23-webp-q-compare.html">← 화질 비교로</a>
+ <span id="scenes"></span>
+ <label><input type="checkbox" id="sync" checked> 시점 동기화</label>
+ <span class="hint">어느 쪽을 돌리거나 확대해도 반대쪽이 같은 시점으로 따라옵니다 · 끝까지 확대하면 l1 타일이 최대 3× 로 보입니다</span>
+</div>
+<div class="wrap" id="wrap">
+ <div class="pane jpg" data-v="jpg"><div class="lab" id="lab-jpg"></div><div class="pano" id="pano-jpg"></div></div>
+ <div class="pane q60" data-v="q60"><div class="lab" id="lab-q60"></div><div class="pano" id="pano-q60"></div></div>
+</div>
+<script src="assets/2026-11-23-webp-q-compare-vr/krpano.js"></script>
+<script>
+const VR = [{"slug": "1-1154-1", "scene": "pano/1/1154/1", "name": "덕수궁 · 돌담길", "levels": [{"l": "l1", "size": 3820}, {"l": "l2", "size": 2048}, {"l": "l3", "size": 1024}], "jpg": 33491751, "q60": 35553948, "pct": 6.2, "grown": 389}, {"slug": "0-135-33", "scene": "pano/0/135/33", "name": "수리산성지 · 마리아 상", "levels": [{"l": "l1", "size": 3820}, {"l": "l2", "size": 2048}, {"l": "l3", "size": 1024}], "jpg": 31033211, "q60": 32659498, "pct": 5.2, "grown": 339}];
+const mb = b => (b/1048576).toFixed(1)+'MB';
+const qs = new URLSearchParams(location.search);
+const cur = VR.find(x => x.slug === qs.get('s')) || VR[0];
+document.title = 'VR 비교 — ' + cur.name + ' · JPG | WebP q60';
+document.getElementById('scenes').innerHTML = VR.map(x => `<button class="${x===cur?'on':''}" onclick="location.search='?s=${x.slug}'">${x.name}</button>`).join(' ');
+document.getElementById('lab-jpg').innerHTML = `<b>JPG 원본</b> · 타일 504장 ${mb(cur.jpg)}`;
+document.getElementById('lab-q60').innerHTML = `<b>WebP q60</b> · ${mb(cur.q60)} <span class="bad">${cur.pct>0?'+':''}${cur.pct}%</span> · 커진 타일 ${cur.grown}/504`;
+const fit = () => document.body.style.setProperty('--top', document.getElementById('top').offsetHeight + 'px');
+fit(); addEventListener('resize', fit);
+
+function xml(variant) {
+  const ext = variant === 'jpg' ? 'jpg' : 'webp';
+  const base = `%HTMLPATH%/assets/2026-11-23-webp-q-compare-vr/${cur.slug}/${variant}/`;
+  const lv = cur.levels.slice().sort((a,b) => a.size - b.size).map(l =>
+    `<level tiledimagewidth="${l.size}" tiledimageheight="${l.size}"><cube url="${base}mres_%s/${l.l}/%v/${l.l}_%s_%v_%h.${ext}" /></level>`).join('');
+  // 레거시 생성기(a.createCyberTourXML.php)와 같은 설정: tilesize 512 · multiresthreshold -0.2 · maxpixelzoom 3.0 · fovmax 150
+  return `<krpano><view hlookat="0" vlookat="0" fov="100" maxpixelzoom="3.0" fovmax="150" limitview="auto" />` +
+         `<image type="CUBE" multires="yes" tilesize="512" multiresthreshold="-0.2">${lv}</image></krpano>`;
+}
+const K = {};
+let master = 'jpg', last = '';
+for (const v of ['jpg','q60']) {
+  embedpano({target: 'pano-' + v, id: 'krpano-' + v, xml: null, html5: 'only', mobilescale: 1.0,
+    onready: k => { K[v] = k; k.call('loadxml(' + escape(xml(v)) + ', null, MERGE, BLEND(0))'); }});
+  const pane = document.querySelector(`.pane[data-v="${v}"]`);
+  for (const ev of ['pointerdown','wheel','touchstart','mousedown'])
+    pane.addEventListener(ev, () => { master = v; }, {capture: true, passive: true});
+}
+(function loop() {
+  const a = K[master], b = K[master === 'jpg' ? 'q60' : 'jpg'];
+  if (a && b && document.getElementById('sync').checked) {
+    const h = a.get('view.hlookat'), vv = a.get('view.vlookat'), f = a.get('view.fov');
+    const key = h + ',' + vv + ',' + f;
+    if (key !== last && h !== null && h !== undefined) { b.set('view.hlookat', h); b.set('view.vlookat', vv); b.set('view.fov', f); last = key; }
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body></html>
