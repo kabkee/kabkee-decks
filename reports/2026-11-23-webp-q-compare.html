@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WebP q60 · q70 · q75 화질 비교 — 레거시 타일 11개 장면</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif;color:#1f2937;background:#f3f4f6;line-height:1.6}
+code{background:#eef2ff;border-radius:4px;padding:1px 5px;font-size:.86em}
+header{background:#111827;color:#f9fafb;padding:32px 24px 24px}header .w,main{max-width:1400px;margin:0 auto}
+header h1{margin:0;font-size:1.55em}header .sub{color:#9ca3af;margin-top:6px;font-size:.88em}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:18px}
+.kpi{background:#1f2937;border:1px solid #374151;border-radius:12px;padding:11px 14px}.kpi b{display:block;font-size:1.3em;color:#fbbf24}.kpi span{font-size:.78em;color:#d1d5db}
+main{padding:20px 24px 60px;display:flex;flex-direction:column;gap:18px}
+section{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px 22px}
+h2{margin:0 0 10px;font-size:1.15em}h2 small{font-weight:400;color:#6b7280;font-size:.72em;margin-left:6px}
+h3{margin:0;font-size:1.05em}
+table{width:100%;border-collapse:collapse;font-size:.84em}th,td{border-bottom:1px solid #e5e7eb;padding:6px 8px;text-align:right;vertical-align:middle;white-space:nowrap}
+th{background:#f9fafb;color:#374151}td:first-child,th:first-child,td.l,th.l{text-align:left;white-space:normal}
+.good{color:#047857;font-weight:700}.bad{color:#b91c1c;font-weight:700}.mute{color:#9ca3af}.amber{color:#b45309;font-weight:700}
+.tag{display:inline-block;font-size:.72em;padding:1px 8px;border-radius:999px;background:#eef2ff;color:#3730a3;margin-left:6px;vertical-align:middle}
+ul{margin:6px 0 0;padding-left:20px}li{margin:2px 0}
+.bar{position:sticky;top:0;z-index:5;background:#111827f2;color:#f9fafb;padding:9px 24px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:.86em}
+.bar .grp{display:flex;gap:4px;align-items:center}.bar button{background:#374151;color:#f9fafb;border:0;border-radius:7px;padding:4px 11px;cursor:pointer;font:inherit}
+.bar button.on{background:#fbbf24;color:#111827;font-weight:700}.bar a{color:#93c5fd}
+.scene-h{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.scene-h .p{color:#6b7280;font-size:.8em}
+.mini{margin:10px 0 4px}.mini td,.mini th{padding:4px 8px}
+.region{border-top:1px dashed #e5e7eb;margin-top:14px;padding-top:12px}
+.rh{font-size:.86em;color:#374151;margin-bottom:8px}.rh b{color:#111827}
+.row{display:flex;gap:10px;align-items:flex-start;overflow-x:auto;padding-bottom:4px}
+.ov{flex:0 0 auto;width:150px;font-size:.72em;color:#6b7280}.ov .box{position:relative;width:150px;height:150px;background:#e5e7eb}
+.ov img{width:100%;height:100%;display:block}.ov .rect{position:absolute;border:2px solid #ef4444;box-shadow:0 0 0 1px #fff}
+.pn{flex:0 0 auto}.pn .lab{font-size:.74em;margin-bottom:3px;display:flex;justify-content:space-between;gap:6px}
+.pn .lab b{font-size:1.08em}.pn .v{position:relative;overflow:hidden;background:#000;border-radius:4px;cursor:crosshair}
+.pn .v img{position:absolute;image-rendering:pixelated;image-rendering:crisp-edges;max-width:none}
+.pn .v .peek{position:absolute;left:4px;top:4px;background:#ef4444;color:#fff;font-size:.7em;padding:0 6px;border-radius:4px;display:none}
+.pn .v.peeking .peek{display:block}
+.pn.jpg .lab b{color:#111827}.pn.q60 .lab b{color:#b91c1c}.pn.q70 .lab b{color:#b45309}.pn.q75 .lab b{color:#047857}
+.note{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;font-size:.86em}
+.pick{display:flex;gap:6px;margin-top:10px;font-size:.82em;align-items:center;flex-wrap:wrap}
+.pick button{border:1px solid #d1d5db;background:#fff;border-radius:7px;padding:3px 10px;cursor:pointer;font:inherit}
+.pick button.on{background:#111827;color:#fff;border-color:#111827}
+#verdicts td{text-align:left}
+</style></head><body>
+<header><div class="w">
+<h1>WebP q60 · q70 · q75 화질 비교 — 레거시 큐브 타일 11개 장면</h1>
+<div class="sub">2026-11-23 · <a href="2026-11-18-webp-legacy-tile-plan.html" style="color:#93c5fd">레거시 큐브 타일 WebP 전환 실행 계획</a> 후속 · 시범 장면 11개(타일 5,544장)를 세 품질로 바꾸고 장면마다 «가장 많이 달라진 곳»을 골라 나란히 놓았습니다</div>
+<div class="kpis" id="kpis"></div>
+</div></header>
+<div class="bar">
+ <div class="grp">확대 <button data-z="1">1×</button><button data-z="2" class="on">2×</button><button data-z="3">3×</button></div>
+ <div class="grp">칸 크기 <button data-s="192">작게</button><button data-s="256" class="on">보통</button><button data-s="320">크게</button></div>
+ <div>💡 WebP 칸을 <b>누르고 있으면(마우스 올리면)</b> 같은 자리의 JPG 원본으로 바뀝니다</div>
+ <div style="margin-left:auto"><a href="#summary">요약</a> · <a href="#verdict">판정표</a> · <a href="#log">작업 내역</a></div>
+</div>
+<main>
+<section id="summary">
+<h2>요약 — 11개 장면 전체 용량과 장면 스킵 규칙 <small>장면마다 큐브 타일 504장 전부 · 지금 JPG 대비</small></h2>
+<div id="sumtable"></div>
+<ul>
+<li><b>q60 만 «전체로 봐도 확실히 줄어듭니다».</b> q70 은 디테일 많은 장면에서 −4~9% 에 그쳐 장면 스킵 규칙(절감 8% 미만이면 JPG 유지)에 걸리는 장면이 늘어납니다.</li>
+<li>이 11개는 <b>일부러 «커지는 사례» 3곳(의릉·덕수궁·수리산성지)을 넣은 표본</b>이라 운영 전체 평균(계획 덱 q70 −16~22%)보다 절감률이 낮게 나옵니다.</li>
+<li>덕수궁 돌담길 · 수리산성지는 <span class="bad">q60 에서도 커집니다(+5~6%)</span> → 어떤 품질을 고르든 이 장면들은 JPG 유지입니다.</li>
+</ul>
+</section>
+<section>
+<h2>보는 법</h2>
+<ul>
+<li>장면마다 <b>q60 기준으로 «가장 많이 달라진 곳» 3곳</b>을 자동으로 골랐습니다(64×64 픽셀 블록 단위). 같은 자리를 q70 · q75 에서도 그대로 보여 줍니다.
+ <ul>
+ <li><b>① 질감 손실 최대</b> — 밝기 SSIM 이 가장 낮은 곳. 대부분 <b>어두운 면의 노이즈 입자가 매끈해진 곳</b>이라 숫자에 비해 눈에는 잘 안 띕니다.</li>
+ <li><b>② 색 오차 최대</b> — RGB 평균 오차가 가장 큰 곳. 채도 높은 잎·조명·간판에서 잘 나옵니다.</li>
+ <li><b>③ 경계 뭉개짐 최대</b> — 원본에서 <b>글자·윤곽 같은 뚜렷한 경계</b>가 있는 픽셀만 따져 오차가 가장 큰 곳. <b>사람 눈에 가장 잘 보이는 차이</b>입니다.</li>
+ </ul></li>
+<li>각 칸은 <b>원본 타일 파일(JPG · WebP)을 그대로</b> 불러와 브라우저가 디코딩합니다. 다시 저장하지 않으므로 관람자가 받게 될 픽셀과 같습니다.</li>
+<li><b>확대 배율의 의미</b> — 레거시 뷰어는 <code>maxpixelzoom="3.0"</code> 이라 최고 해상도 <b>l1</b> 타일은 끝까지 확대하면 <b>3×</b> 까지 보입니다. <b>l2 · l3</b> 타일은 확대하면 더 세밀한 레벨로 바뀌므로 화면에서는 대략 <b>1× 근처</b>로만 보입니다.</li>
+</ul>
+</section>
+<div id="scenes" style="display:flex;flex-direction:column;gap:18px"></div>
+<section id="verdict">
+<h2>판정표 <small>장면마다 «q60 으로 괜찮은가» 를 골라 두면 이 브라우저에 저장됩니다 (다른 사람과 공유되지 않음)</small></h2>
+<table id="verdicts"></table>
+<div class="note" id="vsum" style="margin-top:10px"></div>
+</section>
+<section id="log">
+<h2>작업 내역</h2>
+<table>
+<tr><th class="l">항목</th><th class="l">내용</th></tr>
+<tr><td>원본</td><td class="l"><code>NAS /Default/Share/webp-test-20261119/webp-test-panoramas.zip</code> (230MB · 파일 6,010개 · 장면 11개, S3 <code>look360-v1-files</code> 장면 폴더 그대로) — <b>원본 zip 은 건드리지 않았습니다</b></td></tr>
+<tr><td>변환 대상</td><td class="l"><code>mres_[fblrud]/l1~l3/…jpg</code> 큐브 타일만 · 장면당 504장(l1 8×8 · l2 4×4 · l3 2×2 × 6면) · 합계 5,544장 · <code>512_</code> · <code>1024_</code> · <code>pv.jpg</code> · 썸네일·GIF 는 계획 덱 범위대로 제외</td></tr>
+<tr><td>변환 설정</td><td class="l">Pillow 13.0.0 (libwebp 1.6.0) · <code>quality=60 / 70 / 75</code> · <code>method=6</code> · 무손실 끔 — 계획 덱 «적용할 설정» 그대로. 장면별 q70 절감률이 <code>목록.txt</code> 에 적힌 값과 소수 첫째 자리까지 일치(같은 방식 확인)</td></tr>
+<tr><td>측정</td><td class="l">타일마다 용량 · 밝기 SSIM(가우시안 11×11, σ1.5 — 계획 덱과 같은 방식) · 64×64 블록(32px 간격) 단위로 SSIM 최저 / RGB 오차 최대 / 경계(밝기 기울기 &gt; 24) 위 오차 최대 위치</td></tr>
+<tr><td>작업 폴더 (전부 한 곳)</td><td class="l"><code>kabkee-main:/home/kabkee/webp-test-20261119/</code><br>
+<code>src/</code> zip 압축 해제본 248MB · <code>out/q60|q70|q75/</code> 변환 결과(폴더 구조 그대로, 확장자만 .webp) 169 · 187 · 197MB · <code>metrics/</code> 타일별 측정값 <code>tiles.csv</code>(16,632행) · 장면 요약 <code>summary.json</code> · <code>compare/sheets/</code> 검토용 확대 이미지 33장 · <code>scripts/</code> 아래 4개</td></tr>
+<tr><td>스크립트</td><td class="l"><code>convert.py</code> 변환+측정(20코어 약 2분 30초) → <code>summarize.py</code> 장면 요약·최악 영역 선정 → <code>contact_sheet.py</code> 확대 시트 → <code>build_page.py</code> 이 페이지 생성<br>다시 돌리기: <code>cd /home/kabkee/webp-test-20261119 && python3 -P scripts/convert.py . && python3 -P scripts/summarize.py . && python3 -P scripts/build_page.py . ~/side-projects/kabkee-decks</code></td></tr>
+<tr><td>이 페이지의 파일</td><td class="l"><code>reports/2026-11-23-webp-q-compare.html</code> + <code>reports/assets/2026-11-23-webp-q-compare/</code> (장면 11개 × 3곳 × JPG·q60·q70·q75 원본 타일)</td></tr>
+<tr><td>사본 보관</td><td class="l">작업 폴더를 지워도 남도록 스크립트 4개 · <code>summary.json</code> · <code>목록.txt</code> 를 kabkee-decks 저장소 <code>reports/2026-11-23-webp-q-compare-work/</code> 에 함께 커밋했습니다(웹에는 올라가지 않음). 타일별 측정값 <code>tiles.csv</code> 는 작업 폴더에만 있습니다</td></tr>
+<tr><td>정리 방법</td><td class="l">테스트가 끝나면 작업 폴더 하나만 지우면 됩니다: <code>rm -rf /home/kabkee/webp-test-20261119</code> — S3 · 운영 서버 · DB · Look360 저장소는 <b>아무것도 바꾸지 않았습니다</b></td></tr>
+<tr><td>하지 않은 것</td><td class="l">뷰어(krpano)에서 장면 전체를 띄워 본 비교 · 기기별(iOS · 안드로이드 · 인앱) 확인 — 계획 덱의 시범 검증 단계에서 할 일입니다</td></tr>
+</table>
+</section>
+</main>
+<script>
+const D = {"scenes": [{"scene": "pano/1/1774/4", "slug": "1-1774-4", "name": "궁디팡팡 캣페스타 · 고공전경", "group": "요청 유형 — 디테일 많은 장면 · 하늘 많은 외부샷", "note": "디테일 최다(타일 평균 31.1KB)", "jpg": 16056165, "tiles": 504, "stat": {"60": {"webp_bytes": 12246390, "change_pct": -23.7, "ssim_mean": 0.9257, "ssim_p5": 0.9, "ssim_min": 0.8768, "grown": 0, "mae_mean": 3.499}, "70": {"webp_bytes": 13905014, "change_pct": -13.4, "ssim_mean": 0.9406, "ssim_p5": 0.9206, "ssim_min": 0.8955, "grown": 25, "mae_mean": 3.139}, "75": {"webp_bytes": 14800334, "change_pct": -7.8, "ssim_mean": 0.9471, "ssim_p5": 0.9304, "ssim_min": 0.903, "grown": 97, "mae_mean": 2.965}}, "regions": [{"kind": "ssim", "tile": "pano/1/1774/4/mres_u/l2/3/l2_u_3_2.jpg", "w": 512, "h": 512, "x": 37, "y": 389, "size": 64, "jpg_bytes": 21411, "per_q": {"60": {"webp_bytes": 11980, "ssim": 0.89044, "mae": 2.808}, "70": {"webp_bytes": 14690, "ssim": 0.9068, "mae": 2.587}, "75": {"webp_bytes": 15996, "ssim": 0.92099, "mae": 2.438}}, "value": {"60": 0.83512, "70": 0.85731, "75": 0.88269}, "base": "l2_u_3_2", "level": "l2", "face": "u"}, {"kind": "err", "tile": "pano/1/1774/4/mres_l/l3/2/l3_l_2_2.jpg", "w": 512, "h": 512, "x": 32, "y": 64, "size": 64, "jpg_bytes": 49444, "per_q": {"60": {"webp_bytes": 39778, "ssim": 0.95801, "mae": 4.15}, "70": {"webp_bytes": 44164, "ssim": 0.96813, "mae": 3.655}, "75": {"webp_bytes": 46692, "ssim": 0.97244, "mae": 3.411}}, "value": {"60": 7.583, "70": 6.641, "75": 6.4}, "base": "l3_l_2_2", "level": "l3", "face": "l"}, {"kind": "edge", "tile": "pano/1/1774/4/mres_f/l1/5/l1_f_5_5.jpg", "w": 512, "h": 512, "x": 224, "y": 416, "size": 64, "jpg_bytes": 38478, "per_q": {"60": {"webp_bytes": 30484, "ssim": 0.92038, "mae": 3.723}, "70": {"webp_bytes": 34822, "ssim": 0.93718, "mae": 3.341}, "75": {"webp_bytes": 36802, "ssim": 0.94997, "mae": 3.091}}, "value": {"60": 3.267, "70": 2.896, "75": 2.782}, "base": "l1_f_5_5", "level": "l1", "face": "f"}]}, {"scene": "pano/1/1774/14", "slug": "1-1774-14", "name": "궁디팡팡 캣페스타 · 카페테리아", "group": "요청 유형 — 디테일 많은 장면 · 하늘 많은 외부샷", "note": "상품", "jpg": 14818664, "tiles": 504, "stat": {"60": {"webp_bytes": 11253092, "change_pct": -24.1, "ssim_mean": 0.9254, "ssim_p5": 0.8899, "ssim_min": 0.8739, "grown": 0, "mae_mean": 3.344}, "70": {"webp_bytes": 12810052, "change_pct": -13.6, "ssim_mean": 0.9395, "ssim_p5": 0.9094, "ssim_min": 0.8956, "grown": 48, "mae_mean": 3.01}, "75": {"webp_bytes": 13666852, "change_pct": -7.8, "ssim_mean": 0.9461, "ssim_p5": 0.9194, "ssim_min": 0.9063, "grown": 121, "mae_mean": 2.844}}, "regions": [{"kind": "ssim", "tile": "pano/1/1774/14/mres_d/l2/2/l2_d_2_1.jpg", "w": 512, "h": 512, "x": 5, "y": 229, "size": 64, "jpg_bytes": 14826, "per_q": {"60": {"webp_bytes": 6532, "ssim": 0.92856, "mae": 2.116}, "70": {"webp_bytes": 8238, "ssim": 0.93881, "mae": 1.963}, "75": {"webp_bytes": 9142, "ssim": 0.94287, "mae": 1.892}}, "value": {"60": 0.79568, "70": 0.84979, "75": 0.86684}, "base": "l2_d_2_1", "level": "l2", "face": "d"}, {"kind": "err", "tile": "pano/1/1774/14/mres_r/l3/1/l3_r_1_1.jpg", "w": 512, "h": 512, "x": 128, "y": 448, "size": 64, "jpg_bytes": 27704, "per_q": {"60": {"webp_bytes": 17186, "ssim": 0.93386, "mae": 3.125}, "70": {"webp_bytes": 19460, "ssim": 0.94798, "mae": 2.732}, "75": {"webp_bytes": 21120, "ssim": 0.9532, "mae": 2.59}}, "value": {"60": 8.485, "70": 7.827, "75": 7.485}, "base": "l3_r_1_1", "level": "l3", "face": "r"}, {"kind": "edge", "tile": "pano/1/1774/14/mres_l/l3/2/l3_l_2_1.jpg", "w": 512, "h": 512, "x": 128, "y": 320, "size": 64, "jpg_bytes": 37907, "per_q": {"60": {"webp_bytes": 30156, "ssim": 0.95975, "mae": 3.453}, "70": {"webp_bytes": 33640, "ssim": 0.96641, "mae": 3.124}, "75": {"webp_bytes": 35992, "ssim": 0.97004, "mae": 2.937}}, "value": {"60": 4.008, "70": 3.529, "75": 3.315}, "base": "l3_l_2_1", "level": "l3", "face": "l"}]}, {"scene": "pano/1/1774/1", "slug": "1-1774-1", "name": "궁디팡팡 캣페스타 · 전시관 입구", "group": "요청 유형 — 디테일 많은 장면 · 하늘 많은 외부샷", "note": "같은 장소 외부샷(하늘)", "jpg": 14741386, "tiles": 504, "stat": {"60": {"webp_bytes": 12009596, "change_pct": -18.5, "ssim_mean": 0.9631, "ssim_p5": 0.9265, "ssim_min": 0.9088, "grown": 34, "mae_mean": 2.946}, "70": {"webp_bytes": 13356220, "change_pct": -9.4, "ssim_mean": 0.9688, "ssim_p5": 0.9345, "ssim_min": 0.9191, "grown": 75, "mae_mean": 2.66}, "75": {"webp_bytes": 14104414, "change_pct": -4.3, "ssim_mean": 0.9717, "ssim_p5": 0.9397, "ssim_min": 0.9261, "grown": 117, "mae_mean": 2.518}}, "regions": [{"kind": "ssim", "tile": "pano/1/1774/1/mres_l/l1/2/l1_l_2_5.jpg", "w": 512, "h": 512, "x": 443, "y": 5, "size": 64, "jpg_bytes": 8499, "per_q": {"60": {"webp_bytes": 2132, "ssim": 0.9355, "mae": 1.718}, "70": {"webp_bytes": 3084, "ssim": 0.93963, "mae": 1.651}, "75": {"webp_bytes": 3812, "ssim": 0.9431, "mae": 1.605}}, "value": {"60": 0.87508, "70": 0.88505, "75": 0.89149}, "base": "l1_l_2_5", "level": "l1", "face": "l"}, {"kind": "err", "tile": "pano/1/1774/1/mres_b/l3/1/l3_b_1_1.jpg", "w": 512, "h": 512, "x": 416, "y": 288, "size": 64, "jpg_bytes": 25829, "per_q": {"60": {"webp_bytes": 19760, "ssim": 0.97604, "mae": 2.467}, "70": {"webp_bytes": 21790, "ssim": 0.97977, "mae": 2.271}, "75": {"webp_bytes": 22840, "ssim": 0.98211, "mae": 2.13}}, "value": {"60": 7.995, "70": 7.076, "75": 6.533}, "base": "l3_b_1_1", "level": "l3", "face": "b"}, {"kind": "edge", "tile": "pano/1/1774/1/mres_b/l2/3/l2_b_3_2.jpg", "w": 512, "h": 512, "x": 352, "y": 288, "size": 64, "jpg_bytes": 55127, "per_q": {"60": {"webp_bytes": 51656, "ssim": 0.96169, "mae": 4.175}, "70": {"webp_bytes": 56970, "ssim": 0.97004, "mae": 3.703}, "75": {"webp_bytes": 60020, "ssim": 0.97378, "mae": 3.457}}, "value": {"60": 4.692, "70": 4.047, "75": 3.786}, "base": "l2_b_3_2", "level": "l2", "face": "b"}]}, {"scene": "pano/0/66/65", "slug": "0-66-65", "name": "한국기술교육대학교 · 중앙공원", "group": "요청 유형 — 디테일 많은 장면 · 하늘 많은 외부샷", "note": "지상 외부샷, 하늘 많음", "jpg": 12352091, "tiles": 504, "stat": {"60": {"webp_bytes": 10313678, "change_pct": -16.5, "ssim_mean": 0.965, "ssim_p5": 0.9356, "ssim_min": 0.9188, "grown": 28, "mae_mean": 2.706}, "70": {"webp_bytes": 11526612, "change_pct": -6.7, "ssim_mean": 0.9707, "ssim_p5": 0.9465, "ssim_min": 0.9296, "grown": 85, "mae_mean": 2.446}, "75": {"webp_bytes": 12192012, "change_pct": -1.3, "ssim_mean": 0.9735, "ssim_p5": 0.951, "ssim_min": 0.939, "grown": 130, "mae_mean": 2.32}}, "regions": [{"kind": "ssim", "tile": "pano/0/66/65/mres_f/l2/2/l2_f_2_4.jpg", "w": 512, "h": 512, "x": 261, "y": 443, "size": 64, "jpg_bytes": 9916, "per_q": {"60": {"webp_bytes": 5842, "ssim": 0.98264, "mae": 1.343}, "70": {"webp_bytes": 6426, "ssim": 0.98489, "mae": 1.253}, "75": {"webp_bytes": 6816, "ssim": 0.98628, "mae": 1.207}}, "value": {"60": 0.86084, "70": 0.8888, "75": 0.90156}, "base": "l2_f_2_4", "level": "l2", "face": "f"}, {"kind": "err", "tile": "pano/0/66/65/mres_b/l3/1/l3_b_1_2.jpg", "w": 512, "h": 512, "x": 352, "y": 448, "size": 64, "jpg_bytes": 15787, "per_q": {"60": {"webp_bytes": 12408, "ssim": 0.98512, "mae": 1.87}, "70": {"webp_bytes": 13646, "ssim": 0.98789, "mae": 1.709}, "75": {"webp_bytes": 14368, "ssim": 0.98919, "mae": 1.637}}, "value": {"60": 6.823, "70": 6.07, "75": 5.637}, "base": "l3_b_1_2", "level": "l3", "face": "b"}, {"kind": "edge", "tile": "pano/0/66/65/mres_l/l1/4/l1_l_4_4.jpg", "w": 512, "h": 512, "x": 96, "y": 320, "size": 64, "jpg_bytes": 47795, "per_q": {"60": {"webp_bytes": 42220, "ssim": 0.9641, "mae": 3.841}, "70": {"webp_bytes": 46718, "ssim": 0.97107, "mae": 3.418}, "75": {"webp_bytes": 49466, "ssim": 0.97479, "mae": 3.19}}, "value": {"60": 5.089, "70": 4.468, "75": 4.17}, "base": "l1_l_4_4", "level": "l1", "face": "l"}]}, {"scene": "pano/0/493/80", "slug": "0-493-80", "name": "물향기수목원 · 항공전경(1)", "group": "요청 유형 — 디테일 많은 장면 · 하늘 많은 외부샷", "note": "구름 낀 하늘 + 숲", "jpg": 8427547, "tiles": 504, "stat": {"60": {"webp_bytes": 5888274, "change_pct": -30.1, "ssim_mean": 0.9655, "ssim_p5": 0.9272, "ssim_min": 0.9155, "grown": 0, "mae_mean": 2.169}, "70": {"webp_bytes": 6659372, "change_pct": -21.0, "ssim_mean": 0.9709, "ssim_p5": 0.9397, "ssim_min": 0.93, "grown": 6, "mae_mean": 1.982}, "75": {"webp_bytes": 7068524, "change_pct": -16.1, "ssim_mean": 0.9734, "ssim_p5": 0.9454, "ssim_min": 0.9363, "grown": 23, "mae_mean": 1.893}}, "regions": [{"kind": "ssim", "tile": "pano/0/493/80/mres_l/l1/4/l1_l_4_5.jpg", "w": 512, "h": 512, "x": 197, "y": 389, "size": 64, "jpg_bytes": 15696, "per_q": {"60": {"webp_bytes": 8752, "ssim": 0.9511, "mae": 2.14}, "70": {"webp_bytes": 10156, "ssim": 0.95982, "mae": 1.979}, "75": {"webp_bytes": 10764, "ssim": 0.96281, "mae": 1.894}}, "value": {"60": 0.85928, "70": 0.88866, "75": 0.89752}, "base": "l1_l_4_5", "level": "l1", "face": "l"}, {"kind": "err", "tile": "pano/0/493/80/mres_d/l2/1/l2_d_1_3.jpg", "w": 512, "h": 512, "x": 0, "y": 288, "size": 64, "jpg_bytes": 40753, "per_q": {"60": {"webp_bytes": 33846, "ssim": 0.94076, "mae": 3.959}, "70": {"webp_bytes": 37908, "ssim": 0.95214, "mae": 3.544}, "75": {"webp_bytes": 40206, "ssim": 0.95741, "mae": 3.369}}, "value": {"60": 6.745, "70": 5.884, "75": 5.502}, "base": "l2_d_1_3", "level": "l2", "face": "d"}, {"kind": "edge", "tile": "pano/0/493/80/mres_d/l2/4/l2_d_4_2.jpg", "w": 512, "h": 512, "x": 320, "y": 96, "size": 64, "jpg_bytes": 41756, "per_q": {"60": {"webp_bytes": 35926, "ssim": 0.94007, "mae": 3.892}, "70": {"webp_bytes": 40490, "ssim": 0.95332, "mae": 3.461}, "75": {"webp_bytes": 42550, "ssim": 0.95788, "mae": 3.308}}, "value": {"60": 3.096, "70": 2.721, "75": 2.546}, "base": "l2_d_4_2", "level": "l2", "face": "d"}]}, {"scene": "pano/0/90/23", "slug": "0-90-23", "name": "의릉 · 전경11", "group": "WebP 로 바꾸면 커지는 사례", "note": "계획 덱 13페이지 타일이 든 장면", "jpg": 19135584, "tiles": 504, "stat": {"60": {"webp_bytes": 16469820, "change_pct": -13.9, "ssim_mean": 0.955, "ssim_p5": 0.9156, "ssim_min": 0.8859, "grown": 25, "mae_mean": 3.597}, "70": {"webp_bytes": 18283850, "change_pct": -4.5, "ssim_mean": 0.9638, "ssim_p5": 0.9318, "ssim_min": 0.9084, "grown": 122, "mae_mean": 3.218}, "75": {"webp_bytes": 19273404, "change_pct": 0.7, "ssim_mean": 0.9678, "ssim_p5": 0.9386, "ssim_min": 0.9197, "grown": 199, "mae_mean": 3.033}}, "regions": [{"kind": "ssim", "tile": "pano/0/90/23/mres_b/l2/4/l2_b_4_3.jpg", "w": 512, "h": 512, "x": 443, "y": 37, "size": 64, "jpg_bytes": 26664, "per_q": {"60": {"webp_bytes": 19606, "ssim": 0.88789, "mae": 3.26}, "70": {"webp_bytes": 22810, "ssim": 0.91265, "mae": 2.925}, "75": {"webp_bytes": 24496, "ssim": 0.9216, "mae": 2.79}}, "value": {"60": 0.852, "70": 0.88232, "75": 0.89192}, "base": "l2_b_4_3", "level": "l2", "face": "b"}, {"kind": "err", "tile": "pano/0/90/23/mres_l/l3/1/l3_l_1_1.jpg", "w": 512, "h": 512, "x": 448, "y": 0, "size": 64, "jpg_bytes": 51941, "per_q": {"60": {"webp_bytes": 48628, "ssim": 0.97277, "mae": 3.932}, "70": {"webp_bytes": 53460, "ssim": 0.97869, "mae": 3.477}, "75": {"webp_bytes": 55578, "ssim": 0.98086, "mae": 3.293}}, "value": {"60": 7.138, "70": 6.215, "75": 5.913}, "base": "l3_l_1_1", "level": "l3", "face": "l"}, {"kind": "edge", "tile": "pano/0/90/23/mres_f/l2/1/l2_f_1_3.jpg", "w": 512, "h": 512, "x": 352, "y": 224, "size": 64, "jpg_bytes": 36282, "per_q": {"60": {"webp_bytes": 32542, "ssim": 0.98335, "mae": 2.586}, "70": {"webp_bytes": 35260, "ssim": 0.98673, "mae": 2.312}, "75": {"webp_bytes": 36758, "ssim": 0.98822, "mae": 2.162}}, "value": {"60": 4.767, "70": 4.222, "75": 3.841}, "base": "l2_f_1_3", "level": "l2", "face": "f"}]}, {"scene": "pano/1/1154/1", "slug": "1-1154-1", "name": "덕수궁 · 돌담길", "group": "WebP 로 바꾸면 커지는 사례", "note": "q70 +15.4%", "jpg": 33491751, "tiles": 504, "stat": {"60": {"webp_bytes": 35553948, "change_pct": 6.2, "ssim_mean": 0.9741, "ssim_p5": 0.9388, "ssim_min": 0.8811, "grown": 389, "mae_mean": 4.974}, "70": {"webp_bytes": 38640900, "change_pct": 15.4, "ssim_mean": 0.98, "ssim_p5": 0.9522, "ssim_min": 0.9034, "grown": 486, "mae_mean": 4.429}, "75": {"webp_bytes": 40260878, "change_pct": 20.2, "ssim_mean": 0.9825, "ssim_p5": 0.9576, "ssim_min": 0.9151, "grown": 502, "mae_mean": 4.172}}, "regions": [{"kind": "ssim", "tile": "pano/1/1154/1/mres_u/l1/2/l1_u_2_5.jpg", "w": 512, "h": 512, "x": 37, "y": 443, "size": 64, "jpg_bytes": 24097, "per_q": {"60": {"webp_bytes": 20698, "ssim": 0.89348, "mae": 3.202}, "70": {"webp_bytes": 24390, "ssim": 0.91576, "mae": 2.868}, "75": {"webp_bytes": 26574, "ssim": 0.92571, "mae": 2.696}}, "value": {"60": 0.85989, "70": 0.89334, "75": 0.90471}, "base": "l1_u_2_5", "level": "l1", "face": "u"}, {"kind": "err", "tile": "pano/1/1154/1/mres_u/l1/2/l1_u_2_2.jpg", "w": 512, "h": 512, "x": 224, "y": 0, "size": 64, "jpg_bytes": 54713, "per_q": {"60": {"webp_bytes": 50704, "ssim": 0.95192, "mae": 4.684}, "70": {"webp_bytes": 55414, "ssim": 0.96092, "mae": 4.259}, "75": {"webp_bytes": 58746, "ssim": 0.96614, "mae": 4.006}}, "value": {"60": 10.03, "70": 9.394, "75": 8.975}, "base": "l1_u_2_2", "level": "l1", "face": "u"}, {"kind": "edge", "tile": "pano/1/1154/1/mres_b/l1/4/l1_b_4_6.jpg", "w": 512, "h": 512, "x": 0, "y": 0, "size": 64, "jpg_bytes": 72482, "per_q": {"60": {"webp_bytes": 76396, "ssim": 0.97604, "mae": 4.763}, "70": {"webp_bytes": 82930, "ssim": 0.98164, "mae": 4.248}, "75": {"webp_bytes": 86322, "ssim": 0.98377, "mae": 3.978}}, "value": {"60": 5.296, "70": 4.627, "75": 4.269}, "base": "l1_b_4_6", "level": "l1", "face": "b"}]}, {"scene": "pano/0/135/33", "slug": "0-135-33", "name": "수리산성지 · 마리아 상", "group": "WebP 로 바꾸면 커지는 사례", "note": "q70 +14.7%", "jpg": 31033211, "tiles": 504, "stat": {"60": {"webp_bytes": 32659498, "change_pct": 5.2, "ssim_mean": 0.9761, "ssim_p5": 0.9581, "ssim_min": 0.929, "grown": 339, "mae_mean": 4.46}, "70": {"webp_bytes": 35606994, "change_pct": 14.7, "ssim_mean": 0.9817, "ssim_p5": 0.9669, "ssim_min": 0.9436, "grown": 466, "mae_mean": 3.93}, "75": {"webp_bytes": 37133586, "change_pct": 19.7, "ssim_mean": 0.984, "ssim_p5": 0.9709, "ssim_min": 0.9503, "grown": 491, "mae_mean": 3.685}}, "regions": [{"kind": "ssim", "tile": "pano/0/135/33/mres_l/l1/6/l1_l_6_3.jpg", "w": 512, "h": 512, "x": 421, "y": 229, "size": 64, "jpg_bytes": 45164, "per_q": {"60": {"webp_bytes": 45202, "ssim": 0.93237, "mae": 4.274}, "70": {"webp_bytes": 50736, "ssim": 0.94692, "mae": 3.804}, "75": {"webp_bytes": 53730, "ssim": 0.95344, "mae": 3.578}}, "value": {"60": 0.90401, "70": 0.92511, "75": 0.93188}, "base": "l1_l_6_3", "level": "l1", "face": "l"}, {"kind": "err", "tile": "pano/0/135/33/mres_l/l2/4/l2_l_4_3.jpg", "w": 512, "h": 512, "x": 320, "y": 0, "size": 64, "jpg_bytes": 68272, "per_q": {"60": {"webp_bytes": 71764, "ssim": 0.98068, "mae": 4.757}, "70": {"webp_bytes": 77928, "ssim": 0.98487, "mae": 4.265}, "75": {"webp_bytes": 81588, "ssim": 0.98695, "mae": 3.983}}, "value": {"60": 6.983, "70": 6.218, "75": 5.718}, "base": "l2_l_4_3", "level": "l2", "face": "l"}, {"kind": "edge", "tile": "pano/0/135/33/mres_l/l3/1/l3_l_1_1.jpg", "w": 512, "h": 512, "x": 448, "y": 0, "size": 64, "jpg_bytes": 61297, "per_q": {"60": {"webp_bytes": 63814, "ssim": 0.95828, "mae": 4.589}, "70": {"webp_bytes": 70476, "ssim": 0.9688, "mae": 4.039}, "75": {"webp_bytes": 73714, "ssim": 0.97282, "mae": 3.787}}, "value": {"60": 5.733, "70": 5.064, "75": 4.623}, "base": "l3_l_1_1", "level": "l3", "face": "l"}]}, {"scene": "pano/0/378/24", "slug": "0-378-24", "name": "2017 파주포크페스티벌 · 야간전경", "group": "추가 제안", "note": "어두운 하늘", "jpg": 13175750, "tiles": 504, "stat": {"60": {"webp_bytes": 10344466, "change_pct": -21.5, "ssim_mean": 0.901, "ssim_p5": 0.8645, "ssim_min": 0.8568, "grown": 4, "mae_mean": 3.337}, "70": {"webp_bytes": 11983016, "change_pct": -9.1, "ssim_mean": 0.921, "ssim_p5": 0.8904, "ssim_min": 0.881, "grown": 79, "mae_mean": 2.988}, "75": {"webp_bytes": 12879830, "change_pct": -2.2, "ssim_mean": 0.9301, "ssim_p5": 0.9033, "ssim_min": 0.8971, "grown": 181, "mae_mean": 2.815}}, "regions": [{"kind": "ssim", "tile": "pano/0/378/24/mres_u/l2/2/l2_u_2_4.jpg", "w": 512, "h": 512, "x": 443, "y": 5, "size": 64, "jpg_bytes": 17811, "per_q": {"60": {"webp_bytes": 10274, "ssim": 0.86066, "mae": 2.914}, "70": {"webp_bytes": 13222, "ssim": 0.88612, "mae": 2.664}, "75": {"webp_bytes": 14710, "ssim": 0.8982, "mae": 2.527}}, "value": {"60": 0.79335, "70": 0.83563, "75": 0.85996}, "base": "l2_u_2_4", "level": "l2", "face": "u"}, {"kind": "err", "tile": "pano/0/378/24/mres_l/l1/4/l1_l_4_4.jpg", "w": 512, "h": 512, "x": 256, "y": 320, "size": 64, "jpg_bytes": 43378, "per_q": {"60": {"webp_bytes": 43674, "ssim": 0.92382, "mae": 4.248}, "70": {"webp_bytes": 49764, "ssim": 0.94229, "mae": 3.704}, "75": {"webp_bytes": 52952, "ssim": 0.94986, "mae": 3.461}}, "value": {"60": 6.501, "70": 5.74, "75": 5.301}, "base": "l1_l_4_4", "level": "l1", "face": "l"}, {"kind": "edge", "tile": "pano/0/378/24/mres_b/l1/5/l1_b_5_3.jpg", "w": 512, "h": 512, "x": 416, "y": 224, "size": 64, "jpg_bytes": 41654, "per_q": {"60": {"webp_bytes": 35402, "ssim": 0.91869, "mae": 4.029}, "70": {"webp_bytes": 40302, "ssim": 0.93658, "mae": 3.577}, "75": {"webp_bytes": 42964, "ssim": 0.94418, "mae": 3.374}}, "value": {"60": 2.864, "70": 2.525, "75": 2.337}, "base": "l1_b_5_3", "level": "l1", "face": "b"}]}, {"scene": "pano/0/100/271", "slug": "0-100-271", "name": "남산서울타워 · 미디어아트", "group": "추가 제안", "note": "어두운 실내", "jpg": 12879002, "tiles": 504, "stat": {"60": {"webp_bytes": 9351070, "change_pct": -27.4, "ssim_mean": 0.9121, "ssim_p5": 0.8699, "ssim_min": 0.8532, "grown": 1, "mae_mean": 3.136}, "70": {"webp_bytes": 10776864, "change_pct": -16.3, "ssim_mean": 0.9279, "ssim_p5": 0.8953, "ssim_min": 0.8837, "grown": 42, "mae_mean": 2.842}, "75": {"webp_bytes": 11575532, "change_pct": -10.1, "ssim_mean": 0.9353, "ssim_p5": 0.9059, "ssim_min": 0.8958, "grown": 90, "mae_mean": 2.694}}, "regions": [{"kind": "ssim", "tile": "pano/0/100/271/mres_u/l2/4/l2_u_4_1.jpg", "w": 512, "h": 512, "x": 389, "y": 421, "size": 64, "jpg_bytes": 14398, "per_q": {"60": {"webp_bytes": 5328, "ssim": 0.90177, "mae": 2.317}, "70": {"webp_bytes": 7186, "ssim": 0.91619, "mae": 2.144}, "75": {"webp_bytes": 8332, "ssim": 0.92392, "mae": 2.044}}, "value": {"60": 0.76922, "70": 0.83135, "75": 0.85874}, "base": "l2_u_4_1", "level": "l2", "face": "u"}, {"kind": "err", "tile": "pano/0/100/271/mres_f/l1/4/l1_f_4_5.jpg", "w": 512, "h": 512, "x": 320, "y": 352, "size": 64, "jpg_bytes": 39483, "per_q": {"60": {"webp_bytes": 31330, "ssim": 0.94012, "mae": 3.511}, "70": {"webp_bytes": 35164, "ssim": 0.95045, "mae": 3.171}, "75": {"webp_bytes": 37508, "ssim": 0.95354, "mae": 3.001}}, "value": {"60": 6.875, "70": 6.103, "75": 5.747}, "base": "l1_f_4_5", "level": "l1", "face": "f"}, {"kind": "edge", "tile": "pano/0/100/271/mres_f/l2/3/l2_f_3_3.jpg", "w": 512, "h": 512, "x": 224, "y": 0, "size": 64, "jpg_bytes": 56067, "per_q": {"60": {"webp_bytes": 53608, "ssim": 0.96237, "mae": 4.431}, "70": {"webp_bytes": 59720, "ssim": 0.97125, "mae": 3.908}, "75": {"webp_bytes": 62772, "ssim": 0.97494, "mae": 3.664}}, "value": {"60": 4.663, "70": 3.877, "75": 3.673}, "base": "l2_f_3_3", "level": "l2", "face": "f"}]}, {"scene": "pano/1/1774/3", "slug": "1-1774-3", "name": "궁디팡팡 캣페스타 · 포토존", "group": "추가 제안", "note": "흰 벽", "jpg": 8539375, "tiles": 504, "stat": {"60": {"webp_bytes": 4651312, "change_pct": -45.5, "ssim_mean": 0.9285, "ssim_p5": 0.8859, "ssim_min": 0.8741, "grown": 0, "mae_mean": 2.366}, "70": {"webp_bytes": 5549942, "change_pct": -35.0, "ssim_mean": 0.9396, "ssim_p5": 0.9073, "ssim_min": 0.8973, "grown": 0, "mae_mean": 2.174}, "75": {"webp_bytes": 6058718, "change_pct": -29.0, "ssim_mean": 0.9451, "ssim_p5": 0.917, "ssim_min": 0.9069, "grown": 0, "mae_mean": 2.075}}, "regions": [{"kind": "ssim", "tile": "pano/1/1774/3/mres_f/l1/3/l1_f_3_6.jpg", "w": 512, "h": 512, "x": 69, "y": 389, "size": 64, "jpg_bytes": 16712, "per_q": {"60": {"webp_bytes": 7658, "ssim": 0.94475, "mae": 2.231}, "70": {"webp_bytes": 9312, "ssim": 0.95278, "mae": 2.069}, "75": {"webp_bytes": 10080, "ssim": 0.95609, "mae": 2.008}}, "value": {"60": 0.8192, "70": 0.85877, "75": 0.87805}, "base": "l1_f_3_6", "level": "l1", "face": "f"}, {"kind": "err", "tile": "pano/1/1774/3/mres_b/l3/1/l3_b_1_2.jpg", "w": 512, "h": 512, "x": 160, "y": 288, "size": 64, "jpg_bytes": 18375, "per_q": {"60": {"webp_bytes": 11376, "ssim": 0.97386, "mae": 1.976}, "70": {"webp_bytes": 12696, "ssim": 0.97738, "mae": 1.831}, "75": {"webp_bytes": 13462, "ssim": 0.97942, "mae": 1.739}}, "value": {"60": 6.907, "70": 6.37, "75": 5.948}, "base": "l3_b_1_2", "level": "l3", "face": "b"}, {"kind": "edge", "tile": "pano/1/1774/3/mres_l/l1/4/l1_l_4_4.jpg", "w": 512, "h": 512, "x": 288, "y": 192, "size": 64, "jpg_bytes": 34437, "per_q": {"60": {"webp_bytes": 24154, "ssim": 0.92408, "mae": 3.378}, "70": {"webp_bytes": 28058, "ssim": 0.93872, "mae": 3.046}, "75": {"webp_bytes": 30258, "ssim": 0.94714, "mae": 2.854}}, "value": {"60": 2.846, "70": 2.512, "75": 2.306}, "base": "l1_l_4_4", "level": "l1", "face": "l"}]}], "total": {"60": {"all": 160741144, "all_pct": -12.9, "ruled": 157052660, "ruled_pct": -14.9, "skip": ["덕수궁 · 돌담길", "수리산성지 · 마리아 상"], "grown": 820}, "70": {"all": 179098836, "all_pct": -3.0, "ruled": 171053117, "ruled_pct": -7.4, "skip": ["한국기술교육대학교 · 중앙공원", "의릉 · 전경11", "덕수궁 · 돌담길", "수리산성지 · 마리아 상"], "grown": 1434}, "75": {"all": 189014084, "all_pct": 2.4, "ruled": 179507376, "ruled_pct": -2.8, "skip": ["궁디팡팡 캣페스타 · 고공전경", "궁디팡팡 캣페스타 · 카페테리아", "궁디팡팡 캣페스타 · 전시관 입구", "한국기술교육대학교 · 중앙공원", "의릉 · 전경11", "덕수궁 · 돌담길", "수리산성지 · 마리아 상", "2017 파주포크페스티벌 · 야간전경"], "grown": 1951}}, "jpg_total": 184650526, "skip": -8.0};
+const QS = ['60','70','75'];
+const FACE = {f:'앞',b:'뒤',l:'왼쪽',r:'오른쪽',u:'위',d:'아래'};
+const LV = {l1:'l1 (최고 해상도 · 최대 3× 까지 확대됨)', l2:'l2 (중간 · 화면에선 약 1×)', l3:'l3 (가장 낮음 · 멀리 볼 때 · 약 1×)'};
+const KIND = {ssim:'① 질감 손실 최대 (SSIM 최저)', err:'② 색 오차 최대', edge:'③ 경계 뭉개짐 최대 (글자·윤곽)'};
+const kb = b => (b/1024).toFixed(1)+'KB', mb = b => (b/1048576).toFixed(1)+'MB';
+const pc = v => (v>0?'+':'')+v.toFixed(1)+'%';
+const cls = v => v > D.skip ? 'bad' : 'good';
+let Z = 2, S = 256;
+
+// KPI
+const t = D.total;
+document.getElementById('kpis').innerHTML = [
+  [pc(t['60'].all_pct), 'q60 · 11개 장면 전부 변환 시 (JPG '+mb(D.jpg_total)+' 대비)'],
+  [pc(t['70'].all_pct), 'q70 · 전부 변환 시'],
+  [pc(t['75'].all_pct), 'q75 · 전부 변환 시 — 오히려 커짐'],
+  [pc(t['60'].ruled_pct)+' / '+pc(t['70'].ruled_pct), 'q60 / q70 · 스킵 규칙 적용 후 (JPG 유지 '+t['60'].skip.length+' / '+t['70'].skip.length+'곳)'],
+].map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
+
+// 요약표
+let h = `<table><tr><th class="l">장면</th><th>JPG</th>${QS.map(q=>`<th>q${q} 변화</th><th>q${q} SSIM</th><th>q${q} 커진 타일</th>`).join('')}</tr>`;
+for (const s of D.scenes) {
+  h += `<tr><td><a href="#${s.slug}">${s.name}</a> <span class="mute">${s.scene.replace('pano/','')}</span></td><td>${mb(s.jpg)}</td>` +
+    QS.map(q=>{const x=s.stat[q];return `<td class="${cls(x.change_pct)}">${pc(x.change_pct)}</td><td>${x.ssim_mean.toFixed(3)}</td><td class="${x.grown>250?'bad':x.grown>50?'amber':''}">${x.grown}/504</td>`}).join('') + '</tr>';
+}
+h += `<tr><th class="l">합계 · 전부 변환</th><th>${mb(D.jpg_total)}</th>${QS.map(q=>`<th class="${cls(t[q].all_pct)}">${pc(t[q].all_pct)}</th><th></th><th>${t[q].grown}</th>`).join('')}</tr>`;
+h += `<tr><th class="l">합계 · 스킵 규칙 적용<br><span class="mute" style="font-weight:400">장면 절감 8% 미만은 JPG 유지</span></th><th></th>${QS.map(q=>`<th class="${cls(t[q].ruled_pct)}">${pc(t[q].ruled_pct)}</th><th colspan="2" class="l" style="font-weight:400;white-space:normal;font-size:.9em">JPG 유지 ${t[q].skip.length}곳</th>`).join('')}</tr></table>`;
+h += `<div class="mute" style="font-size:.8em;margin-top:6px">초록 = 스킵 규칙 통과(8% 이상 절감) · 빨강 = JPG 유지 대상 · SSIM 은 지금 JPG 대비(1 = 동일) 타일 평균</div>`;
+document.getElementById('sumtable').innerHTML = h;
+
+// 장면
+const box = document.getElementById('scenes');
+for (const s of D.scenes) {
+  const sec = document.createElement('section'); sec.id = s.slug;
+  let x = `<div class="scene-h"><h3>${s.name}<span class="tag">${s.group}</span></h3><span class="p"><code>${s.scene}</code> · ${s.note}</span></div>`;
+  x += `<table class="mini"><tr><th class="l">타일 504장</th>${QS.map(q=>`<th>q${q}</th>`).join('')}</tr>
+   <tr><td>용량 (JPG ${mb(s.jpg)})</td>${QS.map(q=>`<td>${mb(s.stat[q].webp_bytes)} <span class="${cls(s.stat[q].change_pct)}">${pc(s.stat[q].change_pct)}</span></td>`).join('')}</tr>
+   <tr><td>SSIM 평균 / 하위 5%</td>${QS.map(q=>`<td>${s.stat[q].ssim_mean.toFixed(3)} / ${s.stat[q].ssim_p5.toFixed(3)}</td>`).join('')}</tr>
+   <tr><td>JPG 보다 커진 타일</td>${QS.map(q=>`<td>${s.stat[q].grown}</td>`).join('')}</tr>
+   <tr><td>스킵 규칙 (8%)</td>${QS.map(q=>s.stat[q].change_pct > D.skip ? `<td class="bad">JPG 유지</td>` : `<td class="good">WebP 전환</td>`).join('')}</tr></table>`;
+  for (const g of s.regions) {
+    const dir = `assets/2026-11-23-webp-q-compare/${s.slug}/`;
+    x += `<div class="region" data-w="${g.w}" data-h="${g.h}" data-cx="${g.x+32}" data-cy="${g.y+32}">
+     <div class="rh"><b>${KIND[g.kind]}</b> · ${FACE[g.face]} 면 · ${LV[g.level]} · 타일 <code>${g.base}</code> (x ${g.x}~${g.x+64}, y ${g.y}~${g.y+64})</div>
+     <div class="row"><div class="ov"><div class="box"><img src="${dir}${g.base}.jpg" loading="lazy"><div class="rect"></div></div>타일 전체 (빨간 상자 = 오른쪽 확대 범위)</div>
+     ${[['jpg','JPG 원본',g.base+'.jpg',g.jpg_bytes,null]].concat(QS.map(q=>['q'+q,'WebP q'+q,`${g.base}.q${q}.webp`,g.per_q[q].webp_bytes,g.per_q[q]])).map(([c,l,f,b,pq])=>
+       `<div class="pn ${c}"><div class="lab"><b>${l}</b><span>${kb(b)}${pq?` · <span class="${b>g.jpg_bytes?'bad':'good'}">${pc((b/g.jpg_bytes-1)*100)}</span> · SSIM ${pq.ssim.toFixed(3)}`:''}</span></div>
+        <div class="v" ${c!=='jpg'?`data-jpg="${dir}${g.base}.jpg" data-own="${dir}${f}"`:''}><img src="${dir}${f}" loading="lazy" draggable="false"><span class="peek">JPG 원본</span></div></div>`).join('')}
+     </div></div>`;
+  }
+  sec.innerHTML = x; box.appendChild(sec);
+}
+
+function layout() {
+  document.querySelectorAll('.region').forEach(r => {
+    const w=+r.dataset.w, h=+r.dataset.h, cx=+r.dataset.cx, cy=+r.dataset.cy;
+    const src = S / Z; // 원본 픽셀 범위
+    const x0 = Math.max(0, Math.min(w - src, cx - src/2)), y0 = Math.max(0, Math.min(h - src, cy - src/2));
+    r.querySelectorAll('.pn .v').forEach(v => {
+      v.style.width = v.style.height = S+'px';
+      const im = v.querySelector('img');
+      im.style.width = (w*Z)+'px'; im.style.height = (h*Z)+'px';
+      im.style.left = (-x0*Z)+'px'; im.style.top = (-y0*Z)+'px';
+    });
+    const rect = r.querySelector('.rect'), kx = 150 / w, ky = 150 / h;
+    Object.assign(rect.style, {left:(x0*kx)+'px', top:(y0*ky)+'px', width:(Math.min(src,w)*kx)+'px', height:(Math.min(src,h)*ky)+'px'});
+  });
+}
+layout();
+document.querySelectorAll('[data-z]').forEach(b => b.onclick = () => { Z=+b.dataset.z; document.querySelectorAll('[data-z]').forEach(o=>o.classList.toggle('on',o===b)); layout(); });
+document.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { S=+b.dataset.s; document.querySelectorAll('[data-s]').forEach(o=>o.classList.toggle('on',o===b)); layout(); });
+// 누르고 있거나 마우스를 올리면 JPG 로
+document.querySelectorAll('.pn .v[data-jpg]').forEach(v => {
+  const im = v.querySelector('img');
+  const on = () => { im.src = v.dataset.jpg; v.classList.add('peeking'); };
+  const off = () => { im.src = v.dataset.own; v.classList.remove('peeking'); };
+  v.addEventListener('pointerenter', on); v.addEventListener('pointerleave', off);
+  v.addEventListener('pointerdown', on); v.addEventListener('pointerup', off); v.addEventListener('pointercancel', off);
+});
+
+// 판정표 (localStorage)
+const KEY = 'webp-q-compare-2026-11-23';
+const V = JSON.parse(localStorage.getItem(KEY) || '{}');
+const OPTS = [['ok60','q60 괜찮음'],['need70','q70 필요'],['need75','q75 필요'],['jpg','JPG 유지']];
+function renderVerdict() {
+  let r = `<tr><th>장면</th><th>q60 변화</th><th>q70 변화</th><th>판정</th></tr>`;
+  for (const s of D.scenes) {
+    r += `<tr><td><a href="#${s.slug}">${s.name}</a></td><td class="${cls(s.stat['60'].change_pct)}">${pc(s.stat['60'].change_pct)}</td><td class="${cls(s.stat['70'].change_pct)}">${pc(s.stat['70'].change_pct)}</td>
+      <td><div class="pick" style="margin:0">${OPTS.map(([k,l])=>`<button data-sc="${s.slug}" data-v="${k}" class="${V[s.slug]===k?'on':''}">${l}</button>`).join('')}</div></td></tr>`;
+  }
+  document.getElementById('verdicts').innerHTML = r;
+  const cnt = k => Object.values(V).filter(v=>v===k).length, n = Object.keys(V).length;
+  document.getElementById('vsum').innerHTML = n ? `판정 ${n}/11 · q60 괜찮음 <b>${cnt('ok60')}</b> · q70 필요 <b>${cnt('need70')}</b> · q75 필요 <b>${cnt('need75')}</b> · JPG 유지 <b>${cnt('jpg')}</b>` +
+    (cnt('need70')+cnt('need75') ? ` → <b class="amber">q70 이상이 필요한 장면이 있어 «일괄 q70» 기준에 해당</b>` : n===11 ? ` → <b class="good">전부 q60 으로 충분 — «일괄 q60» 가능</b>` : '') : '아직 판정 없음 — 위 비교를 보고 장면마다 골라 주세요.';
+  document.querySelectorAll('#verdicts [data-sc]').forEach(b => b.onclick = () => { V[b.dataset.sc] = b.dataset.v; localStorage.setItem(KEY, JSON.stringify(V)); renderVerdict(); });
+}
+renderVerdict();
+</script>
+</body></html>

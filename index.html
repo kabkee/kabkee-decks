@@ -479,6 +479,12 @@
           <div class="meta">서버 /files 는 S3 버킷을 폴더처럼 붙인 것 · 관람 타일은 CloudFront → S3 직접 · 서버 폴더로 변환하면 1회 약 $23~26 + 목록 정보 월 약 $39 증가 → S3 API 로만 변환 · 시범 전후 Inodes 비교로 직접 업로드 영향 확정 · 지금 월 약 $52 는 전환과 별개 과제</div>
           <span class="tag">NEW · AWS 비용 · S3 Files · 레거시</span>
         </a>
+        <a class="deck-card" href="reports/2026-11-23-webp-q-compare.html">
+          <div class="date">2026-11-23</div>
+          <div class="title">WebP q60 · q70 · q75 화질 비교<br>레거시 큐브 타일 11개 장면 · 가장 많이 달라진 곳</div>
+          <div class="meta">시범 장면 11개 타일 5,544장 변환(method 6) · 전부 변환 시 q60 −12.9% · q70 −3.0% · q75 +2.4% · 스킵 규칙(8%) 적용 시 q60 −14.9%(JPG 유지 2곳) · q70 −7.4%(4곳) · 장면마다 SSIM 최저 · 색 오차 · 경계 뭉개짐 3곳을 실제 타일 파일로 1~3× 확대 비교 · 누르면 JPG 원본 · 장면별 판정표</div>
+          <span class="tag">NEW · WebP · 화질 비교 · 레거시</span>
+        </a>
         <a class="deck-card" href="reports/2026-11-18-webp-legacy-tile-plan.html">
           <div class="date">2026-11-18</div>
           <div class="title">레거시 큐브 타일 WebP 전환 실행 계획<br>전환 확정 후 · 절감 효과와 미래 시나리오</div>
