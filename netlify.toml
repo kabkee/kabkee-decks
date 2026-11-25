@@ -36,3 +36,12 @@
   from = "/reports/place-scores"
   to = "/reports/2026-11-18-place-guide-scores.html"
   status = 200
+
+# ===== 레거시 번역 문제 문구 수정 요청 페이지 (2026-11-25 · IND-9870) =====
+# 날짜 파일명 대신 고정 주소로 공유한다. status 200 = rewrite(주소창은 공유 주소 그대로).
+# 🚫 `reports/translation-issues/` 폴더를 만들지 말 것 — 폴더와 파일이 같은 이름이면 Netlify
+#    pretty URL 이 충돌해 «배포 성공인데 다른 화면» 이 된다(2026-11-13 실측).
+[[redirects]]
+  from = "/reports/translation-issues"
+  to = "/reports/2026-11-25-legacy-translation-issues.html"
+  status = 200
