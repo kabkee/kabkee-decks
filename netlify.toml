@@ -45,3 +45,10 @@
   from = "/reports/translation-issues"
   to = "/reports/2026-11-25-legacy-translation-issues.html"
   status = 200
+
+# ===== 레거시 번역 오역 회의용 슬라이드 (2026-11-25 · IND-9870) =====
+# 🚫 같은 이름의 폴더를 만들지 말 것 — 폴더와 파일이 같은 이름이면 pretty URL 이 충돌한다.
+[[redirects]]
+  from = "/reports/translation-deck"
+  to = "/reports/2026-11-25-translation-mistranslation.html"
+  status = 200
