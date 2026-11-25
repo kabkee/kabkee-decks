@@ -246,3 +246,35 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-25 &nbsp;·&nbsp; IND-9832 (카톡 썸�
 
 </div>
 </div>
+
+---
+
+## 🔖 결정 — `imglink_*_900.jpg` 는 변환하되, JPG 삭제에서는 뺍니다 <span class="badge-date">2026-11-25</span>
+
+<div class="cols">
+<div class="col">
+
+### 변환은 그대로 (11-24 오너 결정 유지)
+- IND-9881 §1: 범위에 **`imglink_*_900.jpg` 포함** · gif·`_src`·`_src2` 는 호환성 때문에 제외
+- 화면 호출부는 이미 `tile_ext` 로 `.webp` 를 부릅니다 — `panoThumbSwapPath`(IND-9893) · 지도 `rep_pano_tile_ext` · l3 `krpano-xml-builder.ts:1439` `swapAssetExt`
+- 🔴 지금 변환에서 빼면 오히려 깨집니다 — 정규식 세 벌이 모두 변환 대상으로 보므로 webp 장면에서 `.webp` 404
+
+### JPG 삭제(6단계)에서는 제외
+- `imglink_*_900.jpg` = <span class="hl-amber">126,227개 · 13.08 GB</span> (보관 비용 월 약 $0.3 추정)
+- 지우려면 오른쪽 고정 호출부부터 고친 뒤에 지웁니다
+
+</div>
+<div class="col">
+
+### `.jpg` 를 고정으로 부르는 곳 (삭제 시 깨짐)
+| 위치 | 깨지는 모습 |
+|---|---|
+| `pages/embedpano.php:216` | 후보가 `preview.jpg` → `pv.jpg` 로 넘어가 **배경이 큐브 띠** |
+| `pages/place.php:315` | `is_file` 분기로 `view_500.jpg` 로 넘어감 → 장소 og 깨질 수 있음 |
+| `email_form_factory.php` · 2017 메일 템플릿 | 발송된 메일 속 절대 URL |
+| 외부 핫링크 | 규모 미확인 |
+
+`view_*`·`pv.jpg` 삭제 전에도 같은 고정 호출부 전수 조사가 필요합니다 (이번 조사 범위 밖).
+
+</div>
+</div>
