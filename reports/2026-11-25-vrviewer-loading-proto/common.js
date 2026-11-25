@@ -15,5 +15,6 @@ if(window.buildBg) window.buildBg(document.getElementById('bg'),IMG);
 const b=document.body; let previewed=false;
 setTimeout(()=>{ if(!previewed){b.classList.add('shown')} },GRACE);
 setTimeout(()=>{ previewed=true; b.classList.add('refining'); },T.p);
-setTimeout(()=>{ b.classList.remove('refining'); b.classList.add('done'); },T.d);
+// 타일 완료 시 refining 을 떼지 않는다 — 떼면 로고·Loading 이 가운데로 복귀해 0.3초간 다시 보인다(2026-11-25 덱 사본 수정)
+setTimeout(()=>{ b.classList.add('done'); },T.d);
 document.title='ready'; window.__t0=performance.now();
