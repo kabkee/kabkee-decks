@@ -44,10 +44,10 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-25 &nbsp;·&nbsp; IND-9870 &nbsp;·&nbsp
 - 🚫 태그 위치·구두점 819건은 **고치지 않기로** 했습니다 (내용은 읽힙니다)
 
 ### ④ 정할 것
+- 🔴 **오역 수정은 아직 한 건도 하지 않았습니다** — 처리 방향을 정한 뒤 집행합니다
 - 전수 검사 재개 여부 · 모델 등급
 - 수정 범위 (영문만? 확신 high 만?)
-- 유료 번역분 처리
-- **레거시 재공급 방어** — 지금 고친 것도 재마이그하면 되돌아갑니다
+- 유료 번역분 처리 · **레거시 재공급 방어**
 
 </div>
 </div>
@@ -84,6 +84,8 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-25 &nbsp;·&nbsp; IND-9870 &nbsp;·&nbsp
 | 전수 환산 | <span class="hl-red">약 6,300건</span> |
 
 🔴 **「전수 검사 결과」가 아닙니다.** 목록에 없다고 문제없는 것이 아닙니다.
+
+⚠️ 원본이 레거시(`look360_place_multilang`)이므로 **레거시 서비스(look360.kr)에도 같은 오역이 보일 가능성이 높습니다** — 아직 화면을 직접 확인하지 않았습니다.
 
 </div>
 <div class="col">
@@ -191,10 +193,11 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-25 &nbsp;·&nbsp; IND-9870 &nbsp;·&nbsp
 - 우리가 고칠지
 
 ### ④ 레거시 재공급 방어 🔴
-- `l3_place` ← `look360_place`
-- `l3_place_i18n` ← `look360_place_multilang`
-- 레거시에서 **매번 덮어씁니다** ⇒ 지금 고친 꺾쇠·한자도 <span class="hl-red">재마이그하면 되돌아갑니다</span>
-- 변환 규칙에 넣어야 영구적입니다 — 그 작업을 할지 정해야 합니다
+꺾쇠·한자 수정도 <span class="hl-red">재마이그 1회로 사라집니다</span>. 어느 방안을 쓸지 정해 주세요.
+
+- **A 규칙 후처리** — 꺾쇠. 변환 규칙에 멱등 함수
+- **B 시드 고정** — 한자·오역. `(place_uid, language, 컬럼)` 키
+- **C 레거시 원본 교정** — <span class="hl-green">레거시 서비스까지 함께 고쳐집니다</span>
 
 </div>
 </div>
@@ -212,5 +215,7 @@ Indyspot AI Corp &nbsp;·&nbsp; 2026-11-25 &nbsp;·&nbsp; IND-9870 &nbsp;·&nbsp
 <a href="https://kabkee-decks.netlify.app/reports/translation-issues">검토 페이지 — 오역 599건 · 장소 109곳 (기본: 영문 · 의미 오역만)</a>
 <a href="https://kabkee-main.tailfe017f.ts.net:8443/IND/issues/IND-9870">IND-9870</a>
 </div>
+
+조사 정리 전문(우려사항 · 재마이그 방어 방안 A/B/C 상세): 저장소 `.artifacts/IND-9870/translation-findings-summary.md`
 
 Indyspot AI Corp &nbsp;·&nbsp; 2026-11-25
