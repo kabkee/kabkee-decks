@@ -1,0 +1,17 @@
+/* A3 Dream Drift — soft-focus(blur 2px)+글로우(blur 40px, screen)+느린 Ken Burns(1.04→1.14, 14s alternate). 가장자리는 넓게 feather.
+   in: 1200ms ease-in-out · 장면 크로스디졸브 1300ms ease-in-out (Ken Burns 는 끊기지 않고 사라지며 이어짐) · sharpen 900ms ease-out */
+.bg{--m:radial-gradient(ellipse 78% 72% at 50% 50%,#000 0%,rgba(0,0,0,.7) 38%,rgba(0,0,0,.25) 70%,transparent 100%)}
+.bg .kb{position:absolute;inset:0;-webkit-mask-image:var(--m);mask-image:var(--m);animation:kb 14s ease-in-out infinite alternate}
+.bg .kb img{filter:blur(2px) brightness(1.05);opacity:.30}
+.bg .kb img.glow{filter:blur(40px) saturate(1.3);opacity:.35;mix-blend-mode:screen}
+@keyframes kb{from{transform:scale(1.04) translate(0,0)}to{transform:scale(1.14) translate(-1.5%,-1%)}}
+.bg .aurora{position:absolute;inset:-10%;filter:blur(70px);opacity:.35}
+.bg .aurora i{position:absolute;width:45%;height:55%;border-radius:50%;animation:dr 12s ease-in-out infinite alternate}
+.bg .aurora i:nth-child(1){left:12%;top:18%;background:#3b4f8a}
+.bg .aurora i:nth-child(2){right:10%;bottom:12%;background:#6b4a8f;animation-delay:-6s}
+@keyframes dr{from{transform:translate(-6%,-4%) scale(1)}to{transform:translate(8%,6%) scale(1.15)}}
+body.shown .bg{opacity:1;transition:opacity 1200ms ease-in-out}
+.scene{filter:blur(8px);transition:opacity 1300ms ease-in-out,filter 900ms ease-out}
+body.refining .scene,body.done .scene{opacity:1}
+body.done .scene{filter:blur(0)}
+body.refining .bg,body.done .bg{opacity:0;transition:opacity 1300ms ease-in-out}

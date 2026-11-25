@@ -1,0 +1,7 @@
+/* 현행 근사(비교 기준) — 단색 #1b1e24 + 로고 + Loading... 이 바로 뜨고, preview 가 오면 막이 300ms(FADE_MS) 만에 걷히며 장면이 그대로 드러난다. 타일 완료 시 선명해지는 것도 즉시. */
+.bg{opacity:1;background:#1b1e24;z-index:1}
+.chrome{opacity:1;z-index:2}
+.scene{filter:blur(4px)}
+body.refining .scene,body.done .scene{opacity:1}
+body.refining .bg,body.done .bg{opacity:0;transition:opacity 300ms ease}
+body.done .scene{filter:blur(0)}

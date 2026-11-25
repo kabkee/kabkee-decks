@@ -1,0 +1,10 @@
+/* A1 Vignette Mist — 가장자리 radial 비네팅으로 사라지는 정적 썸네일(opacity .38).
+   in: 700ms cubic-bezier(.22,.61,.36,1) · 장면 크로스디졸브 600ms cubic-bezier(.4,0,.2,1) · 바탕 out 900ms ease-in-out · 타일 sharpen 700ms ease-out */
+.bg{--m:radial-gradient(ellipse 68% 62% at 50% 50%,#000 0%,rgba(0,0,0,.55) 46%,transparent 100%)}
+.bg img{opacity:.38;transform:scale(1.04);-webkit-mask-image:var(--m);mask-image:var(--m)}
+.bg .pool{position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 50% 50%,rgba(70,100,170,.34) 0%,rgba(70,100,170,.12) 50%,transparent 100%)}
+body.shown .bg{opacity:1;transition:opacity 700ms cubic-bezier(.22,.61,.36,1)}
+.scene{filter:blur(8px);transition:opacity 600ms cubic-bezier(.4,0,.2,1),filter 700ms ease-out}
+body.refining .scene,body.done .scene{opacity:1}
+body.done .scene{filter:blur(0)}
+body.refining .bg,body.done .bg{opacity:0;transition:opacity 900ms cubic-bezier(.4,0,.2,1)}

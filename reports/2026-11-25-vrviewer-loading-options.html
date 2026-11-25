@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>VR 뷰어 로딩 화면 — 배경 시안 A1 · A2 · A3 비교 (IND-9836)</title>
+<style>
+  :root { --fg:#1d2330; --mute:#5d6678; --line:#e3e6ec; --bg:#f6f7f9; --card:#fff; --a1:#2f6fed; --a2:#7b4fd6; --a3:#0e8f6e; --a0:#6b7280; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; color:var(--fg); background:var(--bg); line-height:1.6; }
+  header { background:#111827; color:#fff; padding:36px 24px 28px; }
+  header .in, main { max-width:1280px; margin:0 auto; }
+  header h1 { margin:0 0 8px; font-size:26px; }
+  header p { margin:4px 0; color:#c9cfdb; }
+  header blockquote { margin:12px 0 0; padding:10px 14px; border-left:3px solid #4b5563; color:#aeb6c4; font-size:14px; background:rgba(255,255,255,.04); border-radius:0 8px 8px 0; }
+  main { padding:24px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin:0 0 24px; }
+  h2 { margin:0 0 12px; font-size:21px; }
+  h3 { margin:18px 0 8px; font-size:16px; color:var(--mute); }
+  table { width:100%; border-collapse:collapse; font-size:15px; }
+  th, td { border-bottom:1px solid var(--line); padding:10px 8px; text-align:left; vertical-align:top; }
+  th { background:#f0f2f6; white-space:nowrap; }
+  code { background:#f0f2f6; padding:1px 5px; border-radius:4px; font-size:.9em; }
+  .badge { display:inline-block; padding:1px 9px; border-radius:999px; font-size:12px; font-weight:700; color:#fff; vertical-align:middle; }
+  .b0 { background:var(--a0); } .b1 { background:var(--a1); } .b2 { background:var(--a2); } .b3 { background:var(--a3); }
+  .rec { background:#fff4cc; color:#8a5a00; border:1px solid #f1d27a; }
+  .toolbar { position:sticky; top:0; z-index:10; background:rgba(246,247,249,.95); backdrop-filter:blur(6px); padding:10px 0; margin:-8px 0 16px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; border-bottom:1px solid var(--line); }
+  .toolbar span { color:var(--mute); font-size:14px; margin-right:2px; }
+  .toolbar .sep { width:12px; }
+  .toolbar button, .toolbar a { font:inherit; font-size:14px; padding:6px 12px; border-radius:8px; border:1px solid var(--line); background:#fff; cursor:pointer; color:var(--fg); text-decoration:none; }
+  .toolbar button.on { background:#111827; color:#fff; border-color:#111827; }
+  .toolbar button.play { background:#2f6fed; color:#fff; border-color:#2f6fed; font-weight:700; }
+  .live { display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; max-width:1000px; margin:0 auto; }
+  .live .cell { border-radius:10px; overflow:hidden; border:1px solid var(--line); background:#1b1e24; }
+  .live .cell .cap { background:#fff; padding:6px 10px; font-size:14px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .live .cell .cap small { color:var(--mute); font-size:12px; }
+  .frame { position:relative; width:100%; aspect-ratio:16/9; overflow:hidden; }
+  .frame iframe { position:absolute; left:0; top:0; width:960px; height:540px; border:0; transform-origin:0 0; pointer-events:none; }
+  .opt { border-left:6px solid var(--line); }
+  #a1 { border-left-color:var(--a1); } #a2 { border-left-color:var(--a2); } #a3 { border-left-color:var(--a3); }
+  .pros { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:8px 0 4px; }
+  .pros div { background:#f7f9fc; border-radius:10px; padding:10px 14px; font-size:14px; }
+  .pros b { display:block; margin-bottom:2px; }
+  .diff { background:#f3f0ff; border-radius:10px; padding:10px 14px; font-size:14px; margin:10px 0 0; }
+  .stills { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
+  figure { margin:8px 0 0; }
+  figure img { width:100%; height:auto; border:1px solid var(--line); border-radius:8px; cursor:zoom-in; background:#1b1e24; display:block; }
+  figcaption { font-size:13px; color:var(--mute); margin-top:4px; }
+  .hint { font-size:14px; color:var(--mute); }
+  .note { background:#fff8e6; border:1px solid #f1d27a; border-radius:10px; padding:10px 14px; font-size:14px; margin-top:12px; }
+  .timing { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:13px; }
+  ol.q { padding-left:22px; } ol.q li { margin:6px 0; }
+  @media (max-width: 760px) {
+    main { padding:12px; } section { padding:16px; }
+    header h1 { font-size:21px; }
+    .pros, .stills, .live { grid-template-columns:1fr; }
+    .cmp, .cmp tbody, .cmp tr, .cmp td { display:block; width:100%; }
+    .cmp tr:first-child { display:none; }
+    .cmp tr { border:1px solid var(--line); border-radius:10px; margin-bottom:10px; padding:6px 4px; }
+    .cmp td { border:0; padding:4px 8px; font-size:14px; }
+    .cmp td:nth-child(1) { font-weight:700; font-size:15px; }
+    .cmp td:nth-child(2)::before { content:"표현 · "; color:var(--mute); font-weight:700; }
+    .cmp td:nth-child(3)::before { content:"전환 · "; color:var(--mute); font-weight:700; }
+    .cmp td:nth-child(4)::before { content:"③ 이미지 없음 · "; color:var(--mute); font-weight:700; }
+    .cmp td:nth-child(5)::before { content:"👍 "; }
+    .cmp td:nth-child(6)::before { content:"👎 "; }
+    th { white-space:normal; }
+    .stack, .stack tbody, .stack tr, .stack td { display:block; width:100%; }
+    .stack tr:first-child { display:none; }
+    .stack tr { border:1px solid var(--line); border-radius:10px; margin-bottom:10px; padding:6px 4px; }
+    .stack td { border:0; padding:3px 8px; font-size:14px; }
+    .stack td:nth-child(1) { font-weight:700; font-size:15px; }
+    #data .stack td:nth-child(2)::before { content:"기준 · "; color:var(--mute); font-weight:700; }
+    #data .stack td:nth-child(3)::before { content:"규모 · "; color:var(--mute); font-weight:700; }
+    #data .stack td:nth-child(4)::before { content:"예시 · "; color:var(--mute); font-weight:700; }
+    .toolbar { flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .toolbar button, .toolbar a, .toolbar span { flex:0 0 auto; white-space:nowrap; }
+  }
+</style>
+<meta name="deck-comments" content="report-2026-11-25-vrviewer-loading-options">
+</head>
+<body>
+<header><div class="in">
+  <h1>VR 뷰어 로딩 화면 — 배경 시안 A1 · A2 · A3 중 하나 고르기</h1>
+  <p>VR을 열 때 잠깐 나오는 검은 로딩 화면 뒤에 그 콘텐츠의 이미지를 은은하게 깔고, VR 화면으로 넘어갈 때 «확» 바뀌지 않고 부드럽게 이어지게 하려는 작업이야.</p>
+  <p>세 가지 표현 방식(A1 · A2 · A3)을 만들었고, 각 방식을 콘텐츠 종류 세 가지(①커스텀 이미지 있음 ②기본 썸네일만 ③이미지 없음)에 모두 적용해 봤어.</p>
+  <blockquote>요청 원문 요약 — 「VR이 뜰 때 너무 확 뜨는 느낌이니 fade in-out 으로 자연스럽게 연결」 · 「로딩 배경에 넷플릭스처럼 그 콘텐츠의 썸네일·커스텀 이미지를 은은하게, 모서리는 그라데이션처럼 사라지거나 꿈꾸듯 묻히게」 · 「로딩 화면은 가능한 안 보이고 빨리 뜨면 좋겠다」</blockquote>
+  <p style="font-size:13px;color:#8d96a8;margin-top:12px">2026-11-25 · l3 플랫폼 · 시안 <a style="color:#9ab8ff" href="https://kabkee-main.tailfe017f.ts.net:8443/IND/issues/IND-9836">IND-9836</a> · 상위 작업 <a style="color:#9ab8ff" href="https://kabkee-main.tailfe017f.ts.net:8443/IND/issues/IND-9815">IND-9815</a> · 시안 제작: Designer 에이전트(11-23)</p>
+</div></header>
+
+<main>
+  <div class="toolbar">
+    <span>콘텐츠</span>
+    <button data-c="1" class="on">① 커스텀 이미지</button>
+    <button data-c="2">② 기본 썸네일</button>
+    <button data-c="3">③ 이미지 없음</button>
+    <span class="sep"></span><span>로딩 속도</span>
+    <button data-sp="slow" class="on">느림 (2초)</button>
+    <button data-sp="edge">애매함 (0.65초)</button>
+    <button data-sp="fast">빠름 (0.3초)</button>
+    <span class="sep"></span>
+    <button class="play" id="replay">▶ 다시 재생</button>
+    <a href="#cmp">비교표</a><a href="#a1">A1</a><a href="#a2">A2</a><a href="#a3">A3</a><a href="#fast">빠른 로딩</a><a href="#decide">결정할 것</a>
+  </div>
+
+  <section id="live">
+    <h2>▶ 직접 재생해 보기 — 지금 화면과 세 시안을 동시에</h2>
+    <p class="hint">위 막대에서 콘텐츠 종류와 로딩 속도를 고르면 네 화면이 같은 시각에 함께 다시 재생돼. 「느림」은 preview(첫 저해상 화면)가 2.0초에, 고해상 타일이 4.2초에 도착하는 상황이야. 몇 번 반복해서 보면 차이가 잘 보여.</p>
+    <div class="live">
+      <div class="cell"><div class="frame"><iframe data-d="A0" title="현행"></iframe></div><div class="cap"><span><span class="badge b0">현행</span> 지금 화면(비교 기준)</span><small>단색 + 로고 → 0.3초 만에 걷힘</small></div></div>
+      <div class="cell"><div class="frame"><iframe data-d="A1" title="A1"></iframe></div><div class="cap"><span><span class="badge b1">A1</span> 가장자리가 사라지는 은은한 사진</span><small>Vignette Mist</small></div></div>
+      <div class="cell"><div class="frame"><iframe data-d="A2" title="A2"></iframe></div><div class="cap"><span><span class="badge b2">A2</span> 강하게 흐린 색감 막</span><small>Deep Blur Veil</small></div></div>
+      <div class="cell"><div class="frame"><iframe data-d="A3" title="A3"></iframe></div><div class="cap"><span><span class="badge b3">A3</span> 꿈결처럼 천천히 움직이는 사진</span><small>Dream Drift</small></div></div>
+    </div>
+    <div class="note">⚠️ 시안의 «VR 화면» 부분은 실제 krpano 뷰어가 아니라, 그 장소의 파노라마 미리보기 사진을 흐릿한 상태에서 선명하게 바꿔서 흉내 낸 거야. 그래서 배경·전환 «느낌»을 비교하는 용도로 봐 줘. 실제 뷰어에 넣으면 체감이 조금 다를 수 있어. 「현행」 칸도 지금 동작을 같은 방식으로 흉내 낸 근사치야.</div>
+  </section>
+
+  <section id="cmp">
+    <h2>한눈에 비교</h2>
+    <table class="cmp">
+      <tr><th>안</th><th>배경 표현</th><th>VR로 넘어가는 전환</th><th>③ 이미지가 없을 때</th><th>장점</th><th>단점</th></tr>
+      <tr><td><span class="badge b1">A1</span> Vignette Mist <span class="badge rec">디자이너 추천(기본안)</span></td>
+        <td>사진을 38% 밝기로 깔고, 가운데만 보이고 가장자리는 어둠 속으로 사라지게 한다.</td>
+        <td class="timing">배경 등장 0.7s → VR 0.6s 페이드 → 배경 0.9s 퇴장</td>
+        <td>사진 대신 파란빛이 은은하게 번지는 «빛웅덩이».</td>
+        <td>무엇이 나올지 어렴풋이 보인다. 구현이 가장 단순하고 모바일 부담이 적다.</td>
+        <td>사진이 움직이지 않아서 셋 중 가장 평범하다.</td></tr>
+      <tr><td><span class="badge b2">A2</span> Deep Blur Veil</td>
+        <td>사진을 형체를 알아볼 수 없을 만큼 강하게 흐리게 해서 «색감»만 전달한다.</td>
+        <td class="timing">배경 등장 0.8s → 초점이 맞춰지듯 1.0s → VR 0.8s 페이드</td>
+        <td>이미지 없는 파노라마의 작은 미리보기를 더 세게 흐려서 쓴다.</td>
+        <td>흐린 배경이 초점이 맞듯 VR로 이어져서 «다른 그림으로 점프»하는 느낌이 가장 적다.</td>
+        <td>무슨 장소인지 알아보기 어렵다. «썸네일을 보여 달라»는 요청에는 가장 약하다.</td></tr>
+      <tr><td><span class="badge b3">A3</span> Dream Drift</td>
+        <td>사진을 살짝만 흐리고 빛 번짐을 더한 뒤, 14초에 걸쳐 아주 천천히 확대되며 흐르게 한다. 가장자리는 넓게 녹인다.</td>
+        <td class="timing">배경 등장 1.2s → VR 1.3s 크로스페이드</td>
+        <td>파랑·보라 오로라가 천천히 흐른다.</td>
+        <td>«넷플릭스처럼 은은하게»·«꿈꾸듯»에 가장 가깝고 전환이 가장 부드럽다.</td>
+        <td>전환이 가장 길어(1.3초) 느리게 느껴질 수 있다. 움직임과 빛 효과 때문에 저사양 휴대폰 부담이 크다.</td></tr>
+    </table>
+    <h3>세 안에 공통으로 들어가는 것</h3>
+    <ul class="hint">
+      <li><b>0.5초 유예</b> — VR 미리보기가 0.5초 안에 도착하면 로딩 배경·로고를 아예 띄우지 않는다. 빠른 콘텐츠에서 로딩 화면이 «번쩍» 지나가는 걸 막으려는 장치야.</li>
+      <li>미리보기가 도착하면 로고는 사라지고, 화면 아래에 작은 「Loading...」 문구만 남았다가 고해상 타일이 다 받아지면 0.3초 만에 사라진다.</li>
+      <li>배경 이미지는 VR을 열 때 이미 받아 오는 데이터에 들어 있어서 새 API가 필요 없다(아래 «데이터 근거» 참고).</li>
+    </ul>
+    <p class="hint">🔍 이미지를 누르면 크게 볼 수 있어. 💬 오른쪽 아래 「코멘트」 버튼을 켜고 원하는 안의 제목이나 이미지를 눌러 의견을 남겨줘.</p>
+  </section>
+
+  <section class="opt" id="a1">
+    <h2><span class="badge b1">A1</span> Vignette Mist — 가장자리가 사라지는 은은한 사진 <span class="badge rec">디자이너 추천</span></h2>
+    <div class="pros"><div><b>👍 장점</b>어둠 속에서 그 장소가 어렴풋이 보이다가 VR이 그 위로 겹쳐 떠오른다. CSS 마스크 한 장이라 구현이 쉽고 휴대폰에서도 가볍다.</div><div><b>👎 단점</b>정지한 사진이라 A3만큼 «꿈결 같은» 느낌은 없다.</div></div>
+    <div class="diff">🔁 <b>10월에 썸네일 배경을 뺐을 때와 다른 점</b> — 그때는 썸네일이 먼저 또렷하게 보였다가 VR이 갑자기 덮었어. A1은 사진을 38% 밝기로 누르고 가장자리를 완전히 녹여서 «사진이 먼저 보인다»가 아니라 «어둠 속에 어렴풋이» 보이게 했어.</div>
+    <h3>로딩 중 화면 — ① 커스텀 이미지 · ② 기본 썸네일 · ③ 이미지 없음</h3>
+    <div class="stills">
+      <figure><img src="assets/2026-11-25-vrviewer-loading/A1-vignette-mist-1-custom-loading.webp" alt="A1 ① 커스텀 이미지"><figcaption>① 커스텀 이미지 — 경희판교VI캠퍼스</figcaption></figure>
+      <figure><img src="assets/2026-11-25-vrviewer-loading/A1-vignette-mist-2-default-thumb-loading.webp" alt="A1 ② 기본 썸네일"><figcaption>② 기본 썸네일 — 서울신라호텔</figcaption></figure>
+      <figure><img src="assets/2026-11-25-vrviewer-loading/A1-vignette-mist-3-flat-loading.webp" alt="A1 ③ 이미지 없음"><figcaption>③ 이미지 없음 — 파란 빛웅덩이</figcaption></figure>
+    </div>
+    <h3>시간 순서로 본 전환 (세 경우 × 네 시점)</h3>
+    <figure><img src="assets/2026-11-25-vrviewer-loading/A1-vignette-mist-filmstrip.webp" alt="A1 전환 필름스트립"><figcaption>A1 · 로딩 → 미리보기 도착 → 타일 완료</figcaption></figure>
+  </section>
+
+  <section class="opt" id="a2">
+    <h2><span class="badge b2">A2</span> Deep Blur Veil — 강하게 흐린 색감 막</h2>
+    <div class="pros"><div><b>👍 장점</b>배경의 흐림이 점점 줄어들며 VR로 이어져서, 카메라 초점이 맞춰지는 것처럼 자연스럽다.</div><div><b>👎 단점</b>너무 흐려서 무슨 장소인지 알아보기 어렵다. 색감만 남는다.</div></div>
+    <div class="diff">🔁 <b>10월과 다른 점</b> — 형체를 알아볼 수 없을 만큼 흐리게 해서 «다른 그림이 먼저 보였다가 바뀐다»는 느낌 자체가 생기지 않게 했어.</div>
+    <h3>로딩 중 화면 — ① 커스텀 이미지 · ② 기본 썸네일 · ③ 이미지 없음</h3>
+    <div class="stills">
+      <figure><img src="assets/2026-11-25-vrviewer-loading/A2-deep-blur-veil-1-custom-loading.webp" alt="A2 ① 커스텀 이미지"><figcaption>① 커스텀 이미지</figcaption></figure>
+      <figure><img src="assets/2026-11-25-vrviewer-loading/A2-deep-blur-veil-2-default-thumb-loading.webp" alt="A2 ② 기본 썸네일"><figcaption>② 기본 썸네일</figcaption></figure>
+      <figure><img src="assets/2026-11-25-vrviewer-loading/A2-deep-blur-veil-3-flat-loading.webp" alt="A2 ③ 이미지 없음"><figcaption>③ 이미지 없음 — 작은 미리보기를 더 세게 흐림</figcaption></figure>
+    </div>
+    <h3>시간 순서로 본 전환</h3>
+    <figure><img src="assets/2026-11-25-vrviewer-loading/A2-deep-blur-veil-filmstrip.webp" alt="A2 전환 필름스트립"><figcaption>A2 · 로딩 → 미리보기 도착 → 타일 완료</figcaption></figure>
+  </section>
+
+  <section class="opt" id="a3">
+    <h2><span class="badge b3">A3</span> Dream Drift — 꿈결처럼 천천히 움직이는 사진</h2>
+    <div class="pros"><div><b>👍 장점</b>사진이 거의 그대로 보이면서도 천천히 흐르고 빛이 번져서 가장 «은은하고 꿈같은» 분위기가 난다. 전환도 가장 부드럽다.</div><div><b>👎 단점</b>전환이 1.3초로 가장 길다. 움직임·빛 합성 때문에 저사양 휴대폰에서 버벅일 수 있어서, 구현할 때 «움직임 줄이기» 설정과 모바일용 단순화가 필요하다.</div></div>
+    <div class="diff">🔁 <b>10월과 다른 점</b> — 사진을 30% 밝기로만 보이게 하고 계속 천천히 움직이게 해서 «사진이 떴다가 바뀐다»가 아니라 «꿈결처럼 흐르다가 VR로 녹아든다»로 바꿨어.</div>
+    <h3>로딩 중 화면 — ① 커스텀 이미지 · ② 기본 썸네일 · ③ 이미지 없음</h3>
+    <div class="stills">
+      <figure><img src="assets/2026-11-25-vrviewer-loading/A3-dream-drift-1-custom-loading.webp" alt="A3 ① 커스텀 이미지"><figcaption>① 커스텀 이미지</figcaption></figure>
+      <figure><img src="assets/2026-11-25-vrviewer-loading/A3-dream-drift-2-default-thumb-loading.webp" alt="A3 ② 기본 썸네일"><figcaption>② 기본 썸네일</figcaption></figure>
+      <figure><img src="assets/2026-11-25-vrviewer-loading/A3-dream-drift-3-flat-loading.webp" alt="A3 ③ 이미지 없음"><figcaption>③ 이미지 없음 — 흐르는 오로라</figcaption></figure>
+    </div>
+    <h3>시간 순서로 본 전환</h3>
+    <figure><img src="assets/2026-11-25-vrviewer-loading/A3-dream-drift-filmstrip.webp" alt="A3 전환 필름스트립"><figcaption>A3 · 로딩 → 미리보기 도착 → 타일 완료</figcaption></figure>
+  </section>
+
+  <section id="fast">
+    <h2>로딩이 빠를 때 화면이 깜빡이지 않나?</h2>
+    <p class="hint">「로딩 화면은 가능한 안 보였으면」 하는 요청 때문에 따로 확인했어. 위 막대에서 「빠름」·「애매함」을 눌러 직접 볼 수도 있어.</p>
+    <table class="stack">
+      <tr><th>상황</th><th>결과 (세 안 공통)</th></tr>
+      <tr><td><b>빠름</b> — 미리보기 0.3초 도착</td><td>✅ 0.5초 유예 안에 도착해서 로딩 배경·로고가 <b>한 번도 뜨지 않는다.</b> 지금 화면에서 바로 VR이 페이드인된다. 깜빡임 없음.</td></tr>
+      <tr><td><b>애매함</b> — 미리보기 0.65초 도착(가장 위험한 구간)</td><td>✅ 배경이 20%쯤 떠오르다가 VR 페이드에 자연스럽게 묻힌다. «확 뜨는» 느낌은 없다. 다만 아래쪽 작은 「Loading...」 문구가 약 0.5초 보인다(원하면 이것도 숨길 수 있어).</td></tr>
+      <tr><td>참고 — 유예를 0.35초로 줄였을 때</td><td>🔴 0.45초에 도착하는 경우 배경·로고가 0.1초 «번쩍» 했다. 그래서 유예는 <b>0.5초 이상</b>을 권장해.</td></tr>
+    </table>
+    <figure><img src="assets/2026-11-25-vrviewer-loading/fast-load-filmstrip-fast300ms-A1-A2-A3.webp" alt="빠른 로딩 0.3초 필름스트립"><figcaption>빠름(0.3초) — A1 · A2 · A3</figcaption></figure>
+    <figure><img src="assets/2026-11-25-vrviewer-loading/fast-load-filmstrip-edge650ms-A1-A2-A3.webp" alt="애매한 로딩 0.65초 필름스트립"><figcaption>애매함(0.65초) — A1 · A2 · A3</figcaption></figure>
+  </section>
+
+  <section id="data">
+    <h2>데이터 근거 — 콘텐츠를 세 종류로 나누는 기준</h2>
+    <table class="stack">
+      <tr><th>종류</th><th>판별 기준</th><th>규모</th><th>시안에 쓴 실제 콘텐츠</th></tr>
+      <tr><td>① 커스텀 이미지 있음</td><td>콘텐츠 대표 이미지(<code>l3_vr_content.thumb_filename</code>)가 등록돼 있음 — 판매자가 올렸거나 레거시에서 옮겨 온 커버</td><td>VR스토리 89 · 360VIEW 39</td><td>경희판교VI캠퍼스 (uid 2704 · <code>xo6jh8ib</code>)</td></tr>
+      <tr><td>② 기본 썸네일만</td><td>대표 이미지가 없고, 첫 장면 파노라마의 자동 미리보기(<code>view_500.jpg</code>)만 있음</td><td>360VIEW 약 2,150 — <b>가장 흔한 경우</b></td><td>서울신라호텔 (uid 2699 · <code>ntbcbojq</code>)</td></tr>
+      <tr><td>③ 쓸 만한 이미지 없음</td><td>평면(flat) 파노라마처럼 250px 작은 미리보기만 있고 500px 미리보기가 없음(404)</td><td>flat 파노라마 294개</td><td>Flat 파노라마 테스트 (uid 802 · <code>gfisdzqk</code>)</td></tr>
+    </table>
+    <p class="hint">이 값들은 VR을 열 때 이미 받는 <code>GET /v1.0/vr/{domain}</code> 응답에 들어 있어서, 구현할 때 새 API는 필요 없어. 「로딩 이미지」를 따로 지정하는 설정은 지금 플랫폼에도, 레거시 DB 이관 테이블에도 없었어. 시안 제작 중 실제 콘텐츠 조회수는 바뀌지 않았어(0건).</p>
+  </section>
+
+  <section id="decide">
+    <h2>결정할 것</h2>
+    <ol class="q">
+      <li><b>어느 안으로 갈지</b> — <span class="badge b1">A1</span> · <span class="badge b2">A2</span> · <span class="badge b3">A3</span> 중 하나, 또는 «A1 + A3의 느린 움직임»처럼 조합.<br><span class="hint">디자이너 의견: 기본 안전선은 A1이고, «넷플릭스처럼 은은하게»에 가장 가까운 건 A1 또는 A3야. A2는 썸네일을 보여 준다는 요구에는 약해.</span></li>
+      <li><b>0.5초 유예</b>를 그대로 둘지 (빠른 콘텐츠에서는 로딩 화면이 아예 안 보임).</li>
+      <li>미리보기가 뜬 뒤 화면 아래에 남는 작은 <b>「Loading...」 문구</b>를 남길지 숨길지.</li>
+    </ol>
+    <p class="hint">고른 안은 일반 VR과 VR 스토리 로딩 화면 양쪽에 같이 적용하는 걸로 상위 작업(<a href="https://kabkee-main.tailfe017f.ts.net:8443/IND/issues/IND-9815">IND-9815</a>)에 잡혀 있어. 선택 카드는 <a href="https://kabkee-main.tailfe017f.ts.net:8443/IND/issues/IND-9836">IND-9836</a> 에 올라가 있어.</p>
+  </section>
+</main>
+
+<script>
+// 라이브 비교 — 네 iframe 을 같은 c·speed 로 동시에 다시 불러온다. iframe 은 960×540 으로 그리고 칸 폭에 맞춰 축소.
+(() => {
+  const base = '2026-11-25-vrviewer-loading-proto/';
+  let c = '1', sp = 'slow';
+  const frames = [...document.querySelectorAll('.frame iframe')];
+  const fit = () => frames.forEach(f => { const w = f.parentElement.clientWidth; f.style.transform = `scale(${w / 960})`; });
+  const play = () => { const t = Date.now(); frames.forEach(f => { f.src = `${base}${f.dataset.d}.html?c=${c}&speed=${sp}&tag=0&t=${t}`; }); };
+  const pick = (sel, attr, set) => document.querySelectorAll(sel).forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll(sel).forEach(x => x.classList.toggle('on', x === b)); set(b.dataset[attr]); play();
+    document.getElementById('live').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+  pick('.toolbar button[data-c]', 'c', v => c = v);
+  pick('.toolbar button[data-sp]', 'sp', v => sp = v);
+  document.getElementById('replay').addEventListener('click', () => { play(); document.getElementById('live').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  addEventListener('resize', fit); fit(); play();
+})();
+</script>
+<script data-lightbox>
+/* 스크린샷 클릭 → 확대 보기
+   · 열면 먼저 화면에 꽉 맞춰 보여주고, 한 번 더 누르면 원본 100% 크기로 확대
+   · 확대 상태에서 드래그(모바일은 한 손가락)로 이동, 휠·핀치로 자유 배율
+   · ESC·✕·배경 클릭으로 닫기 (오너 상시 요구 · 2026-10-06 도입)                      */
+(() => {
+  if (window.__lb) return; window.__lb = 2;   // 2 = 원본 크기 확대판(2026-11-04)
+
+  const PAD = 28, MAXZ = 4;
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99999;display:none;overflow:hidden;' +
+    'background:rgba(10,14,22,.93);touch-action:none;-webkit-user-select:none;user-select:none';
+
+  const im = document.createElement('img');
+  im.draggable = false;
+  im.style.cssText = 'position:absolute;left:0;top:0;transform-origin:0 0;background:#fff;' +
+    'border-radius:4px;box-shadow:0 12px 44px rgba(0,0,0,.5);will-change:transform';
+  ov.appendChild(im);
+
+  const hud = document.createElement('div');
+  hud.style.cssText = 'position:absolute;right:16px;top:14px;display:flex;gap:8px;align-items:center;' +
+    'font:600 13px/1 system-ui,-apple-system,sans-serif;color:#eaf0fb;pointer-events:none';
+  const chip = 'background:rgba(255,255,255,.15);padding:8px 12px;border-radius:999px;backdrop-filter:blur(6px)';
+  const tip = document.createElement('span'); tip.style.cssText = chip + ';transition:opacity .4s';
+  const pct = document.createElement('span'); pct.style.cssText = chip + ';font-variant-numeric:tabular-nums';
+  const xb  = document.createElement('button'); xb.textContent = '✕'; xb.setAttribute('aria-label', '닫기');
+  xb.style.cssText = chip + ';pointer-events:auto;border:0;color:#fff;width:36px;height:36px;padding:0;' +
+    'font:600 16px/1 system-ui;cursor:pointer';
+  hud.append(tip, pct, xb);
+  ov.appendChild(hud);
+
+  let nw = 0, nh = 0, fit = 1, s = 1, tx = 0, ty = 0;
+  let drag = false, lx = 0, ly = 0, moved = false, tipT = 0;
+
+  const clamp = () => {
+    const W = innerWidth, H = innerHeight, w = nw * s, h = nh * s;
+    tx = w <= W ? (W - w) / 2 : Math.min(0, Math.max(W - w, tx));
+    ty = h <= H ? (H - h) / 2 : Math.min(0, Math.max(H - h, ty));
+  };
+  const draw = () => {
+    im.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')';
+    pct.textContent = Math.round(s * 100) + '%';
+    const big = nw * s > innerWidth + 1 || nh * s > innerHeight + 1;
+    im.style.cursor = big ? (drag ? 'grabbing' : 'grab') : (s < 1 ? 'zoom-in' : 'zoom-out');
+  };
+  const zoom = (ns, cx, cy) => {
+    ns = Math.max(Math.min(fit, 1) * 0.9, Math.min(ns, MAXZ));
+    const k = ns / s;
+    tx = cx - (cx - tx) * k; ty = cy - (cy - ty) * k;
+    s = ns; clamp(); draw();
+  };
+  const showTip = (t) => {
+    tip.textContent = t; tip.style.opacity = '1';
+    clearTimeout(tipT); tipT = setTimeout(() => { tip.style.opacity = '0'; }, 2600);
+  };
+  const close = () => { ov.style.display = 'none'; im.removeAttribute('src'); document.body.style.overflow = ''; };
+
+  const open = (src) => {
+    im.onload = () => {
+      nw = im.naturalWidth; nh = im.naturalHeight;
+      im.style.width = nw + 'px'; im.style.height = nh + 'px';
+      fit = Math.min((innerWidth - PAD * 2) / nw, (innerHeight - PAD * 2) / nh);
+      s = Math.min(fit, 1);            // 원본보다 크게는 띄우지 않는다
+      tx = ty = 0; clamp(); draw();
+      showTip(fit < 0.995 ? '클릭하면 원본 크기 · 드래그 이동 · ESC 닫기' : '휠로 확대 · ESC 닫기');
+    };
+    im.src = src;
+    ov.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  };
+
+  // 배경 클릭 → 닫기 / 이미지 클릭 → 맞춤 ↔ 원본 토글
+  ov.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (moved) { moved = false; return; }
+    if (e.target === xb || e.target === ov) { close(); return; }
+    if (e.target === im) {
+      const f = Math.min(fit, 1);
+      zoom(s > f + 0.005 ? f : Math.max(1, f * 2), e.clientX, e.clientY);
+    }
+  });
+
+  // 드래그 이동 (마우스 · 터치 공통)
+  im.addEventListener('pointerdown', (e) => {
+    if (nw * s <= innerWidth && nh * s <= innerHeight) return;
+    drag = true; moved = false; lx = e.clientX; ly = e.clientY;
+    im.setPointerCapture(e.pointerId); draw(); e.preventDefault();
+  });
+  im.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.clientX - lx, dy = e.clientY - ly;
+    if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+    tx += dx; ty += dy; lx = e.clientX; ly = e.clientY; clamp(); draw();
+  });
+  const endDrag = (e) => { if (drag) { drag = false; try { im.releasePointerCapture(e.pointerId); } catch (_) {} draw(); } };
+  im.addEventListener('pointerup', endDrag);
+  im.addEventListener('pointercancel', endDrag);
+
+  // 휠 줌 (슬라이드 전환으로 새지 않게 차단)
+  ov.addEventListener('wheel', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    zoom(s * (e.deltaY < 0 ? 1.18 : 1 / 1.18), e.clientX, e.clientY);
+  }, { passive: false });
+
+  // 핀치 줌
+  let pts = new Map(), pd = 0;
+  ov.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') pts.set(e.pointerId, e); });
+  ov.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'touch' || !pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, e);
+    if (pts.size !== 2) return;
+    const [a, b] = [...pts.values()];
+    const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+    if (pd) { moved = true; zoom(s * (d / pd), (a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2); }
+    pd = d;
+  });
+  const dropPt = (e) => { pts.delete(e.pointerId); if (pts.size < 2) pd = 0; };
+  ov.addEventListener('pointerup', dropPt);
+  ov.addEventListener('pointercancel', dropPt);
+
+  // 열려 있는 동안 키보드는 전부 여기서 소비 (화살표가 슬라이드를 넘기면 안 된다)
+  document.addEventListener('keydown', (e) => {
+    if (ov.style.display === 'none') return;
+    const cx = innerWidth / 2, cy = innerHeight / 2;
+    if (e.key === 'Escape') close();
+    else if (e.key === '+' || e.key === '=') zoom(s * 1.25, cx, cy);
+    else if (e.key === '-' || e.key === '_') zoom(s / 1.25, cx, cy);
+    else if (e.key === '0') zoom(Math.min(fit, 1), cx, cy);
+    else if (e.key === '1') zoom(1, cx, cy);
+    else if (e.key === 'ArrowLeft') { tx += 60; clamp(); draw(); }
+    else if (e.key === 'ArrowRight') { tx -= 60; clamp(); draw(); }
+    else if (e.key === 'ArrowUp') { ty += 60; clamp(); draw(); }
+    else if (e.key === 'ArrowDown') { ty -= 60; clamp(); draw(); }
+    else return;
+    e.preventDefault(); e.stopPropagation();
+  }, true);
+
+  addEventListener('resize', () => {
+    if (ov.style.display === 'none' || !nw) return;
+    fit = Math.min((innerWidth - PAD * 2) / nw, (innerHeight - PAD * 2) / nh);
+    clamp(); draw();
+  });
+
+  const ready = () => {
+    document.body.appendChild(ov);
+    document.addEventListener('click', (e) => {
+      const t = e.target;
+      if (t && t.tagName === 'IMG' && t.closest('section') && !t.classList.contains('emoji')) {
+        e.preventDefault(); e.stopPropagation(); open(t.currentSrc || t.src);
+      }
+    }, true);
+  };
+  document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', ready) : ready();
+})();
+</script>
+<script data-deck-comments>
+/* 슬라이드 요소별 검토 코멘트 (marp 덱 공용 · 2026-11-16 오너 요청)
+   · 오른쪽 아래 「💬 코멘트」 버튼으로 코멘트 모드를 켠다(단축키 C).
+   · 켜면 제목·문단·목록 한 줄·표 한 행·이미지·링크 묶음에 마우스를 올려 윤곽을 보고, 누르면 그 요소에 코멘트를 단다.
+   · 「이 슬라이드 전체」 버튼으로 슬라이드 단위 코멘트도 단다.
+   · 종류: 수정 요청 / 의사결정으로 앞으로 / 다음 주로 미루기 / 질문 / 기타 — Claude 가 읽고 덱을 고칠 때 분류 기준으로 쓴다.
+   · 저장: /api/comments (Netlify 함수 · netlify/functions/comments.mjs). 로컬(:8088)에서 열면 배포된 API 로 보내고,
+     API 가 이 덱을 받지 않으면 이 브라우저(localStorage)에만 저장한 뒤 「복사」로 Claude 에게 넘긴다.
+   · 덱 id 는 <meta name="deck-comments" content="..."> (빌드가 주입). 없으면 동작하지 않는다.                       */
+(() => {
+  if (window.__dc) return; window.__dc = 1;
+  const DECK = document.querySelector('meta[name="deck-comments"]')?.content;
+  if (!DECK) return;
+
+  const REMOTE = 'https://kabkee-decks.netlify.app/api/comments';
+  const API = /netlify\.app$/.test(location.hostname) ? '/api/comments' : REMOTE;
+  const LS = 'deck-comments:' + DECK;
+  const SEL = 'h1,h2,h3,h4,p,li,tr,blockquote,figure,img:not(.emoji),figcaption,pre,.card,.links,.lnk';
+  const KINDS = [
+    ['fix', '수정 요청'], ['decision', '의사결정으로 앞으로'], ['later', '다음 주로 미루기'],
+    ['question', '질문'], ['etc', '기타'],
+  ];
+  const KLABEL = Object.fromEntries(KINDS);
+
+  // ── 스타일 ──
+  const st = document.createElement('style');
+  st.textContent = `
+  .dc-fab{position:fixed;right:18px;bottom:18px;z-index:99990;display:flex;gap:8px;align-items:center;font:600 14px/1 system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+  .dc-fab button{border:0;border-radius:999px;padding:11px 16px;cursor:pointer;background:#1f2937;color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.25);font:inherit}
+  .dc-fab button.on{background:#16a34a}
+  .dc-fab .dc-n{background:#f59e0b;color:#1a1204;border-radius:999px;padding:2px 8px;margin-left:6px;font-size:12px}
+  body.dc-on section [data-dc-hot]{outline:3px solid #16a34a!important;outline-offset:2px;cursor:copy!important;background:rgba(22,163,74,.07)}
+  body.dc-on section [data-dc-has]{outline:2px dashed #f59e0b;outline-offset:2px}
+  body.dc-on section{cursor:crosshair;position:relative}
+  .dc-pin{position:absolute;z-index:5;background:#f59e0b;color:#1a1204;font:700 12px/1 system-ui;border-radius:999px;padding:3px 7px;pointer-events:none}
+  .dc-drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);z-index:99995;background:#fff;color:#111827;border-left:1px solid #e5e7eb;box-shadow:-12px 0 32px rgba(0,0,0,.18);padding:18px 18px 28px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;font:15px/1.5 system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+  .dc-drawer[hidden]{display:none}
+  .dc-drawer h3{margin:0;font-size:17px}
+  .dc-drawer .dc-row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .dc-drawer .dc-target{font:600 12px/1.4 ui-monospace,Menlo,monospace;color:#b45309}
+  .dc-drawer .dc-detail{font-size:13px;color:#4b5563;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;max-height:8.5em;overflow:auto;white-space:pre-wrap}
+  .dc-drawer label{display:grid;gap:4px;font-size:13px;color:#4b5563}
+  .dc-drawer input,.dc-drawer textarea{font:15px/1.5 inherit;font-family:inherit;color:#111827;border:1px solid #d1d5db;border-radius:8px;padding:8px 10px;width:100%;box-sizing:border-box}
+  .dc-drawer textarea{min-height:130px;resize:vertical}
+  .dc-kinds{display:flex;flex-wrap:wrap;gap:6px}
+  .dc-kinds button{border:1px solid #d1d5db;background:#fff;border-radius:999px;padding:6px 11px;font:600 13px/1 inherit;font-family:inherit;cursor:pointer;color:#374151}
+  .dc-kinds button.sel{background:#111827;color:#fff;border-color:#111827}
+  .dc-btn{border:1px solid #d1d5db;background:#fff;border-radius:8px;padding:8px 12px;font:600 14px/1 inherit;font-family:inherit;cursor:pointer;color:#111827}
+  .dc-btn.pri{background:#16a34a;border-color:#16a34a;color:#fff}
+  .dc-status{font-size:13px;color:#6b7280}
+  .dc-warn{font-size:13px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:8px;padding:8px 10px}
+  .dc-list{display:grid;gap:8px}
+  .dc-c{border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;background:#fafafa}
+  .dc-c .dc-meta{font-size:12px;color:#6b7280}
+  .dc-c .dc-where{font:600 12px/1.4 ui-monospace,Menlo,monospace;color:#b45309;cursor:pointer}
+  .dc-c p{margin:4px 0 0;white-space:pre-wrap}
+  .dc-tag{display:inline-block;font-size:11px;font-weight:700;border-radius:4px;padding:1px 6px;margin-right:6px;background:#e5e7eb;color:#111827}
+  .dc-tag.decision{background:#fee2e2;color:#991b1b}.dc-tag.fix{background:#dbeafe;color:#1e40af}.dc-tag.later{background:#f3f4f6;color:#4b5563}.dc-tag.question{background:#fef3c7;color:#92400e}
+  `;
+  document.head.appendChild(st);
+
+  // ── 상태 ──
+  let on = false, comments = [], remoteOk = false, current = null, kind = 'fix';
+  const $ = (t, a = {}, ...kids) => { const e = document.createElement(t); Object.assign(e, a); kids.forEach(k => e.append(k)); return e; };
+  const pad = (n) => String(n).padStart(2, '0');
+  const sections = () => [...document.querySelectorAll('svg[data-marpit-svg] > foreignObject > section, section[data-marpit-pagination]')]
+    .filter((s, i, a) => a.indexOf(s) === i);
+  const slideNo = (sec) => {
+    const all = sections(); const i = all.indexOf(sec);
+    return i >= 0 ? i + 1 : Number(sec.id) || 0;
+  };
+  const short = (t, n) => { t = (t || '').replace(/\s+/g, ' ').trim(); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
+  const textOf = (el) => el.tagName === 'IMG' ? '[이미지] ' + (el.getAttribute('alt') || el.getAttribute('src') || '') : (el.innerText || el.textContent || '');
+  const slideTitle = (sec) => short(sec.querySelector('h1,h2')?.innerText || '', 80);
+  const anchorOf = (el) => {
+    const sec = el.closest('section'); const n = slideNo(sec);
+    if (el === sec) return { anchor: `s${pad(n)}-slide`, sec, n };
+    const idx = [...sec.querySelectorAll(SEL)].indexOf(el);
+    return { anchor: `s${pad(n)}-e${String(idx + 1).padStart(2, '0')}`, sec, n };
+  };
+  const elOf = (anchor) => {
+    const m = /^s(\d+)-(slide|e(\d+))$/.exec(anchor || ''); if (!m) return null;
+    const sec = sections()[Number(m[1]) - 1]; if (!sec) return null;
+    return m[2] === 'slide' ? sec : sec.querySelectorAll(SEL)[Number(m[3]) - 1] || null;
+  };
+  const goSlide = (n) => { location.hash = '#' + n; };
+
+  // ── 저장소 ──
+  const loadLocal = () => { try { return JSON.parse(localStorage.getItem(LS) || '[]'); } catch { return []; } };
+  const saveLocal = (list) => localStorage.setItem(LS, JSON.stringify(list));
+  async function load() {
+    let remote = [];
+    try {
+      const r = await fetch(API + '?deck=' + encodeURIComponent(DECK), { cache: 'no-store' });
+      if (r.ok) { remote = await r.json(); remoteOk = true; } else remoteOk = false;
+    } catch { remoteOk = false; }
+    comments = [...remote, ...loadLocal().map(c => ({ ...c, local: true }))];
+    paint();
+  }
+  async function post(c) {
+    if (remoteOk) {
+      try {
+        const r = await fetch(API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(c) });
+        if (r.ok) return { ...(await r.json()), local: false };
+      } catch { /* 아래 로컬 저장으로 */ }
+    }
+    const lc = { ...c, id: 'L' + Math.random().toString(36).slice(2, 9), createdAt: new Date().toISOString(), local: true };
+    saveLocal([...loadLocal(), lc]);
+    return lc;
+  }
+
+  // ── 표시 ──
+  const fab = $('div', { className: 'dc-fab' });
+  const bAll = $('button', { type: 'button', title: '이 덱의 코멘트 전체 보기' }, '목록');
+  const bOn = $('button', { type: 'button', title: '코멘트 모드 켜기/끄기 (C)' }, '💬 코멘트');
+  const nBadge = $('span', { className: 'dc-n' }, '0');
+  bOn.append(nBadge);
+  fab.append(bAll, bOn);
+  document.body.appendChild(fab);
+
+  const dr = $('aside', { className: 'dc-drawer', hidden: true });
+  dr.setAttribute('aria-label', '슬라이드 코멘트');
+  document.body.appendChild(dr);
+
+  function paint() {
+    nBadge.textContent = String(comments.length);
+    document.querySelectorAll('[data-dc-has]').forEach(e => e.removeAttribute('data-dc-has'));
+    document.querySelectorAll('.dc-pin').forEach(e => e.remove());
+    const by = new Map();
+    comments.forEach(c => by.set(c.anchor, (by.get(c.anchor) || 0) + 1));
+    by.forEach((cnt, a) => {
+      const el = elOf(a); if (!el) return;
+      el.setAttribute('data-dc-has', '1');
+      if (on && el.tagName !== 'SECTION' && el.tagName !== 'TR' && el.tagName !== 'IMG') {
+        const sec = el.closest('section'); const sr = sec.getBoundingClientRect(), er = el.getBoundingClientRect();
+        const k = sec.offsetWidth ? sr.width / sec.offsetWidth : 1;
+        const pin = $('span', { className: 'dc-pin' }, String(cnt));
+        pin.style.left = ((er.right - sr.left) / k - 8) + 'px'; pin.style.top = ((er.top - sr.top) / k - 10) + 'px';
+        sec.appendChild(pin);
+      }
+    });
+  }
+
+  const card = (c) => {
+    const where = $('div', { className: 'dc-where' }, `${c.anchor} · ${short(c.label, 60)}`);
+    where.onclick = () => { const m = /^s(\d+)/.exec(c.anchor); if (m) goSlide(Number(m[1])); };
+    const tag = $('span', { className: 'dc-tag ' + (c.kind || '') }, KLABEL[c.kind] || '코멘트');
+    const meta = $('div', { className: 'dc-meta' }, `${c.author || '익명'} · ${(c.createdAt || '').slice(5, 16).replace('T', ' ')}${c.local ? ' · 이 브라우저에만 저장' : ''}`);
+    return $('div', { className: 'dc-c' }, where, meta, $('p', {}, tag, c.text));
+  };
+
+  function openFor(el) {
+    const { anchor, sec, n } = anchorOf(el);
+    const isTitle = el === sec.querySelector('h1,h2');
+    const label = el === sec ? `${n}쪽 슬라이드 전체 — ${slideTitle(sec)}` : isTitle ? `${n}쪽 · 제목 — ${slideTitle(sec)}` : `${n}쪽 · ${slideTitle(sec)} › ${short(textOf(el), 60)}`;
+    current = { anchor, label, detail: short(textOf(el), 800), n };
+    dr.replaceChildren();
+    const close = $('button', { className: 'dc-btn', type: 'button' }, '닫기'); close.onclick = hide;
+    const whole = $('button', { className: 'dc-btn', type: 'button' }, '이 슬라이드 전체에 달기'); whole.onclick = () => openFor(sec);
+    dr.append($('div', { className: 'dc-row' }, $('h3', {}, '코멘트 달기'), close));
+    dr.append($('div', { className: 'dc-target' }, `${anchor} · ${short(label, 90)}`));
+    if (el !== sec) dr.append($('div', { className: 'dc-detail' }, current.detail), whole);
+    if (!remoteOk) dr.append($('div', { className: 'dc-warn' }, '지금은 공유 저장소에 연결되지 않아 이 브라우저에만 저장돼요. 「목록」 → 「Claude 용으로 복사」로 넘겨 주세요.'));
+    const mine = comments.filter(c => c.anchor === anchor);
+    if (mine.length) dr.append($('div', { className: 'dc-list' }, ...mine.map(card)));
+    const kinds = $('div', { className: 'dc-kinds' });
+    KINDS.forEach(([k, l]) => {
+      const b = $('button', { type: 'button', className: k === kind ? 'sel' : '' }, l);
+      b.onclick = () => { kind = k; kinds.querySelectorAll('button').forEach(x => x.classList.toggle('sel', x === b)); };
+      kinds.append(b);
+    });
+    const name = $('input', { maxLength: 60, value: localStorage.getItem('deck-comments:name') || '', placeholder: '예: 오빠' });
+    const ta = $('textarea', { maxLength: 4000, required: true, placeholder: '무엇을 어떻게 바꾸면 좋을지 적어 주세요' });
+    const stat = $('span', { className: 'dc-status' });
+    const send = $('button', { className: 'dc-btn pri', type: 'submit' }, '저장');
+    const form = $('form', {},
+      $('div', { style: 'display:grid;gap:10px' },
+        $('label', {}, '종류', kinds), $('label', {}, '이름', name), $('label', {}, '코멘트', ta),
+        $('div', { className: 'dc-row' }, stat, send)));
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const text = ta.value.trim(); if (!text) { stat.textContent = '내용을 적어 주세요.'; return; }
+      send.disabled = true; stat.textContent = '저장 중…';
+      localStorage.setItem('deck-comments:name', name.value.trim());
+      const c = await post({ deck: DECK, anchor: current.anchor, label: current.label, detail: current.detail, kind, author: name.value.trim() || '익명', text });
+      comments.push(c); paint(); openFor(el);
+      dr.querySelector('.dc-status').textContent = c.local ? '이 브라우저에 저장했어요.' : '저장했어요.';
+    };
+    dr.append(form);
+    dr.hidden = false;
+    setTimeout(() => ta.focus(), 30);
+  }
+
+  function showAll() {
+    dr.replaceChildren();
+    const close = $('button', { className: 'dc-btn', type: 'button' }, '닫기'); close.onclick = hide;
+    const copy = $('button', { className: 'dc-btn', type: 'button' }, 'Claude 용으로 복사');
+    copy.onclick = async () => {
+      const lines = [`덱 코멘트 — ${DECK} (${comments.length}건)`, `파일: ${location.pathname}`, ''];
+      [...comments].sort((a, b) => a.anchor.localeCompare(b.anchor)).forEach(c =>
+        lines.push(`- [${KLABEL[c.kind] || '코멘트'}] ${c.anchor} · ${c.label}\n  대상 원문: ${short(c.detail, 200)}\n  코멘트(${c.author || '익명'}): ${c.text.replace(/\n/g, '\n  ')}`));
+      try { await navigator.clipboard.writeText(lines.join('\n')); copy.textContent = '복사했어요'; }
+      catch { const t = $('textarea', { value: lines.join('\n'), style: 'min-height:240px' }); dr.append(t); t.select(); }
+    };
+    dr.append($('div', { className: 'dc-row' }, $('h3', {}, `코멘트 ${comments.length}건`), close));
+    dr.append($('div', { className: 'dc-status' }, remoteOk ? '공유 저장소에 연결됨 — Claude 가 직접 읽을 수 있어요.' : '공유 저장소 미연결 — 이 브라우저 저장분은 「Claude 용으로 복사」로 넘겨 주세요.'), copy);
+    // 이 브라우저(localStorage)에만 저장된 코멘트 지우기 — 공유 저장소의 코멘트는 건드리지 않는다.
+    // 실수로 지우지 않게 두 번 눌러야 지운다(브라우저 확인 창은 쓰지 않음).
+    const nLocal = comments.filter(c => c.local).length;
+    if (nLocal) {
+      const del = $('button', { className: 'dc-btn', type: 'button' }, `이 브라우저 저장분 ${nLocal}건 지우기`);
+      let armed = false;
+      del.onclick = () => {
+        if (!armed) { armed = true; del.textContent = `한 번 더 누르면 ${nLocal}건을 지워요 (공유 저장소는 그대로)`; del.style.borderColor = '#dc2626'; del.style.color = '#dc2626'; return; }
+        localStorage.removeItem(LS);
+        comments = comments.filter(c => !c.local); paint(); showAll();
+      };
+      dr.append(del);
+    }
+    const list = [...comments].sort((a, b) => a.anchor.localeCompare(b.anchor));
+    dr.append(list.length ? $('div', { className: 'dc-list' }, ...list.map(card)) : $('div', { className: 'dc-status' }, '아직 코멘트가 없어요.'));
+    dr.hidden = false;
+  }
+  function hide() { dr.hidden = true; current = null; }
+
+  function setOn(v) {
+    on = v; document.body.classList.toggle('dc-on', on); bOn.classList.toggle('on', on);
+    bOn.firstChild.textContent = on ? '💬 코멘트 모드 켜짐' : '💬 코멘트';
+    if (!on) { hide(); clearHot(); }
+    paint();
+  }
+  let hot = null;
+  const clearHot = () => { if (hot) hot.removeAttribute('data-dc-hot'); hot = null; };
+  const pick = (t) => { const sec = t.closest?.('section'); if (!sec || dr.contains(t)) return null; const el = t.closest(SEL); return el && sec.contains(el) ? el : sec; };
+
+  bOn.onclick = () => setOn(!on);
+  bAll.onclick = () => (dr.hidden ? showAll() : hide());
+  document.addEventListener('mouseover', (e) => {
+    if (!on) return; const el = pick(e.target); if (el === hot) return;
+    clearHot(); if (el && el.tagName !== 'SECTION') { hot = el; el.setAttribute('data-dc-hot', '1'); }
+  }, true);
+  // 캡처 단계에서 가로채서 링크 이동·이미지 확대(lightbox)·슬라이드 넘김보다 먼저 처리한다
+  document.addEventListener('click', (e) => {
+    if (!on || dr.contains(e.target) || fab.contains(e.target)) return;
+    const el = pick(e.target); if (!el) return;
+    e.preventDefault(); e.stopImmediatePropagation(); openFor(el);
+  }, true);
+  // 입력 중 키가 슬라이드 넘김(bespoke 단축키)으로 새지 않게 막는다
+  addEventListener('keydown', (e) => {
+    if (dr.contains(e.target)) { if (e.key === 'Escape') hide(); e.stopPropagation(); return; }
+    if ((e.key === 'c' || e.key === 'C') && !e.metaKey && !e.ctrlKey && !e.altKey && !/INPUT|TEXTAREA/.test(e.target.tagName)) { setOn(!on); e.stopPropagation(); }
+  }, true);
+  addEventListener('hashchange', () => setTimeout(paint, 300));
+  addEventListener('resize', () => setTimeout(paint, 300));
+  load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+/* A2 Deep Blur Veil — 강한 blur(32px)+저투명도(.32) 막. 초점이 맞춰지듯(focus pull) 장면으로 이어진다.
+   in: 800ms ease-out · focus pull(blur 32→10, opacity→0) 1000ms cubic-bezier(.22,.61,.36,1) · 장면 fade-in 800ms ease-in-out · sharpen 700ms ease-out */
+.bg{--m:linear-gradient(to bottom,transparent 0%,#000 28%,#000 72%,transparent 100%)}
+.bg img{filter:blur(32px) saturate(1.25) brightness(.9);transform:scale(1.2);opacity:.32;-webkit-mask-image:var(--m);mask-image:var(--m);transition:filter 1000ms cubic-bezier(.22,.61,.36,1),opacity 1000ms cubic-bezier(.22,.61,.36,1)}
+.bg img.lowres{filter:blur(44px) saturate(1.3) brightness(.95);transform:scale(1.35)}
+body.shown .bg{opacity:1;transition:opacity 800ms ease-out}
+.scene{filter:blur(10px);transition:opacity 800ms ease-in-out,filter 700ms ease-out}
+body.refining .scene,body.done .scene{opacity:1}
+body.done .scene{filter:blur(0)}
+body.refining .bg img,body.done .bg img{filter:blur(10px) saturate(1.25);opacity:0}
